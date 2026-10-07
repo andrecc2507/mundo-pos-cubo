@@ -254,3 +254,13 @@ describe('equilíbrio (simulação longa)', () => {
     expect(sum.dead).toHaveLength(ids[2] === g.protagonistId ? 0 : 1);
   });
 });
+
+describe('dia e noite nas lutas do jogo base', () => {
+  it('a hora do globo chega na batalha (meio-dia em 0° às 12h; meia-noite do outro lado)', async () => {
+    const { timeOfDayAt } = await import('@game/geo/maps');
+    expect(timeOfDayAt(12, 0)).toBe('dia');
+    expect(timeOfDayAt(12, 179)).toBe('noite');
+    expect(timeOfDayAt(0, 0)).toBe('noite');
+    expect(timeOfDayAt(0, 180)).toBe('dia');
+  });
+});

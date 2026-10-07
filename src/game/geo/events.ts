@@ -10,7 +10,7 @@
  */
 import type { Rng } from '@core';
 import type { BattleResult, BattleSetup, BattleUnit, Wave } from '../battle/types';
-import { battleMap } from './maps';
+import { battleMap, timeOfDayAt } from './maps';
 import { generateVillageMap } from '../mapgen/village_map';
 import { VILLAIN_LINES, makeBeast, makeBeastGrunt, makeGrunt, makeVillain } from '../demo/demo_squad';
 import type { Biome } from '../data';
@@ -92,6 +92,7 @@ export function raidBattle(g: GeoGame, defenders: BattleUnit[], rng: Rng): Battl
     waves,
     victory: { type: 'survive', rounds: RA.survivalRounds },
     ambush: false,
+    timeOfDay: timeOfDayAt(g.hours, g.village.at[0]),
     canFlee: true,
     seed,
     villainLines: r.kind === 'bestas' ? undefined : VILLAIN_LINES,
@@ -222,6 +223,7 @@ export function encounterBattle(g: GeoGame, units: BattleUnit[], rng: Rng): Batt
     enemies,
     victory: { type: 'eliminate' },
     ambush: e.type === 'emboscada' && rng.chance(0.5),
+    timeOfDay: timeOfDayAt(g.hours, ((sq) => (sq ? squadPosition(g, sq)[0] : g.village.at[0]))(g.squads.find((s) => s.id === e.squadId))),
     canFlee: true,
     seed,
     villainLines: enemies.some((u) => u.gift) ? VILLAIN_LINES : undefined,

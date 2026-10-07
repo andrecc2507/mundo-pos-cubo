@@ -7,7 +7,7 @@ import type { Rng } from '@core';
 import { DB } from '../data';
 import type { BattleSetup, BattleUnit, ObjectiveDef, Victory, Wave } from '../battle/types';
 import { unitFromCharacter } from '../battle/units';
-import { battleMap } from './maps';
+import { battleMap, timeOfDayAt } from './maps';
 import { VILLAIN_LINES, makeBeast, makeBeastGrunt, makeGrunt, makeVillain, type GruntKind } from '../demo/demo_squad';
 import { makeCharacter } from '../rules/recruit';
 import type { Character } from '../rules/character';
@@ -289,6 +289,7 @@ export function contractBattle(g: GeoGame, c: Contract, squad: BattleUnit[], rng
     objectives,
     victory,
     ambush: false,
+    timeOfDay: timeOfDayAt(g.hours, c.at[0]),
     canFlee: true,
     seed,
     stealthStart: def.stealth,
