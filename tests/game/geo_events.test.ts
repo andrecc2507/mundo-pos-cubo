@@ -123,3 +123,50 @@ describe('política', () => {
     expect(dispatchBlock(g, c, [g.protagonistId])).toContain('recusa');
   });
 });
+
+describe('recrutamento completo e especialistas', () => {
+  it('recrutas têm origem, profissão, afinidades e traços; o pool não repete Dom demais', async () => {
+    const { makeRecruit } = await import('@game/geo/people');
+    const { PERKS } = await import('@game/rules/perks');
+    const g = newGeoGame(spec(9));
+    const rng = new Rng(3);
+    const gifts = new Set<string>();
+    const list = Array.from({ length: 12 }, () => makeRecruit(g, rng, gifts));
+    for (const c of list) {
+      expect(c.origin).toBeTruthy();
+      expect(c.profession).toBeTruthy();
+      expect(Object.keys(c.affinity ?? {})).toHaveLength(4);
+      expect((c.perks ?? []).every((p) => PERKS[p])).toBe(true);
+    }
+    const withGift = list.filter((c) => c.gift).map((c) => c.gift!.id);
+    expect(new Set(withGift).size).toBeGreaterThanOrEqual(withGift.length - 2);
+  });
+
+  it('traços valem na batalha e evoluem por evento', async () => {
+    const { perkEvent } = await import('@game/rules/perks');
+    const g = newGeoGame(spec(10));
+    const c = g.roster[g.protagonistId]!;
+    c.perks = ['disciplinado', 'protetor', 'inseguro'];
+    const u = unitFromCharacter(c, 'player');
+    c.perks = [];
+    const base = unitFromCharacter(c, 'player');
+    expect(u.accuracy).toBe(base.accuracy + 6 - 5);
+    expect(u.skills).toContain('perk_protetor');
+    c.perks = ['inseguro'];
+    expect(perkEvent(c, 'closeCall')).toBeNull();
+    perkEvent(c, 'closeCall');
+    expect(perkEvent(c, 'closeCall')).toContain('Resiliente');
+    expect(c.perks).toEqual(['resiliente']);
+  });
+
+  it('especialista da profissão certa melhora a instalação', async () => {
+    const { assignSpecialist } = await import('@game/geo/people');
+    const { effect } = await import('@game/geo/village');
+    const g = newGeoGame(spec(11));
+    g.village.facilities.horta = 1;
+    const before = effect(g, 'foodPerDay');
+    const farmer = g.specialists.find((s) => s.profession === 'agricultor')!;
+    expect(assignSpecialist(g, farmer.id, 'horta')).toBe(true);
+    expect(effect(g, 'foodPerDay')).toBe(before * 1.5);
+  });
+});

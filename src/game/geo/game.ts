@@ -130,6 +130,9 @@ export interface GeoGame {
   stock: Record<string, number>;
   /** Já viu a explicação inicial. */
   introSeen?: boolean;
+  /** Especialistas da vila (não lutam; designados às instalações) e os candidatos da leva. */
+  specialists: Specialist[];
+  specialistPool: Specialist[];
   /** Governos hostis (agiu contra eles e a reputação caiu demais). */
   hostile: Record<string, boolean>;
   /** Próximo ataque à vila (hora). */
@@ -138,6 +141,14 @@ export interface GeoGame {
   raid?: Raid;
   /** Encontro na estrada esperando decisão. */
   encounter?: RoadEncounter;
+}
+
+/** Especialista da vila: profissão do mundo antigo; designado a uma instalação, melhora o efeito dela. */
+export interface Specialist {
+  id: string;
+  name: string;
+  profession: string;
+  facility?: string;
 }
 
 export interface Raid {
@@ -154,7 +165,7 @@ export interface RoadEncounter {
   level: number;
   regionId: string;
   /** Oferta do encontro (mercador: item e preço; desertor: o recruta). */
-  offer?: { item?: string; price?: number; recruit?: Character; food?: number; pop?: number; supply?: Supply; amount?: number };
+  offer?: { item?: string; price?: number; recruit?: Character; food?: number; pop?: number; supply?: Supply; amount?: number; specialist?: Specialist };
 }
 
 /** RNG do jogo: lê o estado salvo e grava de volta ao terminar. */

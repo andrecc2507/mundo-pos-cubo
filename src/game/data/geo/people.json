@@ -1,0 +1,352 @@
+{
+ "_doc": "Gente do Mundo Pós-Cubo (spec §3, §10–15, §27–29, §37–40): origens dos recrutas, profissões do mundo antigo, traços com efeito de batalha (e evolução por evento), afinidades com as quatro classes e os especialistas da vila (não combatentes designados às instalações).",
+ "origins": {
+  "academia": {
+   "name": "Academia",
+   "desc": "Treinou num dos centros que ainda funcionam.",
+   "attrs": {
+    "dex": 2,
+    "int": 2
+   },
+   "level": 0,
+   "cost": 1.15,
+   "mastery": 10,
+   "traits": [
+    1,
+    2
+   ],
+   "weight": 2
+  },
+  "voluntario": {
+   "name": "Voluntário civil",
+   "desc": "Gente comum que decidiu lutar.",
+   "attrs": {},
+   "level": -1,
+   "cost": 0.8,
+   "mastery": 0,
+   "traits": [
+    1,
+    3
+   ],
+   "weight": 4
+  },
+  "organizacao": {
+   "name": "Organização parceira",
+   "desc": "Indicado por uma organização aliada.",
+   "attrs": {
+    "vit": 2
+   },
+   "level": 0,
+   "cost": 1,
+   "mastery": 5,
+   "traits": [
+    1,
+    2
+   ],
+   "weight": 2
+  },
+  "sobrevivente": {
+   "name": "Sobrevivente",
+   "desc": "Escapou de um incidente que matou quase todos.",
+   "attrs": {
+    "vit": 1,
+    "spd": 1
+   },
+   "level": 0,
+   "cost": 0.9,
+   "mastery": 0,
+   "traits": [
+    2,
+    3
+   ],
+   "weight": 3
+  },
+  "veterano": {
+   "name": "Veterano",
+   "desc": "Já lutou muito antes de chegar aqui.",
+   "attrs": {
+    "str": 2,
+    "vit": 2
+   },
+   "level": 2,
+   "cost": 1.4,
+   "mastery": 15,
+   "traits": [
+    2,
+    4
+   ],
+   "weight": 1
+  },
+  "especialista": {
+   "name": "Especialista técnico",
+   "desc": "Sabe consertar e operar o que sobrou.",
+   "attrs": {
+    "int": 3
+   },
+   "level": 0,
+   "cost": 1.1,
+   "mastery": 5,
+   "traits": [
+    1,
+    2
+   ],
+   "weight": 2
+  },
+  "regional": {
+   "name": "Recrutamento regional",
+   "desc": "Da região da vila; conhece o terreno.",
+   "attrs": {
+    "spd": 1
+   },
+   "level": 0,
+   "cost": 0.9,
+   "mastery": 0,
+   "traits": [
+    1,
+    2
+   ],
+   "weight": 3
+  }
+ },
+ "professions": {
+  "medico": {
+   "name": "Médico(a)",
+   "facilities": [
+    "enfermaria",
+    "centro_medico"
+   ]
+  },
+  "mecanico": {
+   "name": "Mecânico(a)",
+   "facilities": [
+    "oficina",
+    "hangar"
+   ]
+  },
+  "agricultor": {
+   "name": "Agricultor(a)",
+   "facilities": [
+    "horta"
+   ]
+  },
+  "engenheiro": {
+   "name": "Engenheiro(a)",
+   "facilities": [
+    "muros",
+    "deposito"
+   ]
+  },
+  "professor": {
+   "name": "Professor(a)",
+   "facilities": [
+    "treino"
+   ]
+  },
+  "soldado": {
+   "name": "Ex-soldado",
+   "facilities": [
+    "muros",
+    "treino"
+   ]
+  },
+  "cientista": {
+   "name": "Cientista",
+   "facilities": [
+    "laboratorio",
+    "inteligencia"
+   ]
+  },
+  "comerciante": {
+   "name": "Comerciante",
+   "facilities": [
+    "mercado"
+   ]
+  },
+  "assistente": {
+   "name": "Assistente social",
+   "facilities": [
+    "recrutamento"
+   ]
+  },
+  "cozinheiro": {
+   "name": "Cozinheiro(a)",
+   "facilities": [
+    "horta",
+    "deposito"
+   ]
+  },
+  "estudante": {
+   "name": "Estudante",
+   "facilities": []
+  },
+  "piloto": {
+   "name": "Piloto",
+   "facilities": [
+    "hangar"
+   ]
+  }
+ },
+ "traits": {
+  "disciplinado": {
+   "name": "Disciplinado",
+   "kind": "positivo",
+   "desc": "+6 de precisão.",
+   "battle": {
+    "accuracy": 6
+   }
+  },
+  "resiliente": {
+   "name": "Resiliente",
+   "kind": "positivo",
+   "desc": "+10% de vida.",
+   "battle": {
+    "hpPct": 0.1
+   }
+  },
+  "observador": {
+   "name": "Observador",
+   "kind": "positivo",
+   "desc": "+5% de crítico e vê quem está escondido.",
+   "battle": {
+    "crit": 5
+   },
+   "fx": {
+    "seeHidden": true
+   }
+  },
+  "protetor": {
+   "name": "Protetor",
+   "kind": "positivo",
+   "desc": "20% de chance de interceptar o golpe num aliado ao lado; −5% de vida.",
+   "battle": {
+    "hpPct": -0.05
+   },
+   "fx": {
+    "intercept": {
+     "radius": 1,
+     "pct": 0.2,
+     "mitigate": 0
+    }
+   }
+  },
+  "tecnico": {
+   "name": "Técnico",
+   "kind": "positivo",
+   "desc": "Técnicas custam 10% menos Stamina.",
+   "fx": {
+    "mpDiscount": {
+     "pct": 0.1
+    }
+   }
+  },
+  "adaptavel": {
+   "name": "Adaptável",
+   "kind": "positivo",
+   "desc": "+3 de precisão e de esquiva.",
+   "battle": {
+    "accuracy": 3,
+    "evasion": 3
+   }
+  },
+  "introvertido": {
+   "name": "Introvertido",
+   "kind": "neutro",
+   "desc": "+5 de esquiva.",
+   "battle": {
+    "evasion": 5
+   }
+  },
+  "competitivo": {
+   "name": "Competitivo",
+   "kind": "neutro",
+   "desc": "+5% de crítico, −3 de precisão.",
+   "battle": {
+    "crit": 5,
+    "accuracy": -3
+   }
+  },
+  "cauteloso": {
+   "name": "Cauteloso",
+   "kind": "neutro",
+   "desc": "+8 de esquiva, −3% de crítico.",
+   "battle": {
+    "evasion": 8,
+    "crit": -3
+   }
+  },
+  "impulsivo": {
+   "name": "Impulsivo",
+   "kind": "neutro",
+   "desc": "+6% de crítico, −5 de esquiva.",
+   "battle": {
+    "crit": 6,
+    "evasion": -5
+   }
+  },
+  "imprudente": {
+   "name": "Imprudente",
+   "kind": "negativo",
+   "desc": "+8% de crítico, −8 de esquiva.",
+   "battle": {
+    "crit": 8,
+    "evasion": -8
+   }
+  },
+  "inseguro": {
+   "name": "Inseguro",
+   "kind": "negativo",
+   "desc": "−5 de precisão. (Sobreviver a 3 lutas no limite o torna Resiliente.)",
+   "battle": {
+    "accuracy": -5
+   },
+   "evolve": {
+    "to": "resiliente",
+    "event": "closeCall",
+    "count": 3
+   }
+  },
+  "instavel": {
+   "name": "Instável",
+   "kind": "negativo",
+   "desc": "+4% de crítico, −4 de precisão.",
+   "battle": {
+    "crit": 4,
+    "accuracy": -4
+   }
+  },
+  "teimoso": {
+   "name": "Teimoso",
+   "kind": "negativo",
+   "desc": "+5% de vida, −3 de esquiva.",
+   "battle": {
+    "hpPct": 0.05,
+    "evasion": -3
+   }
+  }
+ },
+ "traitEvolveExtra": {
+  "impulsivo": {
+   "to": "cauteloso",
+   "event": "failed",
+   "count": 1
+  }
+ },
+ "affinity": {
+  "min": 20,
+  "max": 90,
+  "masteryBase": 0.75,
+  "masteryPerPoint": 0.005
+ },
+ "pool": {
+  "classDeficitWeight": 0.25,
+  "repeatGiftPenalty": 0.5,
+  "specialistsPerLevy": 2
+ },
+ "specialists": {
+  "salaryPerDay": 3,
+  "hireCost": 60,
+  "boostPerSpecialist": 0.5,
+  "maxPerFacility": 2,
+  "refugeeChance": 0.3
+ }
+}

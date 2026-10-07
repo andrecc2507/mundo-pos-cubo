@@ -8,7 +8,8 @@ import { makeMember, type DemoClass } from '../demo/demo_squad';
 import type { Character } from '../rules/character';
 import { GEO_RULES, addLog, type GeoGame } from './game';
 import { spawnContract } from './contracts';
-import { refreshRecruits } from './people';
+import { makeSpecialist, refreshRecruits } from './people';
+import { rollAffinity, rollPerks, rollProfession } from '../rules/perks';
 import { FACILITIES } from './village';
 import { CUBE, REGIONS, regionAt, regionById, type LonLat } from './world';
 
@@ -53,6 +54,11 @@ export function partyBlock(spec: Pick<NewGameSpec, 'protagonist' | 'friends'>): 
 function person(rng: Rng, p: PersonSpec, potential: number, id: string): Character {
   const c = makeMember(rng, { name: p.name.trim(), classId: p.classId, level: 1, gift: p.gift, potential, weapon: CLASS_WEAPON[p.classId], armor: 'colete_tatico', utility: ['kit_medico', null, null] });
   c.id = id;
+  // Gente da vila (cenário §26): origem regional, traços e afinidades como qualquer recruta.
+  c.origin = 'regional';
+  c.profession = rollProfession(rng);
+  c.affinity = rollAffinity(rng, p.classId);
+  c.perks = rollPerks(rng, rng.int(1, 2));
   return c;
 }
 
@@ -96,6 +102,8 @@ export function newGeoGame(spec: NewGameSpec): GeoGame {
     resets: 0,
     stock: {},
     hostile: {},
+    specialists: [],
+    specialistPool: [],
     nextRaidAt: 8 + GEO_RULES.raids.everyDays[1]! * 24,
   };
   const P = GEO_RULES.protagonist;
@@ -114,6 +122,8 @@ export function newGeoGame(spec: NewGameSpec): GeoGame {
   // Primeiros contratos: perto de casa.
   for (let i = 0; i < 3; i++) spawnContract(g, rng, { internal: i === 0 });
   refreshRecruits(g, rng);
+  // Dois especialistas já moram na vila desde o começo.
+  g.specialists.push(makeSpecialist(g, rng, 'agricultor'), makeSpecialist(g, rng, 'medico'));
   g.nextRecruitAt = g.hours + GEO_RULES.recruits.everyHours;
   g.rng = rng.seed;
   return g;

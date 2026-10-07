@@ -10,10 +10,11 @@ import { fullHeal, gainXp, type Character } from '../rules/character';
 import { giftDef, rollGift } from '../rules/gifts';
 import * as stats from '../rules/stats';
 import { gainMastery, masteryOf, masteryRank } from '../rules/mastery';
+import { ORIGINS, PEOPLE_RULES, PROFESSIONS, affinityMasteryMult, perkEvent, rollAffinity, rollOrigin, rollPerks, rollProfession } from '../rules/perks';
 import { DB } from '../data';
 import { POLITICS, changeRep } from './politics';
 import { regionById } from './world';
-import { GEO_RULES, SUPPLY_LABEL, addLog, awayIds, newId, type GeoGame, type Supply } from './game';
+import { GEO_RULES, SUPPLY_LABEL, addLog, awayIds, newId, type GeoGame, type Specialist, type Supply } from './game';
 import { sendHome } from './squads';
 import { effect, foodStorage, rosterCap } from './village';
 
@@ -26,31 +27,96 @@ function rollPotential(rng: Rng): number {
   return r < 0.2 ? 1 : r < 0.55 ? 2 : r < 0.85 ? 3 : r < 0.97 ? 4 : 5;
 }
 
-/** Um candidato a recruta (nível perto da média do grupo). */
-export function makeRecruit(g: GeoGame, rng: Rng): Character {
+/**
+ * Classe do candidato: pool dinâmico (spec §37) — classes com menos gente no grupo pesam mais.
+ */
+function pickClass(g: GeoGame, rng: Rng): DemoClass {
+  const count: Record<string, number> = {};
+  for (const c of Object.values(g.roster)) count[c.classId] = (count[c.classId] ?? 0) + 1;
+  const max = Math.max(1, ...Object.values(count));
+  const w = DEMO_CLASSES.map((id) => 1 + PEOPLE_RULES.pool.classDeficitWeight * (max - (count[id] ?? 0)));
+  let r = rng.next() * w.reduce((a, b) => a + b, 0);
+  for (let i = 0; i < DEMO_CLASSES.length; i++) if ((r -= w[i]!) < 0) return DEMO_CLASSES[i]!;
+  return DEMO_CLASSES[0]!;
+}
+
+/** Dom do candidato: evita repetir Dons do grupo e da leva (spec §38), mas permite coincidência. */
+function pickGift(g: GeoGame, rng: Rng, taken: Set<string>): string | null {
+  if (!rng.chance(R.giftChance)) return null;
+  for (let i = 0; i < 4; i++) {
+    const gift = rollGift(() => rng.next());
+    if (!gift) return null;
+    if (!taken.has(gift.id) || rng.chance(PEOPLE_RULES.pool.repeatGiftPenalty * 0.3)) return gift.id;
+  }
+  return rollGift(() => rng.next())?.id ?? null;
+}
+
+/** Um candidato a recruta (spec §12): origem, Dom, potencial, traços, afinidades, profissão. */
+export function makeRecruit(g: GeoGame, rng: Rng, taken: Set<string> = new Set(Object.values(g.roster).map((c) => c.gift?.id ?? '').filter(Boolean))): Character {
   const levels = Object.values(g.roster).map((c) => c.level);
   const avg = levels.length ? levels.reduce((a, b) => a + b, 0) / levels.length : 1;
-  const level = Math.max(1, Math.round(avg - rng.int(0, R.levelSpread)));
-  const classId = rng.pick(DEMO_CLASSES);
-  const gift = rng.chance(R.giftChance) ? rollGift(() => rng.next()) : undefined;
+  const originId = rollOrigin(rng);
+  const origin = ORIGINS[originId]!;
+  const level = Math.max(1, Math.round(avg - rng.int(0, R.levelSpread) + origin.level));
+  const classId = pickClass(g, rng);
+  const giftId = pickGift(g, rng, taken);
+  if (giftId) taken.add(giftId);
   const potential = rollPotential(rng);
-  const c = makeMember(rng, { name: rng.pick(GEO_RULES.names.recruits), classId, level, gift: gift?.id ?? null, potential, weapon: CLASS_WEAPON[classId], armor: null, utility: [null, null, null] });
+  const c = makeMember(rng, { name: rng.pick(GEO_RULES.names.recruits), classId, level, gift: giftId, potential, weapon: CLASS_WEAPON[classId], armor: null, utility: [null, null, null] });
   c.id = newId(g, 'ch');
+  c.origin = originId;
+  c.profession = rollProfession(rng);
+  c.affinity = rollAffinity(rng, classId);
+  c.perks = rollPerks(rng, rng.int(origin.traits[0], origin.traits[1]));
+  for (const [a, v] of Object.entries(origin.attrs)) c.attrs[a as keyof typeof c.attrs] += v!;
+  // Origem com treino: técnicas aprendidas já chegam com um pouco de Maestria.
+  if (origin.mastery) for (const id of c.skills) (c.mastery ??= {})[id] = origin.mastery;
   // Sem laboratório, o potencial que se vê pode errar por uma estrela.
   if (c.gift && !effect(g, 'revealPotential')) c.gift.shownPotential = Math.max(1, Math.min(5, potential + rng.int(-1, 1)));
+  fullHeal(c);
   return c;
 }
 
 export function hireCost(c: Character): number {
-  return R.hireCostBase + c.level * R.hireCostPerLevel + (c.gift ? (c.gift.shownPotential ?? c.gift.potential) * 40 : 0);
+  const base = R.hireCostBase + c.level * R.hireCostPerLevel + (c.gift ? (c.gift.shownPotential ?? c.gift.potential) * 40 : 0);
+  return Math.round(base * (ORIGINS[c.origin ?? '']?.cost ?? 1));
 }
 
-/** Leva nova de candidatos. */
+/** Leva nova de candidatos (combatentes e especialistas). */
 export function refreshRecruits(g: GeoGame, rng: Rng): void {
   const n = R.pool + effect(g, 'recruitBonus');
-  g.recruits = Array.from({ length: n }, () => makeRecruit(g, rng));
+  const taken = new Set(Object.values(g.roster).map((c) => c.gift?.id ?? '').filter(Boolean));
+  g.recruits = Array.from({ length: n }, () => makeRecruit(g, rng, taken));
+  g.specialistPool = Array.from({ length: PEOPLE_RULES.pool.specialistsPerLevy }, () => makeSpecialist(g, rng));
   g.nextRecruitAt = g.hours + R.everyHours;
-  addLog(g, `📣 ${n} candidatos chegaram à vila.`);
+  addLog(g, `📣 ${n} candidatos e ${g.specialistPool.length} especialistas chegaram à vila.`);
+}
+
+// ───────────────────────────── especialistas da vila ─────────────────────────────
+
+export function makeSpecialist(g: GeoGame, rng: Rng, profession?: string): Specialist {
+  const prof = profession ?? rng.pick(Object.keys(PROFESSIONS).filter((p) => PROFESSIONS[p]!.facilities.length));
+  return { id: newId(g, 'sp'), name: rng.pick(GEO_RULES.names.recruits), profession: prof };
+}
+
+export function hireSpecialist(g: GeoGame, i: number): boolean {
+  const sp = g.specialistPool[i];
+  const cost = PEOPLE_RULES.specialists.hireCost;
+  if (!sp || g.money < cost) return false;
+  g.money -= cost;
+  g.specialistPool.splice(i, 1);
+  g.specialists.push(sp);
+  addLog(g, `🧰 ${sp.name} (${PROFESSIONS[sp.profession]?.name}) veio trabalhar na vila.`, 'good');
+  return true;
+}
+
+/** Designa (ou tira, com null) um especialista de uma instalação. */
+export function assignSpecialist(g: GeoGame, id: string, facility: string | null): boolean {
+  const sp = g.specialists.find((x) => x.id === id);
+  if (!sp) return false;
+  if (facility && g.specialists.filter((x) => x.facility === facility && x !== sp).length >= PEOPLE_RULES.specialists.maxPerFacility) return false;
+  sp.facility = facility ?? undefined;
+  return true;
 }
 
 export function hireBlock(g: GeoGame, i: number): string | null {
@@ -165,6 +231,15 @@ export function applyUnitOutcomes(g: GeoGame, result: BattleResult, sum: GeoResu
     }
     const frac = u.maxHp ? (u.lowHp ?? u.hp) / u.maxHp : 1;
     ch.hp = Math.max(1, u.hp);
+    // Sobreviveu no limite: traços podem mudar (Inseguro → Resiliente).
+    if (frac < 0.25) {
+      const changed = perkEvent(ch, 'closeCall');
+      if (changed) sum.lines.push(`Traço mudou — ${changed}.`);
+    }
+    if (result.outcome !== 'victory') {
+      const changed = perkEvent(ch, 'failed');
+      if (changed) sum.lines.push(`Traço mudou — ${changed}.`);
+    }
     const days = stats.woundDays(frac);
     if (days > 0) {
       ch.woundDays = Math.max(ch.woundDays, days);
@@ -175,7 +250,7 @@ export function applyUnitOutcomes(g: GeoGame, result: BattleResult, sum: GeoResu
     // Os pontos novos ficam para gastar na vila (ficha do herói).
     if (ch.level > before) sum.levelUps.push(`${ch.name} → NV ${ch.level}`);
     // Maestria por uso: o que foi usado na luta melhora.
-    for (const id of gainMastery(ch, u.castLog, (sid) => !!DB.skills[sid]?.gift)) {
+    for (const id of gainMastery(ch, u.castLog, (sid) => !!DB.skills[sid]?.gift, (sid) => affinityMasteryMult(ch, sid))) {
       const m = masteryOf(ch, id);
       sum.mastery.push(`${ch.name}: ${DB.skills[id]?.name ?? id} ${m >= 100 ? '— Maestria 100! Escolha a variante na ficha' : `→ Nv ${masteryRank(m)}`}`);
     }

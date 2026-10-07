@@ -10,6 +10,7 @@ import type { BattleUnit, Team } from './types';
 import { frictionLevel, quirkBattle } from '../rules/personality';
 import { giftDef } from '../rules/gifts';
 import { masteryRank } from '../rules/mastery';
+import { perkBattle, perkSkills } from '../rules/perks';
 
 /** Pontos de vínculo → níveis (só os que já têm nível). */
 function bondLevels(points: Record<string, number> | undefined): Record<string, number> | undefined {
@@ -110,7 +111,9 @@ export function unitFromCharacter(c: Character, team: Team): BattleUnit {
   const d = derive(c);
   // Ferido leve luta, mas com a vida máxima reduzida até sarar.
   // Personalidade (virtudes e manias): ajustes pequenos de acerto, esquiva, crítico e vida.
-  const q = quirkBattle(c);
+  const q0 = quirkBattle(c);
+  const pk = perkBattle(c);
+  const q = { accuracy: q0.accuracy + pk.accuracy, evasion: q0.evasion + pk.evasion, crit: q0.crit + pk.crit, hpPct: q0.hpPct + pk.hpPct };
   const baseMax = Math.max(1, Math.round(d.maxHp * (1 + q.hpPct)));
   const woundedMax = team === 'player' && c.woundDays > 0 && !c.severeWound ? Math.max(1, Math.round(baseMax * stats.woundHpMult())) : baseMax;
   const cls = DB.classes[c.classId];
@@ -149,7 +152,7 @@ export function unitFromCharacter(c: Character, team: Team): BattleUnit {
     y: 0,
     facing: team === 'player' ? 0 : 2,
     gauge: 0,
-    skills: [...innateSkillIds(c.classId), ...giftInnate(c), ...c.skills.filter((id) => DB.skills[id]), ...grantedSkillIds(c.classId, c.skills), ...unlockedEvolutions(c.skills, c.skillRanks), ...jewelSkill(c), ...kitSkills(c)],
+    skills: [...innateSkillIds(c.classId), ...giftInnate(c), ...c.skills.filter((id) => DB.skills[id]), ...grantedSkillIds(c.classId, c.skills), ...unlockedEvolutions(c.skills, c.skillRanks), ...jewelSkill(c), ...kitSkills(c), ...perkSkills(c)],
     ...(c.gift && giftDef(c.gift.id) ? { gift: c.gift.id, strain: 0, giftPotential: c.gift.potential } : {}),
     title: c.storyId ? STORY_KITS[c.storyId]?.title : undefined,
     skillRanks: { ...grantedRanks(c), ...jewelRank(c) },

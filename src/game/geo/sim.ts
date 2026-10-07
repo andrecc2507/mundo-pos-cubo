@@ -9,6 +9,7 @@ import { dailyPeople, healTick, refreshRecruits } from './people';
 import { arrivalTime, squadPosition } from './squads';
 import { encounterTick, startRaid } from './events';
 import { dailyPolitics } from './politics';
+import { PEOPLE_RULES } from '../rules/perks';
 import { effect, finishConstruction, foodStorage, stageDef } from './village';
 
 const E = GEO_RULES.economy;
@@ -104,7 +105,7 @@ export function foodMade(g: GeoGame): number {
 }
 
 export function salaries(g: GeoGame): number {
-  return g.salaried.filter((id) => g.roster[id]).length * E.salaryPerRecruitPerDay;
+  return g.salaried.filter((id) => g.roster[id]).length * E.salaryPerRecruitPerDay + (g.specialists ?? []).length * PEOPLE_RULES.specialists.salaryPerDay;
 }
 
 /** Economia do dia: comida, salários, população, gente. */

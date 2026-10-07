@@ -17,7 +17,8 @@ import { VILLAIN_LINES, makeBeast, makeVillain } from '../demo/demo_squad';
 import type { Biome } from '../data';
 import { GEO_RULES, SUPPLIES, addLog, awayIds, newId, type GeoAlert, type GeoGame, type Raid, type RoadEncounter, type Squad } from './game';
 import { contractLevel } from './contracts';
-import { applyUnitOutcomes, checkGameOver, emptySummary, makeRecruit, type GeoResultSummary } from './people';
+import { applyUnitOutcomes, checkGameOver, emptySummary, makeRecruit, makeSpecialist, type GeoResultSummary } from './people';
+import { PEOPLE_RULES, PROFESSIONS } from '../rules/perks';
 import { changeRep, isHostile, POLITICS } from './politics';
 import { abortMission, squadPosition } from './squads';
 import { effect, facilityLevel, foodStorage, itemPrice, rosterCap, SHOP } from './village';
@@ -178,7 +179,7 @@ export function rollEncounter(g: GeoGame, s: Squad, stepHours: number, rng: Rng)
     const c = makeRecruit(g, rng);
     if (!c.gift) c.gift = { id: 'eletricidade', potential: 3, shownPotential: 3, mastery: 0 };
     enc.offer = { recruit: c };
-  } else if (type === 'refugiados') enc.offer = { pop: rng.int(3, 7), food: rng.int(8, 16) };
+  } else if (type === 'refugiados') enc.offer = { pop: rng.int(3, 7), food: rng.int(8, 16), specialist: rng.chance(PEOPLE_RULES.specialists.refugeeChance) ? makeSpecialist(g, rng) : undefined };
   else if (type === 'esconderijo') enc.offer = { supply: rng.pick(SUPPLIES), amount: rng.int(2, 4) };
   g.encounter = enc;
   addLog(g, `${EN.types[type as keyof typeof EN.types].icon} ${s.name}: ${EN.types[type as keyof typeof EN.types].name}.`);
@@ -277,6 +278,10 @@ export function resolveEncounterChoice(g: GeoGame, choice: EncounterChoice): str
         g.population += o.pop ?? 4;
         changeRep(g, e.regionId, 2);
         addLog(g, `🧳 ${o.pop} refugiados vieram morar na vila.`, 'good');
+        if (o.specialist) {
+          g.specialists.push(o.specialist);
+          return `${o.pop} pessoas vão para a vila — entre elas ${o.specialist.name}, ${PROFESSIONS[o.specialist.profession]?.name.toLowerCase()}.`;
+        }
         return `${o.pop} pessoas vão para a vila (mais bocas, mais mãos).`;
       }
       if (g.food < (o.food ?? 10)) return 'Sem comida para dividir.';

@@ -5,6 +5,7 @@
 import { DB } from '../data';
 import VILLAGE from '../data/geo/village.json';
 import { addLog, overallReputation, type GeoGame, type Supply } from './game';
+import { PEOPLE_RULES, PROFESSIONS } from '../rules/perks';
 
 export interface StageDef {
   name: string;
@@ -59,10 +60,22 @@ export function facilityLevel(g: GeoGame, id: string): number {
   return g.village.facilities[id] ?? 0;
 }
 
-/** Soma de um efeito em todas as instalações (efeito × nível). */
+/** Efeitos que não aumentam com especialistas (contagens e liga/desliga). */
+const FLAT: (keyof FacilityEffect)[] = ['flights', 'rosterCap', 'revealPotential', 'trade', 'shopTier'];
+
+/** Especialistas da profissão certa designados à instalação: +50% cada (data/geo/people.json). */
+export function specialistBoost(g: GeoGame, facility: string): number {
+  const n = (g.specialists ?? []).filter((s) => s.facility === facility && PROFESSIONS[s.profession]?.facilities.includes(facility)).length;
+  return 1 + Math.min(PEOPLE_RULES.specialists.maxPerFacility, n) * PEOPLE_RULES.specialists.boostPerSpecialist;
+}
+
+/** Soma de um efeito em todas as instalações (efeito × nível × especialistas). */
 export function effect(g: GeoGame, key: keyof FacilityEffect): number {
   let sum = 0;
-  for (const [id, lv] of Object.entries(g.village.facilities)) sum += (FACILITIES[id]?.effect[key] ?? 0) * lv;
+  for (const [id, lv] of Object.entries(g.village.facilities)) {
+    const v = (FACILITIES[id]?.effect[key] ?? 0) * lv;
+    sum += v && !FLAT.includes(key) ? v * specialistBoost(g, id) : v;
+  }
   return sum;
 }
 

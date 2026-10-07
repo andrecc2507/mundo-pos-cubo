@@ -5,7 +5,8 @@ import { Audio } from '../../audio/audio';
 import { unitFromCharacter } from '../../battle/units';
 import { CONTRACT_TYPES, SOURCES, contractBattle, contractText, rewardText } from '../../geo/contracts';
 import { GEO_RULES, SUPPLIES, SUPPLY_LABEL, awayIds, clockLabel, isAvailable, overallReputation, withRng, type Contract, type GeoAlert, type GeoGame, type Squad } from '../../geo/game';
-import { applyContractResult, dismiss, hire, hireBlock, hireCost, resetBuild, resetCost } from '../../geo/people';
+import { applyContractResult, assignSpecialist, dismiss, hire, hireBlock, hireCost, hireSpecialist, resetBuild, resetCost } from '../../geo/people';
+import { ORIGINS, PEOPLE_RULES, PERKS, PROFESSIONS, perkLabel } from '../../rules/perks';
 import { foodMade, foodUse, hoursPerSecond, salaries, tick } from '../../geo/sim';
 import { abortMission, arrivalTime, dispatch, dispatchBlock, planRoute, squadPosition } from '../../geo/squads';
 import { FACILITIES, STAGES, buildBlock, buyItem, canTrade, facilityCost, facilityLevel, foodStorage, itemPrice, rosterCap, shopItems, stageBlock, stageDef, startBuild, tradeFood, upgradeStage } from '../../geo/village';
@@ -500,6 +501,15 @@ export class GeoscapeScene extends Scene {
         ),
       );
     }
+    el.append(h('div', { class: 'demo-section', text: '🧰 Especialistas' }), h('div', { class: 'muted', style: 'font-size:11px', text: `Designe à instalação da profissão: +${Math.round(PEOPLE_RULES.specialists.boostPerSpecialist * 100)}% no efeito (até ${PEOPLE_RULES.specialists.maxPerFacility} por instalação). Contrate mais em 📣 Recrutas.` }));
+    for (const sp of g.specialists) {
+      const sel = h('select', {}) as HTMLSelectElement;
+      sel.append(h('option', { value: '', text: '— sem posto —' }));
+      for (const f of PROFESSIONS[sp.profession]?.facilities ?? []) if (FACILITIES[f]) sel.append(h('option', { value: f, text: `${FACILITIES[f]!.icon} ${FACILITIES[f]!.name}${facilityLevel(g, f) ? '' : ' (não construída)'}` }));
+      sel.value = sp.facility ?? '';
+      sel.addEventListener('change', () => (assignSpecialist(this.g, sp.id, sel.value || null) ? this.renderAll() : toast('Essa instalação já tem especialistas demais.')));
+      el.append(h('div', { class: 'row', style: 'gap:6px;align-items:center;font-size:12px;margin:2px 0' }, h('span', { style: 'flex:1', text: `${sp.name} · ${PROFESSIONS[sp.profession]?.name}` }), sel));
+    }
     if (g.memorial.length) {
       el.append(h('div', { class: 'demo-section', text: '🕯 Memorial' }));
       for (const m of g.memorial) el.append(h('div', { class: 'muted', style: 'font-size:12px', text: `${m.name} (${(DB.classes as Record<string, { name: string } | undefined>)[m.classId]?.name ?? m.classId}${m.gift ? ` · ${giftDef(m.gift)?.name}` : ''}) — ${m.cause}, ${clockLabel(m.at)}` }));
@@ -527,6 +537,16 @@ export class GeoscapeScene extends Scene {
       bar(Math.min(c.hp, d.maxHp), d.maxHp, '#66bb6a', `HP ${Math.min(c.hp, d.maxHp)}/${d.maxHp}`),
       away ? h('div', { style: 'font-size:11px;color:#4fc3f7', text: '🚩 em campo' }) : c.woundDays > 0 ? h('div', { style: 'font-size:11px;color:#e57373', text: `✚ ferido: ${Math.ceil(c.woundDays)} dia(s)` }) : '',
       extra ?? '',
+    );
+  }
+
+  /** Origem, profissão, traços e afinidades (spec §49). */
+  private personLines(c: Character): HTMLElement {
+    const aff = c.affinity ?? {};
+    return h('div', { style: 'font-size:11px' },
+      c.origin ? h('div', { class: 'muted', text: `${ORIGINS[c.origin]?.name ?? c.origin}${c.profession ? ` · antes: ${PROFESSIONS[c.profession]?.name}` : ''}` }) : '',
+      c.perks?.length ? h('div', { text: `Traços: ${c.perks.map(perkLabel).join(', ')}`, title: c.perks.map((p) => `${perkLabel(p)}: ${PERKS[p]?.desc}`).join('\n') }) : '',
+      Object.keys(aff).length ? h('div', { class: 'muted', text: `Afinidade: ${Object.entries(aff).map(([k, v]) => `${(DB.classes as Record<string, { name: string } | undefined>)[k]?.name ?? k} ${v}`).join(' · ')}` }) : '',
     );
   }
 
@@ -562,6 +582,7 @@ export class GeoscapeScene extends Scene {
       holder = h('div', { class: 'geo-sheet' });
       body.append(holder);
       draw();
+      body.append(this.personLines(c));
       if (c.id !== g.protagonistId && !awayIds(g).has(c.id) && g.salaried.includes(c.id))
         body.append(h('div', { class: 'row', style: 'justify-content:flex-end;margin-top:6px' }, btn('Dispensar', () => (dismiss(g, c.id), m.close(), this.renderLeft()), { class: 'small danger' })));
     }, { wide: true, onClose: () => this.renderAll() });
@@ -573,8 +594,19 @@ export class GeoscapeScene extends Scene {
     if (!g.recruits.length) el.append(h('div', { class: 'muted', text: 'Nenhum candidato agora.' }));
     g.recruits.forEach((c, i) => {
       const why = hireBlock(g, i);
-      el.append(this.heroRow(c, false, () => undefined, h('div', { class: 'row', style: 'gap:6px;align-items:center;margin-top:3px' }, btn(`Contratar ($${hireCost(c)})`, () => (hire(this.g, i) ? this.renderAll() : toast(why ?? '')), { class: 'small primary', disabled: !!why }), why ? h('span', { class: 'muted', style: 'font-size:11px', text: why }) : '')));
+      el.append(this.heroRow(c, false, () => undefined, h('div', { class: 'col', style: 'gap:2px' },
+        this.personLines(c),
+        h('div', { class: 'row', style: 'gap:6px;align-items:center;margin-top:3px' }, btn(`Contratar ($${hireCost(c)})`, () => (hire(this.g, i) ? this.renderAll() : toast(why ?? '')), { class: 'small primary', disabled: !!why }), why ? h('span', { class: 'muted', style: 'font-size:11px', text: why }) : ''),
+      )));
     });
+    el.append(h('div', { class: 'demo-section', text: `Especialistas (não lutam · $${PEOPLE_RULES.specialists.salaryPerDay}/dia)` }));
+    if (!g.specialistPool.length) el.append(h('div', { class: 'muted', style: 'font-size:12px', text: 'Nenhum especialista nesta leva.' }));
+    g.specialistPool.forEach((sp, i) =>
+      el.append(h('div', { class: 'item row', style: 'justify-content:space-between;gap:6px;align-items:center;padding:4px 6px' },
+        h('div', {}, h('b', { text: sp.name }), h('div', { class: 'muted', style: 'font-size:11px', text: `${PROFESSIONS[sp.profession]?.name} · melhora: ${PROFESSIONS[sp.profession]?.facilities.map((f) => FACILITIES[f]?.name).join(', ')}` })),
+        btn(`$${PEOPLE_RULES.specialists.hireCost}`, () => (hireSpecialist(this.g, i) ? this.renderAll() : toast('Dinheiro insuficiente.')), { class: 'small', disabled: g.money < PEOPLE_RULES.specialists.hireCost }),
+      )),
+    );
   }
 
   private tabShop(el: HTMLElement): void {

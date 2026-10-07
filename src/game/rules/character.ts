@@ -88,6 +88,13 @@ export interface Character {
    * estar escondido) e Maestria 0–100. Sem Dom = combatente só de armas e classe.
    */
   gift?: { id: string; potential: number; shownPotential?: number; mastery?: number };
+  /** Mundo Pós-Cubo (rules/perks.ts): origem, profissão do mundo antigo, afinidades e traços. */
+  origin?: string;
+  profession?: string;
+  affinity?: Record<string, number>;
+  perks?: string[];
+  /** Contagem para a evolução dos traços (spec §29). */
+  perkProgress?: Record<string, number>;
   /** Maestria por técnica (0–100, sobe com o uso — rules/mastery.ts). */
   mastery?: Record<string, number>;
   /** Variante escolhida de cada técnica dominada (Poder, Controle, Eficiência). */

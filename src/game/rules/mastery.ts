@@ -33,13 +33,13 @@ export function masteryRank(points: number): number {
  * Soma a Maestria dos usos de uma batalha (`casts`: técnica → vezes usada). Devolve as técnicas que
  * subiram de nível ou chegaram a 100.
  */
-export function gainMastery(c: Character, casts: Record<string, number> | undefined, isGift: (id: string) => boolean): string[] {
+export function gainMastery(c: Character, casts: Record<string, number> | undefined, isGift: (id: string) => boolean, mult: (id: string) => number = () => 1): string[] {
   if (!casts) return [];
   const up: string[] = [];
   for (const [id, n] of Object.entries(casts)) {
     if (!c.skills.includes(id) || n <= 0) continue;
     const before = masteryOf(c, id);
-    const after = Math.min(100, before + Math.min(MASTERY.perBattleCap, n * MASTERY.perUse));
+    const after = Math.min(100, before + Math.round(Math.min(MASTERY.perBattleCap, n * MASTERY.perUse) * mult(id)));
     (c.mastery ??= {})[id] = after;
     if (masteryRank(after) > masteryRank(before) || (after >= MASTERY.variantAt && before < MASTERY.variantAt)) up.push(id);
     if (c.gift && isGift(id)) c.gift.mastery = Math.min(100, (c.gift.mastery ?? 0) + n * MASTERY.giftPerUse);

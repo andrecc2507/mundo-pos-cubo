@@ -28,6 +28,8 @@ export function loadGeo(save: SaveService, slot: string): boolean {
   if (!g || g.version !== 1) return false;
   g.stock ??= {};
   g.hostile ??= {};
+  g.specialists ??= [];
+  g.specialistPool ??= [];
   g.nextRaidAt ??= g.hours + 24 * 10;
   g.speed = 0;
   geoStore.game = g;
