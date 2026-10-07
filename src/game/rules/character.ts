@@ -1,5 +1,5 @@
 import type { Rng } from '@core';
-import { ATTRS, DB, FIREARMS, item, type Attr, type Attributes, type ClassId, type WeaponType } from '../data';
+import { ATTRS, DB, FIREARMS, NEW_CLASSES, item, type Attr, type Attributes, type ClassId, type WeaponType } from '../data';
 import { learnableSkillIds, lockReason, rankOf, treeBonus, treeMpBonus } from './skill_tree';
 import * as stats from './stats';
 
@@ -194,7 +194,8 @@ export function derive(c: Character): Derived {
     healBonus += b.heal ?? 0;
   }
   const weapon = c.equipment.weapon ? item(c.equipment.weapon) : null;
-  const weaponType: WeaponType = weapon?.weaponType ?? (c.classId === 'fera' ? 'natural' : 'faca');
+  // Mundo Pós-Cubo: de mãos vazias luta com os punhos (Artes Marciais valem desarmado).
+  const weaponType: WeaponType = weapon?.weaponType ?? (c.classId === 'fera' ? 'natural' : (NEW_CLASSES as readonly string[]).includes(c.classId) ? 'punhos' : 'faca');
   // Ataque físico como no Ragnarok: arcos e facas com DES; espadas, bastões e o resto com FOR.
   // A varinha dispara magia no ataque básico (INT); o bastão é arma de golpe (FOR) e a INT fica
   // para as magias e as curas.

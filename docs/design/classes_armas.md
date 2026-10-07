@@ -72,7 +72,7 @@ afinidade **não bloqueia**: muda o custo dos nós, o ganho de Maestria e a efic
 
 ## Árvore de armas (estilo XCOM)
 
-Para todos, com ou sem Dom. Quatro ramos; o personagem escolhe um ramo principal (a arma que
+Para todos, com ou sem Dom. Seis ramos; o personagem escolhe um ramo principal (a arma que
 carrega) e pode pegar nós soltos de outro.
 
 | Ramo | Armas | Identidade | Exemplos de nós |
@@ -81,8 +81,10 @@ carrega) e pode pegar nós soltos de outro.
 | **Assalto** | Fuzil, escopeta | Perto, mobilidade, pressão | Correr e atirar, Tiro à queima-roupa, Fogo contínuo (supressão), Rajada |
 | **Pesado** | Metralhadora, lança-granadas | Área, cobertura destruída | Supressão pesada, Granada, Demolição (derruba paredes), Chuva de balas |
 | **Especialista** | Pistola, drone, ferramentas | Tecnologia e armadilhas | Drone (cura ou ataca à distância), Hackear (torres, portas, câmeras), Armadilhas (mina, rede, choque), Interferência |
+| **Artes Marciais** | Punhos (soco-inglês, luvas) ou mãos vazias | O corpo é a arma | Sequência de Golpes (3 socos), Postura de Combate (+esquiva), Projeção (derruba e lança 2 casas), Contra-ataque (50% contra golpe corpo a corpo), Punho Final (atravessa a guarda e lança 3 casas) |
+| **Armas Brancas** | Lâminas (faca, facão, katana, machado, lança) e contundentes (cano, taco, marreta) | Cortes, investidas, giros | Corte Rápido (sangra; ação rápida), Aparar (35%: metade do dano), Investida Cortante (atravessa a linha), Ritmo da Lâmina (+crítico e flanco), Turbilhão de Aço (3×3 ao redor, sangra) |
 
-Armas usam **munição** (recarregar gasta a ação). Granadas e armadilhas têm usos por missão.
+Sem arma equipada, o combatente luta com os punhos (as Artes Marciais valem desarmado). Armas de fogo usam **munição** (recarregar gasta a ação). Granadas e armadilhas têm usos por missão.
 
 Sem Dom não é ser menos: a árvore de armas tem o mesmo número de nós e de "momentos decisivos"
 que a do Dom (tiro mirado, chuva de balas, drone, armadilha).

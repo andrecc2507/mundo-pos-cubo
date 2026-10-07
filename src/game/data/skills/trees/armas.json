@@ -17,7 +17,7 @@
     {
      "id": "armas_inato",
      "name": "Treino Básico",
-     "description": "Sabe usar qualquer arma de fogo.",
+     "description": "Sabe usar qualquer arma de fogo, lâmina e os próprios punhos.",
      "kind": "passive",
      "range": 0,
      "power": 0,
@@ -425,6 +425,219 @@
       "turns": 1
      },
      "anim": "nova"
+    }
+   ]
+  },
+  {
+   "id": "artes_marciais",
+   "name": "Artes Marciais",
+   "type": "evolucao",
+   "parents": [],
+   "x": 160,
+   "y": -160,
+   "description": "O corpo é a arma: sequências, projeções e contra-ataques. (Punhos, luvas ou de mãos vazias.)",
+   "skills": [
+    {
+     "kind": "physical",
+     "range": 1,
+     "power": 3,
+     "cooldown": 1,
+     "mp": 3,
+     "id": "marciais_sequencia",
+     "name": "Sequência de Golpes",
+     "description": "Três golpes rápidos no mesmo alvo.",
+     "levelReq": 1,
+     "fx": {
+      "hits": 3
+     },
+     "needsWeapon": [
+      "punhos"
+     ],
+     "anim": "claw"
+    },
+    {
+     "id": "marciais_postura",
+     "name": "Postura de Combate",
+     "description": "+10 de esquiva.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 3,
+     "fx": {
+      "evasion": 10
+     }
+    },
+    {
+     "kind": "physical",
+     "range": 1,
+     "power": 6,
+     "cooldown": 2,
+     "mp": 4,
+     "id": "marciais_projecao",
+     "name": "Projeção",
+     "description": "Agarra e arremessa o alvo 2 casas: ele cai derrubado.",
+     "levelReq": 5,
+     "fx": {
+      "knock": 2
+     },
+     "status": {
+      "id": "derrubado",
+      "turns": 1
+     },
+     "needsWeapon": [
+      "punhos"
+     ],
+     "anim": "thrust"
+    },
+    {
+     "id": "marciais_contra",
+     "name": "Contra-ataque",
+     "description": "Metade das vezes que leva um golpe corpo a corpo, devolve um golpe.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 7,
+     "fx": {
+      "react": {
+       "on": "melee",
+       "do": "counter",
+       "chance": 50
+      }
+     }
+    },
+    {
+     "kind": "physical",
+     "range": 1,
+     "power": 14,
+     "cooldown": 4,
+     "mp": 8,
+     "id": "marciais_final",
+     "name": "Punho Final",
+     "description": "Um soco que atravessa a guarda: ignora metade da defesa, +30% de crítico e lança o alvo 3 casas.",
+     "levelReq": 9,
+     "fx": {
+      "crit": 30,
+      "pierce": 0.5,
+      "knock": 3
+     },
+     "needsWeapon": [
+      "punhos"
+     ],
+     "anim": "charge"
+    }
+   ]
+  },
+  {
+   "id": "armas_brancas",
+   "name": "Armas Brancas",
+   "type": "evolucao",
+   "parents": [],
+   "x": -160,
+   "y": -160,
+   "description": "Lâminas e porretes: cortes que sangram, investidas e giros. (Faca, facão, katana, machado, lança, taco, cano ou marreta.)",
+   "skills": [
+    {
+     "kind": "physical",
+     "range": -1,
+     "power": 5,
+     "cooldown": 1,
+     "mp": 3,
+     "id": "brancas_corte",
+     "name": "Corte Rápido",
+     "description": "Golpe rápido que abre um corte: sangramento por 2 turnos. A próxima vez chega na metade do tempo.",
+     "levelReq": 1,
+     "apCost": 1,
+     "status": {
+      "id": "sangramento",
+      "turns": 2
+     },
+     "needsWeapon": [
+      "lamina",
+      "contundente"
+     ],
+     "anim": "slash"
+    },
+    {
+     "id": "brancas_aparar",
+     "name": "Aparar",
+     "description": "35% de chance de aparar um golpe corpo a corpo e levar só metade do dano.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 3,
+     "fx": {
+      "react": {
+       "on": "melee",
+       "do": "mitigate",
+       "reduce": 0.5,
+       "chance": 35
+      }
+     }
+    },
+    {
+     "kind": "physical",
+     "range": 4,
+     "power": 7,
+     "cooldown": 3,
+     "mp": 5,
+     "id": "brancas_investida",
+     "name": "Investida Cortante",
+     "description": "Avança até 4 casas em linha, cortando todos no caminho.",
+     "target": "tile",
+     "shape": "line",
+     "levelReq": 5,
+     "fx": {
+      "dashThrough": true
+     },
+     "needsWeapon": [
+      "lamina",
+      "contundente"
+     ],
+     "anim": "dash"
+    },
+    {
+     "id": "brancas_ritmo",
+     "name": "Ritmo da Lâmina",
+     "description": "+10% de crítico e +15% de dano quando um aliado também está ao lado do alvo.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 7,
+     "fx": {
+      "critBonus": 10,
+      "flank": 0.15
+     }
+    },
+    {
+     "kind": "physical",
+     "range": 0,
+     "power": 10,
+     "cooldown": 4,
+     "mp": 8,
+     "id": "brancas_turbilhao",
+     "name": "Turbilhão de Aço",
+     "description": "Gira a arma: acerta todos ao redor (3×3) e faz sangrar.",
+     "target": "self",
+     "shape": "radius",
+     "radius": 1,
+     "levelReq": 9,
+     "status": {
+      "id": "sangramento",
+      "turns": 2
+     },
+     "needsWeapon": [
+      "lamina",
+      "contundente"
+     ],
+     "anim": "spin"
     }
    ]
   }

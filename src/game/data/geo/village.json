@@ -1,32 +1,301 @@
 {
  "_doc": "A vila (geo/village.ts): os 4 estágios do cenário (§32) e as instalações. Custos em dinheiro e peças; tempo de obra em dias. Efeitos: foodPerDay, healMult (ferimentos saram mais rápido), trainXpPerDay (quem fica na vila treina), storage (estoque máximo de comida), defense (resiste a ataques à vila), shopTier (itens melhores na loja), discount (desconto na loja), flights (voos simultâneos), recruitBonus (recrutas a mais), contractBonus (contratos a mais), radiusKm (alcance dos contratos), revealPotential (revela o potencial real), popGrowth, rosterCap.",
  "stages": [
-  { "name": "Vila", "rosterCap": 10, "popCap": 40 },
-  { "name": "Comunidade Fortificada", "rosterCap": 14, "popCap": 90, "require": { "population": 32, "reputation": 20, "money": 900, "pecas": 8 } },
-  { "name": "Base", "rosterCap": 20, "popCap": 180, "require": { "population": 75, "reputation": 45, "money": 2600, "pecas": 25 } },
-  { "name": "Base Militar", "rosterCap": 30, "popCap": 320, "require": { "population": 150, "reputation": 70, "money": 6500, "pecas": 55 } }
+  {
+   "name": "Vila",
+   "rosterCap": 10,
+   "popCap": 40
+  },
+  {
+   "name": "Comunidade Fortificada",
+   "rosterCap": 14,
+   "popCap": 90,
+   "require": {
+    "population": 32,
+    "reputation": 20,
+    "money": 900,
+    "pecas": 8
+   }
+  },
+  {
+   "name": "Base",
+   "rosterCap": 20,
+   "popCap": 180,
+   "require": {
+    "population": 75,
+    "reputation": 45,
+    "money": 2600,
+    "pecas": 25
+   }
+  },
+  {
+   "name": "Base Militar",
+   "rosterCap": 30,
+   "popCap": 320,
+   "require": {
+    "population": 150,
+    "reputation": 70,
+    "money": 6500,
+    "pecas": 55
+   }
+  }
  ],
  "facilities": {
-  "horta": { "name": "Hortas e criação", "icon": "🌱", "stage": 0, "max": 3, "cost": { "money": 150, "pecas": 1 }, "days": 3, "effect": { "foodPerDay": 7 }, "desc": "Comida todo dia." },
-  "enfermaria": { "name": "Enfermaria", "icon": "✚", "stage": 0, "max": 2, "cost": { "money": 220, "pecas": 2 }, "days": 4, "effect": { "healMult": 0.5 }, "desc": "Feridos saram mais rápido (gasta remédios quando tem)." },
-  "hangar": { "name": "Hangar", "icon": "✈", "stage": 0, "max": 2, "builtAtStart": 1, "cost": { "money": 1200, "pecas": 12 }, "days": 8, "effect": { "flights": 1 }, "minStageForLevel": [0, 2], "desc": "O avião para os contratos intercontinentais. Nível 2 (estágio Base): dois voos ao mesmo tempo." },
-  "muros": { "name": "Muros e postos de vigia", "icon": "🧱", "stage": 1, "max": 3, "cost": { "money": 300, "pecas": 4 }, "days": 5, "effect": { "defense": 1, "popGrowth": 0.2 }, "desc": "Defesa da vila; gente se sente segura e vem morar." },
-  "oficina": { "name": "Oficina", "icon": "🔧", "stage": 1, "max": 2, "cost": { "money": 350, "pecas": 5 }, "days": 5, "effect": { "shopTier": 1, "discount": 0.08 }, "desc": "Conserta e fabrica: armas melhores na loja e desconto." },
-  "deposito": { "name": "Depósitos", "icon": "🏚", "stage": 1, "max": 3, "cost": { "money": 200, "pecas": 2 }, "days": 3, "effect": { "storage": 150 }, "desc": "Guarda mais comida." },
-  "treino": { "name": "Área de treinamento", "icon": "🎯", "stage": 1, "max": 3, "cost": { "money": 280, "pecas": 3 }, "days": 4, "effect": { "trainXpPerDay": 6 }, "desc": "Quem fica na vila ganha experiência todo dia." },
-  "mercado": { "name": "Comércio", "icon": "⚖", "stage": 2, "max": 2, "cost": { "money": 600, "pecas": 6 }, "days": 6, "effect": { "discount": 0.07, "trade": 1 }, "desc": "Troca comida por dinheiro (e vice-versa) e barateia a loja." },
-  "recrutamento": { "name": "Posto de recrutamento", "icon": "📣", "stage": 2, "max": 2, "cost": { "money": 500, "pecas": 4 }, "days": 5, "effect": { "recruitBonus": 2 }, "desc": "Mais candidatos a cada leva." },
-  "inteligencia": { "name": "Inteligência", "icon": "📡", "stage": 2, "max": 2, "cost": { "money": 700, "pecas": 8 }, "days": 6, "effect": { "contractBonus": 2, "radiusKm": 1500 }, "desc": "Mais contratos e de mais longe." },
-  "laboratorio": { "name": "Laboratório", "icon": "🧪", "stage": 3, "max": 1, "cost": { "money": 1800, "pecas": 20 }, "days": 10, "effect": { "revealPotential": 1 }, "desc": "Mede os Dons: revela o potencial real de todos." },
-  "arsenal": { "name": "Arsenal", "icon": "🗄", "stage": 3, "max": 1, "cost": { "money": 1500, "pecas": 15 }, "days": 8, "effect": { "shopTier": 1 }, "desc": "Armas raras na loja." },
-  "centro_medico": { "name": "Centro médico", "icon": "🏥", "stage": 3, "max": 1, "cost": { "money": 1600, "pecas": 14 }, "days": 8, "effect": { "healMult": 1 }, "desc": "Feridos graves voltam muito mais rápido." },
-  "quartel": { "name": "Quartéis", "icon": "🏛", "stage": 3, "max": 1, "cost": { "money": 1400, "pecas": 12 }, "days": 7, "effect": { "rosterCap": 10 }, "desc": "Cabe mais gente no grupo." }
+  "horta": {
+   "name": "Hortas e criação",
+   "icon": "🌱",
+   "stage": 0,
+   "max": 3,
+   "cost": {
+    "money": 150,
+    "pecas": 1
+   },
+   "days": 3,
+   "effect": {
+    "foodPerDay": 7
+   },
+   "desc": "Comida todo dia."
+  },
+  "enfermaria": {
+   "name": "Enfermaria",
+   "icon": "✚",
+   "stage": 0,
+   "max": 2,
+   "cost": {
+    "money": 220,
+    "pecas": 2
+   },
+   "days": 4,
+   "effect": {
+    "healMult": 0.5
+   },
+   "desc": "Feridos saram mais rápido (gasta remédios quando tem)."
+  },
+  "hangar": {
+   "name": "Hangar",
+   "icon": "✈",
+   "stage": 0,
+   "max": 2,
+   "builtAtStart": 1,
+   "cost": {
+    "money": 1200,
+    "pecas": 12
+   },
+   "days": 8,
+   "effect": {
+    "flights": 1
+   },
+   "minStageForLevel": [
+    0,
+    2
+   ],
+   "desc": "O avião para os contratos intercontinentais. Nível 2 (estágio Base): dois voos ao mesmo tempo."
+  },
+  "muros": {
+   "name": "Muros e postos de vigia",
+   "icon": "🧱",
+   "stage": 1,
+   "max": 3,
+   "cost": {
+    "money": 300,
+    "pecas": 4
+   },
+   "days": 5,
+   "effect": {
+    "defense": 1,
+    "popGrowth": 0.2
+   },
+   "desc": "Defesa da vila; gente se sente segura e vem morar."
+  },
+  "oficina": {
+   "name": "Oficina",
+   "icon": "🔧",
+   "stage": 1,
+   "max": 2,
+   "cost": {
+    "money": 350,
+    "pecas": 5
+   },
+   "days": 5,
+   "effect": {
+    "shopTier": 1,
+    "discount": 0.08
+   },
+   "desc": "Conserta e fabrica: armas melhores na loja e desconto."
+  },
+  "deposito": {
+   "name": "Depósitos",
+   "icon": "🏚",
+   "stage": 1,
+   "max": 3,
+   "cost": {
+    "money": 200,
+    "pecas": 2
+   },
+   "days": 3,
+   "effect": {
+    "storage": 150
+   },
+   "desc": "Guarda mais comida."
+  },
+  "treino": {
+   "name": "Área de treinamento",
+   "icon": "🎯",
+   "stage": 1,
+   "max": 3,
+   "cost": {
+    "money": 280,
+    "pecas": 3
+   },
+   "days": 4,
+   "effect": {
+    "trainXpPerDay": 6
+   },
+   "desc": "Quem fica na vila ganha experiência todo dia."
+  },
+  "mercado": {
+   "name": "Comércio",
+   "icon": "⚖",
+   "stage": 2,
+   "max": 2,
+   "cost": {
+    "money": 600,
+    "pecas": 6
+   },
+   "days": 6,
+   "effect": {
+    "discount": 0.07,
+    "trade": 1
+   },
+   "desc": "Troca comida por dinheiro (e vice-versa) e barateia a loja."
+  },
+  "recrutamento": {
+   "name": "Posto de recrutamento",
+   "icon": "📣",
+   "stage": 2,
+   "max": 2,
+   "cost": {
+    "money": 500,
+    "pecas": 4
+   },
+   "days": 5,
+   "effect": {
+    "recruitBonus": 2
+   },
+   "desc": "Mais candidatos a cada leva."
+  },
+  "inteligencia": {
+   "name": "Inteligência",
+   "icon": "📡",
+   "stage": 2,
+   "max": 2,
+   "cost": {
+    "money": 700,
+    "pecas": 8
+   },
+   "days": 6,
+   "effect": {
+    "contractBonus": 2,
+    "radiusKm": 1500
+   },
+   "desc": "Mais contratos e de mais longe."
+  },
+  "laboratorio": {
+   "name": "Laboratório",
+   "icon": "🧪",
+   "stage": 3,
+   "max": 1,
+   "cost": {
+    "money": 1800,
+    "pecas": 20
+   },
+   "days": 10,
+   "effect": {
+    "revealPotential": 1
+   },
+   "desc": "Mede os Dons: revela o potencial real de todos."
+  },
+  "arsenal": {
+   "name": "Arsenal",
+   "icon": "🗄",
+   "stage": 3,
+   "max": 1,
+   "cost": {
+    "money": 1500,
+    "pecas": 15
+   },
+   "days": 8,
+   "effect": {
+    "shopTier": 1
+   },
+   "desc": "Armas raras na loja."
+  },
+  "centro_medico": {
+   "name": "Centro médico",
+   "icon": "🏥",
+   "stage": 3,
+   "max": 1,
+   "cost": {
+    "money": 1600,
+    "pecas": 14
+   },
+   "days": 8,
+   "effect": {
+    "healMult": 1
+   },
+   "desc": "Feridos graves voltam muito mais rápido."
+  },
+  "quartel": {
+   "name": "Quartéis",
+   "icon": "🏛",
+   "stage": 3,
+   "max": 1,
+   "cost": {
+    "money": 1400,
+    "pecas": 12
+   },
+   "days": 7,
+   "effect": {
+    "rosterCap": 10
+   },
+   "desc": "Cabe mais gente no grupo."
+  }
  },
  "shop": {
   "tiers": [
-   ["pistola_9mm", "fuzil_assalto", "escopeta_calibre12", "soco_ingles", "facao", "colete_tatico", "kit_medico", "granada_fumaca", "estimulante"],
-   ["revolver_pesado", "fuzil_precisao", "metralhadora_leve", "luvas_reforcadas", "traje_de_heroi", "granada_fragmentacao", "granada_atordoante"],
-   ["carabina_militar", "lanca_granadas", "armadura_pesada"]
+   [
+    "pistola_9mm",
+    "fuzil_assalto",
+    "escopeta_calibre12",
+    "soco_ingles",
+    "facao",
+    "colete_tatico",
+    "kit_medico",
+    "granada_fumaca",
+    "estimulante",
+    "faca_de_combate",
+    "cano_de_ferro",
+    "taco_de_beisebol"
+   ],
+   [
+    "revolver_pesado",
+    "fuzil_precisao",
+    "metralhadora_leve",
+    "luvas_reforcadas",
+    "traje_de_heroi",
+    "granada_fragmentacao",
+    "granada_atordoante",
+    "machado_de_incendio",
+    "lanca_improvisada",
+    "katana"
+   ],
+   [
+    "carabina_militar",
+    "lanca_granadas",
+    "armadura_pesada",
+    "marreta",
+    "luvas_hidraulicas"
+   ]
   ],
   "tradeFoodPrice": 3
  }

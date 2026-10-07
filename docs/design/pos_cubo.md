@@ -31,7 +31,7 @@ Na prática, cada mecânica é julgada por estas perguntas:
 | Nome | `gift` no código; **Dom** no jogo. |
 | Progressão | **3 pilares**, uma tela de evolução com abas: **Classes** (teia), **Dom**, **Armas**. |
 | Classes | Impacto, Movimento, Suporte, Controle — uma teia única com as fusões entre vizinhas. As classes antigas (Guerreiro, Arqueiro, Mago, Clérigo, Ladrão) saem. |
-| Árvore de armas | Estilo XCOM: **Sniper, Assalto, Pesado, Especialista** (tecnologia e armadilhas). |
+| Árvore de armas | Estilo XCOM: **Sniper, Assalto, Pesado, Especialista** (tecnologia e armadilhas), **Artes Marciais** e **Armas Brancas**. |
 | Sem Dom | Existem; seguem só a árvore de armas (e a de classe). |
 | Recursos de combate | **Stamina** (substitui o PM; custo de toda técnica) + **Strain** (só do Dom; leva ao Overload). |
 | Técnicas | Ponto de habilidade desbloqueia; **Maestria por uso** (0–100) aprimora e abre variantes. O nível 1–5 do molde sai. |

@@ -154,12 +154,18 @@
   "impacto": [
    "soco_ingles",
    "facao",
-   "escopeta_calibre12"
+   "escopeta_calibre12",
+   "taco_de_beisebol",
+   "marreta",
+   "luvas_hidraulicas"
   ],
   "movimento": [
    "pistola_9mm",
    "facao",
-   "revolver_pesado"
+   "revolver_pesado",
+   "katana",
+   "faca_de_combate",
+   "lanca_improvisada"
   ],
   "suporte": [
    "pistola_9mm",
@@ -213,6 +219,8 @@
   "fuzil_assalto",
   "escopeta_calibre12",
   "metralhadora_leve",
-  "fuzil_assalto"
+  "fuzil_assalto",
+  "machado_de_incendio",
+  "taco_de_beisebol"
  ]
 }

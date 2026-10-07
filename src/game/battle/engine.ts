@@ -1680,7 +1680,7 @@ export function canCast(u: BattleUnit, s: SkillLike): boolean {
 }
 
 /** Por que a habilidade não pode ser usada agora (texto curto para a interface), ou null. */
-const WEAPON_NAME: Record<string, string> = { pistola: 'pistola', fuzil: 'fuzil', escopeta: 'escopeta', precisao: 'fuzil de precisão', metralhadora: 'metralhadora', lanca_granadas: 'lança-granadas', punhos: 'punhos', lamina: 'lâmina' };
+const WEAPON_NAME: Record<string, string> = { pistola: 'pistola', fuzil: 'fuzil', escopeta: 'escopeta', precisao: 'fuzil de precisão', metralhadora: 'metralhadora', lanca_granadas: 'lança-granadas', punhos: 'punhos', lamina: 'lâmina', contundente: 'contundente' };
 
 export function castBlockReason(state: BattleState, u: BattleUnit, s: SkillLike): string | null {
   const def = DB.skills[s.id];

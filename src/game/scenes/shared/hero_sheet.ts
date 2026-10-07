@@ -15,7 +15,7 @@ import {
 export type SheetTab = 'ficha' | 'classes' | 'dom' | 'armas';
 const TAB_LABEL: Record<SheetTab, string> = { ficha: 'Ficha', classes: 'Classes', dom: 'Dom', armas: 'Armas' };
 export const RARITY_COLOR: Record<GiftRarity, string> = { comum: '#b0a898', incomum: '#7fbf6e', raro: '#5ea8e0', excepcional: '#c08ae8', lendario: '#f0b54a' };
-export const WEAPON_TYPE_LABEL: Record<string, string> = { pistola: 'Pistola', fuzil: 'Fuzil', escopeta: 'Escopeta', precisao: 'Fuzil de precisão', metralhadora: 'Metralhadora', lanca_granadas: 'Lança-granadas', punhos: 'Punhos', lamina: 'Lâmina' };
+export const WEAPON_TYPE_LABEL: Record<string, string> = { pistola: 'Pistola', fuzil: 'Fuzil', escopeta: 'Escopeta', precisao: 'Fuzil de precisão', metralhadora: 'Metralhadora', lanca_granadas: 'Lança-granadas', punhos: 'Punhos', lamina: 'Lâmina', contundente: 'Contundente' };
 export const MODERN_UTILITY = ['kit_medico', 'granada_fragmentacao', 'granada_fumaca', 'granada_atordoante', 'estimulante'];
 export const MODERN_ARMOR = ['colete_tatico', 'armadura_pesada', 'traje_de_heroi'];
 
@@ -207,7 +207,7 @@ export class HeroSheet {
 
     // Equipamento.
     el.append(h('div', { class: 'demo-section', text: 'Equipamento' }));
-    const weapons = Object.values(DB.items).filter((it) => it.slot === 'weapon' && it.weaponType && ([...FIREARMS, 'punhos', 'lamina'] as string[]).includes(it.weaponType) && DB.classes[c.classId].weapons.includes(it.weaponType));
+    const weapons = Object.values(DB.items).filter((it) => it.slot === 'weapon' && it.weaponType && ([...FIREARMS, 'punhos', 'lamina', 'contundente'] as string[]).includes(it.weaponType) && DB.classes[c.classId].weapons.includes(it.weaponType));
     const sel = (value: string | null, options: string[], onPick: (v: string | null) => void, none = '— nada —') => {
       const s = h('select', {}) as HTMLSelectElement;
       s.append(h('option', { value: '', text: none }));

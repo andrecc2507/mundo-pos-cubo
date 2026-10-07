@@ -110,7 +110,13 @@ export function autoSpend(c: Character, rng: Rng, focus?: string): void {
     for (const n of shuffle(rng, own.filter((n) => n !== sub))) order.push(...chainOf(n).slice(0, 2).map((s) => s.id));
   }
   const arms = trees.find((t) => t.id === 'armas');
-  if (arms) for (const n of arms.nodes.filter((x) => x.type === 'evolucao')) order.push(...chainOf(n).map((s) => s.id));
+  if (arms) {
+    // O ramo da arma que carrega primeiro (desarmado conta como punhos).
+    const wt = DB.items[c.equipment.weapon ?? '']?.weaponType ?? 'punhos';
+    const fits = (n: { skills: { id: string }[] }) => n.skills.some((s) => DB.skills[s.id]?.needsWeapon?.includes(wt as never));
+    const branches = arms.nodes.filter((x) => x.type === 'evolucao').sort((a, b) => Number(fits(b)) - Number(fits(a)));
+    for (const n of branches) order.push(...chainOf(n).map((s) => s.id));
+  }
   for (let guard = 0; guard < 200 && c.skillPoints > 0; guard++) {
     const next = order.find((id) => !c.skills.includes(id) && lockReason(c, id) === null);
     if (!next || !learnSkill(c, next)) break;

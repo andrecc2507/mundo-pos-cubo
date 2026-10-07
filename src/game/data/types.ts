@@ -20,7 +20,7 @@ export const NEW_CLASSES = ['impacto', 'movimento', 'suporte', 'controle'] as co
 export type WeaponType =
   | 'espada' | 'arco' | 'varinha' | 'bastao' | 'faca' | 'natural' | 'besta_mao'
   // Mundo Pós-Cubo: armas de fogo e corpo a corpo moderno.
-  | 'pistola' | 'fuzil' | 'escopeta' | 'precisao' | 'metralhadora' | 'lanca_granadas' | 'punhos' | 'lamina';
+  | 'pistola' | 'fuzil' | 'escopeta' | 'precisao' | 'metralhadora' | 'lanca_granadas' | 'punhos' | 'lamina' | 'contundente';
 
 /** Armas que usam munição (pente) e recarregam. */
 export const FIREARMS: readonly WeaponType[] = ['pistola', 'fuzil', 'escopeta', 'precisao', 'metralhadora', 'lanca_granadas'];
