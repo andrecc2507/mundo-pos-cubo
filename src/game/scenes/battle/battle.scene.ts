@@ -433,9 +433,9 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
         const sk = shot.skill ? (skill(shot.skill) as SkillLike) : BASIC_ATTACK;
         const style = animFor(
           { id: sk.id, kind: def?.kind ?? sk.kind, shape: sk.shape, range: shot.kind === 'opportunity' ? 1 : Math.max(2, manhattan(shooter.x, shooter.y, at[0], at[1])), radius: sk.radius, element: sk.element, anim: def?.anim, fx: def?.fx },
-          { beast: shooter.classId === 'fera', weaponRange: shooter.weaponRange, wand: shooter.weaponType === 'varinha' },
+          { beast: shooter.classId === 'fera', weaponRange: shooter.weaponRange },
         );
-        const palette = paletteFor({ kind: def?.kind ?? (shooter.weaponType === 'varinha' ? 'magic' : 'physical'), element: sk.element });
+        const palette = paletteFor({ kind: def?.kind ?? 'physical', element: sk.element });
         this.focus(at[0], at[1], 0.25);
         this.showBanner(shooter, shot.kind === 'opportunity' ? '⚔ Ataque de oportunidade!' : `🎯 Prontidão${def ? `: ${def.name}` : '!'}`);
         this.hitPalette = palette;
@@ -596,10 +596,9 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
     const def = DB.skills[sk.id];
     const style = animFor(
       { id: sk.id, kind: def?.kind ?? sk.kind, shape: sk.shape, range: skillRange(u, sk), radius: sk.radius, element: sk.element, anim: def?.anim, fx: def?.fx },
-      { beast: u.classId === 'fera', weaponRange: u.weaponRange, wand: u.weaponType === 'varinha' },
+      { beast: u.classId === 'fera', weaponRange: u.weaponRange },
     );
-    const magicBasic = sk.id === BASIC_ATTACK.id && u.weaponType === 'varinha';
-    const palette = paletteFor({ kind: magicBasic ? 'magic' : def?.kind ?? sk.kind, element: sk.element });
+    const palette = paletteFor({ kind: def?.kind ?? sk.kind, element: sk.element });
     this.perform(u, title, style, palette, x, y, sk.radius ?? 0, resolve, done, sk.id);
   }
 
@@ -1151,7 +1150,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
     if (!u || m.kind !== 'target' || !m.skill || !this.hover || m.itemSlot !== undefined) return;
     if (m.skill.kind === 'heal' || m.skill.kind === 'buff' || m.skill.kind === 'utility') return;
     if (!m.tiles.has(idx(this.state.map, this.hover[0], this.hover[1]))) return;
-    const kind = m.skill.id === 'ataque' ? (u.weaponType === 'varinha' ? 'magic' : 'basic') : m.skill.kind;
+    const kind = m.skill.id === 'ataque' ? 'basic' : m.skill.kind;
     for (const [x, y] of areaOf(this.state, u, m.skill, this.hover[0], this.hover[1])) {
       const t = unitAt(this.state, x, y);
       if (!t || t === u || !visibleToPlayer(this.state, t, this.vision)) continue;
@@ -1342,7 +1341,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
       { label: `🌑 Esconder (${hideChance(s, u)}%)`, desc: 'Some da vista dos inimigos (melhor em arbustos, fumaça e no escuro). Gasta a ação.', disabled: acted || u.hidden, why: u.hidden ? 'Já está escondido' : usedAction, run: () => this.selfAction(u, 'Esconder', 'smoke', () => hide(s, u)) },
       { label: '↩ Desengajar', desc: 'Recua com cuidado: o resto do movimento deste turno não provoca ataques de oportunidade. Gasta a ação.', disabled: acted, why: usedAction, run: () => this.selfAction(u, 'Desengajar', 'buff', () => disengage(s, u)) },
       { label: '🎯 Prontidão', desc: 'Fica de tocaia: ataca (ou solta a habilidade preparada) no primeiro inimigo que se mover ao alcance.', disabled: acted || u.weaponRange < 1, why: usedAction || 'Sem alcance', run: () => this.openOverwatch(u) },
-      { label: `⛓ Render (${captureChance(u)}%)`, desc: 'Captura um humano ao lado com até 25% da vida (vai para a Prisão).', disabled: acted || !captureTargets(s, u).length, why: acted ? usedAction : 'Nenhum humano rendível ao lado', run: () => this.setMode({ kind: 'target', label: `Render: humano adjacente com até 25% da vida (${captureChance(u)}%)`, tiles: new Set(captureTargets(s, u)), range: this.rangeOf(u, undefined, 1), capture: true }) },
+      { label: `⛓ Render (${captureChance(u)}%)`, desc: 'Captura um humano ao lado com até 25% da vida.', disabled: acted || !captureTargets(s, u).length, why: acted ? usedAction : 'Nenhum humano rendível ao lado', run: () => this.setMode({ kind: 'target', label: `Render: humano adjacente com até 25% da vida (${captureChance(u)}%)`, tiles: new Set(captureTargets(s, u)), range: this.rangeOf(u, undefined, 1), capture: true }) },
     ];
     if (tactics.throwSources(s, u).length) out.push({ label: '🪣 Arremessar objeto', desc: 'Levanta e arremessa um objeto ao lado (barril, caixa, feno).', disabled: acted, why: usedAction, run: () => this.setMode({ kind: 'target', label: 'Arremessar: escolha o objeto ao lado (barril, caixa, feno…)', tiles: new Set(tactics.throwSources(s, u)), range: new Set(), tactic: 'throwPick' }) });
     if (tactics.propShotTargets(s, u, skillRange(u, BASIC_ATTACK)).length) out.push({ label: '🎯 Derrubar lustre', desc: 'Um tiro na corrente: o lustre despenca em quem estiver embaixo.', disabled: acted, why: usedAction, run: () => this.setMode({ kind: 'target', label: 'Mire no lustre: ele despenca em quem estiver embaixo', tiles: new Set(tactics.propShotTargets(s, u, skillRange(u, BASIC_ATTACK))), range: new Set(), tactic: 'propShot' }) });
@@ -1420,7 +1419,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
 
   private selfAction(u: BattleUnit, title: string, style: AnimStyle, resolve: () => void): void {
     this.setMode({ kind: 'busy' });
-    // Ação livre (ex.: esconder-se do Ladino) devolve o menu em vez de encerrar o turno.
+    // Ação livre (ex.: esconder-se sem custo) devolve o menu em vez de encerrar o turno.
     this.perform(u, title, style, ELEMENT_PALETTE.apoio, u.x, u.y, 0, resolve, () => this.afterPlayerStep(u, this.state.turn.acted));
   }
 
@@ -1609,7 +1608,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
       if (block && !mm.range.has(idx(map, x, y))) el.append(h('div', { style: 'color:#ff8a80', text: `🚫 Linha de tiro bloqueada: ${block.reason}` }));
     }
     if (u && t.p && !target && mm.kind === 'target' && mm.skill?.id === 'ataque' && mm.tiles.has(idx(map, x, y))) {
-      const dmg = structureHit(u, u.weaponType === 'varinha' ? 'magic' : 'basic', 0);
+      const dmg = structureHit(u, 'basic', 0);
       el.append(h('div', { class: 'gold', text: `🪓 Quebrar ${PROPS[t.p].name}: ${dmg} de dano (acerto garantido)` }));
     }
     if (target && visibleToPlayer(this.state, target, this.vision)) {
@@ -1623,7 +1622,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
         el.append(h('div', { class: 'muted', style: 'font-size:11px', text: `Também na área: ${others.map(([uid, f]) => { const o = unitById(this.state, uid)!; return `${o.name} ${f.chance}% ${f.min}–${f.max}${f.min >= o.hp ? ' ☠' : ''}`; }).join(' · ')}` }));
       const m = this.mode;
       if (u && m.kind === 'target' && m.skill && m.skill.kind !== 'heal' && m.skill.kind !== 'buff' && target.team !== u.team) {
-        const kind = m.skill.id === 'ataque' ? (u.weaponType === 'varinha' ? 'magic' : 'basic') : m.skill.kind;
+        const kind = m.skill.id === 'ataque' ? 'basic' : m.skill.kind;
         const p = previewHit(this.state, u, target, kind, m.skill.power, m.skill.element, m.skill.accuracy ?? 0, 1, m.skill);
         el.append(h('div', { class: 'gold', text: `Acerto ${p.chance}% · Dano ${p.min}–${p.max} · Crítico ${p.crit}%` }));
         el.append(h('div', { style: `font-size:11px;color:${p.min >= target.hp ? '#ff5252' : p.max >= target.hp ? '#ffb74d' : '#bdbdbd'}`, text: p.min >= target.hp ? '☠ Golpe letal se acertar' : p.max >= target.hp ? '☠ Pode matar (dano alto ou crítico)' : `Vida depois: ${Math.max(0, target.hp - p.max)}–${target.hp - p.min} de ${target.maxHp}` }));
@@ -1707,7 +1706,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
     drawBattle(ctx, this.cam, this.state.map, {
       forecast: this.forecast,
       intents: m.kind === 'deploy' ? [] : this.intents,
-      grade: this.state.inverted ? 'void' : 'dark',
+      grade: 'dark',
       night: this.state.timeOfDay === 'noite',
       highlights,
       path,
@@ -1751,12 +1750,12 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
     this.bfx.drawFlash(ctx, this.cam.viewW, this.cam.viewH);
   }
 
-  /** Vinheta nas bordas (tom dark fantasy); no Vazio, com névoa violeta. */
+  /** Vinheta nas bordas (tom sombrio). */
   private drawVignette(ctx: CanvasRenderingContext2D): void {
     const w = this.cam.viewW;
     const hgt = this.cam.viewH;
     const g = ctx.createRadialGradient(w / 2, hgt / 2, Math.min(w, hgt) * 0.35, w / 2, hgt / 2, Math.max(w, hgt) * 0.75);
-    const edge = this.state.inverted ? 'rgba(20,6,40,0.78)' : 'rgba(6,3,2,0.7)';
+    const edge = 'rgba(6,3,2,0.7)';
     g.addColorStop(0, 'rgba(0,0,0,0)');
     g.addColorStop(1, edge);
     ctx.fillStyle = g;

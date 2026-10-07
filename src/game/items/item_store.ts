@@ -72,5 +72,5 @@ export function hasItemEdits(): boolean {
 
 /** Arma nova com valores neutros. */
 export function blankWeapon(id: string): ItemDef {
-  return { id, name: 'Nova arma', slot: 'weapon', rarity: 'comum', price: 100, weaponType: 'espada', atk: 10, range: 1, description: '' };
+  return { id, name: 'Nova arma', slot: 'weapon', rarity: 'comum', price: 100, weaponType: 'lamina', atk: 10, range: 1, description: '' };
 }

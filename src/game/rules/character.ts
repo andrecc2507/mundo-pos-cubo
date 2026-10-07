@@ -121,7 +121,7 @@ export const SKIN_TONES = ['#f6d3b3', '#e8b98f', '#c98e62', '#9a6440', '#6b422a'
 export const HAIR_STYLES = 4;
 
 export const DEFAULT_WEAPON: Record<ClassId, string | null> = {
-  aprendiz: 'faca_simples',
+  aprendiz: 'faca_de_combate',
   fera: null,
   impacto: 'soco_ingles',
   movimento: 'pistola_9mm',
@@ -195,12 +195,9 @@ export function derive(c: Character): Derived {
   }
   const weapon = c.equipment.weapon ? item(c.equipment.weapon) : null;
   // Mundo Pós-Cubo: de mãos vazias luta com os punhos (Artes Marciais valem desarmado).
-  const weaponType: WeaponType = weapon?.weaponType ?? (c.classId === 'fera' ? 'natural' : (NEW_CLASSES as readonly string[]).includes(c.classId) ? 'punhos' : 'faca');
-  // Ataque físico como no Ragnarok: arcos e facas com DES; espadas, bastões e o resto com FOR.
-  // A varinha dispara magia no ataque básico (INT); o bastão é arma de golpe (FOR) e a INT fica
-  // para as magias e as curas.
-  // Armas de fogo: pontaria (DES); punhos e lâminas pesadas: FOR.
-  const attackAttr: Attr = weaponType === 'arco' || weaponType === 'faca' || weaponType === 'besta_mao' || FIREARMS.includes(weaponType) ? 'dex' : weaponType === 'varinha' ? 'int' : 'str';
+  const weaponType: WeaponType = weapon?.weaponType ?? (c.classId === 'fera' ? 'natural' : 'punhos');
+  // Armas de fogo: pontaria (DES); punhos, lâminas e contundentes: FOR.
+  const attackAttr: Attr = FIREARMS.includes(weaponType) ? 'dex' : 'str';
   const tb = treeBonus(c);
   attrs.spd = Math.round(attrs.spd * (1 + tb.speed));
   attrs.str = Math.round(attrs.str * (1 + tb.str));

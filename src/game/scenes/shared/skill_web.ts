@@ -81,7 +81,7 @@ export function webLayout(tree: SkillTree): WebLayout {
     });
   }
   // Híbridas por último: na diagonal entre os pais, um pouco além da habilidade que as abre; se a
-  // fila esbarrar em outra teia (ex.: o leque de ramos do Mago), gira aos poucos até ficar livre.
+  // fila esbarrar em outra teia (ex.: um leque largo de ramos), gira aos poucos até ficar livre.
   for (const n of tree.nodes) {
     if (n.type !== 'hibrida') continue;
     const base0 = unit(n.x - base.x, n.y - base.y);

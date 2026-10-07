@@ -13,7 +13,7 @@ import type { BattleState, BattleUnit, TimeOfDay } from '@game/battle/types';
 import { unitFromCharacter, unitFromEnemy } from '@game/battle/units';
 import { runAiTurn } from '@game/battle/ai';
 import { generateMap } from '@game/mapgen/generator';
-import { generateTheme, type ThemeId } from '@game/mapgen/themes';
+import { RUINS_THEMES, generateRuinsMap } from '@game/mapgen/ruins';
 import { makeCharacter } from '@game/rules/recruit';
 import { learnSkill, type Character } from '@game/rules/character';
 import { chainOf, rankOf, unlockSkillOf } from '@game/rules/skill_tree';
@@ -118,8 +118,8 @@ function battle(seed: number): Result {
   const rng = new Rng(seed);
   const level = rng.pick([10, 20, 30, 40]);
   const night: TimeOfDay | undefined = rng.chance(0.35) ? 'noite' : undefined;
-  const theme = rng.pick<ThemeId | 'campo'>(['campo', 'campo', 'cidade', 'vila', 'porto', 'citadela', 'caverna', 'templo']);
-  const map = theme === 'campo' ? generateMap({ biome: rng.pick(['floresta', 'neve', 'costa', 'deserto', 'planicie'] as const), seed, w: 14, h: 14 }) : generateTheme(theme, 16, 16, seed);
+  const theme = rng.pick<string>(['campo', 'campo', ...Object.keys(RUINS_THEMES)]);
+  const map = theme === 'campo' ? generateMap({ biome: rng.pick(['floresta', 'neve', 'costa', 'deserto', 'planicie'] as const), seed, w: 14, h: 14 }) : generateRuinsMap({ region: theme, seed });
   // Barris de pólvora/óleo e um lustre aqui e ali (cidades).
   if (theme !== 'campo')
     for (let k = 0; k < 4; k++) {

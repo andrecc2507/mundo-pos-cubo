@@ -74,8 +74,7 @@ export function skillPointsAt(level: number): number {
 
 /**
  * Pontos de habilidade acumulados até o nível `level`: 1 inicial + 1 por nível + 1 a cada 5 níveis
- * = 72 no nível 60 — duas teias até a suprema (28 cada) e meia teia de outra (~14), ver
- * docs/design/arvores_de_habilidades.md.
+ * = 72 no nível 60.
  */
 export function totalSkillPoints(level: number): number {
   let sum = balance.progression.startingSkillPoints;
@@ -233,9 +232,9 @@ export function healPower(attrs: Attributes, healBonus: number, power: number, l
   return Math.max(1, Math.round((rawPower(0, attrs, scaling, level) * balance.skill.heal.intWeight + safe(healBonus)) * skillMultiplier(power)));
 }
 
-/** A magia usa a arma? Sim com varinha/bastão, ou quando a escala mistura FOR/DES (lâmina arcana, flecha rúnica). */
-export function magicUsesWeapon(weaponType: string, scaling?: Partial<Record<Attr, number>>): boolean {
-  return weaponType === 'varinha' || weaponType === 'bastao' || !!(scaling && ((scaling.str ?? 0) > 0 || (scaling.dex ?? 0) > 0));
+/** A técnica de energia usa a arma? Só quando a escala mistura FOR/DES (golpe carregado na arma). */
+export function magicUsesWeapon(scaling?: Partial<Record<Attr, number>>): boolean {
+  return !!(scaling && ((scaling.str ?? 0) > 0 || (scaling.dex ?? 0) > 0));
 }
 
 /**

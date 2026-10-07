@@ -1,7 +1,7 @@
 /**
  * A IA usando as táticas do mapa (battle/tactics.ts, downed.ts, scenery.ts, build.ts): empurrar de
  * telhados e para o fogo, arremessar barris, atirar em barris de pólvora e lustres, estabilizar
- * aliados caídos, tocar o sino, puxar alavancas que abrem caminho e erguer cobertura. Cada função
+ * aliados caídos, tocar o sino de alarme, puxar alavancas que abrem caminho e erguer cobertura. Cada função
  * avalia a posição atual de `u` (o planejador move `u` pelas casas alcançáveis antes de chamar).
  */
 import { DB } from '../data';
@@ -98,12 +98,12 @@ export function tacticOptions(state: BattleState, u: BattleUnit): { value: numbe
       out.push({ value: v, action: { kind: 'tactic', tactic: 'throw', x: o.x, y: o.y, from: [sx, sy] } });
     }
   }
-  // Sino: inimigos escondidos ou corrompidos perto dele.
+  // Sino: inimigos escondidos perto dele.
   for (const i of scenery.sceneryTargets(state, u)) {
     const [x, y] = [i % map.w, Math.floor(i / map.w)];
     if (tileAt(map, x, y)!.p !== 'sino') continue;
     const near = opponents(state, u).filter((o) => manhattan(o.x, o.y, x, y) <= 6);
-    const v = near.filter((o) => o.hidden).length * 15 + near.filter((o) => o.element === 'sombra').length * 18;
+    const v = near.filter((o) => o.hidden).length * 15;
     if (v > 0) out.push({ value: v, action: { kind: 'tactic', tactic: 'scenery', x, y } });
   }
   return out;

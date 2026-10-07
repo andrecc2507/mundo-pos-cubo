@@ -11,8 +11,8 @@ Jogo em TypeScript + Vite, sem engine. Leia `docs/ARCHITECTURE.md` antes de muda
   balanceamento em `game/data/`.
 - Toda conta de atributo, dano, acerto e linha do tempo passa por `game/rules/stats.ts` (números em
   `game/data/balance.json`, explicação em `docs/design/matematica.md`); habilidades não fazem conta própria.
-- Regras de jogo vivem em módulos puros (`game/rules`, `game/battle`, `game/world`); cenas só orquestram.
-  Valores de design vêm de `docs/design/variaveis.md` e ficam em `game/data/*.json` ou constantes nomeadas.
+- Regras de jogo vivem em módulos puros (`game/rules`, `game/battle`, `game/geo`); cenas só orquestram.
+  Decisões de design ficam em `docs/design/pos_cubo.md`; valores em `game/data/*.json` ou constantes nomeadas.
 - `window.__jogo` expõe o Engine para testes no navegador (Playwright) e depuração.
 - Docs e comentários em português; identificadores em inglês; arquivos em snake_case.
 - Mundo Pós-Cubo: regras do globo em `game/geo/` (puras), dados em `game/data/geo/`, desenho em

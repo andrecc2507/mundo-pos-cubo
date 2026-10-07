@@ -13,9 +13,9 @@ import { RARITY_COLOR, RARITY_LABEL } from '../../rules/rarity';
 import { ELEMENT_LABEL, field } from '../shared/skill_form';
 
 const SLOT_LABEL: Record<ItemSlot, string> = { weapon: 'Arma', offhand: 'Mão secundária', armor: 'Armadura', accessory: 'Acessório', utility: 'Item de campo' };
-const WEAPON_LABEL: Record<WeaponType, string> = { espada: 'Espada', arco: 'Arco', varinha: 'Varinha', bastao: 'Bastão', faca: 'Faca', natural: 'Natural', besta_mao: 'Bestas de mão', pistola: 'Pistola', fuzil: 'Fuzil', escopeta: 'Escopeta', precisao: 'Fuzil de precisão', metralhadora: 'Metralhadora', lanca_granadas: 'Lança-granadas', punhos: 'Punhos', lamina: 'Lâmina', contundente: 'Contundente' };
+const WEAPON_LABEL: Record<WeaponType, string> = { natural: 'Natural', pistola: 'Pistola', fuzil: 'Fuzil', escopeta: 'Escopeta', precisao: 'Fuzil de precisão', metralhadora: 'Metralhadora', lanca_granadas: 'Lança-granadas', punhos: 'Punhos', lamina: 'Lâmina', contundente: 'Contundente' };
 /** Atributo que escala cada tipo de arma (mesma regra de rules/character). */
-const WEAPON_ATTR: Record<WeaponType, Attr> = { espada: 'str', arco: 'dex', faca: 'dex', varinha: 'int', bastao: 'int', natural: 'str', besta_mao: 'dex', pistola: 'dex', fuzil: 'dex', escopeta: 'dex', precisao: 'dex', metralhadora: 'dex', lanca_granadas: 'dex', punhos: 'str', lamina: 'str', contundente: 'str' };
+const WEAPON_ATTR: Record<WeaponType, Attr> = { natural: 'str', pistola: 'dex', fuzil: 'dex', escopeta: 'dex', precisao: 'dex', metralhadora: 'dex', lanca_granadas: 'dex', punhos: 'str', lamina: 'str', contundente: 'str' };
 const BONUS_FIELDS: [string, string][] = [['str', 'FOR'], ['dex', 'DES'], ['spd', 'VEL'], ['int', 'INT'], ['vit', 'VIT'], ['crit', 'Crítico %'], ['accuracy', 'Precisão'], ['evasion', 'Esquiva'], ['heal', 'Cura']];
 /** Atributo principal típico de um personagem focado, por nível (ver docs/design/matematica.md). */
 const REF_ATTR: [number, number][] = [[1, 11], [20, 35], [40, 55], [60, 70]];
@@ -119,7 +119,7 @@ export class ArsenalScene extends Scene {
       ),
       it.slot === 'weapon'
         ? row(
-            select('Arma', it.weaponType ?? 'espada', Object.entries(WEAPON_LABEL).filter(([k]) => k !== 'natural'), (v) => (it.weaponType = v as WeaponType)),
+            select('Arma', it.weaponType ?? 'lamina', Object.entries(WEAPON_LABEL).filter(([k]) => k !== 'natural'), (v) => (it.weaponType = v as WeaponType)),
             num('Ataque', it.atk ?? 0, (v) => (it.atk = Math.max(0, Math.round(v))), { min: 0 }),
             num('Alcance', it.range ?? 1, (v) => (it.range = Math.max(1, Math.round(v))), { min: 1, suffix: 'm' }),
           )
@@ -162,7 +162,7 @@ export class ArsenalScene extends Scene {
     const it = this.current;
     el.append(h('h3', { text: 'Balanceamento' }));
     if (it?.slot === 'weapon') {
-      const type = it.weaponType ?? 'espada';
+      const type = it.weaponType ?? 'lamina';
       const attr = WEAPON_ATTR[type];
       const users = (Object.keys(DB.classes) as ClassId[]).filter((c) => c !== 'fera' && DB.classes[c].weapons.includes(type)).map((c) => DB.classes[c].name);
       el.append(
@@ -285,7 +285,7 @@ export class ArsenalScene extends Scene {
   private testBattle(): void {
     const it = this.current;
     if (!it || it.slot !== 'weapon' || (this.dirty && !this.save())) return;
-    const cls = (Object.keys(DB.classes) as ClassId[]).find((c) => c !== 'fera' && c !== 'aprendiz' && DB.classes[c].weapons.includes(it.weaponType ?? 'espada')) ?? 'impacto';
+    const cls = (Object.keys(DB.classes) as ClassId[]).find((c) => c !== 'fera' && c !== 'aprendiz' && DB.classes[c].weapons.includes(it.weaponType ?? 'lamina')) ?? 'impacto';
     const level = 20;
     const rng = new Rng(Date.now() % 1e9);
     const c = makeCharacter(rng, { classId: cls, level });

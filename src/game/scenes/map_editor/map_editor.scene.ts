@@ -7,7 +7,7 @@ import { CLOUDS, GROUP_LABEL, MAX_HEIGHT, PERMANENT, PROPS, SURFACES, TERRAIN, c
 import { MapHistory, floodTerrain, rectTiles } from '../../mapgen/edit_ops';
 import { STRUCTURES, stamp, toggleDoorway, toggleWindows, type StructureId } from '../../mapgen/structures';
 import { HEADROOM, MAX_BUILD_HEIGHT, STOREY, columnTop, topLevel } from '../../battle/stack';
-import { THEMES, generateTheme, type ThemeId } from '../../mapgen/themes';
+import { RUINS_THEMES, generateRuinsMap } from '../../mapgen/ruins';
 import { DevPanel } from '../../dev/dev_panel';
 import { Audio } from '../../audio/audio';
 import { devPlayerUnits } from '../../dev/dev_squad';
@@ -72,7 +72,7 @@ export class MapEditorScene extends Scene {
   private pieceH = 3;
   /** Corte de andar: esconde peças desta altura para cima (ver dentro dos prédios); null = tudo. */
   private cut: number | null = null;
-  private theme: ThemeId = 'vila';
+  private theme = 'eu_oeste';
   /** Pincel ou retângulo (arrastar de um canto ao outro). */
   private shape: 'brush' | 'rect' = 'brush';
   private rectStart: [number, number] | null = null;
@@ -486,10 +486,10 @@ export class MapEditorScene extends Scene {
     const seed = h('input', { type: 'number', value: String(Math.floor(Math.random() * 99999)) });
     for (const i of [w, hh, seed]) i.style.width = '64px';
     const themeSel = h('select', {}) as HTMLSelectElement;
-    for (const [k, v] of Object.entries(THEMES)) themeSel.append(h('option', { value: k, text: v.name }));
+    for (const [k, v] of Object.entries(RUINS_THEMES)) themeSel.append(h('option', { value: k, text: v.name }));
     themeSel.value = this.theme;
     themeSel.addEventListener('change', () => {
-      this.theme = themeSel.value as ThemeId;
+      this.theme = themeSel.value;
       this.renderMeta();
     });
     const size = () => [Math.max(6, Math.min(24, Number(w.value) || 14)), Math.max(6, Math.min(24, Number(hh.value) || 14))] as const;
@@ -508,12 +508,10 @@ export class MapEditorScene extends Scene {
           const [W, H] = size();
           this.setMap(generateMap({ biome: biome.value as Biome, w: W, h: H, seed: Number(seed.value) || 1 }));
         }, { class: 'primary' }),
-        h('h3', { style: 'margin-top:6px', text: 'Cenários da história' }),
+        h('h3', { style: 'margin-top:6px', text: 'Ruínas por região' }),
         themeSel,
-        h('div', { class: 'muted', style: 'font-size:11px', text: THEMES[this.theme].hint }),
-        btn('🏗 Gerar cenário', () => {
-          const [W, H] = size();
-          this.setMap(generateTheme(this.theme, W, H, Number(seed.value) || 1));
+        btn('🏗 Gerar ruínas', () => {
+          this.setMap(generateRuinsMap({ region: this.theme, seed: Number(seed.value) || 1 }));
         }, { class: 'primary' }),
         btn('💾 Salvar no navegador', () => {
           saveMap(cloneMap(this.map));

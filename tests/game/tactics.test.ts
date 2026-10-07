@@ -130,9 +130,9 @@ describe('táticas: supressão, tiro perdido, luz', () => {
     expect(hit).toBe(true);
   });
 
-  it('poção arremessada cura em área (efeito menor); tocha ilumina e impede esconder', () => {
+  it('kit médico arremessado cura em área (efeito menor); tocha ilumina e impede esconder', () => {
     const { s, hero } = battle('noite');
-    hero.items = ['pocao_de_vida', 'tocha'];
+    hero.items = ['kit_medico', 'tocha'];
     delete hero.itemUses;
     const ally = unitFromCharacter(makeCharacter(new Rng(9), { classId: 'controle', level: 5 }), 'player');
     [ally.x, ally.y] = [5, 8];

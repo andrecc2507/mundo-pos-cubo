@@ -400,8 +400,6 @@ export interface BattleState {
   traps?: Trap[];
   /** Ondas de reforço ainda por entrar. */
   waves?: Wave[];
-  /** Batalha no mundo invertido (o Vazio): paleta própria. */
-  inverted?: boolean;
   /** Hora do encontro: de dia não há névoa de guerra; de noite o cenário escurece e a visão encurta. */
   timeOfDay?: TimeOfDay;
   /** Multiplicador do dano dos inimigos contra o jogador (dificuldade). */
@@ -502,8 +500,6 @@ export interface BattleSetup {
   allies?: BattleUnit[];
   /** Ondas de reforço inimigas. */
   waves?: Wave[];
-  /** Batalha no mundo invertido (o Vazio). */
-  inverted?: boolean;
   /** Hora do encontro (encontros aleatórios): 'dia' sem névoa de guerra, 'noite' escuro. */
   timeOfDay?: TimeOfDay;
   /** O chão desaba atrás do esquadrão (uma coluna por rodada, da esquerda para a direita). */
@@ -566,7 +562,7 @@ export interface BattleResult {
   rounds: number;
   /** Espécie (enemyId) de cada inimigo derrotado — drops e abates por espécie. */
   defeated?: string[];
-  /** Inimigos rendidos (vão para a Prisão da base). */
+  /** Inimigos rendidos (capturados). */
   captured?: { enemyId: string; name: string; level: number }[];
   /** O rival recorrente esteve na batalha: fugiu, morreu, e o dano que levou por tipo. */
   rival?: { fled: boolean; killed: boolean; damage: Record<string, number> };

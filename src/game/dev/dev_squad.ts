@@ -18,7 +18,7 @@ export function devCharacters(level: number, seed = 7): Character[] {
     const c = makeCharacter(rng, { classId: cls, level });
     c.skills = firstSkills(cls);
     c.skillRanks = {};
-    c.equipment.utility = ['pocao_de_vida', i % 2 ? 'frasco_de_fogo' : 'frasco_dagua', i === 5 ? 'bomba_de_fumaca' : 'frasco_de_oleo'];
+    c.equipment.utility = ['kit_medico', i % 2 ? 'granada_fragmentacao' : 'granada_atordoante', i === 5 ? 'granada_fumaca' : 'estimulante'];
     return c;
   });
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { Rng } from '@core';
 import { DB } from '@game/data';
-import { buildResult, createBattle, damage, interact, interactTargets, reachable, settleStructures } from '@game/battle/engine';
+import { createBattle, interact, interactTargets, reachable } from '@game/battle/engine';
 import { createEmptyMap, tileAt } from '@game/battle/map';
 import type { BattleContext, BattleState, BattleUnit } from '@game/battle/types';
 import { unitFromCharacter, unitFromEnemy } from '@game/battle/units';
@@ -12,12 +12,12 @@ import { makeCharacter } from '@game/rules/recruit';
 
 const CTX: BattleContext = { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' };
 
-function battle(inverted = false): { s: BattleState; hero: BattleUnit; foe: BattleUnit } {
+function battle(): { s: BattleState; hero: BattleUnit; foe: BattleUnit } {
   const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'movimento', level: 8 }), 'player');
   const foe = unitFromEnemy(DB.enemies.saqueador!, 5, new Rng(2));
   const map = createEmptyMap(16, 16, 'planicie');
   building(map, 5, 5, 4, 4, 1, { wall: 'muralha', floor: 'madeira', roof: 'ardosia', windows: 0, furniture: [] });
-  const s = createBattle({ map, players: [hero], enemies: [foe], victory: { type: 'eliminate' }, ambush: false, canFlee: true, seed: 3, inverted, context: CTX });
+  const s = createBattle({ map, players: [hero], enemies: [foe], victory: { type: 'eliminate' }, ambush: false, canFlee: true, seed: 3, context: CTX });
   const h = s.units.find((u) => u.team === 'player')!;
   const f = s.units.find((u) => u.team === 'enemy')!;
   [h.x, h.y] = [6, 9];
@@ -62,18 +62,5 @@ describe('cenário interativo', () => {
     s.traps = [{ x: 6, y: 10, team: 'enemy', ownerUid: 'x', name: 'Espinhos', armed: true, spotted: ['player'] }];
     expect(scenery.disarm(s, hero, 6, 10)).toBe(true);
     expect(s.traps.length).toBe(0);
-  });
-});
-
-describe('rival recorrente e gravidade invertida', () => {
-  it('no Vazio, pedras sem apoio sobem e ninguém é esmagado', () => {
-    const { s, hero } = battle(true);
-    const t = tileAt(s.map, 2, 2)!;
-    t.up = [{ b: 3, h: 5, t: 'muralha' }];
-    [hero.x, hero.y] = [2, 2];
-    const hp = hero.hp;
-    settleStructures(s);
-    expect(t.up).toBeUndefined();
-    expect(hero.hp).toBe(hp);
   });
 });

@@ -91,8 +91,8 @@ export interface BattleDrawOptions {
   intents?: Intent[];
   /** Encontro à noite: cenário escuro e azulado, com luz em volta dos heróis e do fogo. */
   night?: boolean;
-  /** Gradação de cor da batalha (tom sombrio; o Vazio é frio e violeta). */
-  grade?: 'dark' | 'void';
+  /** Gradação de cor da batalha (tom sombrio). */
+  grade?: 'dark';
   /** Confinamentos (paredes de energia entre os selos). */
   confines?: { x0: number; y0: number; x1: number; y1: number }[];
   /** Corte de andar: peças que começam nesta altura ou acima não são desenhadas (ver dentro dos prédios). */
@@ -140,8 +140,7 @@ let grade: BattleDrawOptions['grade'];
 const gradeCache = new Map<string, string>();
 
 /**
- * Tom sombrio do terreno (as unidades e os números ficam com a cor original): dessatura e escurece;
- * no Vazio, puxa para um violeta frio.
+ * Tom sombrio do terreno (as unidades e os números ficam com a cor original): dessatura e escurece.
  */
 export function gradeColor(hex: string, mode: NonNullable<BattleDrawOptions['grade']>): string {
   const key = `${mode}${hex}`;
@@ -150,7 +149,7 @@ export function gradeColor(hex: string, mode: NonNullable<BattleDrawOptions['gra
   const n = parseInt(hex.slice(1, 7), 16);
   let [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
   const lum = 0.3 * r + 0.59 * g + 0.11 * b;
-  const [desat, dark, tint, mixT] = mode === 'void' ? [0.55, 0.7, [72, 52, 120], 0.3] : [0.3, 0.8, [60, 48, 40], 0.12];
+  const [desat, dark, tint, mixT] = [0.3, 0.8, [60, 48, 40], 0.12] as const;
   const f = (c: number, t: number) => Math.round(((c * (1 - desat) + lum * desat) * (1 - mixT) + t * mixT) * dark);
   [r, g, b] = [f(r, tint[0]!), f(g, tint[1]!), f(b, tint[2]!)];
   const out = `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)}`;

@@ -87,14 +87,13 @@ describe('avisos de ambiente e de estado', () => {
 });
 
 describe('animações', () => {
-  const actor = { beast: false, weaponRange: 1, wand: false };
+  const actor = { beast: false, weaponRange: 1 };
 
-  it('ataque básico: corte, garra, flecha ou orbe conforme quem ataca', () => {
+  it('ataque básico: corte, garra ou projétil conforme quem ataca', () => {
     const basic = { id: 'ataque', kind: 'physical' as const, range: -1 };
     expect(animFor(basic, actor)).toBe('slash');
     expect(animFor(basic, { ...actor, beast: true })).toBe('claw');
     expect(animFor(basic, { ...actor, weaponRange: 6 })).toBe('arrow');
-    expect(animFor(basic, { ...actor, weaponRange: 4, wand: true })).toBe('orb');
   });
 
   it('magias e habilidades escolhem pelo formato e elemento; a ficha pode forçar', () => {

@@ -39,7 +39,7 @@
   "id": "altura",
   "cat": "Batalha",
   "term": "Altura",
-  "text": "Atacar de cima dá acerto e alcance extra; de baixo, o contrário. Arqueiros em colinas dominam o campo."
+  "text": "Atacar de cima dá acerto e alcance extra; de baixo, o contrário. Atiradores no alto dominam o campo."
  },
  {
   "id": "linha_tiro",
@@ -99,7 +99,7 @@
   "id": "render",
   "cat": "Batalha",
   "term": "Render (captura)",
-  "text": "Humanos adjacentes com pouca vida podem ser rendidos. Os capturados vão para a Prisão da base, onde podem ser interrogados."
+  "text": "Humanos adjacentes com pouca vida podem ser rendidos e saem da luta capturados."
  },
  {
   "id": "voltar_turno",
@@ -171,19 +171,19 @@
   "id": "nivel",
   "cat": "Personagens",
   "term": "Nível e atributos",
-  "text": "Força (dano físico), Destreza (acerto, alcance), Velocidade (barra de ação, esquiva), Inteligência (magia, mana) e Vitalidade (vida). Cada nível dá pontos de atributo; atributos altos custam mais."
+  "text": "Força (dano físico), Destreza (acerto, alcance), Velocidade (barra de ação, esquiva), Inteligência (técnicas de energia, energia) e Vitalidade (vida). Cada nível dá pontos de atributo; atributos altos custam mais."
  },
  {
   "id": "teia",
   "cat": "Personagens",
   "term": "Teia de habilidades",
-  "text": "Cada classe tem uma teia de runas. Pontos de habilidade compram e fortalecem habilidades até o Nv 5. Habilidades fundas pedem nível e níveis nas anteriores. No Nv 5, algumas revelam uma forma fortificada secreta."
+  "text": "Impacto, Movimento, Suporte e Controle dividem uma teia única. Pontos de habilidade compram técnicas; a Maestria por uso fortalece cada uma."
  },
  {
   "id": "build",
   "cat": "Personagens",
   "term": "Build",
-  "text": "O rótulo do herói (ex.: \"Berserker 4 · E. Arcano 3\") mostra onde estão os pontos: dá para misturar caminhos e chegar a duas supremas no nível 60."
+  "text": "O rótulo do herói mostra onde estão os pontos na teia: dá para misturar caminhos de classes diferentes."
  },
  {
   "id": "morte",
@@ -255,7 +255,7 @@
   "id": "luz",
   "cat": "Batalha",
   "term": "Luz e furtividade",
-  "text": "À noite, tochas, fogo e magias de luz iluminam casas. Esconder-se em casa escura é mais fácil; em casa iluminada, mais difícil. Tocha aumenta a visão mas revela quem a carrega; sinalizador ilumina uma área por algumas rodadas."
+  "text": "À noite, tochas, fogo e técnicas de luz iluminam casas. Esconder-se em casa escura é mais fácil; em casa iluminada, mais difícil. Tocha aumenta a visão mas revela quem a carrega; sinalizador ilumina uma área por algumas rodadas."
  },
  {
   "id": "predios",
@@ -279,61 +279,13 @@
   "id": "cenario",
   "cat": "Batalha",
   "term": "Cenário interativo",
-  "text": "Alavancas abrem portões, portas podem estar trancadas (arrombar ou explodir), passagens secretas e armadilhas aparecem com Procurar, e o sino alerta e atordoa os corrompidos."
+  "text": "Alavancas abrem portões, portas podem estar trancadas (arrombar ou explodir), passagens secretas e armadilhas aparecem com Procurar, e o sino de alarme revela quem está escondido e acorda patrulhas."
  },
  {
   "id": "suprimido",
   "cat": "Estados",
   "term": "Suprimido",
   "text": "Erra mais e sai do lugar sob fogo: mover-se dispara um tiro de reação de quem o suprime."
- },
- {
-  "id": "pistas",
-  "cat": "Comandante",
-  "term": "Quadro de investigação",
-  "text": "Ato 2: as missões principais pedem pistas. Rumores, interrogatórios e vitórias sobre humanos rendem pistas, mas algumas são falsas: verifique com informação. Pista falsa leva a uma emboscada."
- },
- {
-  "id": "frentes",
-  "cat": "Comandante",
-  "term": "Frentes de guerra",
-  "text": "Ato 3: cada país é uma frente entre a Coroa e a Resistência. Toda semana uma cidade troca de dono para o lado mais forte. Operações mudam a balança e preparam o assalto ao palácio."
- },
- {
-  "id": "portais",
-  "cat": "Comandante",
-  "term": "Portais",
-  "text": "Ato 4: portais amadurecem e viram incursões que levam moradores e espalham a Terra Morta. Feche-os com uma missão antes que amadureçam."
- },
- {
-  "id": "aliancas",
-  "cat": "Comandante",
-  "term": "Alianças",
-  "text": "Ato 4: confiança (reputação) e influência compram a aliança de uma capital: tropa ao lado nas batalhas daquele país, território e renda. Capital aliada não cai por pânico."
- },
- {
-  "id": "corrupcao",
-  "cat": "Comandante",
-  "term": "Corrupção",
-  "text": "Ato 5: cada dia no Vazio soma corrupção. Com 25, o Dom sombrio (mira e crítico); com 50, 75 e 100, mutações que ficam para sempre. O Santuário limpa a corrupção, não as mutações."
- },
- {
-  "id": "acampamento",
-  "cat": "Comandante",
-  "term": "Acampamento de expedição",
-  "text": "Ato 6: no continente não há base. Monte o acampamento numa vila: lá o esquadrão come, descansa e cura como na base. Algumas terras trocam de bioma toda semana e podem fechar."
- },
- {
-  "id": "baroes",
-  "cat": "Comandante",
-  "term": "Barões",
-  "text": "Ato 7: tomar os postos de um Barão atrasa o Despertar e dá postos avançados. O Barão atacado guarda rancor e contra-ataca; matar um deixa os outros mais fortes."
- },
- {
-  "id": "mesa_guerra",
-  "cat": "Comandante",
-  "term": "Mesa de guerra",
-  "text": "Ato 8: alianças, companheiros, facções amigas, postos e território viram força. Distribua entre as frentes: frente com força suficiente ganha aliados e perde uma onda, e as vencidas reforçam a batalha final."
  },
  {
   "id": "desengajar",
@@ -358,11 +310,5 @@
   "cat": "Campanha",
   "term": "Personalidade",
   "text": "Além do traço de fala, cada herói tem 1–3 virtudes, manias ou pequenos transtornos. Personalidades que combinam criam vínculo mais rápido; as que se chocam criam atrito: Rivais (lado a lado: +5% de dano, −3 de acerto) e Desafetos (−5% de dano, −8 de acerto). Uma conversa mediada pelo comandante alivia o atrito."
- },
- {
-  "id": "mundos_paralelos",
-  "cat": "Campanha",
-  "term": "Mundos paralelos",
-  "text": "O portal do palácio, despertado por Orun, leva a Sarth (o mundo escamado) e a Hrimgard (o mundo do norte). Cada um tem missões próprias e heróis únicos que se juntam à resistência."
  }
 ]

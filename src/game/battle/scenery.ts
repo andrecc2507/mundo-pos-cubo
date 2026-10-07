@@ -1,11 +1,11 @@
 /**
  * Cenário interativo (Baldur's Gate 3): alavancas que abrem portões e portas, portas trancadas
- * (arrombar), passagens secretas (perceber), sinos que atordoam os corrompidos pelo Vazio e revelam
- * escondidos, e armadilhas inimigas que dá para perceber, desarmar e — o Trapper — roubar.
+ * (arrombar), passagens secretas (perceber), sinos de alarme que revelam escondidos e acordam
+ * patrulhas, e armadilhas inimigas que dá para perceber, desarmar e — o Trapper — roubar.
  */
 import { DB } from '../data';
 import { DIRS, PROPS, idx, inBounds, chebyshev, manhattan, tileAt, type Tile } from './map';
-import { addStatus, unitAt } from './elements';
+import { unitAt } from './elements';
 import * as stack from './stack';
 import * as stats from '../rules/stats';
 import type { BattleState, BattleUnit, Trap } from './types';
@@ -63,9 +63,9 @@ function pullLever(state: BattleState, u: BattleUnit, lever: Tile): void {
   state.events.push({ type: 'text', x: lx, y: ly, text: '⛓', color: '#ffe082' });
 }
 
-/** Sino de Aster: atordoa os corrompidos pelo Vazio por perto, revela escondidos e acorda patrulhas. */
+/** Sino de alarme: revela escondidos por perto e acorda patrulhas. */
 function ringBell(state: BattleState, u: BattleUnit, x: number, y: number): void {
-  state.log.push(`🔔 ${u.name} toca o sino! O som de Aster ecoa.`);
+  state.log.push(`🔔 ${u.name} toca o sino de alarme!`);
   state.events.push({ type: 'text', x, y, text: '🔔 DONG', color: '#ffd54f' });
   for (const o of state.units) {
     if (!o.alive || manhattan(o.x, o.y, x, y) > 6) continue;
@@ -73,8 +73,6 @@ function ringBell(state: BattleState, u: BattleUnit, x: number, y: number): void
       o.hidden = false;
       state.log.push(`👁 O sino revela ${o.name}.`);
     }
-    const corrupt = o.team !== u.team && (o.element === 'sombra' || (o.enemyId ?? '').match(/veu|corrompid|vazio/));
-    if (corrupt) addStatus(o, 'atordoado', 1);
     if (o.unaware) alertPod(state, o, 'ouviu o sino');
   }
 }

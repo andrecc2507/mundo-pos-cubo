@@ -388,7 +388,7 @@ export function settle(map: BattleMap): Fall[] {
       delete slab.open;
     } else slab.h = land + thick;
     // O que estava no chão onde a peça caiu é esmagado.
-    if (landing.p && !(landing.p === 'portal_vazio')) {
+    if (landing.p) {
       landing.p = null;
       delete landing.pHp;
     }

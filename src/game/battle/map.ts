@@ -6,7 +6,7 @@ export type Terrain =
   | 'caverna' | 'rocha_viva' | 'cristal' | 'abismo'
   | 'paralelepipedo' | 'lajota' | 'marmore' | 'tapete' | 'arenito'
   | 'telhado' | 'ardosia' | 'palha' | 'adobe' | 'muralha'
-  | 'vazio' | 'carne' | 'escombros' | 'enxaimel' | 'tijolo'
+  | 'escombros' | 'enxaimel' | 'tijolo'
   // Cidade moderna arruinada.
   | 'asfalto' | 'concreto';
 export type Prop =
@@ -16,7 +16,7 @@ export type Prop =
   | 'parede_madeira' | 'pilar' | 'pilar_quebrado' | 'carroca' | 'barril' | 'feno' | 'cerca' | 'poco'
   | 'banca' | 'tenda' | 'estatua' | 'fonte' | 'lampiao' | 'fogueira' | 'banco' | 'mesa' | 'estante'
   | 'bau' | 'altar' | 'trono' | 'estandarte' | 'portao'
-  | 'lapide' | 'sarcofago' | 'obelisco' | 'portal_vazio'
+  | 'lapide' | 'sarcofago'
   | 'barril_oleo' | 'barril_polvora' | 'lustre' | 'alavanca' | 'sino' | 'selo_confinamento'
   // Mundo Pós-Cubo (cidade moderna).
   | 'carro' | 'barreira_concreto' | 'lixeira'
@@ -112,14 +112,13 @@ export const MAX_HEIGHT = 8;
 export const PERMANENT = 999;
 
 /** Grupos da paleta do editor (ambientes da história). */
-export type MapGroup = 'natureza' | 'caverna' | 'cidade' | 'construcao' | 'templo' | 'vazio';
+export type MapGroup = 'natureza' | 'caverna' | 'cidade' | 'construcao' | 'templo';
 export const GROUP_LABEL: Record<MapGroup, string> = {
   natureza: '🌲 Natureza',
   caverna: '⛰ Caverna',
   cidade: '🏘 Cidade e vila',
   construcao: '🧱 Telhados e muros',
   templo: '⛪ Templo e palácio',
-  vazio: '🌀 Vazio',
 };
 
 /** Desenho das paredes laterais de um bloco (casas, muralhas, paredes de caverna). */
@@ -128,7 +127,7 @@ export type WallPattern = 'pedra' | 'enxaimel' | 'adobe' | 'rocha' | 'tijolo' | 
 /** Textura desenhada sobre a cor do topo (ver render/terrain_art.ts). */
 export type TerrainTexture =
   | 'terra' | 'madeira' | 'musgo' | 'cascalho' | 'pantano' | 'gelo' | 'lava' | 'caverna' | 'cristal' | 'abismo'
-  | 'paralelepipedo' | 'lajota' | 'marmore' | 'tapete' | 'telhas' | 'palha' | 'vazio' | 'carne' | 'neve' | 'areia' | 'grama' | 'asfalto';
+  | 'paralelepipedo' | 'lajota' | 'marmore' | 'tapete' | 'telhas' | 'palha' | 'neve' | 'areia' | 'grama' | 'asfalto';
 
 export interface TerrainDef {
   name: string;
@@ -176,13 +175,11 @@ export const TERRAIN: Record<Terrain, TerrainDef> = {
   palha: { name: 'Telhado de palha', color: '#c8a457', walkable: true, flammable: true, group: 'construcao', side: '#cdb894', wall: 'enxaimel', tex: 'palha', hp: 25 },
   adobe: { name: 'Terraço de adobe', color: '#c79a64', walkable: true, flammable: false, group: 'construcao', side: '#c08e58', wall: 'adobe', hp: 60 },
   muralha: { name: 'Muralha / torre', color: '#8d8a84', walkable: true, flammable: false, group: 'construcao', side: '#76726c', wall: 'pedra', tex: 'lajota', hp: 120 },
-  vazio: { name: 'Chão do Vazio', color: '#3b2a52', walkable: true, flammable: false, group: 'vazio', side: '#24183a', tex: 'vazio', light: '#8a5cff' },
   enxaimel: { name: 'Parede de enxaimel', color: '#d8c7a0', walkable: true, flammable: true, group: 'construcao', side: '#d8c7a0', wall: 'enxaimel', tex: 'madeira', hp: 45 },
   tijolo: { name: 'Parede de tijolo', color: '#9a5a44', walkable: true, flammable: false, group: 'construcao', side: '#9a5a44', wall: 'tijolo', hp: 90 },
   escombros: { name: 'Escombros', color: '#7d766c', walkable: true, flammable: false, group: 'construcao', side: '#5e584f', tex: 'cascalho', hp: 30 },
   asfalto: { name: 'Asfalto rachado', color: '#4a4b4f', walkable: true, flammable: false, group: 'cidade', side: '#36373a', tex: 'asfalto', hp: 80 },
   concreto: { name: 'Concreto (prédio moderno)', color: '#9a9690', walkable: true, flammable: false, group: 'construcao', side: '#8c8882', wall: 'concreto', tex: 'lajota', hp: 110 },
-  carne: { name: 'Carne do Vazio', color: '#6e2a3a', walkable: true, flammable: false, group: 'vazio', side: '#4a1726', tex: 'carne' },
 };
 
 export interface PropDef {
@@ -273,8 +270,6 @@ export const PROPS: Record<Prop, PropDef> = {
   portao: P('Portão de ferro', 'cidade', 2, '#3c3c44', 160, {}),
   lapide: P('Lápide', 'templo', 1, '#8f8c86', 80, {}),
   sarcofago: P('Sarcófago', 'templo', 1, '#a7a196', 140, {}),
-  obelisco: P('Obelisco rúnico (Selo)', 'vazio', 3, '#3a3048', 180, { los: true, light: '#b07cff' }),
-  portal_vazio: P('Portal do Vazio', 'vazio', 3, '#5a2a8a', 999, { light: '#c08cff' }),
   barril_oleo: P('Barril de óleo', 'cidade', 1, '#5a4a2a', 20, { fire: true, onBreak: 'oil', throwable: true }),
   barril_polvora: P('Barril de pólvora alquímica', 'cidade', 1, '#3a2a22', 15, { fire: true, onBreak: 'explode', throwable: true }),
   lustre: P('Lustre', 'templo', 0, '#d8b04a', 12, { move: false, onBreak: 'fall', hanging: true, light: '#ffd27a' }),

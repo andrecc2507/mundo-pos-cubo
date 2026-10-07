@@ -1,5 +1,5 @@
 /**
- * Objetos do mapa (props): natureza, caverna, cidade medieval, templo e Vazio. Desenho procedural;
+ * Objetos do mapa (props): natureza, caverna, cidade, templo e ruínas. Desenho procedural;
  * os que têm base (caixas, mesas, carroças) giram junto com a câmera (render/tile_shape.ts).
  */
 import { PROPS, type Tile } from '../battle/map';
@@ -564,7 +564,7 @@ export function drawPropArt(ctx: Ctx, t: Tile, sx: number, sy: number, z: number
       for (const hgt of [6, 18, 24]) stroke(ctx, [a, b].map(([p, q]) => [p, q - hgt * z] as [number, number]), '#2c2c34', 1.8 * z);
       break;
     }
-    // ── templo e Vazio ──
+    // ── templo e cemitério ──
     case 'lapide':
       shadow(ctx, sx, sy, z, 7);
       ctx.fillStyle = '#8f8c86';
@@ -582,40 +582,6 @@ export function drawPropArt(ctx: Ctx, t: Tile, sx: number, sy: number, z: number
       const c = [(top[0]![0] + top[2]![0]) / 2, (top[0]![1] + top[2]![1]) / 2] as [number, number];
       disc(ctx, c[0], c[1], 7 * z, 3 * z, '#bdb7ab');
       disc(ctx, c[0] - 6 * z, c[1] + 1 * z, 2.4 * z, 1.8 * z, '#c8c2b6');
-      break;
-    }
-    case 'obelisco': {
-      shadow(ctx, sx, sy, z, 9);
-      isoBox(ctx, sx, sy, z, 0.26, 0.26, 40 * z, '#3a3048');
-      polygon(ctx, [[sx - 8 * z, sy - 40 * z], [sx, sy - 52 * z], [sx + 8 * z, sy - 40 * z], [sx, sy - 36 * z]]);
-      ctx.fillStyle = '#4a3e5c';
-      ctx.fill();
-      const glow = 0.55 + Math.sin(time * 2 + x) * 0.35;
-      ctx.fillStyle = `rgba(190,140,255,${glow})`;
-      for (let k = 0; k < 4; k++) ctx.fillRect(sx - 2 * z + (k % 2) * 2 * z, sy - (12 + k * 7) * z, 2 * z, 4 * z);
-      break;
-    }
-    case 'portal_vazio': {
-      const r = 15 * z;
-      const pulse = 1 + Math.sin(time * 3) * 0.06;
-      const cy = sy - 22 * z;
-      const g = ctx.createRadialGradient(sx, cy, 0, sx, cy, r * pulse);
-      g.addColorStop(0, '#0a0012');
-      g.addColorStop(0.6, '#5a2a8a');
-      g.addColorStop(1, 'rgba(192,140,255,0)');
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.ellipse(sx, cy, r * 0.7 * pulse, r * 1.3 * pulse, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(200,160,255,0.85)';
-      ctx.lineWidth = 1.5 * z;
-      ctx.beginPath();
-      ctx.ellipse(sx, cy, r * 0.62, r * 1.18, Math.sin(time) * 0.1, 0, Math.PI * 2);
-      ctx.stroke();
-      for (let k = 0; k < 5; k++) {
-        const a = time * 1.5 + k * 1.25;
-        disc(ctx, sx + Math.cos(a) * r * 0.9, cy + Math.sin(a) * r * 1.5, 1.2 * z, 1.2 * z, 'rgba(220,190,255,0.8)');
-      }
       break;
     }
     // ── cidade moderna (Mundo Pós-Cubo) ──

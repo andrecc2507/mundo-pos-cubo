@@ -98,7 +98,6 @@ function renderAttrs(el: HTMLElement, ch: Character, render: () => void): void {
   );
   const table = h('div', {}, attrTable(ch, render, { bonus: d.attrs }), attrSaveBar(ch, render));
   const lv = levelAttack(ch.level);
-  const magicWeapon = d.weaponType === 'varinha' || d.weaponType === 'bastao' ? d.weaponAtk : 0;
   card.append(
     table,
     h('table', { class: 'stats', style: 'margin-top:6px;font-size:12px' },
@@ -106,7 +105,7 @@ function renderAttrs(el: HTMLElement, ch: Character, render: () => void): void {
         ['Vida', `${d.maxHp}`],
         ['MP', `${d.maxMp}`],
         ['Ataque físico', `${d.weaponAtk + d.physPower + lv}`],
-        ['Ataque mágico', `${magicWeapon + d.magicPower + lv}`],
+        ['Ataque mágico', `${d.magicPower + lv}`],
         ['Precisão / esquiva', `${Math.round(d.accuracy)} / ${Math.round(d.evasion)}`],
         ['Ação a cada', `${d.actionInterval.toFixed(1)} s`],
       ].map(([k, v]) => h('tr', {}, h('td', { class: 'muted', text: k! }), h('td', { style: 'text-align:right', text: v! }))),

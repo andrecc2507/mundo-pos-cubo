@@ -211,26 +211,6 @@ export function drawTexture(ctx: CanvasRenderingContext2D, t: Tile, sx: number, 
         line(ctx, p, [p[0] + (tileHash(x, y, k) - 0.5) * 3 * s, p[1] + 3 * s], k % 2 ? '#e2c46e' : '#9e7c34');
       }
       break;
-    case 'vazio': {
-      const glow = 0.4 + Math.sin(time * 1.5 + x + y * 0.7) * 0.25;
-      const a = at(...spot(x, y, 1, 0.1));
-      const b = at(...spot(x, y, 2, 0.1));
-      const c = at(...spot(x, y, 3, 0.1));
-      ctx.strokeStyle = `rgba(176,124,255,${glow})`;
-      ctx.lineWidth = 1.4;
-      ctx.beginPath();
-      ctx.moveTo(a[0], a[1]);
-      ctx.lineTo(b[0], b[1]);
-      ctx.lineTo(c[0], c[1]);
-      ctx.stroke();
-      break;
-    }
-    case 'carne': {
-      const beat = 1 + Math.sin(time * 3 + x * 0.5) * 0.12;
-      for (let k = 0; k < 4; k++) blob(ctx, at(...spot(x, y, k, 0.15)), 3 * s * beat, 1.6 * s * beat, k % 2 ? '#8a3448' : '#521a2a');
-      line(ctx, at(...spot(x, y, 10)), at(...spot(x, y, 11)), 'rgba(180,60,80,0.6)', 1.2);
-      break;
-    }
     default:
       break;
   }

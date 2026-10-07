@@ -394,8 +394,8 @@ export function hitMods(state: BattleState, a: BattleUnit, d: BattleUnit, magic:
     }
     // Carapaça frontal: tiro de longe vindo da frente.
     if (f.frontGuard && !magic && dist > 1 && !isBehind(a, d)) m.dmg *= 1 - f.frontGuard;
-    // Pele impenetrável: flechas, adagas e golpes perfurantes.
-    if (f.pierceGuard && !magic && (dist > 1 || a.weaponType === 'faca' || !!fx?.pierce)) m.dmg *= 1 - f.pierceGuard;
+    // Pele impenetrável: tiros, lâminas e golpes perfurantes.
+    if (f.pierceGuard && !magic && (dist > 1 || a.weaponType === 'lamina' || !!fx?.pierce)) m.dmg *= 1 - f.pierceGuard;
   }
   const stanceD = currentStance(state, d);
   if (stanceD?.evasion) m.evasion += stanceD.evasion;

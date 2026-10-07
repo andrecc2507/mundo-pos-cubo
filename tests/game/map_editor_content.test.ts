@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { GROUP_LABEL, PROPS, TERRAIN, createEmptyMap, isWalkable } from '@game/battle/map';
 import { STRUCTURES, stamp, type StructureId } from '@game/mapgen/structures';
-import { THEMES, generateTheme, type ThemeId } from '@game/mapgen/themes';
 import { MapHistory, floodTerrain, rectTiles } from '@game/mapgen/edit_ops';
 import { mapConnected } from '@game/mapgen/generator';
 
@@ -36,17 +35,6 @@ describe('editor de mapas: conteúdo', () => {
     }
   });
 
-  it('cenários da história: spawns dos dois lados e caminho entre eles', () => {
-    for (const theme of Object.keys(THEMES) as ThemeId[])
-      for (const seed of [1, 7, 42]) {
-        const map = generateTheme(theme, 16, 14, seed);
-        const a = map.tiles.findIndex((t) => t.spawn === 'player');
-        const b = map.tiles.findIndex((t) => t.spawn === 'enemy');
-        expect(a, `${theme}/${seed}`).toBeGreaterThanOrEqual(0);
-        expect(b, `${theme}/${seed}`).toBeGreaterThanOrEqual(0);
-        expect(mapConnected(map, a, b), `${theme}/${seed}`).toBe(true);
-      }
-  });
 
   it('balde, retângulo e desfazer/refazer', () => {
     const map = createEmptyMap(6, 6, 'planicie');

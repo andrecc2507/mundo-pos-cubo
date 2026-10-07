@@ -12,11 +12,10 @@ export interface AnimSkill {
   fx?: SkillFx;
 }
 
-/** Quem age: muda o golpe básico (garra para feras, flecha ou orbe à distância). */
+/** Quem age: muda o golpe básico (garra para feras, projétil à distância). */
 export interface AnimActor {
   beast: boolean;
   weaponRange: number;
-  wand: boolean;
 }
 
 /** Estilos que nascem no atacante e viajam até o alvo. */
@@ -32,7 +31,7 @@ export function animFor(s: AnimSkill, actor: AnimActor): AnimStyle {
   if (s.anim) return s.anim;
   const fx = s.fx ?? {};
   if (s.id === 'ataque') {
-    if (actor.weaponRange > 1) return actor.wand ? 'orb' : 'arrow';
+    if (actor.weaponRange > 1) return 'arrow';
     return actor.beast ? 'claw' : 'slash';
   }
   if (s.kind === 'heal' || fx.revive) return 'heal';

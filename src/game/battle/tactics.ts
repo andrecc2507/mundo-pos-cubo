@@ -118,16 +118,10 @@ export function pushStep(state: BattleState, d: BattleUnit, dx: number, dy: numb
   stack.setLevel(map, d, best);
   const drop = h0 - stack.unitH(map, d);
   if (drop > 0 && !d.statuses.voando) {
-    if (state.inverted && drop > 1) {
-      // Gravidade invertida do Vazio: em vez de cair, flutua.
-      addStatus(d, 'voando', 1);
-      state.log.push(`🌀 ${d.name} flutua no ar invertido do Vazio.`);
-    } else {
-      const dmg = stats.fallDamage(d.maxHp, drop, d.jump);
-      if (dmg) {
-        damage(state, d, dmg, undefined, undefined);
-        state.log.push(`⬇ ${d.name} despenca ${drop} níveis.`);
-      }
+    const dmg = stats.fallDamage(d.maxHp, drop, d.jump);
+    if (dmg) {
+      damage(state, d, dmg, undefined, undefined);
+      state.log.push(`⬇ ${d.name} despenca ${drop} níveis.`);
     }
   }
   const tdmg = tileEffectsOnUnit(state, d);
@@ -165,7 +159,7 @@ export function shovePreview(state: BattleState, a: BattleUnit, d: BattleUnit): 
     }
     if (best < 0) return { damage: dmg + stats.collideDamage(d.maxHp), kill: false };
     const top = stack.topOf(t, best);
-    if (h - top > 0 && !d.statuses.voando && !state.inverted) dmg += stats.fallDamage(d.maxHp, h - top, d.jump);
+    if (h - top > 0 && !d.statuses.voando) dmg += stats.fallDamage(d.maxHp, h - top, d.jump);
     if (best === 0 && t.s === 'fogo') dmg += Math.round(d.maxHp * 0.07) + 4;
     x = nx;
     y = ny;
@@ -324,7 +318,7 @@ export function propShotTargets(state: BattleState, u: BattleUnit, range: number
 export function shootProp(state: BattleState, u: BattleUnit, x: number, y: number, range: number): boolean {
   if (!propShotTargets(state, u, range).includes(idx(state.map, x, y))) return false;
   faceTowards(u, x, y);
-  damageProp(state, x, y, structureHit(u, u.weaponType === 'varinha' ? 'magic' : 'basic', 0));
+  damageProp(state, x, y, structureHit(u, 'basic', 0));
   finishAction(state, u);
   return true;
 }

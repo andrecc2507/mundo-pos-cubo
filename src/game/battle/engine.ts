@@ -127,7 +127,6 @@ export function createBattle(setup: BattleSetup): BattleState {
     hunted: setup.hunted,
     roundLimit: setup.roundLimit,
     waves: setup.waves?.length ? setup.waves.map((w) => ({ ...w, done: false })) : undefined,
-    inverted: setup.inverted,
     timeOfDay: setup.timeOfDay,
     enemyDmgMult: setup.difficulty && setup.difficulty.enemyDmg !== 1 ? setup.difficulty.enemyDmg : undefined,
     collapsed: setup.collapse ? 0 : undefined,
@@ -879,8 +878,6 @@ export function inRange(state: BattleState, u: BattleUnit, range: number, x: num
   if (!inBounds(state.map, x, y)) return false;
   // Paredes de energia do confinamento: nada entra nem sai.
   if (confine.blocks(state, u.x, u.y, x, y)) return false;
-  // Arco não dispara à queima-roupa: tiros de arco pedem pelo menos 2 casas de distância.
-  if (minRange >= 1 && range > 1 && u.weaponType === 'arco') minRange = 2;
   // Corpo a corpo (alcance 1) alcança as 8 casas ao redor; à distância conta em passos.
   const d = range <= 1 ? chebyshev(u.x, u.y, x, y) : manhattan(u.x, u.y, x, y);
   // Distância mínima conta as diagonais (a casa na diagonal também é "colada").
@@ -1083,7 +1080,7 @@ export function previewHit(state: BattleState, a: BattleUnit, d: BattleUnit, kin
   const def = sk ? DB.skills[sk.id] : undefined;
   const defScale = def?.fx?.defScaling ?? 0;
   const scaling = def?.scaling ?? (magic ? { int: 1 } : { [a.attackAttr]: 1 });
-  const weaponBase = magic ? (stats.magicUsesWeapon(a.weaponType, def?.scaling) ? a.weaponAtk : 0) : a.weaponAtk;
+  const weaponBase = magic ? (stats.magicUsesWeapon(def?.scaling) ? a.weaponAtk : 0) : a.weaponAtk;
   const raw = stats.rawPower(weaponBase, a.attrs, scaling, a.level) + (a.def + a.attrs.vit) * defScale;
   // Fortificado, quebrado e penetração mexem na defesa efetiva do alvo (m.def).
   const res = magic ? stats.magicResistance(d.attrs.int * m.def) : stats.physicalResistance(d.def * m.def);
@@ -1293,7 +1290,7 @@ export function finishAction(state: BattleState, u: BattleUnit, keepHidden = fal
 /** Dano de um golpe em objeto: mesmo poder bruto do golpe em unidade, sem esquiva nem resistência. */
 export function structureHit(u: BattleUnit, kind: HitKind, power: number): number {
   const magic = kind === 'magic';
-  const weaponBase = magic ? (u.weaponType === 'varinha' || u.weaponType === 'bastao' ? u.weaponAtk : 0) : u.weaponAtk;
+  const weaponBase = magic ? 0 : u.weaponAtk;
   // Demolidor (passiva): mais dano em paredes e objetos.
   const demolish = fx.passiveFx(u).reduce((m, f) => m * (f.demolish ?? 1), 1);
   return Math.round(stats.structureDamage(stats.rawPower(weaponBase, u.attrs, magic ? { int: 1 } : { [u.attackAttr]: 1 }, u.level), power) * demolish);
@@ -1451,16 +1448,6 @@ export function settleStructures(state: BattleState): void {
       const t = tileAt(map, u.x, u.y)!;
       return { u, t, piece: u.z === undefined ? undefined : t.up?.find((p) => p.h === u.z), oldH: u.z ?? t.h };
     });
-  // Gravidade invertida do Vazio: o que perde o apoio sobe e se desfaz no céu (sem esmagar ninguém).
-  if (state.inverted) {
-    const loose = stack.unsupported(map);
-    for (const { x, y, slab } of loose) {
-      const t = tileAt(map, x, y)!;
-      t.up!.splice(t.up!.indexOf(slab), 1);
-      if (!t.up!.length) delete t.up;
-    }
-    if (loose.length) state.log.push(`🌀 ${loose.length} pedra(s) sobem e se desfazem no céu invertido.`);
-  }
   const falls = stack.settle(map);
   if (falls.length) {
     state.log.push(`🏚 Desabamento! ${falls.length} ${falls.length === 1 ? 'peça cai' : 'peças caem'}.`);
@@ -1486,10 +1473,7 @@ export function settleStructures(state: BattleState): void {
       stack.setLevel(map, u, l);
     }
     const drop = oldH - stack.unitH(map, u);
-    if (drop > 1 && u.alive && state.inverted) {
-      addStatus(u, 'voando', 1);
-      state.log.push(`🌀 ${u.name} flutua no ar invertido em vez de cair.`);
-    } else if (drop > 0 && u.alive && !u.statuses.voando) {
+    if (drop > 0 && u.alive && !u.statuses.voando) {
       const d = stats.fallDamage(u.maxHp, drop, u.jump);
       if (d) {
         damage(state, u, d, undefined, undefined);
@@ -1505,7 +1489,7 @@ export function attack(state: BattleState, u: BattleUnit, x: number, y: number):
     // Parede, laje ou telhado: acerto garantido; o que perder o apoio desaba.
     if (!wallInRange(state, u, x, y) || !fx.canStrike(u)) return false;
     faceTowards(u, x, y);
-    hitPiece(state, x, y, wl, structureHit(u, u.weaponType === 'varinha' ? 'magic' : 'basic', 0));
+    hitPiece(state, x, y, wl, structureHit(u, 'basic', 0));
     settleStructures(state);
     finishAction(state, u);
     return true;
@@ -1514,7 +1498,7 @@ export function attack(state: BattleState, u: BattleUnit, x: number, y: number):
     // Quebrar cobertura: acerto garantido, sem crítico.
     if (!inRange(state, u, skillRange(u, BASIC_ATTACK), x, y) || !fx.canStrike(u)) return false;
     faceTowards(u, x, y);
-    damageProp(state, x, y, structureHit(u, u.weaponType === 'varinha' ? 'magic' : 'basic', 0));
+    damageProp(state, x, y, structureHit(u, 'basic', 0));
     finishAction(state, u);
     return true;
   }
@@ -1529,13 +1513,10 @@ export function attack(state: BattleState, u: BattleUnit, x: number, y: number):
   faceTowards(u, x, y);
   const imbue = fx.imbueOf(u);
   const el = imbue?.element ?? (u.weaponType === 'natural' ? fx.currentStance(state, u)?.element ?? u.element : undefined);
-  const kind: HitKind = u.weaponType === 'varinha' || imbue?.magic ? 'magic' : 'basic';
+  const kind: HitKind = imbue?.magic ? 'magic' : 'basic';
   const behind = fx.isBehind(u, target);
   const events = state.events.length;
-  // Bestas de mão gêmeas: dois virotes, cada um com 60% do golpe.
-  const twin = u.weaponType === 'besta_mao';
-  let hit = resolveAttack(state, u, target, kind, imbue?.bonus ?? 0, el, 0, twin ? TWIN_SHOT : 1);
-  if (twin && target.alive) hit = resolveAttack(state, u, target, kind, imbue?.bonus ?? 0, el, 0, TWIN_SHOT) || hit;
+  const hit = resolveAttack(state, u, target, kind, imbue?.bonus ?? 0, el, 0, 1);
   if (hit) fx.afterBasicHit(state, u, target);
   if (fx.num(u, 'momentum')) fx.bag(u).momentum = 0;
   if (el) applyElementToTile(state, x, y, el);

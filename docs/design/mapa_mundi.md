@@ -327,23 +327,22 @@ que falhou — o piloto automático leva o protagonista em toda missão. A fome 
 quando a vila faz hortas cedo (a vila começa com −6 de comida por dia: a primeira horta é a
 primeira decisão).
 
-## Do molde, ainda fora do jogo base (auditoria)
+## Limpeza do molde (2026-10-07)
 
-Sistemas que o molde tem prontos no motor e que o `pos_cubo.md` mantém, mas que ainda **não estão
-ligados** ao geoscape do jogo base:
+O molde de fantasia vive no repositório `andrecc2507/JOGO`. Daqui saiu tudo o que era só dele:
+campanha, história, mapa-mundo do continente, criação do comandante, Quartel, árvores do Guerreiro,
+Arqueiro, Mago, Clérigo e Ladrão, kits da história, orbes/joias da alma, forma fortificada, materiais e
+drops, pesquisa e fabricação, criaturas distantes, rival recorrente, o Vazio (gravidade invertida),
+itens e inimigos humanos de fantasia, temas de mapa medievais e os docs dessas partes.
 
-| Sistema do molde | Situação no jogo base |
+Do motor do molde ficam, ainda **não ligados** ao globo:
+
+| Sistema | Situação no jogo base |
 |---|---|
-| Dia e noite nas batalhas | **Ligado agora**: a hora do globo no local da luta decide (noite = menos visão, furtividade). |
-| Vínculos, atrito e conversas na vila; crônica emergente; personalidade | Vínculos iniciais existem (protagonista + 5 amigos), mas não crescem nem geram conversas/atritos. |
-| Moral e lealdade das tropas | Não usados (fugas e deserções só por salário). |
-| Captura, prisão e interrogatório | A batalha permite render; o geoscape ignora os capturados (sem prisão nem informação). |
-| Drops de materiais, pesquisa e fabricação | Lutas não dão materiais; a vila não pesquisa nem fabrica (só compra). |
-| Rival recorrente (vilão que foge e volta) | Não existe no jogo base. |
-| Clima e estações | Não existem no geoscape. |
+| Vínculos e personalidade | Vínculos iniciais existem (protagonista + 5 amigos), mas não crescem nem geram conversas. |
+| Captura (render) | A batalha permite render; o globo ainda não usa os capturados. |
 | Mapas feitos à mão (editor) | O editor funciona, mas os contratos só usam mapas gerados. |
-| Tutorial, glossário e dicas contextuais | O conteúdo é do molde (fantasia); o jogo base só tem a introdução. |
-| Kits únicos e missões pessoais | Ficam para a campanha (combinado). |
+| Dicas contextuais | Funcionam na batalha; ainda não há tutorial próprio do jogo base. |
 
 ## Código
 

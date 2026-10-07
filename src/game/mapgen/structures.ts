@@ -36,18 +36,18 @@ export interface StructureDef {
 }
 
 export const STRUCTURES: Record<StructureId, StructureDef> = {
-  casa_vila: { name: 'Casa de vila (palha, enxaimel)', hint: 'Aldeias de Aurélia e Silvânia', w: 4, h: 4, min: 3, max: 9, floors: { def: 1, max: 3 } },
-  casa_pedra: { name: 'Casa de pedra (ardósia)', hint: 'Bastiamar, Cristália, Citadela', w: 4, h: 5, min: 3, max: 10, floors: { def: 2, max: 4 } },
-  casa_deserto: { name: 'Casa de adobe (terraço)', hint: "Vel'Qadar e Sahrim", w: 4, h: 4, min: 3, max: 9, floors: { def: 1, max: 3 } },
-  torre: { name: 'Torre de vigia', hint: 'Muralhas, fortes, Citadela', w: 3, h: 3, min: 3, max: 6, floors: { def: 4, max: 20 } },
-  predio: { name: 'Prédio de vários andares', hint: 'Citadela Real, guildas, Bastiamar', w: 5, h: 5, min: 3, max: 12, floors: { def: 3, max: 20 } },
+  casa_vila: { name: 'Casa de vila (palha, enxaimel)', hint: 'Vilas do interior', w: 4, h: 4, min: 3, max: 9, floors: { def: 1, max: 3 } },
+  casa_pedra: { name: 'Casa de pedra (ardósia)', hint: 'Centros históricos', w: 4, h: 5, min: 3, max: 10, floors: { def: 2, max: 4 } },
+  casa_deserto: { name: 'Casa de adobe (terraço)', hint: 'Medinas e desertos', w: 4, h: 4, min: 3, max: 9, floors: { def: 1, max: 3 } },
+  torre: { name: 'Torre de vigia', hint: 'Muros, fortes, postos', w: 3, h: 3, min: 3, max: 6, floors: { def: 4, max: 20 } },
+  predio: { name: 'Prédio de vários andares', hint: 'Centros urbanos', w: 5, h: 5, min: 3, max: 12, floors: { def: 3, max: 20 } },
   muralha: { name: 'Muralha (trecho)', hint: 'Cidades fortificadas', w: 6, h: 1, min: 1, max: 24 },
   ponte: { name: 'Ponte de madeira', hint: 'Rios e portos (sobre água)', w: 5, h: 2, min: 1, max: 24 },
-  praca: { name: 'Praça com fonte', hint: 'Centro de cidade (Solenne, Bastiamar)', w: 5, h: 5, min: 3, max: 9 },
+  praca: { name: 'Praça com fonte', hint: 'Centro de cidade', w: 5, h: 5, min: 3, max: 9 },
   mercado: { name: 'Mercado (bancas)', hint: 'Feiras e portos', w: 5, h: 4, min: 3, max: 9 },
   parede_caverna: { name: 'Parede de caverna', hint: 'Minas, grutas, covis', w: 3, h: 3, min: 1, max: 12 },
-  ruina: { name: 'Ruína', hint: 'Citadela arruinada (Ato 5), templos antigos', w: 4, h: 4, min: 3, max: 8 },
-  cripta: { name: 'Cripta / cemitério', hint: 'Templo de Aster, catacumbas', w: 4, h: 3, min: 3, max: 8 },
+  ruina: { name: 'Ruína', hint: 'Prédios destruídos', w: 4, h: 4, min: 3, max: 8 },
+  cripta: { name: 'Cripta / cemitério', hint: 'Igrejas, catacumbas', w: 4, h: 3, min: 3, max: 8 },
 };
 
 /** Sorteio determinístico por posição (o mesmo carimbo sai igual no mesmo lugar). */
