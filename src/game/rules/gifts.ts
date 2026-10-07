@@ -1,5 +1,6 @@
 import GIFT_DATA from '../data/gifts/gifts.json';
 import GIFT_RULES from '../data/gifts/gift_rules.json';
+import SIGNATURES from '../data/gifts/signatures.json';
 import type { Element, FxStatus, SkillFx, SkillTree, TreeNode, TreeSkill } from '../data/types';
 
 /**
@@ -246,6 +247,16 @@ function controle3(g: GiftDef, arch: string, id: string): TreeSkill {
 }
 
 /** Monta as 13 técnicas (inata + 4 filosofias × 3) e a árvore de um Dom. */
+/** Passiva inata e técnica de assinatura únicas de cada Dom (data/gifts/signatures.json). */
+export interface GiftSignature {
+  innate: { desc: string; fx?: SkillFx };
+  signature: Partial<TreeSkill> & { name: string; description: string };
+}
+export const SIGNATURES_BY_GIFT = (SIGNATURES as unknown as { gifts: Record<string, GiftSignature> }).gifts;
+
+/** Nível do personagem exigido para a técnica de assinatura. */
+export const SIGNATURE_LEVEL = 4;
+
 export function buildGiftTree(g: GiftDef): SkillTree {
   const kit = { ...DEFAULT_KIT[g.family], ...(g.kit ?? {}) };
   const sid = (p: string, n: number) => `${g.id}_${p}${n}`;
@@ -253,9 +264,10 @@ export function buildGiftTree(g: GiftDef): SkillTree {
   const passive = (id: string, over: Partial<TreeSkill>): TreeSkill => ({ id, name: '', description: '', kind: 'passive', range: 0, power: 0, cooldown: 0, mp: 0, gift: g.id, ...over }) as TreeSkill;
   const lv = (s: TreeSkill, levelReq: number): TreeSkill => ({ ...s, levelReq });
   const aImp = ARCH.investida!;
+  const sig = SIGNATURES_BY_GIFT[g.id];
   const nodes: TreeNode[] = [
     node('dom', `Dom: ${g.name}`, 'base', 0, 0, g.description, [
-      passive(`${g.id}_inato`, { name: `Dom: ${g.name}`, description: `${g.description} Fraqueza: ${g.weakness}` }),
+      passive(`${g.id}_inato`, { name: `Dom: ${g.name}`, description: `${g.description} ${sig?.innate.desc ?? ''} Fraqueza: ${g.weakness}`.replace('  ', ' '), fx: sig?.innate.fx }),
     ]),
     node('impacto', 'Impacto', 'evolucao', 0, -160, `Usar ${g.name} para ferir.`, [
       lv(impacto1(g, kit.impacto, sid('i', 1)), 1),
@@ -278,6 +290,13 @@ export function buildGiftTree(g: GiftDef): SkillTree {
       lv(controle3(g, kit.controle, sid('c', 3)), 6),
     ]),
   ];
+  if (sig) {
+    nodes.push(
+      node('assinatura', 'Assinatura', 'evolucao', 160, -160, `A técnica que só ${g.name} faz.`, [
+        lv({ ...base(g, `${g.id}_sig`, sig.signature.name, { mp: 0, cooldown: 0 } as Arch, {}), ...sig.signature, id: `${g.id}_sig`, gift: g.id } as TreeSkill, SIGNATURE_LEVEL),
+      ]),
+    );
+  }
   return { id: giftTreeId(g.id), classId: 'aprendiz', name: `Dom: ${g.name}`, nodes, maxRank: 1 } as SkillTree;
 }
 

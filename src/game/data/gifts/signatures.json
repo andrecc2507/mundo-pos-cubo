@@ -1,0 +1,5647 @@
+{
+ "_doc": "Gerado por tools/gen_signatures.py: passiva inata com efeito e técnica-assinatura de cada Dom (o que o torna único).",
+ "gifts": {
+  "densidade": {
+   "innate": {
+    "desc": "Pesado como chumbo: não pode ser derrubado nem empurrado; −1 de deslocamento.",
+    "fx": {
+     "immune": [
+      "derrubado"
+     ],
+     "moveBonus": -1
+    }
+   },
+   "signature": {
+    "name": "Queda de Chumbo",
+    "description": "Salta e cai com o peso de uma tonelada: dano em volta, derruba e racha o chão.",
+    "kind": "physical",
+    "target": "tile",
+    "shape": "radius",
+    "range": 4,
+    "power": 11,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "derrubado",
+     "turns": 1
+    },
+    "fx": {
+     "leap": true,
+     "demolish": 2
+    },
+    "radius": 1,
+    "anim": "leap"
+   }
+  },
+  "regeneracao": {
+   "innate": {
+    "desc": "Regenera 6% da vida por turno.",
+    "fx": {
+     "regen": 0.06
+    }
+   },
+   "signature": {
+    "name": "Fechar Feridas",
+    "description": "Força a regeneração: cura 40% da vida e remove sangramento e venenos.",
+    "kind": "heal",
+    "target": "self",
+    "shape": "single",
+    "range": 0,
+    "power": 0,
+    "mp": 8,
+    "cooldown": 4,
+    "strain": 30,
+    "fx": {
+     "healPct": 0.4,
+     "cleanse": true
+    },
+    "anim": "heal"
+   }
+  },
+  "forca_explosiva": {
+   "innate": {
+    "desc": "A cada 3 golpes físicos, o próximo explode em volta.",
+    "fx": {
+     "chargeEvery": {
+      "n": 3,
+      "power": 8,
+      "radius": 1
+     }
+    }
+   },
+   "signature": {
+    "name": "Soco Detonante",
+    "description": "Um soco que libera toda a energia guardada: arremessa o alvo 4 casas.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 1,
+    "power": 15,
+    "mp": 10,
+    "cooldown": 3,
+    "strain": 40,
+    "fx": {
+     "knock": 4,
+     "demolish": 3
+    },
+    "anim": "charge"
+   }
+  },
+  "endurecimento": {
+   "innate": {
+    "desc": "Pele de pedra: recebe 20% menos dano físico.",
+    "fx": {
+     "reduce": {
+      "physical": 0.2
+     }
+    }
+   },
+   "signature": {
+    "name": "Estátua",
+    "description": "Endurece por completo: invulnerável por 1 turno e provoca os inimigos em volta.",
+    "kind": "buff",
+    "target": "self",
+    "shape": "single",
+    "range": 0,
+    "power": 0,
+    "mp": 8,
+    "cooldown": 4,
+    "strain": 30,
+    "fx": {
+     "self": {
+      "id": "invulneravel",
+      "turns": 1
+     },
+     "aura": {
+      "radius": 2,
+      "status": {
+       "id": "provocado",
+       "turns": 1
+      }
+     }
+    },
+    "anim": "buff"
+   }
+  },
+  "elasticidade": {
+   "innate": {
+    "desc": "Braços elásticos: ataque básico alcança +1 casa.",
+    "fx": {
+     "reachBonus": 1
+    }
+   },
+   "signature": {
+    "name": "Estilingue",
+    "description": "Estica o corpo e se arremessa contra o alvo, puxando-o para o chão.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 12,
+    "mp": 8,
+    "cooldown": 3,
+    "strain": 30,
+    "status": {
+     "id": "derrubado",
+     "turns": 1
+    },
+    "fx": {
+     "leap": true
+    },
+    "anim": "leap"
+   }
+  },
+  "velocidade": {
+   "innate": {
+    "desc": "Pernas absurdas: +2 de deslocamento e a barra de ação enche 10% mais rápido.",
+    "fx": {
+     "moveBonus": 2,
+     "haste": 0.1
+    }
+   },
+   "signature": {
+    "name": "Mil Golpes",
+    "description": "Some e reaparece golpeando o mesmo alvo 4 vezes.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 4,
+    "power": 4,
+    "mp": 10,
+    "cooldown": 3,
+    "strain": 40,
+    "fx": {
+     "hits": 4,
+     "leap": true
+    },
+    "anim": "dash"
+   }
+  },
+  "pele_de_aco": {
+   "innate": {
+    "desc": "Metal na pele: 25% menos dano físico, mas 25% mais de eletricidade (sem defesa).",
+    "fx": {
+     "reduce": {
+      "physical": 0.25
+     }
+    }
+   },
+   "signature": {
+    "name": "Aríete de Aço",
+    "description": "Corre em linha atravessando tudo: inimigos no caminho são derrubados.",
+    "kind": "physical",
+    "target": "tile",
+    "shape": "line",
+    "range": 5,
+    "power": 11,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "derrubado",
+     "turns": 1
+    },
+    "fx": {
+     "dashThrough": true
+    },
+    "anim": "dash"
+   }
+  },
+  "garras": {
+   "innate": {
+    "desc": "Garras afiadas: golpes ignoram 30% da armadura.",
+    "fx": {
+     "pierce": 0.3
+    }
+   },
+   "signature": {
+    "name": "Dilacerar",
+    "description": "Três cortes rápidos que abrem feridas profundas.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 1,
+    "power": 5,
+    "mp": 8,
+    "cooldown": 2,
+    "strain": 30,
+    "status": {
+     "id": "sangramento",
+     "turns": 3
+    },
+    "fx": {
+     "hits": 3,
+     "also": [
+      {
+       "id": "ferida_aberta",
+       "turns": 2
+      }
+     ]
+    },
+    "anim": "claw"
+   }
+  },
+  "asas": {
+   "innate": {
+    "desc": "Voa: ignora altura e terreno difícil.",
+    "fx": {
+     "fly": true
+    }
+   },
+   "signature": {
+    "name": "Mergulho",
+    "description": "Sobe alto e mergulha: dano extra vindo de cima e derruba.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 6,
+    "power": 13,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "derrubado",
+     "turns": 1
+    },
+    "fx": {
+     "leap": true,
+     "fromAbove": 0.5
+    },
+    "anim": "leap"
+   }
+  },
+  "salto": {
+   "innate": {
+    "desc": "Pernas de mola: salta qualquer desnível.",
+    "fx": {
+     "climb": true,
+     "moveBonus": 1
+    }
+   },
+   "signature": {
+    "name": "Salto Meteoro",
+    "description": "Salta até 7 casas e cai com tudo: dano em volta.",
+    "kind": "physical",
+    "target": "tile",
+    "shape": "radius",
+    "range": 7,
+    "power": 10,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "derrubado",
+     "turns": 1
+    },
+    "fx": {
+     "leap": true
+    },
+    "radius": 1,
+    "anim": "meteor"
+   }
+  },
+  "mimetismo": {
+   "innate": {
+    "desc": "Some na parede: começa escondido e se esconde de graça em qualquer lugar.",
+    "fx": {
+     "freeHide": 1
+    }
+   },
+   "signature": {
+    "name": "Golpe Camuflado",
+    "description": "Ataca escondido: crítico garantido se não foi visto, e volta a se esconder.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 1,
+    "power": 12,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 30,
+    "fx": {
+     "fromHiding": 1.0,
+     "self": {
+      "id": "camuflado",
+      "turns": 2
+     }
+    },
+    "anim": "slash"
+   }
+  },
+  "bracos_extras": {
+   "innate": {
+    "desc": "Quatro braços: +1 golpe no ataque básico a cada 3 turnos.",
+    "fx": {
+     "chargeEvery": {
+      "n": 3,
+      "power": 6,
+      "radius": 0
+     }
+    }
+   },
+   "signature": {
+    "name": "Agarrar e Socar",
+    "description": "Dois braços seguram, dois batem: prende e golpeia 2 vezes.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 1,
+    "power": 7,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "preso",
+     "turns": 1
+    },
+    "fx": {
+     "hits": 2,
+     "grab": true
+    },
+    "anim": "claw"
+   }
+  },
+  "corpo_de_borracha": {
+   "innate": {
+    "desc": "Quica de volta: devolve 30% do dano corpo a corpo recebido.",
+    "fx": {
+     "react": {
+      "on": "melee",
+      "do": "reflect",
+      "chance": 100,
+      "mitigate": 0.3
+     }
+    }
+   },
+   "signature": {
+    "name": "Ricochete",
+    "description": "Se lança contra um inimigo e ricocheteia em até 2 outros perto dele.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 10,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "leap": true,
+     "chain": 2,
+     "chainMult": 0.7
+    },
+    "anim": "dash"
+   }
+  },
+  "resistencia_dor": {
+   "innate": {
+    "desc": "Não sente dor: uma vez por batalha, aguenta um golpe fatal com 1 de vida.",
+    "fx": {
+     "lastStand": true
+    }
+   },
+   "signature": {
+    "name": "Teimosia",
+    "description": "Ignora a dor: escudo de 30% da vida e imune a atordoar e derrubar por 2 turnos.",
+    "kind": "buff",
+    "target": "self",
+    "shape": "single",
+    "range": 0,
+    "power": 0,
+    "mp": 7,
+    "cooldown": 4,
+    "strain": 30,
+    "fx": {
+     "shield": 0.3,
+     "self": {
+      "id": "inabalavel",
+      "turns": 2
+     }
+    },
+    "anim": "buff"
+   }
+  },
+  "adrenalina": {
+   "innate": {
+    "desc": "Quanto pior, melhor: +35% de dano com menos da metade da vida e a barra enche mais rápido.",
+    "fx": {
+     "fury": 1.35,
+     "furyHaste": 0.4
+    }
+   },
+   "signature": {
+    "name": "Pico de Adrenalina",
+    "description": "Ganha um movimento e uma ação extra agora.",
+    "kind": "buff",
+    "target": "self",
+    "shape": "single",
+    "range": 0,
+    "power": 0,
+    "mp": 8,
+    "cooldown": 5,
+    "strain": 45,
+    "fx": {
+     "extraTurn": true
+    },
+    "anim": "buff"
+   }
+  },
+  "ossos_projeteis": {
+   "innate": {
+    "desc": "Lascas de osso: ataque à distância básico (alcance 4).",
+    "fx": {
+     "reachBonus": 3
+    }
+   },
+   "signature": {
+    "name": "Chuva de Ossos",
+    "description": "Dispara uma saraivada em cone que perfura armaduras.",
+    "kind": "physical",
+    "target": "tile",
+    "shape": "cone",
+    "range": 4,
+    "power": 9,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "sangramento",
+     "turns": 2
+    },
+    "fx": {
+     "pierce": 0.4
+    },
+    "anim": "volley"
+   }
+  },
+  "gigantismo": {
+   "innate": {
+    "desc": "Grande: +20% de vida e não pode ser empurrado.",
+    "fx": {
+     "immune": [
+      "derrubado"
+     ],
+     "physBoost": 0.1
+    }
+   },
+   "signature": {
+    "name": "Pisão do Gigante",
+    "description": "Cresce e pisa: dano em área grande e derruba todos.",
+    "kind": "physical",
+    "target": "self",
+    "shape": "radius",
+    "range": 0,
+    "power": 12,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "derrubado",
+     "turns": 1
+    },
+    "fx": {
+     "demolish": 3
+    },
+    "radius": 2,
+    "anim": "nova"
+   }
+  },
+  "encolher": {
+   "innate": {
+    "desc": "Pequeno: +15 de esquiva.",
+    "fx": {
+     "evasion": 15
+    }
+   },
+   "signature": {
+    "name": "Picada Interna",
+    "description": "Entra pela armadura e fere por dentro: ignora toda a defesa.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 1,
+    "power": 11,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 30,
+    "fx": {
+     "pierce": 1,
+     "leap": true
+    },
+    "anim": "thrust"
+   }
+  },
+  "sangue_acido": {
+   "innate": {
+    "desc": "Quem o fere corpo a corpo leva respingo de ácido.",
+    "fx": {
+     "react": {
+      "on": "melee",
+      "do": "status",
+      "status": {
+       "id": "envenenado",
+       "turns": 2
+      },
+      "damage": 6,
+      "element": "veneno"
+     }
+    }
+   },
+   "signature": {
+    "name": "Jorro Ácido",
+    "description": "Corta a própria mão e espirra ácido em cone: derrete armaduras.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "cone",
+    "range": 3,
+    "power": 11,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "veneno",
+    "status": {
+     "id": "quebrado",
+     "turns": 2
+    },
+    "fx": {
+     "pierce": 0.5
+    },
+    "anim": "cone"
+   }
+  },
+  "folego": {
+   "innate": {
+    "desc": "Pulmões enormes: imune a fumaça e gás.",
+    "fx": {
+     "immune": [
+      "envenenado",
+      "cegado"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Vendaval",
+    "description": "Sopra em linha: empurra todos 3 casas e apaga fogo.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "line",
+    "range": 5,
+    "power": 8,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "vento",
+    "fx": {
+     "knock": 3
+    },
+    "anim": "cone"
+   }
+  },
+  "cauda": {
+   "innate": {
+    "desc": "Cauda forte: ataca quem tenta passar ao lado.",
+    "fx": {
+     "pursuit": true
+    }
+   },
+   "signature": {
+    "name": "Varrida",
+    "description": "Gira a cauda: acerta todos em volta e derruba.",
+    "kind": "physical",
+    "target": "self",
+    "shape": "radius",
+    "range": 0,
+    "power": 9,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "derrubado",
+     "turns": 1
+    },
+    "radius": 1,
+    "anim": "spin"
+   }
+  },
+  "chifres": {
+   "innate": {
+    "desc": "Investidas: +20% de dano se andou antes de atacar.",
+    "fx": {
+     "physBoost": 0.1,
+     "moveBonus": 1
+    }
+   },
+   "signature": {
+    "name": "Chifrada",
+    "description": "Corre e chifra: arremessa o alvo e quem estiver atrás dele.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 13,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "leap": true,
+     "knock": 3,
+     "ram": 0.3
+    },
+    "anim": "dash"
+   }
+  },
+  "presas": {
+   "innate": {
+    "desc": "Mordida venenosa: golpes corpo a corpo envenenam.",
+    "fx": {
+     "onCastSelf": {
+      "status": {
+       "id": "afiado",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Mordida Paralisante",
+    "description": "Morde e injeta veneno paralisante.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 1,
+    "power": 10,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "veneno",
+    "status": {
+     "id": "imobilizado",
+     "turns": 2
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "envenenado",
+       "turns": 3
+      }
+     ]
+    },
+    "anim": "claw"
+   }
+  },
+  "metabolismo": {
+   "innate": {
+    "desc": "Metabolismo acelerado: recupera 8% da Stamina por turno.",
+    "fx": {
+     "mpRegen": 0.08
+    }
+   },
+   "signature": {
+    "name": "Queimar Reservas",
+    "description": "Queima a gordura do corpo: cura 25%, recupera Stamina e fica veloz.",
+    "kind": "heal",
+    "target": "self",
+    "shape": "single",
+    "range": 0,
+    "power": 0,
+    "mp": 0,
+    "cooldown": 4,
+    "strain": 35,
+    "fx": {
+     "healPct": 0.25,
+     "self": {
+      "id": "veloz",
+      "turns": 2
+     }
+    },
+    "anim": "heal"
+   }
+  },
+  "punho_sismico": {
+   "innate": {
+    "desc": "O chão treme: golpes físicos derrubam 20% das vezes.",
+    "fx": {
+     "onCastSelf": {
+      "status": {
+       "id": "afiado",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Terremoto",
+    "description": "Soca o chão: onda em linha que derruba e quebra cobertura.",
+    "kind": "physical",
+    "target": "tile",
+    "shape": "line",
+    "range": 6,
+    "power": 12,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "terra",
+    "status": {
+     "id": "derrubado",
+     "turns": 1
+    },
+    "fx": {
+     "demolish": 4,
+     "destroyProps": true
+    },
+    "anim": "nova"
+   }
+  },
+  "couraca_ossea": {
+   "innate": {
+    "desc": "Placas de osso: escudo de 10% da vida no começo de cada luta.",
+    "fx": {
+     "reduce": {
+      "physical": 0.15
+     }
+    }
+   },
+   "signature": {
+    "name": "Couraça Total",
+    "description": "As placas crescem: escudo de 45% da vida.",
+    "kind": "buff",
+    "target": "self",
+    "shape": "single",
+    "range": 0,
+    "power": 0,
+    "mp": 7,
+    "cooldown": 4,
+    "strain": 30,
+    "fx": {
+     "shield": 0.45
+    },
+    "anim": "buff"
+   }
+  },
+  "recarga": {
+   "innate": {
+    "desc": "Recupera o fôlego rápido: +10% de Stamina por turno.",
+    "fx": {
+     "mpRegen": 0.1
+    }
+   },
+   "signature": {
+    "name": "Segundo Fôlego",
+    "description": "Recupera toda a Stamina e reduz as recargas das técnicas.",
+    "kind": "buff",
+    "target": "self",
+    "shape": "single",
+    "range": 0,
+    "power": 0,
+    "mp": 0,
+    "cooldown": 5,
+    "strain": 40,
+    "fx": {
+     "reduceCooldowns": 2,
+     "self": {
+      "id": "eficiente",
+      "turns": 2
+     }
+    },
+    "anim": "buff"
+   }
+  },
+  "corpo_termico": {
+   "innate": {
+    "desc": "Corpo quente: imune a congelar; quem o toca se queima.",
+    "fx": {
+     "immune": [
+      "congelado"
+     ],
+     "react": {
+      "on": "melee",
+      "do": "status",
+      "status": {
+       "id": "queimando",
+       "turns": 2
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Abraço Térmico",
+    "description": "Agarra e esquenta: queima e derrete o gelo em volta.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 1,
+    "power": 11,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "fogo",
+    "status": {
+     "id": "queimando",
+     "turns": 3
+    },
+    "fx": {
+     "grab": true
+    },
+    "anim": "claw"
+   }
+  },
+  "carapaca": {
+   "innate": {
+    "desc": "Carapaça nas costas: 30% menos dano de quem ataca pelas costas.",
+    "fx": {
+     "frontGuard": 0.15,
+     "reduce": {
+      "melee": 0.1
+     }
+    }
+   },
+   "signature": {
+    "name": "Rolar",
+    "description": "Fecha-se na carapaça e rola atropelando em linha.",
+    "kind": "physical",
+    "target": "tile",
+    "shape": "line",
+    "range": 5,
+    "power": 10,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "dashThrough": true,
+     "self": {
+      "id": "fortificado",
+      "turns": 1
+     }
+    },
+    "anim": "dash"
+   }
+  },
+  "hiperflexibilidade": {
+   "innate": {
+    "desc": "Esquiva impossível: +12 de esquiva e nunca provoca ataque de oportunidade.",
+    "fx": {
+     "evasion": 12,
+     "noOpportunity": true
+    }
+   },
+   "signature": {
+    "name": "Contorção",
+    "description": "Se enrola no inimigo: imobiliza e desarma.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 1,
+    "power": 7,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "imobilizado",
+     "turns": 2
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "desarmado",
+       "turns": 1
+      }
+     ]
+    },
+    "anim": "claw"
+   }
+  },
+  "investida_bovina": {
+   "innate": {
+    "desc": "Atropela: avançar em linha derruba quem estiver na frente.",
+    "fx": {
+     "ram": 0.3
+    }
+   },
+   "signature": {
+    "name": "Estouro da Boiada",
+    "description": "Corre até 6 casas atravessando todos; cada um leva mais dano.",
+    "kind": "physical",
+    "target": "tile",
+    "shape": "line",
+    "range": 6,
+    "power": 10,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "derrubado",
+     "turns": 1
+    },
+    "fx": {
+     "dashThrough": true,
+     "ram": 0.4
+    },
+    "anim": "dash"
+   }
+  },
+  "tatuagem_viva": {
+   "innate": {
+    "desc": "Tatuagens vivas: ataques invocam uma marca que segue o alvo.",
+    "fx": {
+     "onCastSelf": {
+      "status": {
+       "id": "afiado",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Tatuagens Soltas",
+    "description": "As tatuagens saem da pele e criam cópias que confundem os inimigos.",
+    "kind": "buff",
+    "target": "self",
+    "shape": "single",
+    "range": 0,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 4,
+    "strain": 35,
+    "fx": {
+     "self": {
+      "id": "duplicatas",
+      "turns": 3
+     }
+    },
+    "anim": "summon"
+   }
+  },
+  "musculo_hidraulico": {
+   "innate": {
+    "desc": "Músculos de pressão: +15% de dano físico, mas precisa de água (molhado dá +15% mais).",
+    "fx": {
+     "physBoost": 0.15
+    }
+   },
+   "signature": {
+    "name": "Prensa Hidráulica",
+    "description": "Um golpe de pressão que esmaga a defesa: o alvo fica quebrado.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 1,
+    "power": 14,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "agua",
+    "status": {
+     "id": "quebrado",
+     "turns": 2
+    },
+    "fx": {
+     "knock": 2
+    },
+    "anim": "charge"
+   }
+  },
+  "olho_de_aguia": {
+   "innate": {
+    "desc": "Vista de águia: +10 de precisão parado e +2 de alcance.",
+    "fx": {
+     "steadyAim": 10,
+     "reachBonus": 2
+    }
+   },
+   "signature": {
+    "name": "Tiro Certeiro",
+    "description": "Mira longa: crítico garantido a qualquer distância.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 10,
+    "power": 12,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 30,
+    "fx": {
+     "crit": 100,
+     "homing": true
+    },
+    "anim": "arrow"
+   }
+  },
+  "pele_refletora": {
+   "innate": {
+    "desc": "A pele espelha: devolve 25% do dano mágico recebido.",
+    "fx": {
+     "react": {
+      "on": "magic",
+      "do": "reflect",
+      "chance": 100,
+      "mitigate": 0.25
+     }
+    }
+   },
+   "signature": {
+    "name": "Clarão Refletido",
+    "description": "Concentra a luz no corpo e solta: cega todos em volta.",
+    "kind": "magic",
+    "target": "self",
+    "shape": "radius",
+    "range": 0,
+    "power": 8,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "luz",
+    "status": {
+     "id": "cegado",
+     "turns": 2
+    },
+    "radius": 2,
+    "anim": "nova"
+   }
+  },
+  "eletricidade": {
+   "innate": {
+    "desc": "Condutor: dano elétrico +20%; molhados viram alvo fácil.",
+    "fx": {
+     "elementBoost": {
+      "element": "eletricidade",
+      "mult": 1.2
+     }
+    }
+   },
+   "signature": {
+    "name": "Corrente em Cadeia",
+    "description": "Uma descarga que salta para até 4 inimigos próximos.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 11,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "eletricidade",
+    "status": {
+     "id": "eletrocutado",
+     "turns": 1
+    },
+    "fx": {
+     "chain": 4,
+     "chainMult": 0.75
+    },
+    "anim": "bolt"
+   }
+  },
+  "calor": {
+   "innate": {
+    "desc": "Chamas: dano de fogo +20% e imune a queimar.",
+    "fx": {
+     "elementBoost": {
+      "element": "fogo",
+      "mult": 1.2
+     },
+     "immune": [
+      "queimando"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Coluna de Fogo",
+    "description": "Uma coluna de fogo sobe do chão e deixa o lugar em chamas.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 12,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "fogo",
+    "status": {
+     "id": "queimando",
+     "turns": 3
+    },
+    "fx": {
+     "surface": "fogo"
+    },
+    "radius": 1,
+    "anim": "meteor"
+   }
+  },
+  "gelo": {
+   "innate": {
+    "desc": "Frio: imune a congelar; golpes de gelo deixam lento.",
+    "fx": {
+     "immune": [
+      "congelado"
+     ],
+     "elementBoost": {
+      "element": "gelo",
+      "mult": 1.15
+     }
+    }
+   },
+   "signature": {
+    "name": "Prisão de Gelo",
+    "description": "Congela o alvo dentro de um bloco de gelo.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 8,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "gelo",
+    "status": {
+     "id": "congelado",
+     "turns": 2
+    },
+    "fx": {
+     "surface": "gelo"
+    },
+    "anim": "orb"
+   }
+  },
+  "luz": {
+   "innate": {
+    "desc": "Brilha: vê quem está escondido e cura 15% mais.",
+    "fx": {
+     "seeHidden": true,
+     "healBoost": 0.15
+    }
+   },
+   "signature": {
+    "name": "Raio Solar",
+    "description": "Um raio de luz que atravessa a linha e cega.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "line",
+    "range": 7,
+    "power": 11,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "luz",
+    "status": {
+     "id": "cegado",
+     "turns": 2
+    },
+    "fx": {
+     "through": true,
+     "throughFalloff": 0.2
+    },
+    "anim": "beam"
+   }
+  },
+  "som": {
+   "innate": {
+    "desc": "Grito: imune a atordoar.",
+    "fx": {
+     "immune": [
+      "atordoado"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Grito Sônico",
+    "description": "Um grito em cone que atordoa e silencia.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "cone",
+    "range": 4,
+    "power": 9,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "vento",
+    "status": {
+     "id": "atordoado",
+     "turns": 1
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "silenciado",
+       "turns": 1
+      }
+     ]
+    },
+    "anim": "shout"
+   }
+  },
+  "acido": {
+   "innate": {
+    "desc": "Ácido: golpes deixam a armadura do alvo quebrada.",
+    "fx": {
+     "pierce": 0.25
+    }
+   },
+   "signature": {
+    "name": "Poça Corrosiva",
+    "description": "Lança ácido em área: tudo nela perde a armadura e se envenena.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 9,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "veneno",
+    "status": {
+     "id": "quebrado",
+     "turns": 3
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "envenenado",
+       "turns": 2
+      }
+     ]
+    },
+    "radius": 1,
+    "anim": "orb"
+   }
+  },
+  "plasma": {
+   "innate": {
+    "desc": "Plasma: ignora 40% da defesa.",
+    "fx": {
+     "pierce": 0.4
+    }
+   },
+   "signature": {
+    "name": "Lança de Plasma",
+    "description": "Um feixe superaquecido que atravessa tudo em linha.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "line",
+    "range": 8,
+    "power": 14,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "fogo",
+    "status": {
+     "id": "queimando",
+     "turns": 2
+    },
+    "fx": {
+     "through": true,
+     "pierce": 0.6
+    },
+    "anim": "beam"
+   }
+  },
+  "vapor": {
+   "innate": {
+    "desc": "Vapor: começa a luta envolto em névoa (difícil de acertar de longe).",
+    "fx": {
+     "evasion": 8
+    }
+   },
+   "signature": {
+    "name": "Nuvem Escaldante",
+    "description": "Cobre a área com vapor fervente que queima e cega.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 7,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "agua",
+    "status": {
+     "id": "cegado",
+     "turns": 1
+    },
+    "fx": {
+     "cloud": "vapor_fervente"
+    },
+    "radius": 2,
+    "anim": "smoke"
+   }
+  },
+  "explosao": {
+   "innate": {
+    "desc": "Explosivo: ao cair, explode em volta.",
+    "fx": {
+     "deathBurst": {
+      "radius": 1,
+      "power": 12,
+      "element": "fogo"
+     }
+    }
+   },
+   "signature": {
+    "name": "Detonação",
+    "description": "Explosão concentrada nas palmas: área grande e derruba.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 4,
+    "power": 15,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "fogo",
+    "status": {
+     "id": "derrubado",
+     "turns": 1
+    },
+    "fx": {
+     "demolish": 4
+    },
+    "radius": 2,
+    "anim": "meteor"
+   }
+  },
+  "laser": {
+   "innate": {
+    "desc": "Mira laser: +10 de precisão.",
+    "fx": {
+     "steadyAim": 10
+    }
+   },
+   "signature": {
+    "name": "Varredura Laser",
+    "description": "Varre a linha inteira: atinge todos sem perder força.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "line",
+    "range": 9,
+    "power": 11,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "luz",
+    "fx": {
+     "through": true,
+     "homing": true
+    },
+    "anim": "beam"
+   }
+  },
+  "radiacao": {
+   "innate": {
+    "desc": "Radioativo: inimigos a até 1 casa se enfraquecem a cada rodada.",
+    "fx": {
+     "aura": {
+      "radius": 1,
+      "status": {
+       "id": "enfraquecido",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Meltdown",
+    "description": "Libera radiação em volta: dano, enfraquece e corta a Stamina máxima.",
+    "kind": "magic",
+    "target": "self",
+    "shape": "radius",
+    "range": 0,
+    "power": 10,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "veneno",
+    "status": {
+     "id": "enfraquecido",
+     "turns": 3
+    },
+    "fx": {
+     "maxMpCut": 0.25
+    },
+    "radius": 2,
+    "anim": "nova"
+   }
+  },
+  "pressao_ar": {
+   "innate": {
+    "desc": "Ar comprimido: empurrões vão 1 casa mais longe.",
+    "fx": {
+     "shoveBonus": 1
+    }
+   },
+   "signature": {
+    "name": "Canhão de Ar",
+    "description": "Uma bala de ar que arremessa o alvo 5 casas.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 10,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "vento",
+    "fx": {
+     "knock": 5
+    },
+    "anim": "orb"
+   }
+  },
+  "vento": {
+   "innate": {
+    "desc": "Corrente de vento: +1 de deslocamento e projéteis inimigos erram mais.",
+    "fx": {
+     "moveBonus": 1,
+     "reduce": {
+      "ranged": 0.15
+     }
+    }
+   },
+   "signature": {
+    "name": "Tornado",
+    "description": "Um tornado que puxa todos para o centro e os joga no chão.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 9,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "vento",
+    "status": {
+     "id": "derrubado",
+     "turns": 1
+    },
+    "fx": {
+     "vortex": 2
+    },
+    "radius": 2,
+    "anim": "nova"
+   }
+  },
+  "lama": {
+   "innate": {
+    "desc": "Lama: imune a enlamear e escorregar.",
+    "fx": {
+     "immune": [
+      "enlameado",
+      "derrubado"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Pântano",
+    "description": "Transforma a área em lama: todos ficam enlameados e lentos.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 5,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "terra",
+    "status": {
+     "id": "lento",
+     "turns": 2
+    },
+    "fx": {
+     "surface": "terra",
+     "also": [
+      {
+       "id": "enlameado",
+       "turns": 2
+      }
+     ]
+    },
+    "radius": 2,
+    "anim": "orb"
+   }
+  },
+  "agua": {
+   "innate": {
+    "desc": "Água: imune a queimar; molhar facilita os choques aliados.",
+    "fx": {
+     "immune": [
+      "queimando"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Jato de Pressão",
+    "description": "Jato de água em linha que empurra e molha todos.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "line",
+    "range": 6,
+    "power": 10,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "agua",
+    "status": {
+     "id": "molhado",
+     "turns": 3
+    },
+    "fx": {
+     "knock": 2,
+     "through": true
+    },
+    "anim": "beam"
+   }
+  },
+  "chama_azul": {
+   "innate": {
+    "desc": "Fogo azul: dano de fogo +35%.",
+    "fx": {
+     "elementBoost": {
+      "element": "fogo",
+      "mult": 1.35
+     }
+    }
+   },
+   "signature": {
+    "name": "Inferno Azul",
+    "description": "Labaredas azuis em cone que não se apagam com água.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "cone",
+    "range": 4,
+    "power": 15,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "fogo",
+    "status": {
+     "id": "queimando",
+     "turns": 4
+    },
+    "fx": {
+     "surface": "fogo"
+    },
+    "anim": "cone"
+   }
+  },
+  "nevoa": {
+   "innate": {
+    "desc": "Névoa: começa escondido e é mais difícil de mirar (+8 de esquiva).",
+    "fx": {
+     "evasion": 8,
+     "freeHide": 1
+    }
+   },
+   "signature": {
+    "name": "Muralha de Névoa",
+    "description": "Cobre uma área grande com névoa: aliados dentro ficam escondidos.",
+    "kind": "utility",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "cloud": "fumaca",
+     "noDamage": true
+    },
+    "radius": 2,
+    "anim": "smoke"
+   }
+  },
+  "fumaca": {
+   "innate": {
+    "desc": "Fumaça: ao ser atingido, solta fumaça e se esconde (uma vez por rodada).",
+    "fx": {
+     "react": {
+      "on": "any",
+      "do": "retreat",
+      "chance": 30
+     }
+    }
+   },
+   "signature": {
+    "name": "Cortina de Fumaça",
+    "description": "Fumaça densa em volta: inimigos perdem a mira.",
+    "kind": "utility",
+    "target": "self",
+    "shape": "radius",
+    "range": 0,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "cegado",
+     "turns": 1
+    },
+    "fx": {
+     "cloud": "fumaca"
+    },
+    "radius": 2,
+    "anim": "smoke"
+   }
+  },
+  "polvora": {
+   "innate": {
+    "desc": "Pólvora: golpes de fogo explodem em volta.",
+    "fx": {
+     "elementBoost": {
+      "element": "fogo",
+      "mult": 1.15
+     }
+    }
+   },
+   "signature": {
+    "name": "Rastilho",
+    "description": "Uma linha de pólvora que detona tudo pelo caminho.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "line",
+    "range": 6,
+    "power": 12,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "fogo",
+    "status": {
+     "id": "derrubado",
+     "turns": 1
+    },
+    "fx": {
+     "through": true,
+     "demolish": 2
+    },
+    "anim": "bolt"
+   }
+  },
+  "esporos": {
+   "innate": {
+    "desc": "Esporos: aliados ao lado regeneram um pouco por rodada.",
+    "fx": {
+     "aura": {
+      "radius": 1,
+      "allies": true,
+      "status": {
+       "id": "regenerando",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Nuvem de Esporos",
+    "description": "Esporos que envenenam inimigos e deixam todos sonolentos.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 6,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "veneno",
+    "status": {
+     "id": "envenenado",
+     "turns": 3
+    },
+    "fx": {
+     "cloud": "esporos"
+    },
+    "radius": 2,
+    "anim": "smoke"
+   }
+  },
+  "feromonio": {
+   "innate": {
+    "desc": "Cheiro estranho: inimigos ao lado ficam confusos às vezes.",
+    "fx": {
+     "aura": {
+      "radius": 1,
+      "status": {
+       "id": "confuso",
+       "turns": 1,
+       "chance": 25
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Feromônio da Discórdia",
+    "description": "Os inimigos na área se confundem e atacam uns aos outros.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "confuso",
+     "turns": 2
+    },
+    "fx": {
+     "noDamage": true
+    },
+    "radius": 1,
+    "anim": "smoke"
+   }
+  },
+  "faiscas": {
+   "innate": {
+    "desc": "Faíscas: golpes elétricos pulam para mais 1 alvo.",
+    "fx": {
+     "elementBoost": {
+      "element": "eletricidade",
+      "mult": 1.1
+     }
+    }
+   },
+   "signature": {
+    "name": "Chuva de Faíscas",
+    "description": "Faíscas atingem 4 inimigos aleatórios à vista.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 6,
+    "power": 7,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "eletricidade",
+    "status": {
+     "id": "eletrocutado",
+     "turns": 1
+    },
+    "fx": {
+     "randomTargets": 4
+    },
+    "anim": "volley"
+   }
+  },
+  "pulso_em": {
+   "innate": {
+    "desc": "Campo EM: imune a silenciar.",
+    "fx": {
+     "immune": [
+      "silenciado"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Pulso",
+    "description": "Um pulso em volta que silencia Dons e desliga armas por 1 turno.",
+    "kind": "magic",
+    "target": "self",
+    "shape": "radius",
+    "range": 0,
+    "power": 6,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "eletricidade",
+    "status": {
+     "id": "silenciado",
+     "turns": 2
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "desarmado",
+       "turns": 1
+      }
+     ]
+    },
+    "radius": 2,
+    "anim": "nova"
+   }
+  },
+  "ondas_choque": {
+   "innate": {
+    "desc": "Firme: não é derrubado pelas próprias ondas (imune a derrubar).",
+    "fx": {
+     "immune": [
+      "derrubado"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Palmas Sísmicas",
+    "description": "Bate as palmas: onda em cone que derruba e empurra.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "cone",
+    "range": 4,
+    "power": 10,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "terra",
+    "status": {
+     "id": "derrubado",
+     "turns": 1
+    },
+    "fx": {
+     "knock": 2
+    },
+    "anim": "cone"
+   }
+  },
+  "laminas_ar": {
+   "innate": {
+    "desc": "Lâminas de ar: ataques à distância cortam (sangram).",
+    "fx": {
+     "reachBonus": 2
+    }
+   },
+   "signature": {
+    "name": "Tempestade de Lâminas",
+    "description": "Cortes de vento em todos os inimigos numa área.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 10,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "vento",
+    "status": {
+     "id": "sangramento",
+     "turns": 3
+    },
+    "radius": 1,
+    "anim": "volley"
+   }
+  },
+  "agulhas": {
+   "innate": {
+    "desc": "Agulhas: +2 de alcance no ataque básico.",
+    "fx": {
+     "reachBonus": 2
+    }
+   },
+   "signature": {
+    "name": "Rajada de Agulhas",
+    "description": "Seis agulhas no mesmo alvo.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 3,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "sangramento",
+     "turns": 2
+    },
+    "fx": {
+     "hits": 6
+    },
+    "anim": "volley"
+   }
+  },
+  "seda": {
+   "innate": {
+    "desc": "Seda: imune a ficar preso.",
+    "fx": {
+     "immune": [
+      "preso",
+      "imobilizado"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Casulo",
+    "description": "Enrola o alvo num casulo de seda: preso e indefeso.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 4,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "preso",
+     "turns": 2
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "desarmado",
+       "turns": 2
+      }
+     ]
+    },
+    "anim": "orb"
+   }
+  },
+  "tinta": {
+   "innate": {
+    "desc": "Tinta: inimigos atingidos ficam marcados (todo mundo acerta mais).",
+    "fx": {
+     "onCastSelf": {
+      "status": {
+       "id": "afiado",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Mancha",
+    "description": "Jato de tinta em cone: cega e marca todos.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "cone",
+    "range": 4,
+    "power": 4,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "cegado",
+     "turns": 2
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "marcado",
+       "turns": 3
+      }
+     ],
+     "cloud": "tinta"
+    },
+    "anim": "cone"
+   }
+  },
+  "cinzas": {
+   "innate": {
+    "desc": "Cinzas: imune a cegar.",
+    "fx": {
+     "immune": [
+      "cegado"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Chuva de Cinzas",
+    "description": "Cinza quente cai na área: queima e cega.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 8,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "fogo",
+    "status": {
+     "id": "cegado",
+     "turns": 2
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "queimando",
+       "turns": 2
+      }
+     ]
+    },
+    "radius": 2,
+    "anim": "smoke"
+   }
+  },
+  "brasas": {
+   "innate": {
+    "desc": "Brasas: queimaduras que causa duram +1 turno.",
+    "fx": {
+     "elementBoost": {
+      "element": "fogo",
+      "mult": 1.1
+     }
+    }
+   },
+   "signature": {
+    "name": "Brasas Grudentas",
+    "description": "Brasas que grudam: o alvo queima por muito tempo.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 8,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "fogo",
+    "status": {
+     "id": "queimando",
+     "turns": 5
+    },
+    "fx": {
+     "surface": "fogo"
+    },
+    "anim": "orb"
+   }
+  },
+  "cristais": {
+   "innate": {
+    "desc": "Cristais: cobertura extra — 15% menos dano à distância.",
+    "fx": {
+     "reduce": {
+      "ranged": 0.15
+     }
+    }
+   },
+   "signature": {
+    "name": "Floresta de Cristais",
+    "description": "Cristais brotam do chão em área: dano, sangramento e viram cobertura.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 10,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "sangramento",
+     "turns": 2
+    },
+    "fx": {
+     "build": {
+      "shape": "pillar",
+      "height": 2,
+      "turns": 3
+     }
+    },
+    "radius": 1,
+    "anim": "nova"
+   }
+  },
+  "oleo": {
+   "innate": {
+    "desc": "Escorregadio: imune a ser preso e agarrado.",
+    "fx": {
+     "immune": [
+      "preso",
+      "imobilizado"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Mancha de Óleo",
+    "description": "Espalha óleo inflamável: todos escorregam (e uma faísca vira incêndio).",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 3,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "derrubado",
+     "turns": 1
+    },
+    "fx": {
+     "surface": "oleo"
+    },
+    "radius": 2,
+    "anim": "orb"
+   }
+  },
+  "nectar": {
+   "innate": {
+    "desc": "Néctar: curas que faz são 25% mais fortes.",
+    "fx": {
+     "healBoost": 0.25
+    }
+   },
+   "signature": {
+    "name": "Chuva de Néctar",
+    "description": "Cura todos os aliados numa área grande e remove venenos.",
+    "kind": "heal",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 12,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "cleanse": true
+    },
+    "radius": 2,
+    "anim": "heal"
+   }
+  },
+  "bioluminescencia": {
+   "innate": {
+    "desc": "Brilha: aliados ao lado acertam mais no escuro (afiados).",
+    "fx": {
+     "aura": {
+      "radius": 1,
+      "allies": true,
+      "status": {
+       "id": "afiado",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Farol",
+    "description": "Clarão que revela tudo escondido e cega quem estiver perto.",
+    "kind": "magic",
+    "target": "self",
+    "shape": "radius",
+    "range": 0,
+    "power": 4,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "luz",
+    "status": {
+     "id": "cegado",
+     "turns": 1
+    },
+    "fx": {
+     "reveal": true
+    },
+    "radius": 3,
+    "anim": "nova"
+   }
+  },
+  "infravermelho": {
+   "innate": {
+    "desc": "Calor invisível: ataques ignoram cobertura.",
+    "fx": {
+     "homing": true
+    }
+   },
+   "signature": {
+    "name": "Raio Térmico",
+    "description": "Esquenta o alvo por dentro: ignora cobertura e armadura.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 7,
+    "power": 12,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "fogo",
+    "status": {
+     "id": "queimando",
+     "turns": 2
+    },
+    "fx": {
+     "homing": true,
+     "pierce": 0.5
+    },
+    "anim": "beam"
+   }
+  },
+  "micro_ondas": {
+   "innate": {
+    "desc": "Micro-ondas: dano extra de 10% da vida atual do alvo.",
+    "fx": {
+     "currentHpPct": 0.1
+    }
+   },
+   "signature": {
+    "name": "Cozinhar",
+    "description": "Esquenta o alvo por dentro: dano igual a 30% da vida atual.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 6,
+    "power": 6,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "fogo",
+    "fx": {
+     "currentHpPct": 0.3,
+     "homing": true
+    },
+    "anim": "beam"
+   }
+  },
+  "gas_sonifero": {
+   "innate": {
+    "desc": "Respira o próprio gás: imune a sono.",
+    "fx": {
+     "immune": [
+      "sono"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Sono Profundo",
+    "description": "Gás em área: todos dormem (acordam ao levar dano).",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "veneno",
+    "status": {
+     "id": "sono",
+     "turns": 3
+    },
+    "fx": {
+     "noDamage": true,
+     "cloud": "gas_fetido"
+    },
+    "radius": 1,
+    "anim": "smoke"
+   }
+  },
+  "veneno": {
+   "innate": {
+    "desc": "Venenos: envenenamentos que causa doem 25% mais.",
+    "fx": {
+     "elementBoost": {
+      "element": "veneno",
+      "mult": 1.25
+     }
+    }
+   },
+   "signature": {
+    "name": "Toxina Final",
+    "description": "Detona todo o veneno do alvo de uma vez.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 8,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "veneno",
+    "fx": {
+     "detonate": [
+      "envenenado"
+     ],
+     "also": [
+      {
+       "id": "envenenado",
+       "turns": 3
+      }
+     ]
+    },
+    "anim": "orb"
+   }
+  },
+  "eco_termico": {
+   "innate": {
+    "desc": "Calor sufocante: inimigos a até 1 casa ficam lentos.",
+    "fx": {
+     "aura": {
+      "radius": 1,
+      "status": {
+       "id": "lento",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Onda de Calor",
+    "description": "Uma onda de calor em área que deixa todos lentos e cansados.",
+    "kind": "magic",
+    "target": "self",
+    "shape": "radius",
+    "range": 0,
+    "power": 7,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "fogo",
+    "status": {
+     "id": "lento",
+     "turns": 2
+    },
+    "fx": {
+     "mpBurn": 6
+    },
+    "radius": 2,
+    "anim": "nova"
+   }
+  },
+  "vetor": {
+   "innate": {
+    "desc": "Redireciona: devolve 30% dos tiros recebidos.",
+    "fx": {
+     "react": {
+      "on": "ranged",
+      "do": "reflect",
+      "chance": 30
+     }
+    }
+   },
+   "signature": {
+    "name": "Redirecionar",
+    "description": "Inverte o vetor do alvo: arremessa 5 casas contra o que estiver atrás.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 6,
+    "power": 11,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "derrubado",
+     "turns": 1
+    },
+    "fx": {
+     "knock": 5
+    },
+    "anim": "bolt"
+   }
+  },
+  "gravidade": {
+   "innate": {
+    "desc": "Gravidade: inimigos a até 1 casa ficam lentos.",
+    "fx": {
+     "aura": {
+      "radius": 1,
+      "status": {
+       "id": "lento",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Poço Gravitacional",
+    "description": "Esmaga a área: puxa todos para o centro, dano e imobiliza.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 11,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "imobilizado",
+     "turns": 1
+    },
+    "fx": {
+     "vortex": 2
+    },
+    "radius": 2,
+    "anim": "nova"
+   }
+  },
+  "magnetismo": {
+   "innate": {
+    "desc": "Ímã: tiros de armas de metal erram mais nele (−20%).",
+    "fx": {
+     "reduce": {
+      "ranged": 0.2
+     }
+    }
+   },
+   "signature": {
+    "name": "Desarmar",
+    "description": "Arranca as armas de metal de todos numa área.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 5,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "eletricidade",
+    "status": {
+     "id": "desarmado",
+     "turns": 2
+    },
+    "fx": {
+     "pull": 1
+    },
+    "radius": 1,
+    "anim": "orb"
+   }
+  },
+  "atrito": {
+   "innate": {
+    "desc": "Sem atrito sob os pés: +2 de deslocamento.",
+    "fx": {
+     "moveBonus": 2
+    }
+   },
+   "signature": {
+    "name": "Chão de Gelo Seco",
+    "description": "Zera o atrito na área: todos escorregam e caem.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 4,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "derrubado",
+     "turns": 2
+    },
+    "fx": {
+     "surface": "geada"
+    },
+    "radius": 2,
+    "anim": "orb"
+   }
+  },
+  "impulso": {
+   "innate": {
+    "desc": "Guarda impulso: cada golpe recebido aumenta o próximo dano (+30% quando ferido).",
+    "fx": {
+     "fury": 1.3
+    }
+   },
+   "signature": {
+    "name": "Devolver Tudo",
+    "description": "Solta o impulso guardado: dano maior quanto mais vida perdeu.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 1,
+    "power": 12,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "shieldFromLost": 0.3,
+     "knock": 3
+    },
+    "anim": "charge"
+   }
+  },
+  "inercia": {
+   "innate": {
+    "desc": "Inércia: não pode ser empurrado.",
+    "fx": {
+     "immune": [
+      "derrubado"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Congelar Movimento",
+    "description": "Para o alvo no lugar e zera a barra de ação dele.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 4,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "imobilizado",
+     "turns": 2
+    },
+    "fx": {
+     "gaugeShift": true
+    },
+    "anim": "orb"
+   }
+  },
+  "temperatura": {
+   "innate": {
+    "desc": "Controle térmico: imune a queimar e congelar.",
+    "fx": {
+     "immune": [
+      "queimando",
+      "congelado"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Choque Térmico",
+    "description": "Esquenta e esfria o alvo de uma vez: dano alto e armadura quebrada.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 13,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "gelo",
+    "status": {
+     "id": "quebrado",
+     "turns": 2
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "congelado",
+       "turns": 1
+      }
+     ]
+    },
+    "anim": "orb"
+   }
+  },
+  "hidrocinese": {
+   "innate": {
+    "desc": "Água obedece: molhado não o atrapalha; dano de água +20%.",
+    "fx": {
+     "elementBoost": {
+      "element": "agua",
+      "mult": 1.2
+     }
+    }
+   },
+   "signature": {
+    "name": "Maremoto",
+    "description": "Ergue uma onda em linha que arrasta todos e molha.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "line",
+    "range": 6,
+    "power": 11,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "agua",
+    "status": {
+     "id": "molhado",
+     "turns": 3
+    },
+    "fx": {
+     "through": true,
+     "knock": 2
+    },
+    "anim": "cone"
+   }
+  },
+  "geocinese": {
+   "innate": {
+    "desc": "Terra: ergue cobertura onde estiver (15% menos dano à distância).",
+    "fx": {
+     "reduce": {
+      "ranged": 0.15
+     }
+    }
+   },
+   "signature": {
+    "name": "Muralha de Pedra",
+    "description": "Ergue um muro de pedra de 3 casas que dura 4 rodadas.",
+    "kind": "utility",
+    "target": "tile",
+    "shape": "line",
+    "range": 4,
+    "power": 0,
+    "mp": 7,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "build": {
+      "shape": "wall",
+      "length": 3,
+      "height": 2,
+      "turns": 4
+     },
+     "noDamage": true
+    },
+    "anim": "nova"
+   }
+  },
+  "metalocinese": {
+   "innate": {
+    "desc": "Metal: armaduras inimigas não protegem dele (ignora 30%).",
+    "fx": {
+     "pierce": 0.3
+    }
+   },
+   "signature": {
+    "name": "Espinhos de Metal",
+    "description": "O metal em volta vira espinhos: dano em área e sangramento.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 11,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "sangramento",
+     "turns": 3
+    },
+    "radius": 1,
+    "anim": "nova"
+   }
+  },
+  "aerocinese": {
+   "innate": {
+    "desc": "Ventos a favor: voa baixo (ignora terreno difícil).",
+    "fx": {
+     "fly": true
+    }
+   },
+   "signature": {
+    "name": "Prisão de Vento",
+    "description": "Prende o alvo num redemoinho no ar: imobilizado e exposto.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 6,
+    "power": 7,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "vento",
+    "status": {
+     "id": "imobilizado",
+     "turns": 2
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "exposto",
+       "turns": 2
+      }
+     ]
+    },
+    "anim": "orb"
+   }
+  },
+  "fitocinese": {
+   "innate": {
+    "desc": "Plantas: regenera 4% por turno perto de grama ou árvores.",
+    "fx": {
+     "regen": 0.04
+    }
+   },
+   "signature": {
+    "name": "Raízes",
+    "description": "Raízes brotam e prendem todos na área.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 5,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "terra",
+    "status": {
+     "id": "preso",
+     "turns": 2
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "lento",
+       "turns": 2
+      }
+     ]
+    },
+    "radius": 1,
+    "anim": "nova"
+   }
+  },
+  "corrosao": {
+   "innate": {
+    "desc": "Corrosão: golpes enfraquecem o alvo.",
+    "fx": {
+     "onCastSelf": {
+      "status": {
+       "id": "afiado",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Ferrugem",
+    "description": "Apodrece armas e armaduras: alvo quebrado e desarmado.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 6,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "veneno",
+    "status": {
+     "id": "quebrado",
+     "turns": 3
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "desarmado",
+       "turns": 1
+      }
+     ],
+     "breakItem": true
+    },
+    "anim": "orb"
+   }
+  },
+  "rotacao": {
+   "innate": {
+    "desc": "Gira: ao ser atacado corpo a corpo, 25% de chance de jogar o atacante longe.",
+    "fx": {
+     "react": {
+      "on": "melee",
+      "do": "status",
+      "chance": 25,
+      "status": {
+       "id": "confuso",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Pião",
+    "description": "Faz o alvo girar sem parar: confuso e tonto.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 7,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "confuso",
+     "turns": 2
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "derrubado",
+       "turns": 1
+      }
+     ]
+    },
+    "anim": "spin"
+   }
+  },
+  "repulsao": {
+   "innate": {
+    "desc": "Repulsão: ninguém consegue ficar colado nele (empurra quem chega).",
+    "fx": {
+     "react": {
+      "on": "melee",
+      "do": "retreat",
+      "chance": 35
+     }
+    }
+   },
+   "signature": {
+    "name": "Explosão Repulsiva",
+    "description": "Empurra tudo em volta 3 casas.",
+    "kind": "magic",
+    "target": "self",
+    "shape": "radius",
+    "range": 0,
+    "power": 8,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "knock": 3
+    },
+    "radius": 2,
+    "anim": "nova"
+   }
+  },
+  "atracao": {
+   "innate": {
+    "desc": "Atração: puxões vão 1 casa mais longe.",
+    "fx": {
+     "shoveBonus": 1
+    }
+   },
+   "signature": {
+    "name": "Atrair Tudo",
+    "description": "Puxa todos os inimigos numa área grande até ele.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 6,
+    "power": 5,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "lento",
+     "turns": 1
+    },
+    "fx": {
+     "vortex": 3
+    },
+    "radius": 2,
+    "anim": "nova"
+   }
+  },
+  "deslize": {
+   "innate": {
+    "desc": "Desliza: nunca provoca ataque de oportunidade.",
+    "fx": {
+     "noOpportunity": true,
+     "moveBonus": 1
+    }
+   },
+   "signature": {
+    "name": "Patinar",
+    "description": "Desliza até 6 casas golpeando quem passar.",
+    "kind": "physical",
+    "target": "tile",
+    "shape": "line",
+    "range": 6,
+    "power": 9,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "dashThrough": true
+    },
+    "anim": "dash"
+   }
+  },
+  "pressao": {
+   "innate": {
+    "desc": "Pressão: dano extra contra quem está imobilizado.",
+    "fx": {
+     "vs": {
+      "status": "imobilizado",
+      "mult": 1.4
+     }
+    }
+   },
+   "signature": {
+    "name": "Esmagar",
+    "description": "Aumenta a pressão sobre o alvo: dano alto e imobiliza.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 14,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "imobilizado",
+     "turns": 1
+    },
+    "fx": {
+     "pierce": 0.5
+    },
+    "anim": "orb"
+   }
+  },
+  "ressonancia": {
+   "innate": {
+    "desc": "Vibração: destrói cobertura e objetos com facilidade.",
+    "fx": {
+     "demolish": 2
+    }
+   },
+   "signature": {
+    "name": "Ressonância",
+    "description": "Faz tudo vibrar: quebra paredes e atordoa quem estiver nelas.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 10,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "atordoado",
+     "turns": 1
+    },
+    "fx": {
+     "demolish": 5,
+     "destroyProps": true
+    },
+    "radius": 1,
+    "anim": "nova"
+   }
+  },
+  "peso": {
+   "innate": {
+    "desc": "Pesa os outros: inimigos atingidos ficam lentos.",
+    "fx": {
+     "onCastSelf": {
+      "status": {
+       "id": "afiado",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Tonelada",
+    "description": "Torna o alvo pesadíssimo: preso no chão e lento.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 6,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "imobilizado",
+     "turns": 2
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "lento",
+       "turns": 3
+      }
+     ]
+    },
+    "anim": "orb"
+   }
+  },
+  "adesao": {
+   "innate": {
+    "desc": "Gruda: imune a ser derrubado e empurrado.",
+    "fx": {
+     "immune": [
+      "derrubado"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Cola",
+    "description": "Gruda todos numa área no chão.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 3,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "preso",
+     "turns": 2
+    },
+    "fx": {
+     "noDamage": true
+    },
+    "radius": 1,
+    "anim": "orb"
+   }
+  },
+  "vidrocinese": {
+   "innate": {
+    "desc": "Vidro: golpes deixam ferida aberta.",
+    "fx": {
+     "onCastSelf": {
+      "status": {
+       "id": "afiado",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Estilhaços",
+    "description": "Janelas viram lâminas: cone de vidro que sangra.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "cone",
+    "range": 4,
+    "power": 11,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "sangramento",
+     "turns": 3
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "ferida_aberta",
+       "turns": 2
+      }
+     ]
+    },
+    "anim": "cone"
+   }
+  },
+  "areia": {
+   "innate": {
+    "desc": "Areia: começa escondido em terreno de areia; imune a cegar.",
+    "fx": {
+     "immune": [
+      "cegado"
+     ],
+     "hide": "sand"
+    }
+   },
+   "signature": {
+    "name": "Tempestade de Areia",
+    "description": "Tempestade em área: cega todos e esconde aliados.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 6,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "terra",
+    "status": {
+     "id": "cegado",
+     "turns": 2
+    },
+    "fx": {
+     "cloud": "fumaca"
+    },
+    "radius": 2,
+    "anim": "smoke"
+   }
+  },
+  "correntes": {
+   "innate": {
+    "desc": "Correntes elétricas: imune a eletrocutar.",
+    "fx": {
+     "immune": [
+      "eletrocutado"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Curto-circuito",
+    "description": "Desvia a energia de tudo em volta para o alvo.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 6,
+    "power": 13,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "eletricidade",
+    "status": {
+     "id": "atordoado",
+     "turns": 1
+    },
+    "fx": {
+     "chain": 2
+    },
+    "anim": "bolt"
+   }
+  },
+  "hemocinese": {
+   "innate": {
+    "desc": "Sangue: rouba 15% do dano como vida.",
+    "fx": {
+     "lifesteal": 0.15
+    }
+   },
+   "signature": {
+    "name": "Sangria",
+    "description": "Puxa o sangue do alvo: dano, sangramento e cura a si mesmo.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 13,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "sangramento",
+     "turns": 3
+    },
+    "fx": {
+     "lifesteal": 0.6
+    },
+    "anim": "beam"
+   }
+  },
+  "fios": {
+   "innate": {
+    "desc": "Fios: puxa armas e objetos (ataca de mais longe, +1).",
+    "fx": {
+     "reachBonus": 1
+    }
+   },
+   "signature": {
+    "name": "Teia de Cabos",
+    "description": "Cabos prendem até 3 inimigos ao mesmo tempo.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 6,
+    "power": 4,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "preso",
+     "turns": 2
+    },
+    "fx": {
+     "pull": 1
+    },
+    "radius": 1,
+    "anim": "orb"
+   }
+  },
+  "equilibrio": {
+   "innate": {
+    "desc": "Equilíbrio perfeito: nunca cai (imune a derrubar).",
+    "fx": {
+     "immune": [
+      "derrubado"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Tropeço Coletivo",
+    "description": "Todo inimigo numa área grande cai.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 6,
+    "power": 2,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "derrubado",
+     "turns": 2
+    },
+    "fx": {
+     "noDamage": true
+    },
+    "radius": 2,
+    "anim": "nova"
+   }
+  },
+  "eletromagnetismo": {
+   "innate": {
+    "desc": "Campo EM: segura balas no ar (30% menos dano à distância).",
+    "fx": {
+     "reduce": {
+      "ranged": 0.3
+     }
+    }
+   },
+   "signature": {
+    "name": "Devolver Balas",
+    "description": "Segura todas as balas e devolve: dano em todos os inimigos à vista.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 8,
+    "power": 9,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "eletricidade",
+    "fx": {
+     "randomTargets": 99
+    },
+    "anim": "volley"
+   }
+  },
+  "ondas": {
+   "innate": {
+    "desc": "Ondas no chão: empurrões derrubam.",
+    "fx": {
+     "shoveBonus": 1
+    }
+   },
+   "signature": {
+    "name": "Onda Terrestre",
+    "description": "O chão ondula em linha: derruba todos e empurra.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "line",
+    "range": 6,
+    "power": 9,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "agua",
+    "status": {
+     "id": "derrubado",
+     "turns": 1
+    },
+    "fx": {
+     "through": true,
+     "knock": 1
+    },
+    "anim": "cone"
+   }
+  },
+  "calor_objetos": {
+   "innate": {
+    "desc": "Esquenta armas: quem o ataca corpo a corpo se queima.",
+    "fx": {
+     "react": {
+      "on": "melee",
+      "do": "status",
+      "status": {
+       "id": "queimando",
+       "turns": 2
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Brasa nas Mãos",
+    "description": "Esquenta as armas dos inimigos na área: queimam e soltam.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 7,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "fogo",
+    "status": {
+     "id": "desarmado",
+     "turns": 1
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "queimando",
+       "turns": 2
+      }
+     ]
+    },
+    "radius": 1,
+    "anim": "orb"
+   }
+  },
+  "barreira": {
+   "innate": {
+    "desc": "Barreiras: aliados ao lado recebem 15% menos dano.",
+    "fx": {
+     "aura": {
+      "radius": 1,
+      "allies": true,
+      "status": {
+       "id": "protegido",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Barreira Total",
+    "description": "Escudo de 35% da vida em todos os aliados numa área.",
+    "kind": "buff",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "shield": 0.35
+    },
+    "radius": 2,
+    "anim": "buff"
+   }
+  },
+  "forja": {
+   "innate": {
+    "desc": "Armas forjadas: +15% de dano físico.",
+    "fx": {
+     "physBoost": 0.15
+    }
+   },
+   "signature": {
+    "name": "Forjar Arma",
+    "description": "Forja uma arma melhor na hora: afiado e +dano por 3 turnos.",
+    "kind": "buff",
+    "target": "ally",
+    "shape": "single",
+    "range": 3,
+    "power": 0,
+    "mp": 7,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "imbue": {
+      "turns": 3,
+      "bonus": 0.3
+     },
+     "self": {
+      "id": "afiado",
+      "turns": 1
+     }
+    },
+    "anim": "buff"
+   }
+  },
+  "plataformas": {
+   "innate": {
+    "desc": "Plataformas: sobe em qualquer lugar (escala paredes).",
+    "fx": {
+     "climb": true
+    }
+   },
+   "signature": {
+    "name": "Escadaria",
+    "description": "Ergue uma rampa de plataformas para subir e atirar do alto.",
+    "kind": "utility",
+    "target": "tile",
+    "shape": "line",
+    "range": 4,
+    "power": 0,
+    "mp": 6,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "build": {
+      "shape": "ramp",
+      "height": 3,
+      "turns": 4
+     },
+     "noDamage": true
+    },
+    "anim": "nova"
+   }
+  },
+  "correntes_criadas": {
+   "innate": {
+    "desc": "Correntes: puxa inimigos 1 casa ao acertar.",
+    "fx": {
+     "shoveBonus": 1
+    }
+   },
+   "signature": {
+    "name": "Laço de Corrente",
+    "description": "Prende o alvo e o puxa até ele.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 6,
+    "power": 8,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "preso",
+     "turns": 1
+    },
+    "fx": {
+     "pull": 5,
+     "grab": true
+    },
+    "anim": "thrust"
+   }
+  },
+  "concreto": {
+   "innate": {
+    "desc": "Concreto: 15% menos dano físico.",
+    "fx": {
+     "reduce": {
+      "physical": 0.15
+     }
+    }
+   },
+   "signature": {
+    "name": "Bunker",
+    "description": "Ergue um bunker de concreto: barricada que dura a luta inteira.",
+    "kind": "utility",
+    "target": "tile",
+    "shape": "line",
+    "range": 3,
+    "power": 0,
+    "mp": 7,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "build": {
+      "shape": "barricade",
+      "length": 3,
+      "height": 2,
+      "turns": 99
+     },
+     "noDamage": true
+    },
+    "anim": "nova"
+   }
+  },
+  "espinhos": {
+   "innate": {
+    "desc": "Espinhos: quem o ataca corpo a corpo se fere.",
+    "fx": {
+     "react": {
+      "on": "melee",
+      "do": "status",
+      "status": {
+       "id": "sangramento",
+       "turns": 2
+      },
+      "damage": 5
+     }
+    }
+   },
+   "signature": {
+    "name": "Campo de Espinhos",
+    "description": "Espinhos brotam numa área: dano e quem andar por ali sangra.",
+    "kind": "physical",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 8,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "sangramento",
+     "turns": 3
+    },
+    "fx": {
+     "trap": {
+      "status": {
+       "id": "sangramento",
+       "turns": 2
+      },
+      "damage": 6,
+      "count": 3
+     }
+    },
+    "radius": 1,
+    "anim": "trap"
+   }
+  },
+  "cordas": {
+   "innate": {
+    "desc": "Cordas: imune a cair de altura (tirolesa).",
+    "fx": {
+     "climb": true
+    }
+   },
+   "signature": {
+    "name": "Rede",
+    "description": "Uma rede de cordas prende todos numa área.",
+    "kind": "physical",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 3,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "preso",
+     "turns": 2
+    },
+    "fx": {
+     "noDamage": true
+    },
+    "radius": 1,
+    "anim": "orb"
+   }
+  },
+  "clones": {
+   "innate": {
+    "desc": "Clones: começa a luta com cópias que confundem os tiros.",
+    "fx": {
+     "onCastSelf": {
+      "status": {
+       "id": "duplicatas",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Exército de Um",
+    "description": "Cria clones: duplicatas por 3 turnos e uma ação extra.",
+    "kind": "buff",
+    "target": "self",
+    "shape": "single",
+    "range": 0,
+    "power": 0,
+    "mp": 10,
+    "cooldown": 5,
+    "strain": 45,
+    "fx": {
+     "self": {
+      "id": "duplicatas",
+      "turns": 3
+     },
+     "extraTurn": true
+    },
+    "anim": "summon"
+   }
+  },
+  "bonecos": {
+   "innate": {
+    "desc": "Bonecos: inimigos atiram nos bonecos (15% menos dano à distância).",
+    "fx": {
+     "reduce": {
+      "ranged": 0.15
+     }
+    }
+   },
+   "signature": {
+    "name": "Isca",
+    "description": "Um boneco perfeito: inimigos numa área ficam provocados e erram.",
+    "kind": "utility",
+    "target": "tile",
+    "shape": "radius",
+    "range": 6,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "provocado",
+     "turns": 2
+    },
+    "fx": {
+     "noDamage": true
+    },
+    "radius": 2,
+    "anim": "summon"
+   }
+  },
+  "torres": {
+   "innate": {
+    "desc": "Torres: +10 de precisão do alto (parado).",
+    "fx": {
+     "steadyAim": 10
+    }
+   },
+   "signature": {
+    "name": "Torre de Vigia",
+    "description": "Ergue uma torre de 3 andares para subir e atirar.",
+    "kind": "utility",
+    "target": "tile",
+    "shape": "single",
+    "range": 3,
+    "power": 0,
+    "mp": 7,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "build": {
+      "shape": "pillar",
+      "height": 4,
+      "turns": 99
+     },
+     "noDamage": true
+    },
+    "anim": "nova"
+   }
+  },
+  "escudos_luz": {
+   "innate": {
+    "desc": "Escudos de luz: ao atacar, dá escudo ao aliado mais próximo.",
+    "fx": {
+     "allyShield": 0.08
+    }
+   },
+   "signature": {
+    "name": "Égide",
+    "description": "Escudo de luz forte num aliado e o deixa refletindo golpes.",
+    "kind": "buff",
+    "target": "ally",
+    "shape": "single",
+    "range": 5,
+    "power": 0,
+    "mp": 8,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "luz",
+    "fx": {
+     "shield": 0.5,
+     "also": [
+      {
+       "id": "refletindo",
+       "turns": 2
+      }
+     ]
+    },
+    "anim": "buff"
+   }
+  },
+  "bolhas": {
+   "innate": {
+    "desc": "Bolhas: amortecem a queda e o primeiro golpe de cada luta.",
+    "fx": {
+     "ignoreOnce": "physical"
+    }
+   },
+   "signature": {
+    "name": "Bolha-Prisão",
+    "description": "Prende o alvo numa bolha: fora da luta por 2 turnos (sem dano).",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "agua",
+    "status": {
+     "id": "aprisionado",
+     "turns": 2
+    },
+    "fx": {
+     "noDamage": true
+    },
+    "anim": "orb"
+   }
+  },
+  "armadilhas_dom": {
+   "innate": {
+    "desc": "Armadilheiro: armadilhas do campo de batalha.",
+    "fx": {
+     "fieldTraps": true
+    }
+   },
+   "signature": {
+    "name": "Minas Invisíveis",
+    "description": "Planta 3 armadilhas invisíveis que imobilizam e ferem.",
+    "kind": "utility",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "trap": {
+      "status": {
+       "id": "imobilizado",
+       "turns": 2
+      },
+      "damage": 10,
+      "count": 3
+     }
+    },
+    "radius": 1,
+    "anim": "trap"
+   }
+  },
+  "granadas_bio": {
+   "innate": {
+    "desc": "Frutos: ao cair, explode em gás.",
+    "fx": {
+     "deathBurst": {
+      "radius": 1,
+      "power": 8,
+      "element": "veneno"
+     }
+    }
+   },
+   "signature": {
+    "name": "Fruto de Duas Faces",
+    "description": "Lança um fruto: envenena inimigos e cura aliados na área.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 9,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "veneno",
+    "status": {
+     "id": "envenenado",
+     "turns": 3
+    },
+    "fx": {
+     "healPct": 0.15,
+     "spareAllies": true
+    },
+    "radius": 1,
+    "anim": "orb"
+   }
+  },
+  "gelo_estrutural": {
+   "innate": {
+    "desc": "Gelo: imune a congelar; anda no gelo sem escorregar.",
+    "fx": {
+     "immune": [
+      "congelado",
+      "derrubado"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Muralha de Gelo",
+    "description": "Ergue uma muralha de gelo de 4 casas.",
+    "kind": "utility",
+    "target": "tile",
+    "shape": "line",
+    "range": 4,
+    "power": 0,
+    "mp": 7,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "gelo",
+    "fx": {
+     "build": {
+      "shape": "wall",
+      "terrain": "gelo",
+      "length": 4,
+      "height": 2,
+      "turns": 3
+     },
+     "noDamage": true
+    },
+    "anim": "nova"
+   }
+  },
+  "pontes": {
+   "innate": {
+    "desc": "Pontes: atravessa vãos e água.",
+    "fx": {
+     "iceBridge": true,
+     "moveBonus": 1
+    }
+   },
+   "signature": {
+    "name": "Passarela",
+    "description": "Cria uma passarela até um telhado: o esquadrão sobe.",
+    "kind": "utility",
+    "target": "tile",
+    "shape": "line",
+    "range": 5,
+    "power": 0,
+    "mp": 6,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "build": {
+      "shape": "ramp",
+      "height": 4,
+      "turns": 99
+     },
+     "noDamage": true
+    },
+    "anim": "nova"
+   }
+  },
+  "cupula": {
+   "innate": {
+    "desc": "Cúpula: aliados ao lado recebem 10% menos dano.",
+    "fx": {
+     "aura": {
+      "radius": 1,
+      "allies": true,
+      "status": {
+       "id": "protegido",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Cúpula",
+    "description": "Cobre a área: aliados dentro ficam invulneráveis por 1 turno.",
+    "kind": "buff",
+    "target": "self",
+    "shape": "radius",
+    "range": 0,
+    "power": 0,
+    "mp": 12,
+    "cooldown": 5,
+    "strain": 50,
+    "fx": {
+     "also": [
+      {
+       "id": "invulneravel",
+       "turns": 1
+      }
+     ]
+    },
+    "radius": 2,
+    "anim": "buff"
+   }
+  },
+  "papel": {
+   "innate": {
+    "desc": "Papel: cortes rápidos (+5% de crítico).",
+    "fx": {
+     "critBonus": 5
+    }
+   },
+   "signature": {
+    "name": "Mil Grous",
+    "description": "Mil dobraduras de papel cortam 4 alvos aleatórios.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 6,
+    "power": 7,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "sangramento",
+     "turns": 2
+    },
+    "fx": {
+     "randomTargets": 4
+    },
+    "anim": "volley"
+   }
+  },
+  "espelhos": {
+   "innate": {
+    "desc": "Espelhos: devolvem 30% dos tiros e da luz.",
+    "fx": {
+     "react": {
+      "on": "ranged",
+      "do": "reflect",
+      "chance": 30
+     }
+    }
+   },
+   "signature": {
+    "name": "Sala de Espelhos",
+    "description": "Espelhos em volta de um aliado: reflete tudo por 2 turnos.",
+    "kind": "buff",
+    "target": "ally",
+    "shape": "single",
+    "range": 5,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "luz",
+    "fx": {
+     "also": [
+      {
+       "id": "refletindo",
+       "turns": 2
+      }
+     ]
+    },
+    "anim": "buff"
+   }
+  },
+  "laminas": {
+   "innate": {
+    "desc": "Lâminas flutuantes: ataca quem chega perto.",
+    "fx": {
+     "pursuit": true
+    }
+   },
+   "signature": {
+    "name": "Ciclone de Lâminas",
+    "description": "As lâminas giram em volta: dano em todos ao lado.",
+    "kind": "physical",
+    "target": "self",
+    "shape": "radius",
+    "range": 0,
+    "power": 10,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "sangramento",
+     "turns": 2
+    },
+    "radius": 1,
+    "anim": "spin"
+   }
+  },
+  "balas": {
+   "innate": {
+    "desc": "Munição viva: nunca fica sem balas (pente infinito).",
+    "fx": {
+     "reachBonus": 1
+    }
+   },
+   "signature": {
+    "name": "Rajada Viva",
+    "description": "Gasta a própria vida em balas: 5 tiros no alvo.",
+    "kind": "ranged",
+    "target": "enemy",
+    "shape": "single",
+    "range": 7,
+    "power": 4,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "hits": 5,
+     "self": {
+      "id": "sangramento",
+      "turns": 1
+     }
+    },
+    "anim": "volley"
+   }
+  },
+  "ferramentas": {
+   "innate": {
+    "desc": "Ferramentas: itens de campo têm efeito melhor.",
+    "fx": {
+     "healBoost": 0.1
+    }
+   },
+   "signature": {
+    "name": "A Ferramenta Certa",
+    "description": "Conserta e reforça um aliado: cura 25% e fortifica.",
+    "kind": "heal",
+    "target": "ally",
+    "shape": "single",
+    "range": 3,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "healPct": 0.25,
+     "also": [
+      {
+       "id": "fortificado",
+       "turns": 2
+      }
+     ]
+    },
+    "anim": "heal"
+   }
+  },
+  "remedio": {
+   "innate": {
+    "desc": "Remédios: curas 20% mais fortes e removem um veneno.",
+    "fx": {
+     "healBoost": 0.2
+    }
+   },
+   "signature": {
+    "name": "Antídoto Universal",
+    "description": "Cura e limpa todos os aliados numa área.",
+    "kind": "heal",
+    "target": "tile",
+    "shape": "radius",
+    "range": 4,
+    "power": 10,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "cleanse": true,
+     "healPct": 0.1
+    },
+    "radius": 1,
+    "anim": "heal"
+   }
+  },
+  "teia": {
+   "innate": {
+    "desc": "Teia: anda em paredes e não fica preso.",
+    "fx": {
+     "climb": true,
+     "immune": [
+      "preso"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Teia Gigante",
+    "description": "Uma teia grande prende todos numa área.",
+    "kind": "physical",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 3,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "preso",
+     "turns": 2
+    },
+    "fx": {
+     "noDamage": true
+    },
+    "radius": 2,
+    "anim": "orb"
+   }
+  },
+  "muro_terra": {
+   "innate": {
+    "desc": "Muro: sempre tem cobertura por perto (10% menos dano à distância).",
+    "fx": {
+     "reduce": {
+      "ranged": 0.1
+     }
+    }
+   },
+   "signature": {
+    "name": "Muro de Terra",
+    "description": "Ergue um muro de terra de 3 casas.",
+    "kind": "utility",
+    "target": "tile",
+    "shape": "line",
+    "range": 4,
+    "power": 0,
+    "mp": 6,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "terra",
+    "fx": {
+     "build": {
+      "shape": "wall",
+      "length": 3,
+      "height": 2,
+      "turns": 4
+     },
+     "noDamage": true
+    },
+    "anim": "nova"
+   }
+  },
+  "holograma": {
+   "innate": {
+    "desc": "Ilusões: 12% de chance de o golpe acertar uma ilusão.",
+    "fx": {
+     "react": {
+      "on": "any",
+      "do": "dodge",
+      "chance": 12
+     }
+    }
+   },
+   "signature": {
+    "name": "Esquadrão Fantasma",
+    "description": "Ilusões de todo o esquadrão: inimigos numa área se confundem.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 6,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "luz",
+    "status": {
+     "id": "confuso",
+     "turns": 2
+    },
+    "fx": {
+     "noDamage": true
+    },
+    "radius": 2,
+    "anim": "blink"
+   }
+  },
+  "abrigo": {
+   "innate": {
+    "desc": "Abrigo: começa a luta fortificado.",
+    "fx": {
+     "reduce": {
+      "physical": 0.1,
+      "ranged": 0.1
+     }
+    }
+   },
+   "signature": {
+    "name": "Trincheira",
+    "description": "Cava uma trincheira: aliados numa área ficam fortificados.",
+    "kind": "buff",
+    "target": "tile",
+    "shape": "radius",
+    "range": 3,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "also": [
+      {
+       "id": "fortificado",
+       "turns": 3
+      }
+     ]
+    },
+    "radius": 1,
+    "anim": "buff"
+   }
+  },
+  "eco": {
+   "innate": {
+    "desc": "Ouve tudo: vê inimigos escondidos.",
+    "fx": {
+     "seeHidden": true
+    }
+   },
+   "signature": {
+    "name": "Grito de Canhão",
+    "description": "Grito concentrado em linha que atordoa todos.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "line",
+    "range": 7,
+    "power": 10,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "vento",
+    "status": {
+     "id": "atordoado",
+     "turns": 1
+    },
+    "fx": {
+     "through": true
+    },
+    "anim": "shout"
+   }
+  },
+  "rastro": {
+   "innate": {
+    "desc": "Rastreador: +15% de dano contra o alvo marcado.",
+    "fx": {
+     "vs": {
+      "status": "marcado",
+      "mult": 1.15
+     }
+    }
+   },
+   "signature": {
+    "name": "Marca de Caça",
+    "description": "Marca o alvo: ninguém do esquadrão erra contra ele por 3 turnos.",
+    "kind": "utility",
+    "target": "enemy",
+    "shape": "single",
+    "range": 10,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "marcado",
+     "turns": 3
+    },
+    "fx": {
+     "noDamage": true,
+     "also": [
+      {
+       "id": "exposto",
+       "turns": 3
+      }
+     ]
+    },
+    "anim": "arrow"
+   }
+  },
+  "raio_x": {
+   "innate": {
+    "desc": "Vê através: ataques ignoram cobertura.",
+    "fx": {
+     "homing": true
+    }
+   },
+   "signature": {
+    "name": "Ponto Exato",
+    "description": "Atira através da parede no órgão certo: crítico garantido.",
+    "kind": "ranged",
+    "target": "enemy",
+    "shape": "single",
+    "range": 8,
+    "power": 11,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "homing": true,
+     "crit": 100
+    },
+    "anim": "arrow"
+   }
+  },
+  "visao_termica": {
+   "innate": {
+    "desc": "Calor dos corpos: vê escondidos e no escuro.",
+    "fx": {
+     "seeHidden": true,
+     "steadyAim": 5
+    }
+   },
+   "signature": {
+    "name": "Alvo Quente",
+    "description": "Marca todos os inimigos à vista: expostos por 2 turnos.",
+    "kind": "utility",
+    "target": "enemy",
+    "shape": "single",
+    "range": 10,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "randomTargets": 99,
+     "noDamage": true,
+     "also": [
+      {
+       "id": "exposto",
+       "turns": 2
+      }
+     ]
+    },
+    "anim": "arrow"
+   }
+  },
+  "precognicao": {
+   "innate": {
+    "desc": "Vê o futuro: 25% de chance de esquivar qualquer golpe.",
+    "fx": {
+     "react": {
+      "on": "any",
+      "do": "dodge",
+      "chance": 25
+     }
+    }
+   },
+   "signature": {
+    "name": "Já Vi Isso",
+    "description": "Vê o próximo golpe: esquiva garantida e contra-ataque por 2 turnos.",
+    "kind": "buff",
+    "target": "self",
+    "shape": "single",
+    "range": 0,
+    "power": 0,
+    "mp": 8,
+    "cooldown": 4,
+    "strain": 35,
+    "fx": {
+     "self": {
+      "id": "preparado",
+      "turns": 2
+     }
+    },
+    "anim": "buff"
+   }
+  },
+  "leitura_movimento": {
+   "innate": {
+    "desc": "Lê o corpo: contra-ataca 25% dos golpes corpo a corpo.",
+    "fx": {
+     "react": {
+      "on": "melee",
+      "do": "counter",
+      "chance": 25
+     }
+    }
+   },
+   "signature": {
+    "name": "Contra-golpe",
+    "description": "Lê e devolve: golpe que derruba e deixa o alvo vulnerável.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 1,
+    "power": 11,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "derrubado",
+     "turns": 1
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "vulneravel",
+       "turns": 2
+      }
+     ]
+    },
+    "anim": "slash"
+   }
+  },
+  "audicao": {
+   "innate": {
+    "desc": "Ouvido absoluto: ninguém o surpreende.",
+    "fx": {
+     "noSurprise": true,
+     "seeHidden": true
+    }
+   },
+   "signature": {
+    "name": "Batimento",
+    "description": "Ouve o coração do alvo: acerta o momento exato (crítico +50%).",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 6,
+    "power": 11,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "crit": 50,
+     "homing": true
+    },
+    "anim": "arrow"
+   }
+  },
+  "olfato": {
+   "innate": {
+    "desc": "Fareja sangue: +15% de dano contra quem sangra.",
+    "fx": {
+     "vs": {
+      "status": "sangramento",
+      "mult": 1.15
+     },
+     "bloodSense": true
+    }
+   },
+   "signature": {
+    "name": "Faro de Medo",
+    "description": "Fareja o medo: o alvo fica com medo e foge.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 4,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "medo",
+     "turns": 2
+    },
+    "fx": {
+     "noDamage": true
+    },
+    "anim": "orb"
+   }
+  },
+  "radar": {
+   "innate": {
+    "desc": "Radar: vê tudo num raio grande; ninguém o surpreende.",
+    "fx": {
+     "seeHidden": true,
+     "noSurprise": true
+    }
+   },
+   "signature": {
+    "name": "Varredura",
+    "description": "Revela toda a área e deixa os inimigos expostos.",
+    "kind": "utility",
+    "target": "self",
+    "shape": "radius",
+    "range": 0,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "reveal": true,
+     "also": [
+      {
+       "id": "exposto",
+       "turns": 2
+      }
+     ]
+    },
+    "radius": 4,
+    "anim": "nova"
+   }
+  },
+  "visao_distante": {
+   "innate": {
+    "desc": "Binóculos nos olhos: +3 de alcance no ataque básico.",
+    "fx": {
+     "reachBonus": 3
+    }
+   },
+   "signature": {
+    "name": "Olho de Longe",
+    "description": "Tiro do outro lado do mapa, ignorando cobertura.",
+    "kind": "ranged",
+    "target": "enemy",
+    "shape": "single",
+    "range": 14,
+    "power": 11,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "homing": true
+    },
+    "anim": "arrow"
+   }
+  },
+  "ponto_fraco": {
+   "innate": {
+    "desc": "Vê a falha: crítico garantido em quem tem 2 estados negativos.",
+    "fx": {
+     "critIfDebuffs": 2
+    }
+   },
+   "signature": {
+    "name": "Golpe na Falha",
+    "description": "Acerta o ponto fraco: ignora a defesa e quebra a armadura.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 1,
+    "power": 13,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "quebrado",
+     "turns": 3
+    },
+    "fx": {
+     "pierce": 1
+    },
+    "anim": "thrust"
+   }
+  },
+  "empatia": {
+   "innate": {
+    "desc": "Sente os aliados: curas que recebe são 15% mais fortes; aliados ao lado inspirados.",
+    "fx": {
+     "aura": {
+      "radius": 1,
+      "allies": true,
+      "status": {
+       "id": "inspirado",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Acalmar",
+    "description": "Acalma os inimigos numa área: param de atacar (encantados).",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 5,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "encantado",
+     "turns": 1
+    },
+    "fx": {
+     "noDamage": true
+    },
+    "radius": 1,
+    "anim": "heal"
+   }
+  },
+  "telepatia": {
+   "innate": {
+    "desc": "Telepatia: o esquadrão age coordenado (aliados ao lado acertam mais).",
+    "fx": {
+     "aura": {
+      "radius": 2,
+      "allies": true,
+      "status": {
+       "id": "afiado",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Ordem Mental",
+    "description": "Fala na cabeça do alvo: ele ataca os próprios aliados.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 6,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "confuso",
+     "turns": 3
+    },
+    "fx": {
+     "noDamage": true
+    },
+    "anim": "orb"
+   }
+  },
+  "detector": {
+   "innate": {
+    "desc": "Sente Dons: técnicas de Dom inimigas custam mais perto dele (aura silencia às vezes).",
+    "fx": {
+     "aura": {
+      "radius": 1,
+      "status": {
+       "id": "silenciado",
+       "turns": 1,
+       "chance": 25
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Interferência",
+    "description": "Atrapalha o Dom do alvo: silenciado e Stamina drenada.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 6,
+    "power": 4,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "silenciado",
+     "turns": 3
+    },
+    "fx": {
+     "mpBurn": 15
+    },
+    "anim": "orb"
+   }
+  },
+  "sentido_perigo": {
+   "innate": {
+    "desc": "Arrepio: 20% de chance de esquivar e nunca é surpreendido.",
+    "fx": {
+     "react": {
+      "on": "any",
+      "do": "dodge",
+      "chance": 20
+     },
+     "noSurprise": true
+    }
+   },
+   "signature": {
+    "name": "Alerta Geral",
+    "description": "Avisa o esquadrão: todos numa área ganham esquiva (preparados).",
+    "kind": "buff",
+    "target": "self",
+    "shape": "radius",
+    "range": 0,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "also": [
+      {
+       "id": "preparado",
+       "turns": 1
+      }
+     ]
+    },
+    "radius": 3,
+    "anim": "shout"
+   }
+  },
+  "mapa_mental": {
+   "innate": {
+    "desc": "Memória do terreno: +1 de deslocamento e sem terreno difícil.",
+    "fx": {
+     "moveBonus": 1
+    }
+   },
+   "signature": {
+    "name": "Rota Perfeita",
+    "description": "Mostra o caminho: um aliado ganha um movimento extra agora.",
+    "kind": "buff",
+    "target": "ally",
+    "shape": "single",
+    "range": 6,
+    "power": 0,
+    "mp": 6,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "gaugeShift": true
+    },
+    "anim": "buff"
+   }
+  },
+  "analise": {
+   "innate": {
+    "desc": "Analisa: +10% de dano contra o inimigo mais ferido.",
+    "fx": {
+     "vsWeakest": 0.1
+    }
+   },
+   "signature": {
+    "name": "Diagnóstico",
+    "description": "Analisa o alvo: vulnerável e exposto para todos.",
+    "kind": "utility",
+    "target": "enemy",
+    "shape": "single",
+    "range": 8,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "vulneravel",
+     "turns": 3
+    },
+    "fx": {
+     "noDamage": true,
+     "also": [
+      {
+       "id": "exposto",
+       "turns": 3
+      }
+     ]
+    },
+    "anim": "arrow"
+   }
+  },
+  "sincronia": {
+   "innate": {
+    "desc": "Mente ligada: +10% de dano com aliado ao lado do alvo.",
+    "fx": {
+     "flank": 0.1
+    }
+   },
+   "signature": {
+    "name": "Mente Única",
+    "description": "Liga-se a um aliado: o aliado age agora.",
+    "kind": "buff",
+    "target": "ally",
+    "shape": "single",
+    "range": 6,
+    "power": 0,
+    "mp": 8,
+    "cooldown": 4,
+    "strain": 40,
+    "fx": {
+     "gaugeShift": true
+    },
+    "anim": "buff"
+   }
+  },
+  "ecolocalizacao": {
+   "innate": {
+    "desc": "Estalos: vê escondidos e não erra no escuro.",
+    "fx": {
+     "seeHidden": true
+    }
+   },
+   "signature": {
+    "name": "Estalo Atordoante",
+    "description": "Estalo em cone: atordoa e revela.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "cone",
+    "range": 4,
+    "power": 6,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "vento",
+    "status": {
+     "id": "atordoado",
+     "turns": 1
+    },
+    "fx": {
+     "reveal": true
+    },
+    "anim": "shout"
+   }
+  },
+  "leitura_intencao": {
+   "innate": {
+    "desc": "Sabe o que vem: 30% de chance de esquivar de humanos.",
+    "fx": {
+     "react": {
+      "on": "any",
+      "do": "dodge",
+      "chance": 20
+     }
+    }
+   },
+   "signature": {
+    "name": "Antecipar",
+    "description": "Atrapalha o plano do alvo: a barra dele vai a zero.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 6,
+    "power": 3,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "lento",
+     "turns": 1
+    },
+    "fx": {
+     "gaugeShift": true
+    },
+    "anim": "orb"
+   }
+  },
+  "marcador": {
+   "innate": {
+    "desc": "Marcas: alvos que acerta ficam marcados para o esquadrão.",
+    "fx": {
+     "vs": {
+      "status": "marcado",
+      "mult": 1.1
+     }
+    }
+   },
+   "signature": {
+    "name": "Marcar Todos",
+    "description": "Marca todos os inimigos numa área grande.",
+    "kind": "utility",
+    "target": "tile",
+    "shape": "radius",
+    "range": 8,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "marcado",
+     "turns": 3
+    },
+    "fx": {
+     "noDamage": true
+    },
+    "radius": 2,
+    "anim": "arrow"
+   }
+  },
+  "visao_360": {
+   "innate": {
+    "desc": "Vê tudo: não pode ser flanqueado nem atacado pelas costas.",
+    "fx": {
+     "frontGuard": 0.15,
+     "noSurprise": true
+    }
+   },
+   "signature": {
+    "name": "Olhos em Tudo",
+    "description": "Aliados numa área não podem ser surpreendidos e ficam preparados.",
+    "kind": "buff",
+    "target": "self",
+    "shape": "radius",
+    "range": 0,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "also": [
+      {
+       "id": "preparado",
+       "turns": 1
+      }
+     ]
+    },
+    "radius": 2,
+    "anim": "buff"
+   }
+  },
+  "tato_sismico": {
+   "innate": {
+    "desc": "Sente passos: vê inimigos escondidos que estão no chão.",
+    "fx": {
+     "seeHidden": true
+    }
+   },
+   "signature": {
+    "name": "Pulso Sísmico",
+    "description": "Bate no chão: todos os inimigos que pisam ficam expostos e derrubados.",
+    "kind": "magic",
+    "target": "self",
+    "shape": "radius",
+    "range": 0,
+    "power": 5,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "terra",
+    "status": {
+     "id": "derrubado",
+     "turns": 1
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "exposto",
+       "turns": 2
+      }
+     ]
+    },
+    "radius": 3,
+    "anim": "nova"
+   }
+  },
+  "calculo_balistico": {
+   "innate": {
+    "desc": "Trajetórias perfeitas: tiros ignoram cobertura.",
+    "fx": {
+     "homing": true,
+     "steadyAim": 5
+    }
+   },
+   "signature": {
+    "name": "Tiro em Curva",
+    "description": "Tiro que faz curva e ricocheteia em 2 inimigos.",
+    "kind": "ranged",
+    "target": "enemy",
+    "shape": "single",
+    "range": 9,
+    "power": 11,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "homing": true,
+     "chain": 2,
+     "chainMult": 0.8
+    },
+    "anim": "arrow"
+   }
+  },
+  "hipercognicao": {
+   "innate": {
+    "desc": "Pensa rápido: a barra de ação enche 15% mais rápido.",
+    "fx": {
+     "haste": 0.15
+    }
+   },
+   "signature": {
+    "name": "Mil Pensamentos",
+    "description": "Pensa tão rápido que age de novo agora e reduz recargas.",
+    "kind": "buff",
+    "target": "self",
+    "shape": "single",
+    "range": 0,
+    "power": 0,
+    "mp": 10,
+    "cooldown": 5,
+    "strain": 50,
+    "fx": {
+     "extraTurn": true,
+     "reduceCooldowns": 1
+    },
+    "anim": "buff"
+   }
+  },
+  "troca": {
+   "innate": {
+    "desc": "Troca: quando um aliado ao lado é atacado, às vezes troca de lugar com ele.",
+    "fx": {
+     "intercept": {
+      "radius": 1,
+      "pct": 0.2
+     }
+    }
+   },
+   "signature": {
+    "name": "Troca Forçada",
+    "description": "Troca de lugar com um inimigo e o deixa confuso.",
+    "kind": "utility",
+    "target": "enemy",
+    "shape": "single",
+    "range": 7,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "confuso",
+     "turns": 1
+    },
+    "fx": {
+     "swap": true,
+     "noDamage": true
+    },
+    "anim": "blink"
+   }
+  },
+  "pausa": {
+   "innate": {
+    "desc": "Tempo parado: imune a lentidão.",
+    "fx": {
+     "immune": [
+      "lento"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Pausa",
+    "description": "Para o tempo do alvo: barra de ação a zero e congelado no lugar.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 7,
+    "power": 0,
+    "mp": 14,
+    "cooldown": 5,
+    "strain": 55,
+    "status": {
+     "id": "imobilizado",
+     "turns": 2
+    },
+    "fx": {
+     "gaugeShift": true,
+     "noDamage": true,
+     "also": [
+      {
+       "id": "sem_reacao",
+       "turns": 2
+      }
+     ]
+    },
+    "anim": "blink"
+   }
+  },
+  "teletransporte": {
+   "innate": {
+    "desc": "Teleporte: nunca provoca ataque de oportunidade.",
+    "fx": {
+     "noOpportunity": true
+    }
+   },
+   "signature": {
+    "name": "Salto Espacial",
+    "description": "Teletransporta para qualquer lugar à vista e golpeia quem estiver ao lado.",
+    "kind": "physical",
+    "target": "tile",
+    "shape": "single",
+    "range": 8,
+    "power": 9,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "teleport": true,
+     "burstAround": {
+      "radius": 1,
+      "power": 9,
+      "around": "self"
+     }
+    },
+    "anim": "blink"
+   }
+  },
+  "duplicacao": {
+   "innate": {
+    "desc": "Dividido: começa a luta com uma duplicata.",
+    "fx": {
+     "onCastSelf": {
+      "status": {
+       "id": "duplicatas",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Dois de Mim",
+    "description": "Divide-se em dois: duplicatas e ação extra.",
+    "kind": "buff",
+    "target": "self",
+    "shape": "single",
+    "range": 0,
+    "power": 0,
+    "mp": 10,
+    "cooldown": 5,
+    "strain": 45,
+    "fx": {
+     "self": {
+      "id": "duplicatas",
+      "turns": 3
+     },
+     "extraTurn": true
+    },
+    "anim": "summon"
+   }
+  },
+  "intangibilidade": {
+   "innate": {
+    "desc": "Intangível às vezes: 20% de chance de golpes físicos atravessarem.",
+    "fx": {
+     "react": {
+      "on": "physical",
+      "do": "negate",
+      "chance": 20
+     }
+    }
+   },
+   "signature": {
+    "name": "Atravessar",
+    "description": "Fica intangível por 2 turnos e atravessa paredes.",
+    "kind": "buff",
+    "target": "self",
+    "shape": "single",
+    "range": 0,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 4,
+    "strain": 40,
+    "fx": {
+     "self": {
+      "id": "intangivel",
+      "turns": 2
+     }
+    },
+    "anim": "blink"
+   }
+  },
+  "sorte": {
+   "innate": {
+    "desc": "Sorte: +10% de crítico e +8 de esquiva.",
+    "fx": {
+     "critBonus": 10,
+     "evasion": 8
+    }
+   },
+   "signature": {
+    "name": "Golpe de Sorte",
+    "description": "Tudo dá certo: crítico garantido, e se derrubar, recarrega as técnicas.",
+    "kind": "physical",
+    "target": "enemy",
+    "shape": "single",
+    "range": 5,
+    "power": 12,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "crit": 100
+    },
+    "anim": "slash"
+   }
+  },
+  "reversao": {
+   "innate": {
+    "desc": "Reverte: uma vez por luta, volta de um golpe fatal com 1 de vida.",
+    "fx": {
+     "cheatDeath": true
+    }
+   },
+   "signature": {
+    "name": "Voltar no Tempo",
+    "description": "Volta um aliado para onde estava e desfaz as feridas recentes.",
+    "kind": "heal",
+    "target": "ally",
+    "shape": "single",
+    "range": 6,
+    "power": 0,
+    "mp": 12,
+    "cooldown": 5,
+    "strain": 50,
+    "fx": {
+     "rewind": true,
+     "healPct": 0.4,
+     "cleanse": true
+    },
+    "anim": "blink"
+   }
+  },
+  "copia": {
+   "innate": {
+    "desc": "Cópia: técnicas custam 10% menos.",
+    "fx": {
+     "mpDiscount": {
+      "pct": 0.1
+     }
+    }
+   },
+   "signature": {
+    "name": "Toque Copiador",
+    "description": "Toca o alvo, rouba os reforços dele (invertidos) e drena a Stamina.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 1,
+    "power": 7,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "invertBuffs": true,
+     "mpBurn": 15,
+     "lifesteal": 0.3
+    },
+    "anim": "claw"
+   }
+  },
+  "anulacao": {
+   "innate": {
+    "desc": "Olhar anulador: inimigos ao lado têm o Dom silenciado às vezes.",
+    "fx": {
+     "aura": {
+      "radius": 1,
+      "status": {
+       "id": "silenciado",
+       "turns": 1,
+       "chance": 35
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Apagar o Dom",
+    "description": "Apaga o Dom do alvo: silenciado, sem reforços e Stamina máxima cortada.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 6,
+    "power": 0,
+    "mp": 12,
+    "cooldown": 5,
+    "strain": 50,
+    "status": {
+     "id": "silenciado",
+     "turns": 3
+    },
+    "fx": {
+     "dispel": true,
+     "maxMpCut": 0.5,
+     "noDamage": true
+    },
+    "anim": "beam"
+   }
+  },
+  "probabilidade": {
+   "innate": {
+    "desc": "Mexe nas chances: inimigos erram mais (+10 de esquiva).",
+    "fx": {
+     "evasion": 10
+    }
+   },
+   "signature": {
+    "name": "Azar",
+    "description": "O alvo fica com todo o azar: vulnerável, exposto e cai.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 6,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "vulneravel",
+     "turns": 3
+    },
+    "fx": {
+     "noDamage": true,
+     "also": [
+      {
+       "id": "derrubado",
+       "turns": 1
+      },
+      {
+       "id": "exposto",
+       "turns": 3
+      }
+     ]
+    },
+    "anim": "orb"
+   }
+  },
+  "portais": {
+   "innate": {
+    "desc": "Portais: anda pelo campo sem provocar ataques e +2 de deslocamento.",
+    "fx": {
+     "noOpportunity": true,
+     "moveBonus": 2
+    }
+   },
+   "signature": {
+    "name": "Portal",
+    "description": "Abre um portal: um aliado troca de lugar com ele.",
+    "kind": "utility",
+    "target": "ally",
+    "shape": "single",
+    "range": 10,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "fx": {
+     "swap": true,
+     "noDamage": true
+    },
+    "anim": "blink"
+   }
+  },
+  "espaco": {
+   "innate": {
+    "desc": "Espaço comprimido: ataque básico alcança +2.",
+    "fx": {
+     "reachBonus": 2
+    }
+   },
+   "signature": {
+    "name": "Compressão",
+    "description": "Encolhe o espaço: puxa todos numa área grande para o centro e os prende.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 7,
+    "power": 8,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "imobilizado",
+     "turns": 1
+    },
+    "fx": {
+     "vortex": 3
+    },
+    "radius": 3,
+    "anim": "nova"
+   }
+  },
+  "inversao": {
+   "innate": {
+    "desc": "Inversão: às vezes um golpe recebido vira cura.",
+    "fx": {
+     "absorb": [
+      "sombra"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Inverter",
+    "description": "Inverte o alvo: reforços viram penalidades e cura vira dano.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 6,
+    "power": 8,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "confuso",
+     "turns": 1
+    },
+    "fx": {
+     "invertBuffs": true
+    },
+    "anim": "orb"
+   }
+  },
+  "vinculo_dor": {
+   "innate": {
+    "desc": "Dor compartilhada: rouba 10% do dano causado como vida.",
+    "fx": {
+     "lifesteal": 0.1
+    }
+   },
+   "signature": {
+    "name": "Laço de Dor",
+    "description": "Liga a dor de 2 inimigos: dano em um fere o outro.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 6,
+    "power": 6,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "sombra",
+    "status": {
+     "id": "condenado",
+     "turns": 2
+    },
+    "fx": {
+     "link": 2
+    },
+    "anim": "beam"
+   }
+  },
+  "sono": {
+   "innate": {
+    "desc": "Toque do sono: imune a sono.",
+    "fx": {
+     "immune": [
+      "sono"
+     ]
+    }
+   },
+   "signature": {
+    "name": "Toque do Sono",
+    "description": "Encosta e o alvo dorme profundamente.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 1,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "sono",
+     "turns": 4
+    },
+    "fx": {
+     "noDamage": true
+    },
+    "anim": "claw"
+   }
+  },
+  "memoria": {
+   "innate": {
+    "desc": "Apaga lembranças: inimigos que o atacam esquecem às vezes (perdem a vez).",
+    "fx": {
+     "react": {
+      "on": "any",
+      "do": "status",
+      "chance": 20,
+      "status": {
+       "id": "confuso",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Esquecer",
+    "description": "O alvo esquece o que ia fazer: perde a vez e as recargas reiniciam.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 6,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "atordoado",
+     "turns": 1
+    },
+    "fx": {
+     "gaugeShift": true,
+     "noDamage": true
+    },
+    "anim": "orb"
+   }
+  },
+  "sombra_viva": {
+   "innate": {
+    "desc": "Sombra viva: ataca junto quem ele atacar (+10% de dano).",
+    "fx": {
+     "physBoost": 0.1,
+     "magicBoost": 0.1
+    }
+   },
+   "signature": {
+    "name": "Sombra Assassina",
+    "description": "A sombra ataca o alvo pelas costas 3 vezes.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 6,
+    "power": 5,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "sombra",
+    "status": {
+     "id": "cegado",
+     "turns": 1
+    },
+    "fx": {
+     "hits": 3,
+     "backstab": 0.3
+    },
+    "anim": "claw"
+   }
+  },
+  "gravidade_zero": {
+   "innate": {
+    "desc": "Flutua: voa sobre terreno e altura.",
+    "fx": {
+     "fly": true
+    }
+   },
+   "signature": {
+    "name": "Gravidade Zero",
+    "description": "Desliga a gravidade numa área: todos flutuam indefesos (expostos e sem alcance).",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 6,
+    "power": 4,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "exposto",
+     "turns": 2
+    },
+    "fx": {
+     "also": [
+      {
+       "id": "sem_alcance",
+       "turns": 1
+      },
+      {
+       "id": "voando",
+       "turns": 2
+      }
+     ]
+    },
+    "radius": 2,
+    "anim": "nova"
+   }
+  },
+  "espelho_dom": {
+   "innate": {
+    "desc": "Espelho: devolve 40% do dano das técnicas de Dom recebidas.",
+    "fx": {
+     "react": {
+      "on": "magic",
+      "do": "reflect",
+      "chance": 40
+     }
+    }
+   },
+   "signature": {
+    "name": "Devolver o Dom",
+    "description": "Fica refletindo tudo por 3 turnos.",
+    "kind": "buff",
+    "target": "self",
+    "shape": "single",
+    "range": 0,
+    "power": 0,
+    "mp": 10,
+    "cooldown": 5,
+    "strain": 45,
+    "fx": {
+     "self": {
+      "id": "refletindo",
+      "turns": 3
+     }
+    },
+    "anim": "buff"
+   }
+  },
+  "distorcao": {
+   "innate": {
+    "desc": "Distorção: 15% de chance de qualquer golpe errar (nada está onde parece).",
+    "fx": {
+     "react": {
+      "on": "any",
+      "do": "dodge",
+      "chance": 15
+     }
+    }
+   },
+   "signature": {
+    "name": "Miragem",
+    "description": "Distorce a área: inimigos confusos e cegos.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 6,
+    "power": 0,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "confuso",
+     "turns": 2
+    },
+    "fx": {
+     "noDamage": true,
+     "also": [
+      {
+       "id": "cegado",
+       "turns": 1
+      }
+     ]
+    },
+    "radius": 2,
+    "anim": "blink"
+   }
+  },
+  "atraso": {
+   "innate": {
+    "desc": "Toque lento: inimigos que acerta ficam lentos.",
+    "fx": {
+     "onCastSelf": {
+      "status": {
+       "id": "afiado",
+       "turns": 1
+      }
+     }
+    }
+   },
+   "signature": {
+    "name": "Câmera Lenta",
+    "description": "Atrasa o tempo de todos numa área: lentos e barras para trás.",
+    "kind": "magic",
+    "target": "tile",
+    "shape": "radius",
+    "range": 6,
+    "power": 3,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "status": {
+     "id": "lento",
+     "turns": 3
+    },
+    "fx": {
+     "gaugeShift": true
+    },
+    "radius": 2,
+    "anim": "nova"
+   }
+  },
+  "aceleracao": {
+   "innate": {
+    "desc": "Tempo acelerado: a barra de ação enche 25% mais rápido.",
+    "fx": {
+     "haste": 0.25
+    }
+   },
+   "signature": {
+    "name": "Acelerar",
+    "description": "Acelera o próprio tempo: ação extra agora e veloz por 3 turnos.",
+    "kind": "buff",
+    "target": "self",
+    "shape": "single",
+    "range": 0,
+    "power": 0,
+    "mp": 12,
+    "cooldown": 5,
+    "strain": 55,
+    "fx": {
+     "extraTurn": true,
+     "self": {
+      "id": "veloz",
+      "turns": 3
+     }
+    },
+    "anim": "buff"
+   }
+  },
+  "desmaterializar": {
+   "innate": {
+    "desc": "Desmancha: golpes ignoram 30% da defesa.",
+    "fx": {
+     "pierce": 0.3
+    }
+   },
+   "signature": {
+    "name": "Desmanchar",
+    "description": "Desmancha a matéria do alvo: dano igual a 35% da vida atual e destrói o que estiver no caminho.",
+    "kind": "magic",
+    "target": "enemy",
+    "shape": "single",
+    "range": 4,
+    "power": 8,
+    "mp": 9,
+    "cooldown": 3,
+    "strain": 35,
+    "element": "sombra",
+    "fx": {
+     "currentHpPct": 0.35,
+     "pierce": 1,
+     "destroyProps": true
+    },
+    "anim": "beam"
+   }
+  }
+ }
+}

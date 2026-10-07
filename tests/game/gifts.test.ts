@@ -3,7 +3,7 @@ import { DB } from '@game/data';
 import { GIFTS, buildGiftTree, giftDef, giftTreeId, OVERLOADS, AWAKENINGS } from '@game/rules/gifts';
 
 describe('Dons: catálogo e árvores', () => {
-  it('centenas de Dons, cada um com overload, despertar e árvore de 13 técnicas instaladas', () => {
+  it('centenas de Dons, cada um com overload, despertar e árvore de 14 técnicas instaladas (com assinatura)', () => {
     expect(GIFTS.length).toBeGreaterThanOrEqual(170);
     for (const g of GIFTS) {
       expect(OVERLOADS[g.overload], g.id).toBeTruthy();
@@ -11,7 +11,7 @@ describe('Dons: catálogo e árvores', () => {
       const t = DB.auxTrees[giftTreeId(g.id)]!;
       expect(t, g.id).toBeTruthy();
       const ids = t.nodes.flatMap((n) => n.skills.map((s) => s.id));
-      expect(ids).toHaveLength(13);
+      expect(ids).toHaveLength(14);
       for (const id of ids) expect(DB.skills[id], id).toBeTruthy();
     }
   });

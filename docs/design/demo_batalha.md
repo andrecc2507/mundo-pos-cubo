@@ -22,7 +22,12 @@ missões, globo nem vila. Para abrir: menu principal → **⚔ Demo de batalha**
      - **Classes**: a teia única. A sua classe vem primeiro; subclasses de outra classe pedem
        treino cruzado (NV 5). As fusões aparecem no fim.
      - **Dom**: a passiva inata mais 4 filosofias (Impacto, Movimento, Suporte, Controle) com 3
-       técnicas cada; mostra Strain e custo.
+       técnicas cada, e a **Assinatura** (NV 4); mostra Strain e custo.
+     - **Dons únicos**: cada um dos 179 Dons tem uma passiva inata com efeito próprio (imunidade,
+       regeneração, voo, reação, roubo de vida…) e uma técnica-assinatura que só ele faz
+       (`data/gifts/signatures.json`, gerado por `tools/gen_signatures.py`). As 4 filosofias
+       seguem o molde da família; a identidade do Dom está na inata e na assinatura. A assinatura
+       conta no limite de técnicas do potencial.
      - **Armas**: Sniper, Assalto, Pesado e Especialista. Avisa quando uma técnica pede outro tipo
        de arma.
    - Clique numa habilidade para ver o que ela faz e por que está trancada. Clicar de novo, se ela
