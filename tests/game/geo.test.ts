@@ -96,7 +96,7 @@ describe('relógio, contratos e economia', () => {
 
   it('mandar, chegar, lutar, voltar: recompensa, XP e reputação', () => {
     const g = newGeoGame(spec(4));
-    const c = g.contracts.find((x) => !x.intercontinental && x.status === 'open')!;
+    const c = g.contracts.find((x) => !x.intercontinental && x.status === 'open' && x.money > 0)!;
     const members = Object.keys(g.roster).slice(0, 4);
     expect(dispatchBlock(g, c, members)).toBeNull();
     const sq = dispatch(g, c, members)!;

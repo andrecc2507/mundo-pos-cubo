@@ -16,7 +16,7 @@ import { generateVillageMap } from '../mapgen/village_map';
 import { VILLAIN_LINES, makeBeast, makeVillain } from '../demo/demo_squad';
 import type { Biome } from '../data';
 import { GEO_RULES, SUPPLIES, addLog, awayIds, difficulty, newId, type GeoAlert, type GeoGame, type Raid, type RoadEncounter, type Squad } from './game';
-import { contractLevel } from './contracts';
+import { contractLevel, squadLevel } from './contracts';
 import { applyUnitOutcomes, checkGameOver, emptySummary, makeRecruit, makeSpecialist, type GeoResultSummary } from './people';
 import { PEOPLE_RULES, PROFESSIONS } from '../rules/perks';
 import { changeRep, isHostile, POLITICS } from './politics';
@@ -48,7 +48,7 @@ export function startRaid(g: GeoGame, rng: Rng): Raid {
   const home = regionById(g.village.regionId)!;
   const hostileNear = REGIONS.filter((r) => r.continent === home.continent && isHostile(g, r.id));
   const kind: Raid['kind'] = hostileNear.length && rng.chance(0.5) ? 'expedicao' : rng.chance(0.6) ? 'bando' : 'bestas';
-  const raid: Raid = { level: contractLevel(g, home.tier, rng), kind, gov: kind === 'expedicao' ? rng.pick(hostileNear).id : undefined, size: 4 + g.village.stage + rng.int(0, 2) };
+  const raid: Raid = { level: Math.min(contractLevel(g, home.tier, rng), Math.round(squadLevel(g) + RA.levelOverSquad + difficulty(g).enemyLevel)), kind, gov: kind === 'expedicao' ? rng.pick(hostileNear).id : undefined, size: RA.baseSize + g.village.stage + rng.int(0, 2) };
   g.raid = raid;
   scheduleRaid(g, rng);
   addLog(g, `🚨 Ataque à vila: ${raidLabel(g, raid)}!`, 'bad');

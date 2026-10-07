@@ -547,6 +547,8 @@ export interface UnitOutcome {
   killedBy?: { name: string; enemyId?: string };
   /** Traiu o esquadrão no meio da luta. */
   betrayed?: boolean;
+  /** Terminou a luta caído, ainda sangrando (não morreu de vez). */
+  bleeding?: boolean;
   /** Posição no fim da luta (vínculos: quem terminou lado a lado). */
   x?: number;
   y?: number;

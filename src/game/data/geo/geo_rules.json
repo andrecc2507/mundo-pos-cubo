@@ -56,13 +56,17 @@
   "radiusKmPerReputation": 80,
   "intercontinentalChance": 0.18,
   "intercontinentalMinRep": 15,
-  "levelBase": 2,
-  "levelPerTier": 2,
-  "levelPerDays": 0.12,
+  "levelBase": 0,
+  "levelPerTier": 1,
+  "levelPerDays": 0.035,
   "failRepLoss": 6,
   "expireRepLoss": 2,
   "successRep": 5,
-  "intercontinentalPayMult": 1.6
+  "intercontinentalPayMult": 1.6,
+  "enemyCountBonus": -1,
+  "enemyCountPerTier": 0.5,
+  "localChance": 0.4,
+  "localLevelOffset": -0.5
  },
  "recruits": {
   "everyHours": 120,
@@ -73,7 +77,9 @@
   "levelSpread": 2
  },
  "wounds": {
-  "hoursPerDay": 24
+  "hoursPerDay": 24,
+  "carryOutOnFlee": true,
+  "_doc": " carryOutOnFlee: ao recuar, quem ainda sangra volta carregado (gravemente ferido)."
  },
  "squad": {
   "max": 6
@@ -180,8 +186,8 @@
  "raids": {
   "_doc": "Ataques à vila: um a cada everyDays (sorteio), mais cedo em região perigosa. Quem está em casa pode defender (batalha no mapa da vila; muros dão guardas e barreiras); sem defesa, a vila resolve sozinha pela força dos muros.",
   "everyDays": [
-   7,
-   13
+   10,
+   18
   ],
   "tierHaste": 0.6,
   "maxDefenders": 6,
@@ -191,9 +197,11 @@
   "lossMoneyPct": 0.15,
   "lossPopPct": 0.1,
   "winRep": 3,
-  "autoBaseChance": 0.2,
+  "autoBaseChance": 0.3,
   "autoPerDefense": 0.22,
-  "autoPerPopulation": 0.002
+  "autoPerPopulation": 0.002,
+  "baseSize": 3,
+  "levelOverSquad": 1
  },
  "encounters": {
   "_doc": "Encontros na estrada (só por terra). chancePerHour × perigo da região (tier/3). Batalha: emboscada, bestas, caçadores (governo hostil). Sem batalha: escolha.",
@@ -263,7 +271,7 @@
   }
  },
  "difficulties": {
-  "_doc": "Dificuldade do jogo base (a morte é permanente em todas). food: consumo de comida; pay: paga dos contratos; enemyLevel: nível a mais nos inimigos; raidEvery: intervalo dos ataques (maior = mais raro); encounters: chance de encontros; start: recursos iniciais.",
+  "_doc": "Dificuldade do jogo base (a morte é permanente em todas). food: consumo de comida; pay: paga dos contratos; enemyLevel: nível a mais nos inimigos; enemyCount: inimigos a mais por luta; raidEvery: intervalo dos ataques (maior = mais raro); encounters: chance de encontros; start: recursos iniciais.",
   "historia": {
    "name": "História",
    "desc": "Para conhecer o mundo: comida rende, contratos pagam mais, inimigos mais fracos, ataques raros.",
@@ -272,7 +280,8 @@
    "enemyLevel": -2,
    "raidEvery": 1.6,
    "encounters": 0.6,
-   "start": 1.5
+   "start": 1.5,
+   "enemyCount": -1
   },
   "normal": {
    "name": "Normal",
@@ -282,7 +291,8 @@
    "enemyLevel": 0,
    "raidEvery": 1,
    "encounters": 1,
-   "start": 1
+   "start": 1,
+   "enemyCount": 0
   },
   "dificil": {
    "name": "Difícil",
@@ -292,7 +302,8 @@
    "enemyLevel": 2,
    "raidEvery": 0.7,
    "encounters": 1.4,
-   "start": 0.8
+   "start": 0.8,
+   "enemyCount": 1
   }
  }
 }

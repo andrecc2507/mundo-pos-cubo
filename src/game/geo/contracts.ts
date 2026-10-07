@@ -68,9 +68,20 @@ export function maxOpenContracts(g: GeoGame): number {
   return C.maxOpen + effect(g, 'contractBonus');
 }
 
-/** Nível dos inimigos do contrato: perigo da região + o tempo de jogo. */
-export function contractLevel(g: GeoGame, regionTier: number, rng: Rng): number {
-  return Math.max(1, Math.round(C.levelBase + regionTier * C.levelPerTier + dayOf(g) * C.levelPerDays + difficulty(g).enemyLevel + rng.int(-1, 1)));
+/** Nível médio dos 4 heróis mais fortes (o "nível do grupo"). */
+export function squadLevel(g: GeoGame): number {
+  const lv = Object.values(g.roster).map((c) => c.level).sort((a, b) => b - a).slice(0, 4);
+  return lv.length ? lv.reduce((a, b) => a + b, 0) / lv.length : 1;
+}
+
+/**
+ * Nível dos inimigos: perigo da região + o tempo de jogo. Com `local`, é um serviço do tamanho do
+ * grupo (perto do nível dele) — a válvula para quem perdeu gente não ficar sem trabalho.
+ */
+export function contractLevel(g: GeoGame, regionTier: number, rng: Rng, local = false): number {
+  const curve = C.levelBase + regionTier * C.levelPerTier + dayOf(g) * C.levelPerDays + difficulty(g).enemyLevel;
+  const base = local ? Math.min(curve, squadLevel(g) + C.localLevelOffset + difficulty(g).enemyLevel / 2) : curve;
+  return Math.max(1, Math.round(base + rng.int(-1, 1)));
 }
 
 /**
@@ -136,7 +147,7 @@ export function spawnContract(g: GeoGame, rng: Rng, opts: { internal?: boolean; 
   const sources = def.sources.filter((s) => (internal ? SOURCES[s]?.internal : !SOURCES[s]?.internal));
   const source = internal ? 'vila' : against ? 'governo' : rng.pick(sources.length ? sources : ['comunidade']);
   const src = SOURCES[source]!;
-  const level = contractLevel(g, region.tier, rng);
+  const level = contractLevel(g, region.tier, rng, region.id === homeRegion.id && rng.chance(C.localChance));
   const lvMult = 1 + (level - 1) * 0.08;
   const interMult = inter ? C.intercontinentalPayMult : 1;
   const civil = def.vip || def.desc.includes('{civil}') ? rng.pick(GEO_RULES.names.civilians) : undefined;
@@ -224,7 +235,7 @@ export function contractBattle(g: GeoGame, c: Contract, squad: BattleUnit[], rng
   const map = biome === 'cidade' ? generateUrbanMap({ seed }) : generateMap({ biome: (BIOMES.includes(biome as Biome) ? biome : 'planicie') as Biome, seed, w: rng.int(14, 17), h: rng.int(13, 16) });
   const lv = c.level;
   const pool = beastPool(biome, lv);
-  const count = Math.max(3, Math.min(9, squad.length + 1 + Math.floor(region.tier / 2)));
+  const count = Math.max(2, Math.min(9, squad.length + C.enemyCountBonus + Math.floor(region.tier * C.enemyCountPerTier) + (difficulty(g).enemyCount ?? 0)));
   const weights = Object.entries(def.enemies) as ['vilao' | 'miliciano' | 'besta', number][];
   const total = weights.reduce((a, [, w]) => a + w, 0);
   const one = (): BattleUnit => {

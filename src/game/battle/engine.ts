@@ -2468,6 +2468,7 @@ export function buildResult(state: BattleState, context: BattleContext): BattleR
         feats: u.feats,
         castLog: u.castLog ? { ...u.castLog } : undefined,
         betrayed: u.betrayed,
+        bleeding: !u.alive && (u.downed ?? 0) > 0 ? true : undefined,
         killedBy: u.killedBy,
         x: u.x,
         y: u.y,

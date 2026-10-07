@@ -216,6 +216,14 @@ export function applyUnitOutcomes(g: GeoGame, result: BattleResult, sum: GeoResu
     ch.kills += u.kills;
     g.stats.kills += u.kills;
     ch.equipment.utility = [...u.items];
+    // Recuo: quem ainda sangrava é carregado pelos que fugiram e volta gravemente ferido.
+    if (!u.alive && u.bleeding && result.outcome === 'fled' && anySurvivor && GEO_RULES.wounds.carryOutOnFlee) {
+      ch.hp = 1;
+      ch.woundDays = Math.max(ch.woundDays, stats.BALANCE.wounds.daysAtZero);
+      ch.severeWound = true;
+      sum.lines.push(`${ch.name} caiu sangrando — os outros o carregaram na fuga.`);
+      continue;
+    }
     if (!u.alive) {
       // O protagonista só cai de vez se o esquadrão inteiro cair.
       if (u.charId === g.protagonistId && anySurvivor) {

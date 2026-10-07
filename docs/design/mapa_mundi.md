@@ -266,6 +266,47 @@ alteradas do bestiário que combinam com o terreno.
 
 A **morte é permanente em todas**. A dificuldade é escolhida na criação, no passo da vila.
 
+## Equilíbrio (simulação longa)
+
+`tests/sim/geo_sim.test.ts` joga o geoscape sozinho por centenas de dias em cada dificuldade: pega
+contratos do tamanho do grupo, constrói (hortas primeiro), contrata, compra armas, poupa para o
+próximo estágio, defende a vila e recua quando a luta vira. As lutas rodam com a IA dos dois lados
+(o que é mais pessimista que um jogador de verdade). `tests/sim/geo_battle_grid.test.ts` mede a
+taxa de vitória por nível e quantidade de inimigos.
+
+```
+SIM=1 SIM_N=10 SIM_DAYS=240 npx vitest run tests/sim/geo_sim.test.ts   # resumo em /tmp/claude-0/geo_sim.txt
+```
+
+O que a primeira rodada mostrou e o que mudou (`data/geo/geo_rules.json`):
+
+- **Contratos começavam no NV 4 contra um grupo NV 1, com um inimigo a mais.** Agora
+  `levelBase` 0, `levelPerTier` 1, `levelPerDays` 0,035 (a curva acompanha o grupo, que sobe ~1
+  nível a cada 25–30 dias) e `enemyCountBonus` −1 (um inimigo a menos que o esquadrão, +½ por
+  perigo da região, ±1 pela dificuldade em `difficulties.*.enemyCount`).
+- **Espiral da derrota.** Quem perdia gente cedo ficava só com contratos fortes demais, sem XP nem
+  dinheiro. Agora 40% dos contratos na região da vila são **serviços locais** (`localChance`), com
+  nível perto do grupo (`squadLevel` − ½). Ataques à vila não passam de `squadLevel` + 1
+  (`raids.levelOverSquad`).
+- **~1 morte por luta.** Quem cai sangrando numa fuga agora é **carregado** pelos que fogem e volta
+  gravemente ferido (`wounds.carryOutOnFlee`). Morrer continua permanente: quem sangra até o fim,
+  ou fica para trás numa derrota total, morre.
+- **Ataques demais.** De 7–13 para 10–18 dias (`raids.everyDays`); ataques com 3 + estágio inimigos
+  (`raids.baseSize`); a vila sem defensores resiste em 30% + muros (`autoBaseChance`).
+
+Resultado (40 partidas de 240 dias por dificuldade, piloto automático):
+
+| Dificuldade | Sobrevive | Contratos V/D | Mortes | NV do grupo |
+|---|---|---|---|---|
+| História | 100% | ~140 / 12 | ~2,5 | ~11 |
+| Normal | ~60% | ~45 / 25 | ~4 | ~7 |
+| Difícil | ~30% | ~12 / 20 | ~4 | ~5 |
+
+Quase todo fim de jogo no Normal/Difícil é o esquadrão do protagonista caindo inteiro numa fuga
+que falhou — o piloto automático leva o protagonista em toda missão. A fome deixou de matar
+quando a vila faz hortas cedo (a vila começa com −6 de comida por dia: a primeira horta é a
+primeira decisão).
+
 ## Código
 
 | Módulo | O que tem |

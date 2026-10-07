@@ -8,7 +8,7 @@ import { applyEncounterResult, applyRaidResult, defendersAvailable, encounterBat
 import { withRng } from '@game/geo/game';
 import { applyContractResult } from '@game/geo/people';
 import { changeRep, isHostile, landing, stance } from '@game/geo/politics';
-import { spawnContract } from '@game/geo/contracts';
+import { contractLevel, spawnContract, squadLevel } from '@game/geo/contracts';
 import { tick } from '@game/geo/sim';
 import { dispatch, dispatchBlock, planRoute } from '@game/geo/squads';
 
@@ -209,5 +209,48 @@ describe('técnicas de dupla e legado', () => {
     const { units } = squadUnits(g, [ids[0]!]);
     expect(units[0]!.crit).toBe(base.crit + 6);
     expect(units[0]!.move).toBe(base.move + 1);
+  });
+});
+
+describe('equilíbrio (simulação longa)', () => {
+  it('serviço local fica perto do nível do grupo; a curva normal sobe com o tempo', () => {
+    const g = newGeoGame(spec(11));
+    g.hours = 24 * 200;
+    const rng = new Rng(3);
+    const lv = squadLevel(g);
+    for (let i = 0; i < 30; i++) expect(contractLevel(g, 3, rng, true)).toBeLessThanOrEqual(Math.round(lv + 1));
+    const far = Array.from({ length: 30 }, () => contractLevel(g, 3, rng));
+    expect(Math.min(...far)).toBeGreaterThan(lv + 3);
+  });
+
+  it('ataque à vila não passa muito do nível do grupo', () => {
+    const g = newGeoGame(spec(12));
+    g.hours = 24 * 300;
+    const r = withRng(g, (rng) => startRaid(g, rng));
+    expect(r.level).toBeLessThanOrEqual(Math.round(squadLevel(g) + 1));
+  });
+
+  it('ao recuar, quem ainda sangra volta carregado e gravemente ferido', () => {
+    const g = newGeoGame(spec(13));
+    const c = g.contracts.find((x) => x.status === 'open')!;
+    const ids = Object.keys(g.roster).slice(0, 3);
+    const sq = dispatch(g, c, ids)!;
+    const base = { mp: 0, maxHp: 100, startHp: 100, kills: 0, killXp: 0, items: [] };
+    const sum = applyContractResult(g, {
+      outcome: 'fled',
+      context: { kind: 'contract', squadId: sq.id, contractId: c.id, baseXp: 0, gold: 0, itemDrops: [], title: 't' },
+      rounds: 3,
+      defeated: [],
+      captured: [],
+      units: [
+        { ...base, charId: ids[0]!, alive: true, hp: 50 },
+        { ...base, charId: ids[1]!, alive: false, hp: 0, bleeding: true },
+        { ...base, charId: ids[2]!, alive: false, hp: 0 },
+      ],
+    } as never);
+    expect(g.roster[ids[1]!]).toBeTruthy();
+    expect(g.roster[ids[1]!]!.severeWound).toBe(true);
+    expect(sum.lines.some((l) => l.includes('carregaram'))).toBe(true);
+    expect(sum.dead).toHaveLength(ids[2] === g.protagonistId ? 0 : 1);
   });
 });

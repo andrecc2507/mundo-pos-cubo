@@ -181,6 +181,8 @@ export interface DifficultyDef {
   food: number;
   pay: number;
   enemyLevel: number;
+  /** Inimigos a mais (ou a menos) em cada luta de contrato. */
+  enemyCount?: number;
   raidEvery: number;
   encounters: number;
   start: number;
