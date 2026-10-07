@@ -6,7 +6,8 @@ import { HINTS, LESSONS, type LessonCard } from '../../world/tutorial';
 import { battleHints } from '../../battle/hints';
 import { openOptions } from '../shared/options_screen';
 import { openGlossary } from '../shared/glossary_screen';
-import { buildLabel } from '../../rules/skill_tree';
+import { buildLabel, isNewClass } from '../../rules/skill_tree';
+import { STRAIN, giftDef } from '../../rules/gifts';
 import { bar, btn, clear, h, layer, modal, toast } from '@ui/dom';
 import { DB, item, skill, type AnimStyle } from '../../data';
 import { aimAt, planTurn, runTactic } from '../../battle/ai';
@@ -199,6 +200,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
   protected override onEnter(params: { setup: import('../../battle/types').BattleSetup; returnTo: BattleReturn }): void {
     this.returnTo = params.returnTo;
     this.setupCtx = params.setup.context;
+    this.villainLines = params.setup.villainLines ?? null;
     this.state = createBattle(params.setup);
     // Semente da própria batalha: as falas variam de uma luta para outra.
     this.barkRng = new Rng((params.setup.seed ^ 0x9e3779b9) >>> 0);
@@ -223,7 +225,24 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
     if (first) this.focus(first.x, first.y);
   }
 
+  private villainLines: import('../../battle/types').BattleSetup['villainLines'] | null = null;
+  private bossHurtSaid = false;
+
+  /** Fala livre num balão (vilões da demo não têm traço de personalidade). */
+  private sayLine(u: BattleUnit, text: string): void {
+    this.lastBark = this.time;
+    this.floaters.push({ x: u.x, y: u.y, h: 0, text, color: '#2a1a10', age: 0, life: 3.2, speech: true });
+  }
+
+  /** Chefe do bando (o vilão com título) ou qualquer vilão vivo. */
+  private villainVoice(): BattleUnit | undefined {
+    const foes = this.state.units.filter((u) => u.team === 'enemy' && u.alive && u.classId !== 'fera');
+    return foes.find((u) => u.title) ?? foes[0];
+  }
+
   private endDeploy(): void {
+    const boss = this.villainLines && this.villainVoice();
+    if (boss && this.villainLines!.start.length) this.sayLine(boss, this.barkRng.pick(this.villainLines!.start));
     const talkers = this.state.units.filter((u) => u.team === 'player' && u.trait && u.alive);
     // Semente da própria batalha: as falas variam de uma luta para outra.
     if (talkers.length && this.barkRng.chance(0.4)) this.say(this.barkRng.pick(talkers), 'start', true);
@@ -602,12 +621,15 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
     const from = this.worldOf(u.x, u.y);
     const to = this.worldOf(tx, ty);
     const self = tx === u.x && ty === u.y;
+    // Golpe finalizador (suprema): o nome é gritado em tela cheia e a encenação segura um pouco mais.
+    const finisher = visible && !!skill && !!DB.skills[skill]?.ultimate;
     if (visible) {
       this.focus(u.x, u.y);
       this.showBanner(u, title);
+      if (finisher) this.shout(u, `${title.toUpperCase()}!`, 'finisher');
     }
     const magic = isMagicStyle(style);
-    this.wait(visible ? 0.45 : 0.1, () => {
+    this.wait(finisher ? 1.0 : visible ? 0.45 : 0.1, () => {
       if (visible && magic && !self) this.bfx.play('charge', from, from, palette[0], palette[1]);
       else if (visible && !self && style !== 'dash' && style !== 'leap') this.lunges.set(u.uid, { dx: Math.sign(tx - u.x), dy: Math.sign(ty - u.y), start: this.time });
       this.wait(visible ? (magic && !self ? 0.4 : 0.16) : 0, () => {
@@ -819,6 +841,18 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
     this.wait(1.0, () => this.hideBanner());
   }
 
+  /**
+   * Grito de golpe (Boku no Hero): faixa diagonal enorme com o nome do golpe ou o momento do Dom
+   * (além do limite, Overload, Despertar). Não segura o fluxo; treme a tela.
+   */
+  private shout(u: BattleUnit, text: string, kind: 'finisher' | 'plusUltra' | 'overload' | 'awaken'): void {
+    const el = h('div', { class: `bnha-shout ${kind} ${u.team}` }, h('div', { class: 'bnha-who', text: u.name }), h('div', { class: 'bnha-text', text }));
+    this.ui.append(el);
+    this.wait(kind === 'awaken' ? 2.2 : 1.6, () => el.remove());
+    this.bfx.shake = Math.max(this.bfx.shake, kind === 'finisher' || kind === 'awaken' ? 10 : 6);
+    Audio.sfx(kind === 'awaken' || kind === 'finisher' ? 'combo' : 'crit');
+  }
+
   private hideBanner(): void {
     this.hud.banner?.classList.remove('show');
   }
@@ -859,6 +893,13 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
       }
       const u = unitById(this.state, e.uid);
       if (!u) continue;
+      if (e.type === 'gift') {
+        if (visibleToPlayer(this.state, u, this.vision)) {
+          this.shout(u, e.text, e.moment);
+          this.floaters.push({ x: u.x, y: u.y, h: 0, text: e.moment === 'awaken' ? '✨' : e.moment === 'overload' ? '💥' : '🔥', color: '#ffcf6e', age: 0, life: 1.6, alert: true });
+        }
+        continue;
+      }
       if (e.type === 'spotted') {
         Audio.sfx('crit');
         this.floaters.push({ x: u.x, y: u.y, h: 0, text: '!', color: '#ff3d3d', age: 0, life: 1.4, alert: true });
@@ -1137,6 +1178,19 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
 
   /** Abates, ferimentos e quedas de aliados viram falas, conforme o traço e a lealdade. */
   private checkBarks(): void {
+    if (this.villainLines) {
+      for (const v of this.state.units.filter((u) => u.team === 'enemy')) {
+        if (!v.alive && !this.deadSeen.has(v.uid)) {
+          this.deadSeen.add(v.uid);
+          const voice = this.villainVoice();
+          if (voice && this.barkRng.chance(0.6)) this.sayLine(voice, this.barkRng.pick(this.villainLines.allyDown));
+        }
+        if (v.alive && v.title && !this.bossHurtSaid && v.hp < v.maxHp * 0.5) {
+          this.bossHurtSaid = true;
+          this.sayLine(v, this.barkRng.pick(this.villainLines.bossHurt));
+        }
+      }
+    }
     const heroes = this.state.units.filter((u) => u.team === 'player' && u.charId);
     for (const u of heroes) {
       const k = this.killsSeen.get(u.uid) ?? 0;
@@ -1216,7 +1270,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
     clear(el);
     const u = activeUnit(this.state);
     if (!u) {
-      el.append(h('div', { class: 'muted', text: 'Aguardando a próxima barra de ação…' }));
+      el.append(h('div', { class: 'muted', text: this.state.teamTurns ? (this.state.phase === 'enemy' ? 'Turno inimigo…' : 'Escolha um herói do esquadrão.') : 'Aguardando a próxima barra de ação…' }));
       return;
     }
     const visible = visibleToPlayer(this.state, u, this.vision);
@@ -1224,7 +1278,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
       el.append(h('div', { class: 'muted', text: 'Um inimigo oculto está agindo…' }));
       return;
     }
-    el.append(unitCard(u));
+    el.append(unitCard(u, !!this.state.teamTurns));
   }
 
   /** Registro: minimizável, arrastável e com os nomes das habilidades explicados ao passar o mouse. */
@@ -1990,7 +2044,19 @@ function linkify(line: string, names: [string, string][], tip: HTMLDivElement): 
   return row;
 }
 
-export function unitCard(u: BattleUnit): HTMLElement {
+/** Dom na ficha: nome, Strain (vermelho além do limite) e Despertar. */
+function giftLine(u: BattleUnit): HTMLElement | null {
+  const g = giftDef(u.gift);
+  if (!g) return null;
+  const st = u.strain ?? 0;
+  const hot = st >= STRAIN.plusUltraAt;
+  return h('div', { class: 'col', style: 'gap:2px' },
+    h('div', { style: 'font-size:11px;color:#ffcf6e', text: `Dom: ${g.name}${u.giftPotential ? ` ${'★'.repeat(u.giftPotential)}` : ''}${u.awakened ? ' · ✨ DESPERTO' : ''}` }),
+    bar(st, 100, hot ? '#ff3d3d' : '#ff9800', `Strain ${st}/100${hot ? ' · ALÉM DO LIMITE' : ''}`),
+  );
+}
+
+export function unitCard(u: BattleUnit, teamTurns = false): HTMLElement {
   const chips = (Object.keys(u.statuses) as StatusId[]).map((s) => {
     const info = STATUS_INFO[s];
     // 99+ turnos = enquanto durar o efeito (concentração, aura): mostra ∞.
@@ -2011,8 +2077,9 @@ export function unitCard(u: BattleUnit): HTMLElement {
     { class: 'col' },
     h('div', { class: 'row', style: 'justify-content:space-between' }, h('b', { text: u.name, style: `color:${u.team === 'player' ? '#4fc3f7' : '#ef5350'}` }), h('span', { class: 'muted', title: DB.classes[u.classId].name, text: `${u.title ? `${u.title} · ` : ''}${u.classId === 'fera' ? DB.classes[u.classId].name : buildLabel(u)} · Nv ${u.level}` })),
     bar(u.hp, u.maxHp, '#66bb6a', `HP ${u.hp}/${u.maxHp}`),
-    u.maxMp ? bar(u.mp, u.maxMp, '#42a5f5', `MP ${u.mp}/${u.maxMp}`) : null,
-    bar(Math.min(100, u.gauge), 100, '#fdd835', `Barra ${Math.floor(Math.min(100, u.gauge))}%`),
+    u.maxMp ? bar(u.mp, u.maxMp, '#42a5f5', `${isNewClass(u.classId) ? 'Stamina' : 'MP'} ${u.mp}/${u.maxMp}`) : null,
+    giftLine(u),
+    teamTurns ? null : bar(Math.min(100, u.gauge), 100, '#fdd835', `Barra ${Math.floor(Math.min(100, u.gauge))}%`),
     h('div', { class: 'muted', style: 'font-size:11px', text: `FOR ${u.attrs.str} DES ${u.attrs.dex} VEL ${u.attrs.spd} INT ${u.attrs.int} VIT ${u.attrs.vit} · Mov ${u.move} · ${actionInterval(u.attrs.spd).toFixed(1)} s/ação` }),
     chips.length ? h('div', { class: 'status-chips' }, ...chips) : null,
     chips.length ? h('div', { class: 'muted', style: 'font-size:10px', text: chips.map((c) => c.title.split(' · ')[0] ?? '').filter((t) => t.includes(' — ')).join(' | ') }) : null,

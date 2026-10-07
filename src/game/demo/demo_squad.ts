@@ -181,6 +181,7 @@ export function makeMember(rng: Rng, spec: MemberSpec): Character {
   c.equipment.utility = [...spec.utility];
   autoSpend(c, rng, spec.focus);
   c.quirks = [];
+  c.trait ??= rng.pick(DEMO.heroTraits);
   fullHeal(c);
   return c;
 }
@@ -250,6 +251,7 @@ export function demoSetup(squad: Character[], opts: DemoOptions = DEFAULT_OPTION
     canFlee: true,
     seed,
     context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: DEMO.title },
+    villainLines: DEMO.villainLines,
   };
 }
 

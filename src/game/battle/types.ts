@@ -479,6 +479,8 @@ export interface BattleContext {
 
 export interface BattleSetup {
   map: BattleMap;
+  /** Falas dos vilões (demo): no começo, quando um deles cai e quando o chefe fica na pior. */
+  villainLines?: { start: string[]; allyDown: string[]; bossHurt: string[] };
   /** Turnos por time (XCOM/Xenonauts) em vez da linha do tempo. */
   teamTurns?: boolean;
   players: BattleUnit[];

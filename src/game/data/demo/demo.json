@@ -2,28 +2,210 @@
  "_doc": "Batalha de demonstração (game/demo/demo_squad.ts): esquadrão inicial, nomes, armas dos vilões e o tamanho do bando.",
  "title": "Demo — Cruzamento da Avenida (turnos por time)",
  "maxSquad": 6,
- "levels": [1, 30],
+ "levels": [
+  1,
+  30
+ ],
  "defaultLevel": 8,
  "defaultExtraEnemies": 0,
  "defaultBeasts": 1,
  "bossLevelBonus": 2,
- "classWeapon": { "impacto": "soco_ingles", "movimento": "pistola_9mm", "suporte": "pistola_9mm", "controle": "fuzil_assalto" },
- "squad": [
-  { "name": "Kaito", "classId": "impacto", "level": 8, "gift": "punho_sismico", "potential": 5, "weapon": "luvas_reforcadas", "armor": "traje_de_heroi", "utility": ["kit_medico", null, null], "focus": "demolidor" },
-  { "name": "Ayla", "classId": "movimento", "level": 8, "gift": "eletricidade", "potential": 4, "weapon": "pistola_9mm", "armor": "traje_de_heroi", "utility": ["granada_atordoante", null, null], "focus": "corredor" },
-  { "name": "Bruno", "classId": "suporte", "level": 8, "gift": "nectar", "potential": 3, "weapon": "pistola_9mm", "armor": "colete_tatico", "utility": ["kit_medico", "granada_fumaca", null], "focus": "socorrista" },
-  { "name": "Mira", "classId": "controle", "level": 8, "gift": "gravidade", "potential": 4, "weapon": "fuzil_assalto", "armor": "colete_tatico", "utility": ["granada_fragmentacao", null, null], "focus": "manipulador" },
-  { "name": "Teo", "classId": "impacto", "level": 8, "gift": null, "potential": 0, "weapon": "fuzil_precisao", "armor": "colete_tatico", "utility": ["kit_medico", null, null], "focus": "cacador" },
-  { "name": "Lia", "classId": "movimento", "level": 8, "gift": "gelo", "potential": 3, "weapon": "escopeta_calibre12", "armor": "traje_de_heroi", "utility": ["estimulante", null, null], "focus": "acrobata" }
- ],
- "heroNames": ["Rafa", "Nina", "Davi", "Iara", "Caio", "Luna", "Theo", "Bia", "Enzo", "Maya", "Joca", "Duda", "Akira", "Sora", "Yuki", "Ren"],
- "villainNames": ["Navalha", "Estática", "Brutamontes", "Vespa", "Mancha", "Corvo", "Ferrugem", "Sucata", "Fuligem", "Dente-de-Sabre", "Cinza", "Zumbido", "Torque", "Viúva", "Granito", "Faísca"],
- "bossTitles": ["Rei da Avenida", "Punho do Cubo", "Dono do Bairro", "Sem Limite"],
- "villainWeapons": {
-  "impacto": ["soco_ingles", "facao", "escopeta_calibre12"],
-  "movimento": ["pistola_9mm", "facao", "revolver_pesado"],
-  "suporte": ["pistola_9mm", "fuzil_assalto"],
-  "controle": ["fuzil_assalto", "metralhadora_leve"]
+ "classWeapon": {
+  "impacto": "soco_ingles",
+  "movimento": "pistola_9mm",
+  "suporte": "pistola_9mm",
+  "controle": "fuzil_assalto"
  },
- "beasts": ["lobo_da_silvia", "javali_casca_grossa", "urso_chifre", "cachorro_da_pradaria", "falcao_cacador"]
+ "squad": [
+  {
+   "name": "Kaito",
+   "classId": "impacto",
+   "level": 8,
+   "gift": "punho_sismico",
+   "potential": 5,
+   "weapon": "luvas_reforcadas",
+   "armor": "traje_de_heroi",
+   "utility": [
+    "kit_medico",
+    null,
+    null
+   ],
+   "focus": "demolidor"
+  },
+  {
+   "name": "Ayla",
+   "classId": "movimento",
+   "level": 8,
+   "gift": "eletricidade",
+   "potential": 4,
+   "weapon": "pistola_9mm",
+   "armor": "traje_de_heroi",
+   "utility": [
+    "granada_atordoante",
+    null,
+    null
+   ],
+   "focus": "corredor"
+  },
+  {
+   "name": "Bruno",
+   "classId": "suporte",
+   "level": 8,
+   "gift": "nectar",
+   "potential": 3,
+   "weapon": "pistola_9mm",
+   "armor": "colete_tatico",
+   "utility": [
+    "kit_medico",
+    "granada_fumaca",
+    null
+   ],
+   "focus": "socorrista"
+  },
+  {
+   "name": "Mira",
+   "classId": "controle",
+   "level": 8,
+   "gift": "gravidade",
+   "potential": 4,
+   "weapon": "fuzil_assalto",
+   "armor": "colete_tatico",
+   "utility": [
+    "granada_fragmentacao",
+    null,
+    null
+   ],
+   "focus": "manipulador"
+  },
+  {
+   "name": "Teo",
+   "classId": "impacto",
+   "level": 8,
+   "gift": null,
+   "potential": 0,
+   "weapon": "fuzil_precisao",
+   "armor": "colete_tatico",
+   "utility": [
+    "kit_medico",
+    null,
+    null
+   ],
+   "focus": "cacador"
+  },
+  {
+   "name": "Lia",
+   "classId": "movimento",
+   "level": 8,
+   "gift": "gelo",
+   "potential": 3,
+   "weapon": "escopeta_calibre12",
+   "armor": "traje_de_heroi",
+   "utility": [
+    "estimulante",
+    null,
+    null
+   ],
+   "focus": "acrobata"
+  }
+ ],
+ "heroNames": [
+  "Rafa",
+  "Nina",
+  "Davi",
+  "Iara",
+  "Caio",
+  "Luna",
+  "Theo",
+  "Bia",
+  "Enzo",
+  "Maya",
+  "Joca",
+  "Duda",
+  "Akira",
+  "Sora",
+  "Yuki",
+  "Ren"
+ ],
+ "villainNames": [
+  "Navalha",
+  "Estática",
+  "Brutamontes",
+  "Vespa",
+  "Mancha",
+  "Corvo",
+  "Ferrugem",
+  "Sucata",
+  "Fuligem",
+  "Dente-de-Sabre",
+  "Cinza",
+  "Zumbido",
+  "Torque",
+  "Viúva",
+  "Granito",
+  "Faísca"
+ ],
+ "bossTitles": [
+  "Rei da Avenida",
+  "Punho do Cubo",
+  "Dono do Bairro",
+  "Sem Limite"
+ ],
+ "villainWeapons": {
+  "impacto": [
+   "soco_ingles",
+   "facao",
+   "escopeta_calibre12"
+  ],
+  "movimento": [
+   "pistola_9mm",
+   "facao",
+   "revolver_pesado"
+  ],
+  "suporte": [
+   "pistola_9mm",
+   "fuzil_assalto"
+  ],
+  "controle": [
+   "fuzil_assalto",
+   "metralhadora_leve"
+  ]
+ },
+ "beasts": [
+  "lobo_da_silvia",
+  "javali_casca_grossa",
+  "urso_chifre",
+  "cachorro_da_pradaria",
+  "falcao_cacador"
+ ],
+ "heroTraits": [
+  "bravo",
+  "cauteloso",
+  "sarcastico",
+  "silencioso",
+  "ambicioso",
+  "idealista",
+  "cinico",
+  "rebelde"
+ ],
+ "villainLines": {
+  "start": [
+   "Heróis de verdade morreram junto com o mundo antigo. Vocês são só gente com Dom.",
+   "Essa avenida é minha. Quem entrar, sai carregado.",
+   "Vocês vieram de longe pra morrer aqui? Que gentileza.",
+   "Mostrem esse Dom de vocês. Quero ver quanto aguentam!",
+   "Depois do Cubo, a lei é quem bate mais forte."
+  ],
+  "allyDown": [
+   "Levanta, inútil!",
+   "Vão pagar por essa!",
+   "Tsc. Fraco demais pra esse mundo.",
+   "Ele era o melhor de nós… quase.",
+   "Não recuem! São só uns moleques!"
+  ],
+  "bossHurt": [
+   "Agora vocês me irritaram de verdade!",
+   "Isso foi tudo? Eu mal comecei!",
+   "Vou tirar o limite. Vejam o que é um Dom de verdade!"
+  ]
+ }
 }
