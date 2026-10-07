@@ -1,0 +1,1970 @@
+{
+ "id": "teia",
+ "classId": "impacto",
+ "classIds": [
+  "impacto",
+  "movimento",
+  "suporte",
+  "controle"
+ ],
+ "name": "Teia das Classes",
+ "maxRank": 1,
+ "nodes": [
+  {
+   "id": "nucleo_impacto",
+   "name": "Núcleo: Impacto",
+   "type": "base",
+   "parents": [],
+   "x": 0,
+   "y": -110,
+   "description": "Lutar para derrubar: dano direto, quebrar cobertura, arremessar.",
+   "skills": [
+    {
+     "id": "impacto_inato",
+     "name": "Instinto de Impacto",
+     "description": "Recebe 10% menos dano físico.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 1,
+     "fx": {
+      "reduce": {
+       "physical": 0.1
+      }
+     }
+    }
+   ],
+   "group": "impacto"
+  },
+  {
+   "id": "nucleo_movimento",
+   "name": "Núcleo: Movimento",
+   "type": "base",
+   "parents": [],
+   "x": 110,
+   "y": 0,
+   "description": "Lutar em movimento: velocidade, flanco, nunca parado.",
+   "skills": [
+    {
+     "id": "movimento_inato",
+     "name": "Instinto de Movimento",
+     "description": "+1 de deslocamento.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 1,
+     "fx": {
+      "moveBonus": 1
+     }
+    }
+   ],
+   "group": "movimento"
+  },
+  {
+   "id": "nucleo_suporte",
+   "name": "Núcleo: Suporte",
+   "type": "base",
+   "parents": [],
+   "x": 0,
+   "y": 110,
+   "description": "Lutar pelos outros: curar, proteger, comandar, resgatar.",
+   "skills": [
+    {
+     "id": "suporte_inato",
+     "name": "Instinto de Suporte",
+     "description": "Aliados ao lado ficam afiados (+acerto).",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 1,
+     "fx": {
+      "aura": {
+       "radius": 1,
+       "allies": true,
+       "status": {
+        "id": "afiado",
+        "turns": 1
+       }
+      }
+     }
+    }
+   ],
+   "group": "suporte"
+  },
+  {
+   "id": "nucleo_controle",
+   "name": "Núcleo: Controle",
+   "type": "base",
+   "parents": [],
+   "x": -110,
+   "y": 0,
+   "description": "Lutar pelo campo: prender, empurrar, negar espaço.",
+   "skills": [
+    {
+     "id": "controle_inato",
+     "name": "Instinto de Controle",
+     "description": "Esquiva 8% a mais.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 1,
+     "fx": {
+      "evasion": 8
+     }
+    }
+   ],
+   "group": "controle"
+  },
+  {
+   "id": "demolidor",
+   "name": "Demolidor",
+   "type": "evolucao",
+   "parents": [],
+   "x": 120,
+   "y": -260,
+   "description": "Dano bruto corpo a corpo; destrói cobertura e paredes.",
+   "skills": [
+    {
+     "id": "demolidor_soco",
+     "name": "Soco Demolidor",
+     "description": "Golpe que arremessa o alvo 2 casas (contra parede ou alguém: dano extra).",
+     "kind": "physical",
+     "range": 1,
+     "power": 8,
+     "cooldown": 0,
+     "mp": 4,
+     "levelReq": 1,
+     "fx": {
+      "push": 2
+     },
+     "anim": "charge"
+    },
+    {
+     "id": "demolidor_parede",
+     "name": "Derrubar Parede",
+     "description": "Destrói obstáculos e cobertura na casa ao lado (e fere quem estiver atrás).",
+     "kind": "physical",
+     "range": 1,
+     "power": 6,
+     "cooldown": 1,
+     "mp": 4,
+     "levelReq": 2,
+     "target": "tile",
+     "fx": {
+      "destroyProps": true
+     },
+     "anim": "charge"
+    },
+    {
+     "id": "demolidor_peso",
+     "name": "Peso Pesado",
+     "description": "Recebe 15% menos dano corpo a corpo e não é derrubado.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 4,
+     "fx": {
+      "reduce": {
+       "melee": 0.15
+      },
+      "immune": [
+       "derrubado"
+      ]
+     }
+    },
+    {
+     "id": "demolidor_terremoto",
+     "name": "Terremoto",
+     "description": "Soca o chão: dano e derruba todos a até 1 casa (aliados também).",
+     "kind": "physical",
+     "range": 1,
+     "power": 7,
+     "cooldown": 3,
+     "mp": 8,
+     "levelReq": 7,
+     "target": "self",
+     "shape": "radius",
+     "radius": 1,
+     "status": {
+      "id": "derrubado",
+      "turns": 1
+     },
+     "anim": "nova"
+    }
+   ],
+   "group": "impacto",
+   "short": "Demolidor"
+  },
+  {
+   "id": "artilheiro",
+   "name": "Artilheiro",
+   "type": "evolucao",
+   "parents": [],
+   "x": 270,
+   "y": -200,
+   "description": "Dano à distância em área; explosões.",
+   "skills": [
+    {
+     "id": "artilheiro_granada",
+     "name": "Granada de Fragmentação",
+     "description": "Explosão 3×3 a até 6 casas; derruba cobertura leve.",
+     "kind": "ranged",
+     "range": 6,
+     "power": 6,
+     "cooldown": 2,
+     "mp": 5,
+     "levelReq": 1,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 1,
+     "fx": {
+      "destroyProps": true
+     },
+     "anim": "orb"
+    },
+    {
+     "id": "artilheiro_mira",
+     "name": "Mão Firme",
+     "description": "O tiro básico alcança 1 casa a mais.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 2,
+     "fx": {
+      "reachBonus": 1
+     }
+    },
+    {
+     "id": "artilheiro_supressao",
+     "name": "Fogo Supressivo",
+     "description": "Prende o alvo sob fogo: se ele sair do lugar, leva outro tiro.",
+     "kind": "ranged",
+     "range": -1,
+     "power": 3,
+     "cooldown": 1,
+     "mp": 4,
+     "levelReq": 4,
+     "fx": {
+      "suppress": true
+     },
+     "anim": "volley"
+    },
+    {
+     "id": "artilheiro_bombardeio",
+     "name": "Bombardeio",
+     "description": "Explosão 5×5 a até 7 casas.",
+     "kind": "ranged",
+     "range": 7,
+     "power": 7,
+     "cooldown": 4,
+     "mp": 10,
+     "levelReq": 7,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 2,
+     "fx": {
+      "destroyProps": true
+     },
+     "anim": "meteor"
+    }
+   ],
+   "group": "impacto",
+   "short": "Artilheiro"
+  },
+  {
+   "id": "duelista",
+   "name": "Duelista",
+   "type": "evolucao",
+   "parents": [],
+   "x": -120,
+   "y": -260,
+   "description": "Um contra um; golpes rápidos e precisos.",
+   "skills": [
+    {
+     "id": "duelista_estocada",
+     "name": "Estocada Rápida",
+     "description": "Golpe com +15% de crítico.",
+     "kind": "physical",
+     "range": 1,
+     "power": 6,
+     "cooldown": 0,
+     "mp": 3,
+     "levelReq": 1,
+     "fx": {
+      "crit": 15
+     },
+     "anim": "thrust"
+    },
+    {
+     "id": "duelista_guarda",
+     "name": "Guarda Alta",
+     "description": "Esquiva 12% a mais.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 2,
+     "fx": {
+      "evasion": 12
+     }
+    },
+    {
+     "id": "duelista_duplo",
+     "name": "Golpe Duplo",
+     "description": "Dois golpes seguidos.",
+     "kind": "physical",
+     "range": 1,
+     "power": 4,
+     "cooldown": 1,
+     "mp": 5,
+     "levelReq": 4,
+     "fx": {
+      "hits": 2
+     },
+     "anim": "slash"
+    },
+    {
+     "id": "duelista_desafio",
+     "name": "Desafio",
+     "description": "Provoca o alvo: ele só consegue atacar o Duelista por 2 turnos.",
+     "kind": "utility",
+     "range": 5,
+     "power": 0,
+     "cooldown": 3,
+     "mp": 5,
+     "levelReq": 7,
+     "target": "enemy",
+     "status": {
+      "id": "provocado",
+      "turns": 2
+     },
+     "anim": "shout"
+    }
+   ],
+   "group": "impacto",
+   "short": "Duelista"
+  },
+  {
+   "id": "cacador",
+   "name": "Caçador",
+   "type": "evolucao",
+   "parents": [],
+   "x": -270,
+   "y": -200,
+   "description": "Finaliza alvos feridos, marcados ou presos.",
+   "skills": [
+    {
+     "id": "cacador_marcar",
+     "name": "Marcar Presa",
+     "description": "Marca o alvo por 3 turnos (todo o esquadrão acerta melhor).",
+     "kind": "utility",
+     "range": 9,
+     "power": 0,
+     "cooldown": 1,
+     "mp": 2,
+     "levelReq": 1,
+     "target": "enemy",
+     "status": {
+      "id": "marcado",
+      "turns": 3
+     },
+     "apCost": 1,
+     "anim": "arrow"
+    },
+    {
+     "id": "cacador_misericordia",
+     "name": "Golpe de Misericórdia",
+     "description": "Derruba na hora alvos abaixo de 25% da vida.",
+     "kind": "ranged",
+     "range": -1,
+     "power": 6,
+     "cooldown": 2,
+     "mp": 5,
+     "levelReq": 2,
+     "fx": {
+      "execute": 0.25
+     },
+     "anim": "arrow"
+    },
+    {
+     "id": "cacador_rastro",
+     "name": "Rastreio",
+     "description": "Enxerga inimigos escondidos.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 4,
+     "fx": {
+      "seeHidden": true
+     }
+    },
+    {
+     "id": "cacador_abate",
+     "name": "Abate",
+     "description": "Tiro devastador: +50% de dano em alvos marcados e +20% de crítico.",
+     "kind": "ranged",
+     "range": -1,
+     "power": 9,
+     "cooldown": 3,
+     "mp": 8,
+     "levelReq": 7,
+     "fx": {
+      "vs": {
+       "status": "marcado",
+       "mult": 1.5
+      },
+      "crit": 20
+     },
+     "anim": "arrow"
+    }
+   ],
+   "group": "impacto",
+   "short": "Caçador"
+  },
+  {
+   "id": "corredor",
+   "name": "Corredor",
+   "type": "evolucao",
+   "parents": [],
+   "x": 280,
+   "y": -140,
+   "description": "Velocidade e investidas em linha reta.",
+   "skills": [
+    {
+     "id": "corredor_arrancada",
+     "name": "Arrancada",
+     "description": "Ganha um deslocamento completo a mais (1 ação).",
+     "kind": "utility",
+     "range": 0,
+     "power": 0,
+     "cooldown": 2,
+     "mp": 3,
+     "levelReq": 1,
+     "target": "self",
+     "fx": {
+      "extraMove": true
+     },
+     "apCost": 1,
+     "anim": "dash"
+    },
+    {
+     "id": "corredor_pernas",
+     "name": "Pernas de Atleta",
+     "description": "+2 de deslocamento.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 2,
+     "fx": {
+      "moveBonus": 2
+     }
+    },
+    {
+     "id": "corredor_investida",
+     "name": "Investida",
+     "description": "Corre até 4 casas em linha, golpeando quem estiver no caminho.",
+     "kind": "physical",
+     "range": 4,
+     "power": 6,
+     "cooldown": 2,
+     "mp": 5,
+     "levelReq": 4,
+     "target": "tile",
+     "shape": "line",
+     "fx": {
+      "dashThrough": true
+     },
+     "anim": "dash"
+    },
+    {
+     "id": "corredor_embalo",
+     "name": "Embalo",
+     "description": "Sair do lado de inimigos não provoca ataque de oportunidade.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 7,
+     "fx": {
+      "noOpportunity": true
+     }
+    }
+   ],
+   "group": "movimento",
+   "short": "Corredor"
+  },
+  {
+   "id": "acrobata",
+   "name": "Acrobata",
+   "type": "evolucao",
+   "parents": [],
+   "x": 330,
+   "y": -50,
+   "description": "Saltos, altura e esquiva; ignora o terreno.",
+   "skills": [
+    {
+     "id": "acrobata_salto",
+     "name": "Salto Acrobático",
+     "description": "Salta até 4 casas, por cima de tudo (1 ação).",
+     "kind": "utility",
+     "range": 4,
+     "power": 0,
+     "cooldown": 1,
+     "mp": 3,
+     "levelReq": 1,
+     "target": "tile",
+     "fx": {
+      "teleport": true
+     },
+     "apCost": 1,
+     "anim": "leap"
+    },
+    {
+     "id": "acrobata_parkour",
+     "name": "Parkour",
+     "description": "Escala paredes e prédios; pula até 4 níveis.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 2,
+     "fx": {
+      "climb": true,
+      "jumpTo": 4
+     }
+    },
+    {
+     "id": "acrobata_aereo",
+     "name": "Ataque Aéreo",
+     "description": "Salta sobre o alvo e golpeia (+50% de dano vindo de cima).",
+     "kind": "physical",
+     "range": 3,
+     "power": 7,
+     "cooldown": 2,
+     "mp": 5,
+     "levelReq": 4,
+     "fx": {
+      "leap": true,
+      "fromAbove": 1.5
+     },
+     "anim": "leap"
+    },
+    {
+     "id": "acrobata_esquiva",
+     "name": "Corpo Leve",
+     "description": "Esquiva 20% a mais.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 7,
+     "fx": {
+      "evasion": 20
+     }
+    }
+   ],
+   "group": "movimento",
+   "short": "Acrobata"
+  },
+  {
+   "id": "batedor",
+   "name": "Batedor",
+   "type": "evolucao",
+   "parents": [],
+   "x": 330,
+   "y": 50,
+   "description": "Reconhecimento, visão longa, abre caminho.",
+   "skills": [
+    {
+     "id": "batedor_sinal",
+     "name": "Sinalizar",
+     "description": "Marca todos numa área 3×3 por 2 turnos.",
+     "kind": "utility",
+     "range": 9,
+     "power": 0,
+     "cooldown": 2,
+     "mp": 3,
+     "levelReq": 1,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 1,
+     "status": {
+      "id": "marcado",
+      "turns": 2
+     },
+     "apCost": 1,
+     "anim": "arrow"
+    },
+    {
+     "id": "batedor_olhos",
+     "name": "Olhos Abertos",
+     "description": "Enxerga inimigos escondidos.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 2,
+     "fx": {
+      "seeHidden": true
+     }
+    },
+    {
+     "id": "batedor_correr_atirar",
+     "name": "Correr e Atirar",
+     "description": "Tiro que não encerra o turno (1 ação).",
+     "kind": "ranged",
+     "range": -1,
+     "power": 5,
+     "cooldown": 1,
+     "mp": 4,
+     "levelReq": 4,
+     "apCost": 1,
+     "anim": "arrow"
+    },
+    {
+     "id": "batedor_trilha",
+     "name": "Trilha",
+     "description": "+1 de deslocamento.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 7,
+     "fx": {
+      "moveBonus": 1
+     }
+    }
+   ],
+   "group": "movimento",
+   "short": "Batedor"
+  },
+  {
+   "id": "infiltrador",
+   "name": "Infiltrador",
+   "type": "evolucao",
+   "parents": [],
+   "x": 280,
+   "y": 140,
+   "description": "Furtividade e flanco.",
+   "skills": [
+    {
+     "id": "infiltrador_sumir",
+     "name": "Sumir",
+     "description": "Some da vista dos inimigos (esconde-se) por 2 turnos.",
+     "kind": "utility",
+     "range": 0,
+     "power": 0,
+     "cooldown": 2,
+     "mp": 4,
+     "levelReq": 1,
+     "target": "self",
+     "fx": {
+      "hide": "any"
+     },
+     "value": 2,
+     "anim": "smoke"
+    },
+    {
+     "id": "infiltrador_passos",
+     "name": "Passos Leves",
+     "description": "Sair do lado de inimigos não provoca ataque de oportunidade.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 2,
+     "fx": {
+      "noOpportunity": true
+     }
+    },
+    {
+     "id": "infiltrador_furtivo",
+     "name": "Ataque Furtivo",
+     "description": "Reaparece atrás do alvo e golpeia (+25% de crítico).",
+     "kind": "physical",
+     "range": 4,
+     "power": 8,
+     "cooldown": 2,
+     "mp": 5,
+     "levelReq": 4,
+     "fx": {
+      "behind": true,
+      "crit": 25
+     },
+     "anim": "blink"
+    },
+    {
+     "id": "infiltrador_sombra",
+     "name": "Sombra",
+     "description": "Esquiva 15% a mais.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 7,
+     "fx": {
+      "evasion": 15
+     }
+    }
+   ],
+   "group": "movimento",
+   "short": "Infiltrador"
+  },
+  {
+   "id": "resgatista",
+   "name": "Resgatista",
+   "type": "evolucao",
+   "parents": [],
+   "x": 120,
+   "y": 260,
+   "description": "Carrega caídos e civis; evacuação.",
+   "skills": [
+    {
+     "id": "resgatista_puxar",
+     "name": "Puxar para Cobertura",
+     "description": "Puxa um aliado 3 casas para perto (1 ação).",
+     "kind": "utility",
+     "range": 5,
+     "power": 0,
+     "cooldown": 1,
+     "mp": 3,
+     "levelReq": 1,
+     "target": "ally",
+     "fx": {
+      "pull": 3
+     },
+     "apCost": 1,
+     "anim": "buff"
+    },
+    {
+     "id": "resgatista_ombro",
+     "name": "Ombro Forte",
+     "description": "+1 de deslocamento (carrega o caído sem perder o passo).",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 2,
+     "fx": {
+      "moveBonus": 1
+     }
+    },
+    {
+     "id": "resgatista_estabilizar",
+     "name": "Socorro à Distância",
+     "description": "Cura 15% da vida de um aliado e limpa estados.",
+     "kind": "heal",
+     "range": 3,
+     "power": 0,
+     "cooldown": 1,
+     "mp": 5,
+     "levelReq": 4,
+     "target": "ally",
+     "fx": {
+      "healPct": 0.15,
+      "cleanse": true
+     },
+     "anim": "heal"
+    },
+    {
+     "id": "resgatista_escudo",
+     "name": "Corpo na Frente",
+     "description": "Intercepta 30% dos golpes contra um aliado ao lado.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 7,
+     "fx": {
+      "intercept": {
+       "radius": 1,
+       "pct": 0.3,
+       "mitigate": 0.2
+      }
+     }
+    }
+   ],
+   "group": "suporte",
+   "short": "Resgatista"
+  },
+  {
+   "id": "socorrista",
+   "name": "Socorrista",
+   "type": "evolucao",
+   "parents": [],
+   "x": 270,
+   "y": 200,
+   "description": "Cura, estabiliza, limpa estados.",
+   "skills": [
+    {
+     "id": "socorrista_socorros",
+     "name": "Primeiros Socorros",
+     "description": "Cura 30% da vida de um aliado ao lado.",
+     "kind": "heal",
+     "range": 1,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 4,
+     "levelReq": 1,
+     "target": "ally",
+     "fx": {
+      "healPct": 0.3
+     },
+     "anim": "heal"
+    },
+    {
+     "id": "socorrista_kit",
+     "name": "Kit Ampliado",
+     "description": "Aliados ao lado regeneram vida a cada rodada.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 2,
+     "fx": {
+      "aura": {
+       "radius": 1,
+       "allies": true,
+       "status": {
+        "id": "regenerando",
+        "turns": 1
+       }
+      }
+     }
+    },
+    {
+     "id": "socorrista_adrenalina",
+     "name": "Injeção de Adrenalina",
+     "description": "Um aliado ao lado ganha 1 ação a mais.",
+     "kind": "buff",
+     "range": 1,
+     "power": 0,
+     "cooldown": 3,
+     "mp": 6,
+     "levelReq": 4,
+     "target": "ally",
+     "fx": {
+      "grantAp": 1
+     },
+     "anim": "buff"
+    },
+    {
+     "id": "socorrista_area",
+     "name": "Hospital de Campanha",
+     "description": "Cura 18% da vida de todos numa área 3×3.",
+     "kind": "heal",
+     "range": 4,
+     "power": 0,
+     "cooldown": 3,
+     "mp": 9,
+     "levelReq": 7,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 1,
+     "fx": {
+      "healPct": 0.18,
+      "cleanse": true
+     },
+     "anim": "heal"
+    }
+   ],
+   "group": "suporte",
+   "short": "Socorrista"
+  },
+  {
+   "id": "guardiao",
+   "name": "Guardião",
+   "type": "evolucao",
+   "parents": [],
+   "x": -120,
+   "y": 260,
+   "description": "Escudos; intercepta golpes de aliados ao lado.",
+   "skills": [
+    {
+     "id": "guardiao_escudo",
+     "name": "Escudo",
+     "description": "Um aliado fica fortificado por 2 turnos.",
+     "kind": "buff",
+     "range": 3,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 4,
+     "levelReq": 1,
+     "target": "ally",
+     "status": {
+      "id": "fortificado",
+      "turns": 2
+     },
+     "anim": "buff"
+    },
+    {
+     "id": "guardiao_interceptar",
+     "name": "Interceptar",
+     "description": "Intercepta metade dos golpes contra aliados ao lado (40% menos dano).",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 2,
+     "fx": {
+      "intercept": {
+       "radius": 1,
+       "pct": 0.5,
+       "mitigate": 0.4
+      }
+     }
+    },
+    {
+     "id": "guardiao_posicao",
+     "name": "Posição Defensiva",
+     "description": "Fica inabalável por 2 turnos (não é empurrado nem derrubado).",
+     "kind": "buff",
+     "range": 0,
+     "power": 0,
+     "cooldown": 3,
+     "mp": 5,
+     "levelReq": 4,
+     "target": "self",
+     "status": {
+      "id": "inabalavel",
+      "turns": 2
+     },
+     "apCost": 1,
+     "anim": "buff"
+    },
+    {
+     "id": "guardiao_muralha",
+     "name": "Muralha Viva",
+     "description": "Aliados a até 1 casa ficam fortificados por 2 turnos.",
+     "kind": "buff",
+     "range": 0,
+     "power": 0,
+     "cooldown": 3,
+     "mp": 7,
+     "levelReq": 7,
+     "target": "self",
+     "shape": "radius",
+     "radius": 1,
+     "status": {
+      "id": "fortificado",
+      "turns": 2
+     },
+     "anim": "shout"
+    }
+   ],
+   "group": "suporte",
+   "short": "Guardião"
+  },
+  {
+   "id": "estrategista",
+   "name": "Estrategista",
+   "type": "evolucao",
+   "parents": [],
+   "x": -270,
+   "y": 200,
+   "description": "Ordens: ações extras e bônus de equipe.",
+   "skills": [
+    {
+     "id": "estrategista_ordem",
+     "name": "Ordem: Avançar!",
+     "description": "Um aliado a até 6 casas ganha 1 ação a mais.",
+     "kind": "buff",
+     "range": 6,
+     "power": 0,
+     "cooldown": 3,
+     "mp": 6,
+     "levelReq": 1,
+     "target": "ally",
+     "fx": {
+      "grantAp": 1
+     },
+     "anim": "shout"
+    },
+    {
+     "id": "estrategista_presenca",
+     "name": "Presença de Comando",
+     "description": "Aliados a até 2 casas ficam afiados (+acerto).",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 2,
+     "fx": {
+      "aura": {
+       "radius": 2,
+       "allies": true,
+       "status": {
+        "id": "afiado",
+        "turns": 1
+       }
+      }
+     }
+    },
+    {
+     "id": "estrategista_plano",
+     "name": "Plano de Ataque",
+     "description": "Aliados a até 3 casas ficam inspirados (+dano) por 2 turnos.",
+     "kind": "buff",
+     "range": 0,
+     "power": 0,
+     "cooldown": 4,
+     "mp": 8,
+     "levelReq": 4,
+     "target": "self",
+     "shape": "radius",
+     "radius": 3,
+     "status": {
+      "id": "inspirado",
+      "turns": 2
+     },
+     "anim": "shout"
+    },
+    {
+     "id": "estrategista_leitura",
+     "name": "Leitura do Campo",
+     "description": "Marca todos numa área 5×5 por 2 turnos.",
+     "kind": "utility",
+     "range": 9,
+     "power": 0,
+     "cooldown": 3,
+     "mp": 6,
+     "levelReq": 7,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 2,
+     "status": {
+      "id": "marcado",
+      "turns": 2
+     },
+     "apCost": 1,
+     "anim": "arrow"
+    }
+   ],
+   "group": "suporte",
+   "short": "Estrategista"
+  },
+  {
+   "id": "restritor",
+   "name": "Restritor",
+   "type": "evolucao",
+   "parents": [],
+   "x": -280,
+   "y": -140,
+   "description": "Imobiliza, agarra, prende.",
+   "skills": [
+    {
+     "id": "restritor_imobilizar",
+     "name": "Imobilizar",
+     "description": "O alvo não sai do lugar por 2 turnos.",
+     "kind": "magic",
+     "range": 4,
+     "power": 2,
+     "cooldown": 1,
+     "mp": 4,
+     "levelReq": 1,
+     "status": {
+      "id": "imobilizado",
+      "turns": 2
+     },
+     "anim": "orb"
+    },
+    {
+     "id": "restritor_agarrar",
+     "name": "Agarrar",
+     "description": "Agarra o alvo ao lado: ele fica preso enquanto você segurar.",
+     "kind": "physical",
+     "range": 1,
+     "power": 3,
+     "cooldown": 2,
+     "mp": 4,
+     "levelReq": 2,
+     "fx": {
+      "grab": true
+     },
+     "status": {
+      "id": "preso",
+      "turns": 2
+     },
+     "anim": "claw"
+    },
+    {
+     "id": "restritor_firme",
+     "name": "Pés no Chão",
+     "description": "Não pode ser imobilizado nem derrubado.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 4,
+     "fx": {
+      "immune": [
+       "imobilizado",
+       "derrubado"
+      ]
+     }
+    },
+    {
+     "id": "restritor_rede",
+     "name": "Rede de Contenção",
+     "description": "Todos numa área 3×3 ficam imobilizados por 1 turno.",
+     "kind": "utility",
+     "range": 5,
+     "power": 0,
+     "cooldown": 3,
+     "mp": 7,
+     "levelReq": 7,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 1,
+     "status": {
+      "id": "imobilizado",
+      "turns": 1
+     },
+     "anim": "orb"
+    }
+   ],
+   "group": "controle",
+   "short": "Restritor"
+  },
+  {
+   "id": "manipulador",
+   "name": "Manipulador",
+   "type": "evolucao",
+   "parents": [],
+   "x": -330,
+   "y": -50,
+   "description": "Empurra, puxa e reposiciona.",
+   "skills": [
+    {
+     "id": "manipulador_puxao",
+     "name": "Puxão",
+     "description": "Puxa o alvo 3 casas para perto.",
+     "kind": "magic",
+     "range": 5,
+     "power": 2,
+     "cooldown": 1,
+     "mp": 4,
+     "levelReq": 1,
+     "fx": {
+      "pull": 3
+     },
+     "anim": "orb"
+    },
+    {
+     "id": "manipulador_empurrao",
+     "name": "Empurrão Forte",
+     "description": "Arremessa o alvo ao lado 3 casas.",
+     "kind": "physical",
+     "range": 1,
+     "power": 4,
+     "cooldown": 1,
+     "mp": 4,
+     "levelReq": 2,
+     "fx": {
+      "push": 3
+     },
+     "anim": "charge"
+    },
+    {
+     "id": "manipulador_troca",
+     "name": "Reposicionar",
+     "description": "Troca de lugar com um aliado a até 5 casas (1 ação).",
+     "kind": "utility",
+     "range": 5,
+     "power": 0,
+     "cooldown": 2,
+     "mp": 4,
+     "levelReq": 4,
+     "target": "ally",
+     "fx": {
+      "swap": true
+     },
+     "apCost": 1,
+     "anim": "blink"
+    },
+    {
+     "id": "manipulador_ancora",
+     "name": "Âncora",
+     "description": "Não pode ser empurrado nem derrubado.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 7,
+     "fx": {
+      "immune": [
+       "derrubado"
+      ]
+     }
+    }
+   ],
+   "group": "controle",
+   "short": "Manipulador"
+  },
+  {
+   "id": "supressor",
+   "name": "Supressor",
+   "type": "evolucao",
+   "parents": [],
+   "x": -330,
+   "y": 50,
+   "description": "Negação de área, supressão, zonas.",
+   "skills": [
+    {
+     "id": "supressor_fogo",
+     "name": "Fogo de Supressão",
+     "description": "Prende o alvo sob fogo: se ele se mexer, leva um tiro.",
+     "kind": "ranged",
+     "range": -1,
+     "power": 2,
+     "cooldown": 1,
+     "mp": 3,
+     "levelReq": 1,
+     "fx": {
+      "suppress": true
+     },
+     "anim": "volley"
+    },
+    {
+     "id": "supressor_minas",
+     "name": "Campo Minado",
+     "description": "Espalha 3 minas numa área 3×3 (dano e derruba).",
+     "kind": "utility",
+     "range": 5,
+     "power": 0,
+     "cooldown": 3,
+     "mp": 6,
+     "levelReq": 2,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 1,
+     "fx": {
+      "trap": {
+       "damage": 9,
+       "status": {
+        "id": "derrubado",
+        "turns": 1
+       },
+       "count": 3
+      }
+     },
+     "anim": "trap"
+    },
+    {
+     "id": "supressor_vigia",
+     "name": "Vigia",
+     "description": "O tiro básico alcança 1 casa a mais.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 4,
+     "fx": {
+      "reachBonus": 1
+     }
+    },
+    {
+     "id": "supressor_barragem",
+     "name": "Barragem",
+     "description": "Rajada sobre uma área 3×3: dano e deixa lento.",
+     "kind": "ranged",
+     "range": 7,
+     "power": 4,
+     "cooldown": 3,
+     "mp": 7,
+     "levelReq": 7,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 1,
+     "status": {
+      "id": "lento",
+      "turns": 2
+     },
+     "anim": "volley"
+    }
+   ],
+   "group": "controle",
+   "short": "Supressor"
+  },
+  {
+   "id": "perturbador",
+   "name": "Perturbador",
+   "type": "evolucao",
+   "parents": [],
+   "x": -280,
+   "y": 140,
+   "description": "Estados: confusão, silêncio, atraso.",
+   "skills": [
+    {
+     "id": "perturbador_atordoante",
+     "name": "Granada Atordoante",
+     "description": "Atordoa (60%) todos numa área 3×3.",
+     "kind": "utility",
+     "range": 5,
+     "power": 1,
+     "cooldown": 2,
+     "mp": 5,
+     "levelReq": 1,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 1,
+     "status": {
+      "id": "atordoado",
+      "turns": 1,
+      "chance": 60
+     },
+     "anim": "orb"
+    },
+    {
+     "id": "perturbador_fumaca",
+     "name": "Cortina de Fumaça",
+     "description": "Fumaça numa área 3×3: atrapalha a mira de quem atira através dela.",
+     "kind": "utility",
+     "range": 5,
+     "power": 0,
+     "cooldown": 2,
+     "mp": 3,
+     "levelReq": 2,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 1,
+     "fx": {
+      "cloud": "fumaca"
+     },
+     "apCost": 1,
+     "anim": "smoke"
+    },
+    {
+     "id": "perturbador_interferencia",
+     "name": "Interferência",
+     "description": "Silencia o alvo por 2 turnos: sem Dom nem técnicas.",
+     "kind": "magic",
+     "range": 6,
+     "power": 1,
+     "cooldown": 3,
+     "mp": 6,
+     "levelReq": 4,
+     "status": {
+      "id": "silenciado",
+      "turns": 2
+     },
+     "anim": "bolt"
+    },
+    {
+     "id": "perturbador_confundir",
+     "name": "Confundir",
+     "description": "Confunde (65%) o alvo por 1 turno.",
+     "kind": "magic",
+     "range": 5,
+     "power": 1,
+     "cooldown": 2,
+     "mp": 5,
+     "levelReq": 7,
+     "status": {
+      "id": "confuso",
+      "turns": 1,
+      "chance": 65
+     },
+     "anim": "orb"
+    }
+   ],
+   "group": "controle",
+   "short": "Perturbador"
+  },
+  {
+   "id": "ariete",
+   "name": "Aríete",
+   "type": "hibrida",
+   "parents": [
+    "demolidor",
+    "corredor"
+   ],
+   "x": 200,
+   "y": -330,
+   "description": "Demolidor + Corredor: o dano cresce com as casas percorridas.",
+   "skills": [
+    {
+     "id": "ariete_investida",
+     "name": "Aríete",
+     "description": "Corre em linha até 6 casas: cada casa percorrida soma 15% ao dano.",
+     "kind": "physical",
+     "range": 6,
+     "power": 6,
+     "cooldown": 2,
+     "mp": 6,
+     "levelReq": 8,
+     "target": "tile",
+     "shape": "line",
+     "fx": {
+      "dashThrough": true,
+      "ram": 0.15
+     },
+     "anim": "dash"
+    },
+    {
+     "id": "ariete_embalo",
+     "name": "Embalo Brutal",
+     "description": "Não é derrubado e não provoca ataque de oportunidade.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 9,
+     "fx": {
+      "immune": [
+       "derrubado"
+      ],
+      "noOpportunity": true
+     }
+    },
+    {
+     "id": "ariete_atropelo",
+     "name": "Atropelo",
+     "description": "Corre em linha até 8 casas: +20% de dano por casa, e arremessa.",
+     "kind": "physical",
+     "range": 8,
+     "power": 7,
+     "cooldown": 4,
+     "mp": 10,
+     "levelReq": 11,
+     "target": "tile",
+     "shape": "line",
+     "fx": {
+      "dashThrough": true,
+      "ram": 0.2,
+      "push": 1
+     },
+     "anim": "dash"
+    }
+   ],
+   "short": "Aríete",
+   "unlockAt": 2
+  },
+  {
+   "id": "bombardeiro",
+   "name": "Bombardeiro",
+   "type": "hibrida",
+   "parents": [
+    "artilheiro",
+    "acrobata"
+   ],
+   "x": 330,
+   "y": -200,
+   "description": "Artilheiro + Acrobata: ataca do alto com mais força.",
+   "skills": [
+    {
+     "id": "bombardeiro_mergulho",
+     "name": "Mergulho Explosivo",
+     "description": "Explosão 3×3 a até 4 casas: +60% de dano se estiver mais alto.",
+     "kind": "ranged",
+     "range": 4,
+     "power": 6,
+     "cooldown": 2,
+     "mp": 6,
+     "levelReq": 8,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 1,
+     "fx": {
+      "fromAbove": 1.6
+     },
+     "anim": "meteor"
+    },
+    {
+     "id": "bombardeiro_asas",
+     "name": "Asas de Chumbo",
+     "description": "Escala e pula até 5 níveis.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 9,
+     "fx": {
+      "climb": true,
+      "jumpTo": 5
+     }
+    },
+    {
+     "id": "bombardeiro_chuva",
+     "name": "Chuva do Alto",
+     "description": "Explosão 5×5 a até 7 casas: +50% vindo de cima.",
+     "kind": "ranged",
+     "range": 7,
+     "power": 7,
+     "cooldown": 4,
+     "mp": 10,
+     "levelReq": 11,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 2,
+     "fx": {
+      "fromAbove": 1.5,
+      "destroyProps": true
+     },
+     "anim": "meteor"
+    }
+   ],
+   "short": "Bombardeiro",
+   "unlockAt": 2
+  },
+  {
+   "id": "extrator",
+   "name": "Extrator",
+   "type": "hibrida",
+   "parents": [
+    "infiltrador",
+    "resgatista"
+   ],
+   "x": 330,
+   "y": 200,
+   "description": "Infiltrador + Resgatista: tira o ferido de lá sem ser visto.",
+   "skills": [
+    {
+     "id": "extrator_troca",
+     "name": "Extração",
+     "description": "Troca de lugar com um aliado a até 6 casas e fica camuflado (1 ação).",
+     "kind": "utility",
+     "range": 6,
+     "power": 0,
+     "cooldown": 2,
+     "mp": 5,
+     "levelReq": 8,
+     "target": "ally",
+     "fx": {
+      "swap": true,
+      "self": {
+       "id": "camuflado",
+       "turns": 1
+      }
+     },
+     "apCost": 1,
+     "anim": "blink"
+    },
+    {
+     "id": "extrator_fantasma",
+     "name": "Fantasma",
+     "description": "Não provoca ataques de oportunidade; +1 de deslocamento.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 9,
+     "fx": {
+      "noOpportunity": true,
+      "moveBonus": 1
+     }
+    },
+    {
+     "id": "extrator_sumir",
+     "name": "Sumir com o Ferido",
+     "description": "Some da vista por 2 turnos e limpa estados.",
+     "kind": "utility",
+     "range": 0,
+     "power": 0,
+     "cooldown": 3,
+     "mp": 5,
+     "levelReq": 11,
+     "target": "self",
+     "fx": {
+      "hide": "any",
+      "cleanse": true
+     },
+     "value": 2,
+     "anim": "smoke"
+    }
+   ],
+   "short": "Extrator",
+   "unlockAt": 2
+  },
+  {
+   "id": "paramedico",
+   "name": "Paramédico de Campo",
+   "type": "hibrida",
+   "parents": [
+    "batedor",
+    "socorrista"
+   ],
+   "x": 200,
+   "y": 330,
+   "description": "Batedor + Socorrista: correr e curar numa ação só.",
+   "skills": [
+    {
+     "id": "paramedico_corrida",
+     "name": "Corrida de Socorro",
+     "description": "Cura 25% de um aliado a até 6 casas (1 ação).",
+     "kind": "heal",
+     "range": 6,
+     "power": 0,
+     "cooldown": 2,
+     "mp": 6,
+     "levelReq": 8,
+     "target": "ally",
+     "fx": {
+      "healPct": 0.25
+     },
+     "apCost": 1,
+     "anim": "heal"
+    },
+    {
+     "id": "paramedico_aura",
+     "name": "Mãos que Curam",
+     "description": "Aliados a até 2 casas regeneram vida a cada rodada.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 9,
+     "fx": {
+      "aura": {
+       "radius": 2,
+       "allies": true,
+       "status": {
+        "id": "regenerando",
+        "turns": 1
+       }
+      }
+     }
+    },
+    {
+     "id": "paramedico_reanimar",
+     "name": "Reanimação",
+     "description": "Cura 50% de um aliado ao lado e limpa estados.",
+     "kind": "heal",
+     "range": 1,
+     "power": 0,
+     "cooldown": 4,
+     "mp": 10,
+     "levelReq": 11,
+     "target": "ally",
+     "fx": {
+      "healPct": 0.5,
+      "cleanse": true
+     },
+     "anim": "heal"
+    }
+   ],
+   "short": "Paramédico",
+   "unlockAt": 2
+  },
+  {
+   "id": "muralha",
+   "name": "Muralha",
+   "type": "hibrida",
+   "parents": [
+    "guardiao",
+    "supressor"
+   ],
+   "x": -200,
+   "y": 330,
+   "description": "Guardião + Supressor: uma zona que o inimigo não atravessa.",
+   "skills": [
+    {
+     "id": "muralha_paredao",
+     "name": "Paredão",
+     "description": "Ergue muros de pedra numa área 3×3 (cobertura instantânea).",
+     "kind": "utility",
+     "range": 3,
+     "power": 0,
+     "cooldown": 3,
+     "mp": 6,
+     "levelReq": 8,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 1,
+     "fx": {
+      "wall": "rocha"
+     },
+     "apCost": 1,
+     "anim": "summon"
+    },
+    {
+     "id": "muralha_escudo",
+     "name": "Escudo Total",
+     "description": "Intercepta 40% dos golpes contra aliados a até 2 casas (50% menos dano).",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 9,
+     "fx": {
+      "intercept": {
+       "radius": 2,
+       "pct": 0.4,
+       "mitigate": 0.5
+      }
+     }
+    },
+    {
+     "id": "muralha_zona",
+     "name": "Zona Proibida",
+     "description": "Espalha 5 armadilhas que prendem numa área 5×5.",
+     "kind": "utility",
+     "range": 4,
+     "power": 0,
+     "cooldown": 4,
+     "mp": 9,
+     "levelReq": 11,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 2,
+     "fx": {
+      "trap": {
+       "status": {
+        "id": "imobilizado",
+        "turns": 1
+       },
+       "damage": 4,
+       "count": 5
+      }
+     },
+     "anim": "trap"
+    }
+   ],
+   "short": "Muralha",
+   "unlockAt": 2
+  },
+  {
+   "id": "maestro",
+   "name": "Maestro",
+   "type": "hibrida",
+   "parents": [
+    "estrategista",
+    "perturbador"
+   ],
+   "x": -330,
+   "y": 200,
+   "description": "Estrategista + Perturbador: reordena o turno.",
+   "skills": [
+    {
+     "id": "maestro_regencia",
+     "name": "Regência",
+     "description": "Um aliado a até 8 casas ganha 1 ação a mais.",
+     "kind": "buff",
+     "range": 8,
+     "power": 0,
+     "cooldown": 2,
+     "mp": 7,
+     "levelReq": 8,
+     "target": "ally",
+     "fx": {
+      "grantAp": 1
+     },
+     "anim": "shout"
+    },
+    {
+     "id": "maestro_compasso",
+     "name": "Compasso",
+     "description": "Inimigos a até 1 casa ficam lentos.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 9,
+     "fx": {
+      "aura": {
+       "radius": 1,
+       "status": {
+        "id": "lento",
+        "turns": 1
+       }
+      }
+     }
+    },
+    {
+     "id": "maestro_caos",
+     "name": "Sinfonia do Caos",
+     "description": "Confunde (60%) todos numa área 5×5.",
+     "kind": "magic",
+     "range": 7,
+     "power": 2,
+     "cooldown": 4,
+     "mp": 10,
+     "levelReq": 11,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 2,
+     "status": {
+      "id": "confuso",
+      "turns": 1,
+      "chance": 60
+     },
+     "anim": "nova"
+    }
+   ],
+   "short": "Maestro",
+   "unlockAt": 2
+  },
+  {
+   "id": "grappler",
+   "name": "Grappler",
+   "type": "hibrida",
+   "parents": [
+    "manipulador",
+    "duelista"
+   ],
+   "x": -330,
+   "y": -200,
+   "description": "Manipulador + Duelista: puxa e golpeia na mesma ação.",
+   "skills": [
+    {
+     "id": "grappler_puxa",
+     "name": "Puxa e Golpeia",
+     "description": "Salta até o alvo a até 4 casas e golpeia.",
+     "kind": "physical",
+     "range": 4,
+     "power": 7,
+     "cooldown": 1,
+     "mp": 5,
+     "levelReq": 8,
+     "fx": {
+      "leap": true
+     },
+     "anim": "leap"
+    },
+    {
+     "id": "grappler_pegada",
+     "name": "Pegada",
+     "description": "Esquiva 10% e recebe 10% menos dano corpo a corpo.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 9,
+     "fx": {
+      "evasion": 10,
+      "reduce": {
+       "melee": 0.1
+      }
+     }
+    },
+    {
+     "id": "grappler_suplex",
+     "name": "Suplex",
+     "description": "Ergue o alvo e o arremessa 3 casas: dano enorme e derruba.",
+     "kind": "physical",
+     "range": 1,
+     "power": 10,
+     "cooldown": 3,
+     "mp": 8,
+     "levelReq": 11,
+     "fx": {
+      "push": 3
+     },
+     "status": {
+      "id": "derrubado",
+      "turns": 1
+     },
+     "anim": "charge"
+    }
+   ],
+   "short": "Grappler",
+   "unlockAt": 2
+  },
+  {
+   "id": "executor",
+   "name": "Executor de Contenção",
+   "type": "hibrida",
+   "parents": [
+    "restritor",
+    "cacador"
+   ],
+   "x": -200,
+   "y": -330,
+   "description": "Restritor + Caçador: o alvo preso recebe dano adicional.",
+   "skills": [
+    {
+     "id": "executor_contido",
+     "name": "Execução Contida",
+     "description": "Tiro com +80% de dano em alvos imobilizados.",
+     "kind": "ranged",
+     "range": -1,
+     "power": 7,
+     "cooldown": 1,
+     "mp": 5,
+     "levelReq": 8,
+     "fx": {
+      "vs": {
+       "status": "imobilizado",
+       "mult": 1.8
+      }
+     },
+     "anim": "arrow"
+    },
+    {
+     "id": "executor_olho",
+     "name": "Olho do Carrasco",
+     "description": "Enxerga inimigos escondidos.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 9,
+     "fx": {
+      "seeHidden": true
+     }
+    },
+    {
+     "id": "executor_sentenca",
+     "name": "Sentença",
+     "description": "Derruba alvos abaixo de 30%; +50% de dano em imobilizados.",
+     "kind": "ranged",
+     "range": -1,
+     "power": 9,
+     "cooldown": 3,
+     "mp": 9,
+     "levelReq": 11,
+     "fx": {
+      "execute": 0.3,
+      "vs": {
+       "status": "imobilizado",
+       "mult": 1.5
+      }
+     },
+     "anim": "arrow"
+    }
+   ],
+   "short": "Executor",
+   "unlockAt": 2
+  }
+ ]
+}

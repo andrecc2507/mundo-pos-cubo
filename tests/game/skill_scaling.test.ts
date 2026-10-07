@@ -3,7 +3,7 @@ import { DB, type Attr } from '@game/data';
 import * as stats from '@game/rules/stats';
 
 const treeSkills = () =>
-  Object.values(DB.trees).flatMap((t) => t!.nodes.flatMap((n) => n.skills.map((s) => ({ tree: t!.classId, node: n.id, def: DB.skills[s.id]! }))));
+  Object.values(DB.trees).filter((t) => !t!.maxRank).flatMap((t) => t!.nodes.flatMap((n) => n.skills.map((s) => ({ tree: t!.classId, node: n.id, def: DB.skills[s.id]! }))));
 const scalingOf = (tree: string, node: string, kind: string) => treeSkills().find((x) => x.tree === tree && x.node === node && x.def.kind === kind)!.def.scaling;
 
 /** Poder da escala numa build de nível 60 (60/50/40/30/10, o maior valor no maior peso). */
@@ -31,7 +31,7 @@ describe('escala das habilidades por subclasse', () => {
   });
 
   it('equilíbrio: na build máxima, toda escala dá poder entre 90 e 100 (puro = 96)', () => {
-    for (const t of Object.values(DB.trees))
+    for (const t of Object.values(DB.trees).filter((t) => !t!.maxRank))
       for (const n of t!.nodes)
         for (const sc of Object.values(n.scaling ?? {})) {
           const p = bestPower(sc!);

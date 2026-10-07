@@ -1647,6 +1647,8 @@ export function castCreatureSkill(state: BattleState, u: BattleUnit, s: SkillLik
       const t = tileAt(state.map, tx, ty);
       if (t && isWalkable(t) && isFree(state, tx, ty, u) && Math.abs(t.h - tileAt(state.map, u.x, u.y)!.h) <= Math.max(3, u.jump)) land = [tx, ty];
     }
+    // Aríete: cada casa percorrida soma ao dano.
+    if (fx.ram && land) aboveMult = 1 + fx.ram * Math.max(Math.abs(land[0] - u.x), Math.abs(land[1] - u.y));
     if (land) [u.x, u.y] = land;
   } else {
     const primary = unitAt(state, x, y);

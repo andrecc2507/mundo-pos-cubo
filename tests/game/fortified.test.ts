@@ -8,7 +8,7 @@ import { unitFromCharacter, unitFromEnemy } from '@game/battle/units';
 import { makeCharacter } from '@game/rules/recruit';
 import { fortifiedId } from '@game/rules/empower';
 
-const treeSkills = () => Object.values(DB.trees).flatMap((t) => t!.nodes.flatMap((n) => n.skills));
+const treeSkills = () => Object.values(DB.trees).filter((t) => !t!.maxRank).flatMap((t) => t!.nodes.flatMap((n) => n.skills));
 
 describe('forma fortificada (Nv 5)', () => {
   it('toda habilidade ativa tem forma fortificada, mais cara e com bônus; passivas e reações não', () => {

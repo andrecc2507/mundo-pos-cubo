@@ -14,7 +14,9 @@ export const ATTR_LABEL: Record<Attr, string> = {
 };
 export const ATTR_SHORT: Record<Attr, string> = { str: 'FOR', dex: 'DES', spd: 'VEL', int: 'INT', vit: 'VIT' };
 
-export type ClassId = 'aprendiz' | 'guerreiro' | 'arqueiro' | 'mago' | 'clerigo' | 'ladrao' | 'fera';
+export type ClassId = 'aprendiz' | 'guerreiro' | 'arqueiro' | 'mago' | 'clerigo' | 'ladrao' | 'fera' | 'impacto' | 'movimento' | 'suporte' | 'controle';
+/** Classes do Mundo Pós-Cubo (teia única). */
+export const NEW_CLASSES = ['impacto', 'movimento', 'suporte', 'controle'] as const;
 export type WeaponType =
   | 'espada' | 'arco' | 'varinha' | 'bastao' | 'faca' | 'natural' | 'besta_mao'
   // Mundo Pós-Cubo: armas de fogo e corpo a corpo moderno.
@@ -62,6 +64,8 @@ export interface SkillDef {
   gift?: string;
   /** Turnos por time: custa só 1 ação e não encerra o turno. */
   apCost?: number;
+  /** Só com estas armas na mão (árvore de armas). */
+  needsWeapon?: WeaponType[];
   /** Id da forma fortificada (habilidades de teia no Nv 5). */
   fortified?: string;
   /** Bônus da forma fortificada (texto). */
@@ -388,6 +392,8 @@ export interface SkillFx {
   defScaling?: number;
   /** Dá N ações a um aliado (turnos por time); se ele já tinha encerrado, volta a agir. */
   grantAp?: number;
+  /** Investida (dashThrough): +fração do dano por casa percorrida (Aríete). */
+  ram?: number;
   /** Passiva (Despertar): o Dom não sofre Overload. */
   overloadImmune?: boolean;
   /** Empurra / puxa o alvo N metros. */
@@ -669,6 +675,8 @@ export interface TreeSkill extends CreatureSkill {
   gift?: string;
   /** Turnos por time: custa só 1 ação e não encerra o turno (técnicas de movimento). */
   apCost?: number;
+  /** Só com estas armas na mão (árvore de armas). */
+  needsWeapon?: WeaponType[];
   /** Evoluções liberadas no Nv 3/5 (aparecem ao lado da versão normal). */
   evolve?: TreeEvolution[];
   levelReq?: number;
@@ -702,6 +710,8 @@ export interface TreeNode {
   short?: string;
   /** Teias de origem: híbridas e ramos só abrem com a habilidade `unlockAt` de cada uma. */
   parents: string[];
+  /** Teia única: classe à qual a subclasse pertence (as das outras classes pedem treino cruzado). */
+  group?: ClassId;
   /** Posição, na teia de cada pai, da habilidade que abre esta teia (padrão 3). */
   unlockAt?: number;
   /** Posição no diagrama (coordenadas do canvas de design). */

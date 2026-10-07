@@ -1,5 +1,5 @@
-import { DB, type ClassId, type FxStatus, type NodeBonus, type SkillDef, type SkillTree, type TreeNode, type TreeSkill } from '../data';
-import { chainRankReq } from './stats';
+import { DB, NEW_CLASSES, type ClassId, type FxStatus, type NodeBonus, type SkillDef, type SkillTree, type TreeNode, type TreeSkill } from '../data';
+import { CROSS_CLASS_LEVEL, chainRankReq } from './stats';
 
 /**
  * Regras da rosa das classes (puro). Cada subclasse é uma teia: uma fila de habilidades que sai do
@@ -85,10 +85,35 @@ export interface Learner {
   skills: string[];
   /** Nível de cada habilidade aprendida (ausente = 1). */
   skillRanks?: Record<string, number>;
+  /** Dom (Mundo Pós-Cubo): abre a árvore do Dom. */
+  gift?: { id: string };
 }
 
 export function treeOf(classId: ClassId): SkillTree | undefined {
   return DB.trees[classId];
+}
+
+/** Classe do Mundo Pós-Cubo (teia única + árvore de armas + Dom). */
+export function isNewClass(classId: ClassId): boolean {
+  return (NEW_CLASSES as readonly string[]).includes(classId);
+}
+
+/**
+ * As árvores de quem aprende: a da classe; nas classes novas, também a de armas e a do Dom (se
+ * tiver Dom). As três dividem os mesmos pontos de habilidade.
+ */
+export function learnerTrees(c: Pick<Learner, 'classId' | 'gift'>): SkillTree[] {
+  const out: SkillTree[] = [];
+  const cls = treeOf(c.classId);
+  if (cls) out.push(cls);
+  if (isNewClass(c.classId) && DB.auxTrees.armas) out.push(DB.auxTrees.armas);
+  if (c.gift && DB.auxTrees[`dom_${c.gift.id}`]) out.push(DB.auxTrees[`dom_${c.gift.id}`]!);
+  return out;
+}
+
+/** Nível máximo das habilidades de uma árvore. */
+export function treeMaxRank(tree: SkillTree | undefined): number {
+  return tree?.maxRank ?? SKILL_MAX_RANK;
 }
 
 export function nodeSkillIds(node: TreeNode): string[] {
@@ -109,7 +134,8 @@ export function grantedSkillIds(classId: ClassId, learned: string[]): string[] {
 
 /** Passivas inatas da classe (habilidades do nó base): valem sempre, sem aprender. */
 export function innateSkillIds(classId: ClassId): string[] {
-  return (treeOf(classId)?.nodes ?? []).filter((n) => n.type === 'base').flatMap(nodeSkillIds);
+  // Teia única: cada classe só tem o próprio núcleo.
+  return (treeOf(classId)?.nodes ?? []).filter((n) => n.type === 'base' && (!n.group || n.group === classId)).flatMap(nodeSkillIds);
 }
 
 export function rankOf(c: Learner, skillId: string): number {
@@ -161,14 +187,24 @@ export function prerequisites(tree: SkillTree, skillId: string): string[] {
 
 /** Motivo pelo qual a habilidade não pode ser aprendida ou fortalecida agora (ou null se pode). */
 export function lockReason(c: Learner, skillId: string): string | null {
-  const tree = treeOf(c.classId);
-  const f = tree && findSkill(tree, skillId);
+  let tree: SkillTree | undefined;
+  let f: ReturnType<typeof findSkill> = null;
+  for (const t of learnerTrees(c)) {
+    f = findSkill(t, skillId);
+    if (f) {
+      tree = t;
+      break;
+    }
+  }
   if (!tree || !f) return 'não é da sua classe';
-  if (f.node.type === 'base') return 'passiva inata da classe';
+  if (f.node.type === 'base') return 'passiva inata';
   if (f.skill.grantedBy) return `vem com ${DB.skills[f.skill.grantedBy]?.name ?? f.skill.grantedBy}`;
   const rank = rankOf(c, skillId);
-  if (rank >= SKILL_MAX_RANK) return 'nível máximo';
+  const maxRank = treeMaxRank(tree);
+  if (rank >= maxRank) return maxRank === 1 ? 'já aprendida' : 'nível máximo';
   if (rank > 0) return null;
+  // Teia única: subclasses de outra classe pedem treino cruzado (nível mínimo).
+  if (f.node.group && f.node.group !== c.classId && c.level < CROSS_CLASS_LEVEL) return `treino cruzado: requer NV ${CROSS_CLASS_LEVEL}`;
   if (!nodeUnlocked(c, tree, f.node)) {
     const parts = f.node.parents.map((p) => {
       const parent = tree.nodes.find((n) => n.id === p);
@@ -180,7 +216,7 @@ export function lockReason(c: Learner, skillId: string): string | null {
   const missing = prerequisites(tree, skillId).filter((id) => !c.skills.includes(id));
   if (missing.length) return `requer ${missing.map((id) => DB.skills[id]?.name ?? id).join(' e ')}`;
   // Curva da teia: a habilidade anterior precisa estar num nível mínimo (1, 2, 2, 3, 3, 3, 4, 4, 5).
-  if (!f.skill.requires && f.index > 0) {
+  if (!f.skill.requires && f.index > 0 && maxRank > 1) {
     const prev = chainOf(f.node)[f.index - 1]!;
     const need = chainRankReq(f.index);
     if (rankOf(c, prev.id) < need) return `requer ${prev.name} Nv ${need}`;
@@ -193,6 +229,11 @@ export function lockReason(c: Learner, skillId: string): string | null {
 /** Tudo o que a classe pode aprender ou fortalecer (bloqueado ou não), na ordem da árvore. */
 export function classSkillIds(classId: ClassId): string[] {
   return (treeOf(classId)?.nodes ?? []).filter((n) => n.type !== 'base').flatMap((n) => chainOf(n).map((s) => s.id));
+}
+
+/** Tudo o que o personagem pode aprender nas suas árvores (classe, armas e Dom). */
+export function learnableSkillIds(c: Pick<Learner, 'classId' | 'gift'>): string[] {
+  return learnerTrees(c).flatMap((t) => t.nodes.filter((n) => n.type !== 'base').flatMap((n) => chainOf(n).map((s) => s.id)));
 }
 
 /**

@@ -20,6 +20,8 @@ function clamp(v: number, lo: number, hi: number): number {
 // ───────────────────────────── progressão ─────────────────────────────
 
 export const MAX_LEVEL = balance.progression.maxLevel;
+/** Teia única: nível para aprender subclasses de outra classe. */
+export const CROSS_CLASS_LEVEL = balance.progression.crossClassLevel;
 export const MAX_ATTR = balance.progression.maxAttribute;
 
 /**

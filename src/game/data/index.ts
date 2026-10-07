@@ -15,6 +15,8 @@ import treeMago from './skills/trees/mago.json';
 import treeArqueiro from './skills/trees/arqueiro.json';
 import treeClerigo from './skills/trees/clerigo.json';
 import treeGuerreiro from './skills/trees/guerreiro.json';
+import treeTeia from './skills/trees/teia.json';
+import treeArmas from './skills/trees/armas.json';
 import { allGiftTrees } from '../rules/gifts';
 import storyKits from './skills/story_kits.json';
 import { fortify } from '../rules/empower';
@@ -177,6 +179,7 @@ export function treeSkillToSkill(s: TreeSkill, tree: SkillTree, node: TreeNode):
   // Ajuste da teia (balanceamento por simulação): multiplica o dano das habilidades no motor.
   return {
     ...def,
+    ...(s.needsWeapon ? { needsWeapon: s.needsWeapon } : {}),
     ...(node.powerMult ? { powerMult: node.powerMult } : {}),
     scaling: s.scaling ?? byKind,
     tree: node.id,
@@ -249,13 +252,15 @@ export function nodeOfSkill(skillId: string): TreeNode | undefined {
   return undefined;
 }
 
-export const REPO_TREES = [treeArqueiro, treeClerigo, treeGuerreiro, treeLadrao, treeMago] as unknown as SkillTree[];
+export const REPO_TREES = [treeArqueiro, treeClerigo, treeGuerreiro, treeLadrao, treeMago, treeTeia] as unknown as SkillTree[];
+/** Árvore de armas (estilo XCOM). */
+export const WEAPON_TREE = treeArmas as unknown as SkillTree;
 
 export const REPO_CREATURES = creatures as unknown as CreatureDef[];
 export const DISTANT_CREATURES = distantCreatures as unknown as CreatureDef[];
 applyCreatures(REPO_CREATURES);
 applyTrees(REPO_TREES);
-applyAuxTrees(allGiftTrees());
+applyAuxTrees([WEAPON_TREE, ...allGiftTrees()]);
 
 /** Kits únicos dos personagens da história (data/skills/story_kits.json). */
 export interface StoryKit {

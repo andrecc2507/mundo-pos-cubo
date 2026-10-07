@@ -1,0 +1,432 @@
+{
+ "id": "armas",
+ "classId": "impacto",
+ "name": "Combate com Armas",
+ "maxRank": 1,
+ "kind": "weapon",
+ "nodes": [
+  {
+   "id": "armas_base",
+   "name": "Treino com Armas",
+   "type": "base",
+   "parents": [],
+   "x": 0,
+   "y": 0,
+   "description": "Todo combatente sabe atirar, recarregar e se proteger.",
+   "skills": [
+    {
+     "id": "armas_inato",
+     "name": "Treino Básico",
+     "description": "Sabe usar qualquer arma de fogo.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 1,
+     "fx": {}
+    }
+   ]
+  },
+  {
+   "id": "sniper",
+   "name": "Sniper",
+   "type": "evolucao",
+   "parents": [],
+   "x": 0,
+   "y": -160,
+   "description": "Longe e no alto; o tiro decisivo. (Fuzil de precisão ou pistola.)",
+   "skills": [
+    {
+     "id": "sniper_mirado",
+     "name": "Tiro Mirado",
+     "description": "Gasta o turno mirando: +15 de acerto e +20% de crítico.",
+     "kind": "ranged",
+     "range": -1,
+     "power": 8,
+     "cooldown": 1,
+     "mp": 3,
+     "levelReq": 1,
+     "accuracy": 15,
+     "fx": {
+      "crit": 20
+     },
+     "needsWeapon": [
+      "precisao",
+      "pistola"
+     ],
+     "anim": "arrow"
+    },
+    {
+     "id": "sniper_visao",
+     "name": "Visão de Atirador",
+     "description": "O tiro básico alcança 2 casas a mais.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 3,
+     "fx": {
+      "reachBonus": 2
+     }
+    },
+    {
+     "id": "sniper_perna",
+     "name": "Tiro na Perna",
+     "description": "Imobiliza o alvo por 1 turno.",
+     "kind": "ranged",
+     "range": -1,
+     "power": 4,
+     "cooldown": 2,
+     "mp": 4,
+     "levelReq": 5,
+     "status": {
+      "id": "imobilizado",
+      "turns": 1
+     },
+     "needsWeapon": [
+      "precisao",
+      "pistola"
+     ],
+     "anim": "arrow"
+    },
+    {
+     "id": "sniper_paciencia",
+     "name": "Paciência",
+     "description": "Enxerga inimigos escondidos.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 7,
+     "fx": {
+      "seeHidden": true
+     }
+    },
+    {
+     "id": "sniper_cabeca",
+     "name": "Tiro na Cabeça",
+     "description": "Ignora metade da defesa e tem +40% de crítico.",
+     "kind": "ranged",
+     "range": -1,
+     "power": 12,
+     "cooldown": 4,
+     "mp": 8,
+     "levelReq": 9,
+     "fx": {
+      "crit": 40,
+      "pierce": 0.5
+     },
+     "needsWeapon": [
+      "precisao",
+      "pistola"
+     ],
+     "anim": "arrow"
+    }
+   ]
+  },
+  {
+   "id": "assalto",
+   "name": "Assalto",
+   "type": "evolucao",
+   "parents": [],
+   "x": 160,
+   "y": 0,
+   "description": "Perto, mobilidade, pressão. (Fuzil ou escopeta.)",
+   "skills": [
+    {
+     "id": "assalto_correr",
+     "name": "Correr e Atirar",
+     "description": "Tiro que não encerra o turno (1 ação).",
+     "kind": "ranged",
+     "range": -1,
+     "power": 5,
+     "cooldown": 1,
+     "mp": 3,
+     "levelReq": 1,
+     "apCost": 1,
+     "needsWeapon": [
+      "fuzil",
+      "escopeta"
+     ],
+     "anim": "arrow"
+    },
+    {
+     "id": "assalto_agil",
+     "name": "Ágil",
+     "description": "+1 de deslocamento.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 3,
+     "fx": {
+      "moveBonus": 1
+     }
+    },
+    {
+     "id": "assalto_rajada",
+     "name": "Rajada",
+     "description": "Dois tiros seguidos (gasta munição como um).",
+     "kind": "ranged",
+     "range": -1,
+     "power": 4,
+     "cooldown": 2,
+     "mp": 4,
+     "levelReq": 5,
+     "fx": {
+      "hits": 2
+     },
+     "needsWeapon": [
+      "fuzil",
+      "escopeta"
+     ],
+     "anim": "volley"
+    },
+    {
+     "id": "assalto_frio",
+     "name": "Sangue Frio",
+     "description": "Recebe 15% menos dano de tiros.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 7,
+     "fx": {
+      "reduce": {
+       "ranged": 0.15
+      }
+     }
+    },
+    {
+     "id": "assalto_queima",
+     "name": "Queima-roupa",
+     "description": "Tiro a até 2 casas: dano enorme e +30% de crítico.",
+     "kind": "ranged",
+     "range": 2,
+     "power": 10,
+     "cooldown": 3,
+     "mp": 6,
+     "levelReq": 9,
+     "fx": {
+      "crit": 30
+     },
+     "needsWeapon": [
+      "fuzil",
+      "escopeta"
+     ],
+     "anim": "volley"
+    }
+   ]
+  },
+  {
+   "id": "pesado",
+   "name": "Pesado",
+   "type": "evolucao",
+   "parents": [],
+   "x": 0,
+   "y": 160,
+   "description": "Área e cobertura destruída. (Metralhadora ou lança-granadas.)",
+   "skills": [
+    {
+     "id": "pesado_supressao",
+     "name": "Supressão Pesada",
+     "description": "Prende o alvo sob fogo: se ele se mexer, leva um tiro.",
+     "kind": "ranged",
+     "range": -1,
+     "power": 2,
+     "cooldown": 1,
+     "mp": 3,
+     "levelReq": 1,
+     "fx": {
+      "suppress": true
+     },
+     "needsWeapon": [
+      "metralhadora",
+      "lanca_granadas"
+     ],
+     "anim": "volley"
+    },
+    {
+     "id": "pesado_granada",
+     "name": "Granada",
+     "description": "Explosão 3×3 a até 6 casas; destrói cobertura.",
+     "kind": "ranged",
+     "range": 6,
+     "power": 7,
+     "cooldown": 2,
+     "mp": 5,
+     "levelReq": 3,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 1,
+     "fx": {
+      "destroyProps": true
+     },
+     "anim": "orb"
+    },
+    {
+     "id": "pesado_couraca",
+     "name": "Couraça",
+     "description": "Recebe 15% menos dano físico e não é derrubado.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 5,
+     "fx": {
+      "reduce": {
+       "physical": 0.15
+      },
+      "immune": [
+       "derrubado"
+      ]
+     }
+    },
+    {
+     "id": "pesado_demolicao",
+     "name": "Demolição",
+     "description": "Derruba paredes numa área 3×3 (quem está atrás leva dano).",
+     "kind": "ranged",
+     "range": 6,
+     "power": 5,
+     "cooldown": 3,
+     "mp": 6,
+     "levelReq": 7,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 1,
+     "fx": {
+      "destroyProps": true
+     },
+     "needsWeapon": [
+      "metralhadora",
+      "lanca_granadas"
+     ],
+     "anim": "meteor"
+    },
+    {
+     "id": "pesado_chuva",
+     "name": "Chuva de Balas",
+     "description": "Varre um cone à frente.",
+     "kind": "ranged",
+     "range": 5,
+     "power": 6,
+     "cooldown": 4,
+     "mp": 8,
+     "levelReq": 9,
+     "shape": "cone",
+     "needsWeapon": [
+      "metralhadora",
+      "lanca_granadas"
+     ],
+     "anim": "volley"
+    }
+   ]
+  },
+  {
+   "id": "especialista",
+   "name": "Especialista",
+   "type": "evolucao",
+   "parents": [],
+   "x": -160,
+   "y": 0,
+   "description": "Tecnologia e armadilhas. (Qualquer arma.)",
+   "skills": [
+    {
+     "id": "especialista_drone",
+     "name": "Drone de Cura",
+     "description": "O drone cura 18% de um aliado a até 7 casas.",
+     "kind": "heal",
+     "range": 7,
+     "power": 0,
+     "cooldown": 1,
+     "mp": 4,
+     "levelReq": 1,
+     "target": "ally",
+     "fx": {
+      "healPct": 0.18
+     },
+     "anim": "heal"
+    },
+    {
+     "id": "especialista_mina",
+     "name": "Mina de Choque",
+     "description": "Arma uma mina: dano e atordoa quem pisar.",
+     "kind": "utility",
+     "range": 4,
+     "power": 0,
+     "cooldown": 2,
+     "mp": 4,
+     "levelReq": 3,
+     "target": "tile",
+     "fx": {
+      "trap": {
+       "damage": 10,
+       "status": {
+        "id": "atordoado",
+        "turns": 1
+       }
+      }
+     },
+     "apCost": 1,
+     "anim": "trap"
+    },
+    {
+     "id": "especialista_hack",
+     "name": "Hackear",
+     "description": "Desliga o alvo: silenciado por 2 turnos (sem Dom nem técnicas).",
+     "kind": "magic",
+     "range": 7,
+     "power": 2,
+     "cooldown": 3,
+     "mp": 5,
+     "levelReq": 5,
+     "status": {
+      "id": "silenciado",
+      "turns": 2
+     },
+     "anim": "bolt"
+    },
+    {
+     "id": "especialista_ferramentas",
+     "name": "Cinto de Ferramentas",
+     "description": "O tiro básico alcança 1 casa a mais.",
+     "kind": "passive",
+     "range": 0,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 7,
+     "fx": {
+      "reachBonus": 1
+     }
+    },
+    {
+     "id": "especialista_pulso",
+     "name": "Pulso de Interferência",
+     "description": "Silencia todos numa área 5×5 por 1 turno.",
+     "kind": "magic",
+     "range": 6,
+     "power": 1,
+     "cooldown": 4,
+     "mp": 8,
+     "levelReq": 9,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 2,
+     "status": {
+      "id": "silenciado",
+      "turns": 1
+     },
+     "anim": "nova"
+    }
+   ]
+  }
+ ]
+}

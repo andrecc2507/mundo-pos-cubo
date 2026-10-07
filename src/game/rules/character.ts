@@ -1,6 +1,6 @@
 import type { Rng } from '@core';
 import { ATTRS, DB, FIREARMS, item, type Attr, type Attributes, type ClassId, type WeaponType } from '../data';
-import { classSkillIds, lockReason, rankOf, treeBonus, treeMpBonus } from './skill_tree';
+import { learnableSkillIds, lockReason, rankOf, treeBonus, treeMpBonus } from './skill_tree';
 import * as stats from './stats';
 
 /** Constantes de progressão (valores em data/balance.json — ver docs/design/matematica.md). */
@@ -112,6 +112,10 @@ export const DEFAULT_WEAPON: Record<ClassId, string | null> = {
   clerigo: 'bastao_de_carvalho',
   ladrao: 'faca_simples',
   fera: null,
+  impacto: 'soco_ingles',
+  movimento: 'pistola_9mm',
+  suporte: 'pistola_9mm',
+  controle: 'fuzil_assalto',
 };
 
 /** Custo para subir um atributo que está em `value` (curva do Ragnarok). */
@@ -286,7 +290,7 @@ export function revertAttrs(c: Character): void {
 
 /** Habilidades que o personagem pode aprender ou fortalecer agora. */
 export function learnableSkills(c: Character): string[] {
-  return classSkillIds(c.classId).filter((id) => lockReason(c, id) === null);
+  return learnableSkillIds(c).filter((id) => lockReason(c, id) === null);
 }
 
 /** Gasta 1 ponto: aprende a habilidade (nível 1) ou sobe um nível (até 5). */

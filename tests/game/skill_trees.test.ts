@@ -184,12 +184,12 @@ describe('Mago: Iniciado no Estudo dos Elementos', () => {
 
 describe('classes base: passivas inatas', () => {
   it('a classe base não tem habilidades a aprender e a passiva vem junto na batalha', () => {
-    for (const t of REPO_TREES) {
+    for (const t of REPO_TREES.filter((x) => !x.maxRank)) {
       const base = t.nodes.find((n) => n.type === 'base')!;
       expect(base.skills, t.id).toHaveLength(1);
       expect(base.skills[0]!.kind, t.id).toBe('passive');
       const c = makeCharacter(new Rng(1), { classId: t.classId, level: 5 });
-      expect(lockReason(c, base.skills[0]!.id)).toBe('passiva inata da classe');
+      expect(lockReason(c, base.skills[0]!.id)).toBe('passiva inata');
       expect(unitFromCharacter(c, 'player').skills).toContain(base.skills[0]!.id);
     }
   });

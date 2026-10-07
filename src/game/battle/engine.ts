@@ -19,7 +19,7 @@ import * as confine from './confine';
 import type { BattleContext, BattleResult, BattleSetup, BattleState, BattleUnit, Objective, StatusId, Team, TurnState, Wave } from './types';
 import * as fx from './creature_fx';
 import * as stats from '../rules/stats';
-import { SKILL_MAX_RANK, rankCooldown } from '../rules/skill_tree';
+import { SKILL_MAX_RANK, isNewClass, rankCooldown } from '../rules/skill_tree';
 import BASE_DATA from '../data/base/base.json';
 import { RIVAL_DATA, rivalTaunt } from '../world/rival';
 import CAPITALS from '../data/world/capitals.json';
@@ -1679,10 +1679,14 @@ export function canCast(u: BattleUnit, s: SkillLike): boolean {
   if (def?.fortifiedOf && ((u.skillRanks?.[def.fortifiedOf] ?? 1) < SKILL_MAX_RANK || !u.skills.includes(def.fortifiedOf))) return false;
   if (u.statuses.silenciado && s.id !== BASIC_ATTACK.id) return false;
   if ((s.kind === 'physical' || s.kind === 'ranged') && !fx.canStrike(u)) return false;
+  // Árvore de armas: técnica que pede a arma certa na mão.
+  if (def?.needsWeapon && !def.needsWeapon.includes(u.weaponType)) return false;
   return u.mp >= fx.mpCost(u, s);
 }
 
 /** Por que a habilidade não pode ser usada agora (texto curto para a interface), ou null. */
+const WEAPON_NAME: Record<string, string> = { pistola: 'pistola', fuzil: 'fuzil', escopeta: 'escopeta', precisao: 'fuzil de precisão', metralhadora: 'metralhadora', lanca_granadas: 'lança-granadas', punhos: 'punhos', lamina: 'lâmina' };
+
 export function castBlockReason(state: BattleState, u: BattleUnit, s: SkillLike): string | null {
   const def = DB.skills[s.id];
   if (def?.passive) return 'Passiva: age sozinha';
@@ -1691,8 +1695,9 @@ export function castBlockReason(state: BattleState, u: BattleUnit, s: SkillLike)
   if (cd > 0) return `EM RECARGA (${cd} turno${cd > 1 ? 's' : ''})`;
   if (u.statuses.silenciado && s.id !== BASIC_ATTACK.id) return 'SILENCIADO';
   if ((s.kind === 'physical' || s.kind === 'ranged') && !fx.canStrike(u)) return 'NÃO PODE ATACAR AGORA';
+  if (def?.needsWeapon && !def.needsWeapon.includes(u.weaponType)) return `REQUER ${def.needsWeapon.map((w) => WEAPON_NAME[w] ?? w).join(' OU ').toUpperCase()}`;
   const cost = fx.mpCost(u, s);
-  if (u.mp < cost) return `MP INSUFICIENTE (${u.mp}/${cost})`;
+  if (u.mp < cost) return `${u.gift || isNewClass(u.classId) ? 'STAMINA' : 'MP'} INSUFICIENTE (${u.mp}/${cost})`;
   if (def && def.classId === 'fera' && !fx.creatureUsable(state, u, def)) return 'CONDIÇÃO NÃO ATENDIDA (terreno ou situação)';
   if (state.turn.acted && !def?.fx?.free) return 'JÁ AGIU NESTE TURNO';
   return null;

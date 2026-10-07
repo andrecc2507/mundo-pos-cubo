@@ -7,7 +7,7 @@ import { chainOf, lockReason, rankOf } from '@game/rules/skill_tree';
 import * as stats from '@game/rules/stats';
 
 const chains = () =>
-  Object.values(DB.trees).flatMap((t) => t!.nodes.filter((n) => n.type !== 'base' && n.id !== 'elementalista').map((n) => ({ tree: t!, node: n, chain: chainOf(n) })));
+  Object.values(DB.trees).filter((t) => !t!.maxRank).flatMap((t) => t!.nodes.filter((n) => n.type !== 'base' && n.id !== 'elementalista').map((n) => ({ tree: t!, node: n, chain: chainOf(n) })));
 
 /** Custo mínimo (pontos) da linha reta até a última habilidade da teia. */
 function pathCost(len: number): number {
