@@ -4,7 +4,7 @@ import { MASTERY_RULES, VARIANTS, canChooseVariant, chooseVariant, masteryOf, ma
 import { ATTRS, ATTR_LABEL, DB, FIREARMS, type Attr, type ClassId, type SkillTree, type TreeNode } from '../../data';
 import { describeSkill } from '../../bestiary/describe';
 import { derive, learnSkill, statCost, xpToNext, type Character } from '../../rules/character';
-import { AWAKENINGS, FAMILIES, GIFTS, OVERLOADS, PHILOSOPHY_LABEL, RARITY_LABEL, giftDef, giftSlots, giftTreeId, rollGift, type GiftFamily, type GiftRarity, type Philosophy } from '../../rules/gifts';
+import { AWAKENINGS, FAMILIES, GIFTS, OVERLOADS, PHILOSOPHY_LABEL, SIGNATURES_BY_GIFT, SIGNATURE_LEVEL, RARITY_LABEL, giftDef, giftSlots, giftTreeId, rollGift, type GiftFamily, type GiftRarity, type Philosophy } from '../../rules/gifts';
 import { CROSS_CLASS_LEVEL } from '../../rules/stats';
 import { chainOf, learnerTrees, lockReason } from '../../rules/skill_tree';
 import {
@@ -184,7 +184,8 @@ export class HeroSheet {
         ),
         h('div', { text: g.description }),
         h('div', { style: 'color:#e08a7a', text: `Fraqueza: ${g.weakness}` }),
-        h('div', { class: 'muted', text: `💥 Overload — ${OVERLOADS[g.overload]?.name ?? g.overload}: ${OVERLOADS[g.overload]?.text ?? ''}` }),
+        ...giftUniqueLines(g.id),
+      h('div', { class: 'muted', text: `💥 Overload — ${OVERLOADS[g.overload]?.name ?? g.overload}: ${OVERLOADS[g.overload]?.text ?? ''}` }),
         h('div', { class: 'muted', text: `✨ Despertar (potencial ★4+) — ${AWAKENINGS[g.awakening]?.name ?? g.awakening}: ${AWAKENINGS[g.awakening]?.text ?? ''}` }),
       );
     } else {
@@ -327,6 +328,7 @@ export class HeroSheet {
       ),
       h('div', { text: g.description }),
       h('div', { style: 'color:#e08a7a', text: `Fraqueza: ${g.weakness}` }),
+      ...giftUniqueLines(g.id),
       h('div', { class: 'muted', text: `💥 Overload — ${OVERLOADS[g.overload]?.name ?? g.overload}: ${OVERLOADS[g.overload]?.text ?? ''}` }),
       h('div', { class: 'muted', text: `✨ Despertar (potencial ★4+) — ${AWAKENINGS[g.awakening]?.name ?? g.awakening}: ${AWAKENINGS[g.awakening]?.text ?? ''}` }),
     );
@@ -496,4 +498,14 @@ export class HeroSheet {
     if (!this.campaign && pts < 100) box.append(btn('+25 Maestria (só na demo)', () => (((c.mastery ??= {})[id] = Math.min(100, pts + 25)), this.hooks.onChange()), { class: 'small' }));
     return box;
   }
+}
+
+/** Passiva inata e técnica-assinatura do Dom (o que o faz único). */
+function giftUniqueLines(giftId: string): HTMLElement[] {
+  const sig = SIGNATURES_BY_GIFT[giftId];
+  if (!sig) return [];
+  return [
+    h('div', { text: `🧬 Inato: ${sig.innate.desc}` }),
+    h('div', { text: `⭐ Assinatura (NV ${SIGNATURE_LEVEL}) — ${sig.signature.name}: ${sig.signature.description}` }),
+  ];
 }
