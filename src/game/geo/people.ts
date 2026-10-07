@@ -45,12 +45,14 @@ function pickClass(g: GeoGame, rng: Rng): DemoClass {
 /** Dom do candidato: evita repetir Dons do grupo e da leva (spec §38), mas permite coincidência. */
 function pickGift(g: GeoGame, rng: Rng, taken: Set<string>): string | null {
   if (!rng.chance(R.giftChance)) return null;
+  // Anômalos são praticamente únicos: nunca sai um que já esteja em jogo.
+  const anomalous = new Set([...taken].filter((id) => giftDef(id)?.rarity === 'anomalo'));
   for (let i = 0; i < 4; i++) {
-    const gift = rollGift(() => rng.next());
+    const gift = rollGift(() => rng.next(), 0, anomalous);
     if (!gift) return null;
     if (!taken.has(gift.id) || rng.chance(PEOPLE_RULES.pool.repeatGiftPenalty * 0.3)) return gift.id;
   }
-  return rollGift(() => rng.next())?.id ?? null;
+  return rollGift(() => rng.next(), 0, anomalous)?.id ?? null;
 }
 
 /** Um candidato a recruta (spec §12): origem, Dom, potencial, traços, afinidades, profissão. */

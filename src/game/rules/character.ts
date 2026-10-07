@@ -106,7 +106,7 @@ export interface Character {
    * Dom (Mundo Pós-Cubo): id do catálogo, potencial real (★ 1–5), potencial que se vê (o real pode
    * estar escondido) e Maestria 0–100. Sem Dom = combatente só de armas e classe.
    */
-  gift?: { id: string; potential: number; shownPotential?: number; mastery?: number };
+  gift?: { id: string; potential: number; shownPotential?: number; mastery?: number; /** Potência / Controle / Versatilidade deste portador (ausente = sorteio estável do catálogo). */ power?: number; control?: number; versatility?: number };
   /** Mundo Pós-Cubo (rules/perks.ts): origem, profissão do mundo antigo, afinidades e traços. */
   origin?: string;
   profession?: string;

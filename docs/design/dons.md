@@ -1,3 +1,63 @@
+# Dons — catálogo central
+
+> **Status:** implementado (2026-10-07). O catálogo do diretor (335 Dons em 14 categorias) é a
+> fonte: `tools/gift_catalog.py` (linhas do catálogo) + `tools/gift_catalog_new.py` (mecânica dos
+> Dons novos) → `python3 tools/gen_catalog.py` gera `data/gifts/gifts.json` e `signatures.json`.
+> O texto abaixo da linha é a proposta inicial (12 Dons), mantida como histórico.
+
+## Conceito
+
+O Dom não determina a classe: um Pirocinético pode ser Impacto, Movimento, Suporte ou Controle — a
+classe é **como** ele usa o Dom (as 4 filosofias da árvore do Dom).
+
+## Categorias (14) e números
+
+I Físicos (1–35) · II Energia (36–70) · III Elementais (71–100) · IV Psíquicos (101–130) ·
+V Matéria (131–160) · VI Transformação (161–190) · VII Espaço (191–205) · VIII Tempo (206–215) ·
+IX Sentidos (216–235) · X Criação (236–255) · XI Controle (256–280) · XII Mobilidade (281–295) ·
+XIII Suporte (296–315) · XIV Anômalos (316–335). A categoria escolhe a forma da árvore (família
+interna: físico, emissor, manipulador, criador, sensorial ou anômalo).
+
+## Raridade (6) — raridade ≠ poder
+
+| Raridade | Dons no catálogo | Fatia da população com Dom |
+|---|---|---|
+| Comum | 69 | 55% |
+| Incomum | 111 | 28% |
+| Raro | 85 | 12% |
+| Épico | 37 | 4% |
+| Lendário | 12 | 0,8% |
+| Anômalo | 21 (a categoria XIV inteira e o Loop Temporal) | 0,2% — praticamente únicos: nunca sai um que já esteja em jogo |
+
+O sorteio escolhe primeiro a raridade pela fatia e depois um Dom dela (`gift_rules.json` → `rarityShare`).
+
+## Potência, Controle e Versatilidade
+
+Cada Dom tem valores de base (1–10) no catálogo; **cada portador** sorteia em volta (±2), então dois
+pirocinéticos lutam diferente (o brutamontes P10/C3/V2 × o técnico P6/C10/V9). Em batalha
+(`rules/stats.ts`, números em `balance.json` → `giftStats`):
+
+- **Potência:** dano das técnicas do Dom (5 = ×1; cada ponto ±4%).
+- **Controle:** acerto das técnicas do Dom (±2 por ponto) e Strain gerado (∓4% por ponto).
+- **Versatilidade:** técnicas do Dom no loadout — 8+ dá uma a mais, 10 dá duas.
+
+## Estágios e Despertar
+
+Cada Dom tem **Estágio I — Manifestação**, **II — Especialização** e **III** (o texto do
+catálogo), que são as técnicas de nível 1, 3 e 6 da árvore, mais a **Assinatura** (NV 4). O
+**Despertar** mostra o texto do catálogo (a propriedade que não era evidente) e usa a mecânica de
+despertar do motor (potencial ★4+, Strain alto, momento dramático). A **Limitação** do catálogo é a
+fraqueza do Dom.
+
+## Origem dos 335
+
+171 Dons do catálogo reaproveitam um Dom que já existia (mecânica, inata e assinatura, com o nome e
+o número novos); 164 são novos, cada um com passiva inata e técnica-assinatura próprias. Oito Dons
+antigos sem lugar no catálogo saíram (Atração, Rotação, Ossos Projéteis, Sangue Ácido, Teia, Pontes,
+Visão Distante, Vento).
+
+---
+
 # Dons — proposta inicial (para revisão)
 
 > **Status:** aprovado como ponto de partida (2026-10-07). Nada implementado.

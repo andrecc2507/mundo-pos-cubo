@@ -1095,6 +1095,8 @@ export function previewHit(state: BattleState, a: BattleUnit, d: BattleUnit, kin
   // Multiplicador da teia (ajuste de balanceamento da subclasse; ver docs/design/simulacao.md).
   const variant = def ? variantDef(a.variants?.[def.id]) : undefined;
   if (variant?.acc) accBonus += variant.acc;
+  // Controle do Dom: técnicas do Dom acertam mais (ou menos).
+  if (def?.gift) accBonus += stats.giftControlAccuracy(a.giftControl ?? 5);
   let dmg = raw * stats.skillMultiplier(power) * (def?.powerMult ?? 1) * insp * (1 - res) * elementMult(d, el) * mult * m.dmg * gift.giftDamageMult(a, def) * (1 + (variant?.dmg ?? 0));
   // Arma de fogo pela distância (só o tiro básico).
   if (kind === 'basic') {

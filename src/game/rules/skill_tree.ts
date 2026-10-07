@@ -1,6 +1,6 @@
 import { DB, NEW_CLASSES, type ClassId, type FxStatus, type NodeBonus, type SkillDef, type SkillTree, type TreeNode, type TreeSkill } from '../data';
 import { CROSS_CLASS_LEVEL, chainRankReq } from './stats';
-import { giftSlots, giftTreeId } from './gifts';
+import { giftSlots, giftStats, giftTreeId } from './gifts';
 
 /**
  * Regras da rosa das classes (puro). Cada subclasse é uma teia: uma fila de habilidades que sai do
@@ -206,7 +206,7 @@ export function lockReason(c: Learner, skillId: string): string | null {
   if (rank > 0) return null;
   // Dom: o potencial (★) limita quantas técnicas ativas cabem (as passivas não contam).
   if (c.gift?.potential && tree.id === giftTreeId(c.gift.id) && f.skill.kind !== 'passive') {
-    const slots = giftSlots(c.gift.potential);
+    const slots = giftSlots(c.gift.potential, giftStats(c as Parameters<typeof giftStats>[0]).versatility);
     const used = tree.nodes.filter((n) => n.type !== 'base').flatMap((n) => n.skills).filter((s) => s.kind !== 'passive' && c.skills.includes(s.id)).length;
     if (used >= slots) return 'o potencial do Dom não comporta mais técnicas';
   }

@@ -1,69 +1,501 @@
 {
  "_doc": "Regras dos Dons (Mundo Pós-Cubo). Strain 0–100 sobe com as técnicas do Dom e cai a cada turno (decayPerTurn descansando, só decayActive se usou o Dom no turno anterior — usar em sequência acumula); a partir de plusUltraAt as técnicas batem mais forte (ir além do limite); em 100 vem o Overload próprio do Dom. Despertar: com potencial ≥ awakening.minPotential, Strain ≥ awakening.strainAt e (aliado caído ou vida < awakening.hpBelow), o Dom desperta no meio da batalha — muda uma regra (passiva própria), zera o Strain e as técnicas ficam mais fortes e baratas. Os arquétipos dão os números das técnicas montadas por rules/gifts.ts.",
- "rarityWeight": { "comum": 60, "incomum": 25, "raro": 10, "excepcional": 4, "lendario": 1 },
- "rarityLabel": { "comum": "Comum", "incomum": "Incomum", "raro": "Raro", "excepcional": "Excepcional", "lendario": "Lendário" },
- "families": {
-  "fisico": { "label": "Físico", "desc": "Altera o próprio corpo.", "kind": "physical", "finisher": "smash" },
-  "emissor": { "label": "Emissor", "desc": "Produz e projeta energia.", "kind": "magic", "finisher": "canhao" },
-  "manipulador": { "label": "Manipulador", "desc": "Altera forças, movimento e matéria.", "kind": "magic", "finisher": "colapso" },
-  "criador": { "label": "Criador", "desc": "Produz estruturas, objetos e recursos.", "kind": "physical", "finisher": "chuva" },
-  "sensorial": { "label": "Sensorial", "desc": "Atua sobre informação e percepção.", "kind": "physical", "finisher": "certeiro" },
-  "anomalo": { "label": "Anômalo", "desc": "Altera regras fundamentais do combate.", "kind": "magic", "finisher": "ruptura" }
+ "rarityLabel": {
+  "comum": "Comum",
+  "incomum": "Incomum",
+  "raro": "Raro",
+  "epico": "Épico",
+  "lendario": "Lendário",
+  "anomalo": "Anômalo"
  },
- "strain": { "decayPerTurn": 15, "decayActive": 5, "plusUltraAt": 75, "plusUltraDamage": 0.25, "afterOverload": 35 },
- "awakening": { "minPotential": 4, "strainAt": 60, "hpBelow": 0.4, "damage": 0.2, "strainMult": 0.5 },
- "potentialSlots": { "1": 2, "2": 3, "3": 3, "4": 4, "5": 5 },
+ "families": {
+  "fisico": {
+   "label": "Físico",
+   "desc": "Altera o próprio corpo.",
+   "kind": "physical",
+   "finisher": "smash"
+  },
+  "emissor": {
+   "label": "Emissor",
+   "desc": "Produz e projeta energia.",
+   "kind": "magic",
+   "finisher": "canhao"
+  },
+  "manipulador": {
+   "label": "Manipulador",
+   "desc": "Altera forças, movimento e matéria.",
+   "kind": "magic",
+   "finisher": "colapso"
+  },
+  "criador": {
+   "label": "Criador",
+   "desc": "Produz estruturas, objetos e recursos.",
+   "kind": "physical",
+   "finisher": "chuva"
+  },
+  "sensorial": {
+   "label": "Sensorial",
+   "desc": "Atua sobre informação e percepção.",
+   "kind": "physical",
+   "finisher": "certeiro"
+  },
+  "anomalo": {
+   "label": "Anômalo",
+   "desc": "Altera regras fundamentais do combate.",
+   "kind": "magic",
+   "finisher": "ruptura"
+  }
+ },
+ "strain": {
+  "decayPerTurn": 15,
+  "decayActive": 5,
+  "plusUltraAt": 75,
+  "plusUltraDamage": 0.25,
+  "afterOverload": 35
+ },
+ "awakening": {
+  "minPotential": 4,
+  "strainAt": 60,
+  "hpBelow": 0.4,
+  "damage": 0.2,
+  "strainMult": 0.5
+ },
+ "potentialSlots": {
+  "1": 2,
+  "2": 3,
+  "3": 3,
+  "4": 4,
+  "5": 5
+ },
  "archetypes": {
-  "soco": { "range": 1, "power": 7, "strain": 15, "mp": 4, "cooldown": 0, "push": 1 },
-  "rajada": { "range": 5, "power": 6, "strain": 15, "mp": 5, "cooldown": 0 },
-  "projetil": { "range": 6, "power": 5, "strain": 12, "mp": 4, "cooldown": 0 },
-  "onda": { "range": 3, "power": 5, "strain": 15, "mp": 5, "cooldown": 1 },
-  "area": { "range": 4, "power": 5, "strain": 18, "mp": 6, "cooldown": 1, "radius": 1 },
-  "preciso": { "range": 7, "power": 5, "strain": 12, "mp": 4, "cooldown": 0, "accuracy": 25 },
-  "smash": { "range": 1, "power": 13, "strain": 45, "mp": 10, "cooldown": 3, "push": 3 },
-  "canhao": { "range": 7, "power": 10, "strain": 45, "mp": 10, "cooldown": 3 },
-  "colapso": { "range": 5, "power": 8, "strain": 45, "mp": 10, "cooldown": 3, "radius": 1 },
-  "chuva": { "range": 6, "power": 7, "strain": 40, "mp": 10, "cooldown": 3, "radius": 2 },
-  "certeiro": { "range": 9, "power": 10, "strain": 35, "mp": 8, "cooldown": 3, "accuracy": 50, "crit": 40 },
-  "ruptura": { "range": 5, "power": 9, "strain": 45, "mp": 10, "cooldown": 3 },
-  "salto": { "range": 4, "strain": 10, "mp": 3, "cooldown": 1 },
-  "propulsao": { "range": 5, "strain": 12, "mp": 3, "cooldown": 1 },
-  "deslize": { "range": 4, "strain": 8, "mp": 2, "cooldown": 1 },
-  "fase": { "range": 4, "strain": 12, "mp": 3, "cooldown": 2 },
-  "troca": { "range": 6, "strain": 15, "mp": 4, "cooldown": 2 },
-  "investida": { "range": 5, "power": 6, "strain": 20, "mp": 6, "cooldown": 2 },
-  "cura": { "range": 4, "strain": 15, "mp": 6, "cooldown": 1, "healPct": 0.22 },
-  "escudo": { "range": 4, "strain": 12, "mp": 5, "cooldown": 1, "turns": 2 },
-  "inspirar": { "radius": 2, "strain": 15, "mp": 6, "cooldown": 2, "turns": 2 },
-  "purificar": { "radius": 1, "range": 4, "strain": 12, "mp": 5, "cooldown": 1, "healPct": 0.12 },
-  "impulso": { "range": 5, "strain": 25, "mp": 8, "cooldown": 3 },
-  "prender": { "range": 5, "power": 3, "strain": 15, "mp": 5, "cooldown": 1, "turns": 1 },
-  "zona": { "range": 5, "power": 3, "strain": 20, "mp": 6, "cooldown": 2, "radius": 1, "turns": 2 },
-  "puxao": { "range": 5, "power": 3, "strain": 18, "mp": 5, "cooldown": 1, "pull": 3 },
-  "empurrao": { "range": 4, "power": 4, "strain": 18, "mp": 5, "cooldown": 1, "push": 3 }
+  "soco": {
+   "range": 1,
+   "power": 7,
+   "strain": 15,
+   "mp": 4,
+   "cooldown": 0,
+   "push": 1
+  },
+  "rajada": {
+   "range": 5,
+   "power": 6,
+   "strain": 15,
+   "mp": 5,
+   "cooldown": 0
+  },
+  "projetil": {
+   "range": 6,
+   "power": 5,
+   "strain": 12,
+   "mp": 4,
+   "cooldown": 0
+  },
+  "onda": {
+   "range": 3,
+   "power": 5,
+   "strain": 15,
+   "mp": 5,
+   "cooldown": 1
+  },
+  "area": {
+   "range": 4,
+   "power": 5,
+   "strain": 18,
+   "mp": 6,
+   "cooldown": 1,
+   "radius": 1
+  },
+  "preciso": {
+   "range": 7,
+   "power": 5,
+   "strain": 12,
+   "mp": 4,
+   "cooldown": 0,
+   "accuracy": 25
+  },
+  "smash": {
+   "range": 1,
+   "power": 13,
+   "strain": 45,
+   "mp": 10,
+   "cooldown": 3,
+   "push": 3
+  },
+  "canhao": {
+   "range": 7,
+   "power": 10,
+   "strain": 45,
+   "mp": 10,
+   "cooldown": 3
+  },
+  "colapso": {
+   "range": 5,
+   "power": 8,
+   "strain": 45,
+   "mp": 10,
+   "cooldown": 3,
+   "radius": 1
+  },
+  "chuva": {
+   "range": 6,
+   "power": 7,
+   "strain": 40,
+   "mp": 10,
+   "cooldown": 3,
+   "radius": 2
+  },
+  "certeiro": {
+   "range": 9,
+   "power": 10,
+   "strain": 35,
+   "mp": 8,
+   "cooldown": 3,
+   "accuracy": 50,
+   "crit": 40
+  },
+  "ruptura": {
+   "range": 5,
+   "power": 9,
+   "strain": 45,
+   "mp": 10,
+   "cooldown": 3
+  },
+  "salto": {
+   "range": 4,
+   "strain": 10,
+   "mp": 3,
+   "cooldown": 1
+  },
+  "propulsao": {
+   "range": 5,
+   "strain": 12,
+   "mp": 3,
+   "cooldown": 1
+  },
+  "deslize": {
+   "range": 4,
+   "strain": 8,
+   "mp": 2,
+   "cooldown": 1
+  },
+  "fase": {
+   "range": 4,
+   "strain": 12,
+   "mp": 3,
+   "cooldown": 2
+  },
+  "troca": {
+   "range": 6,
+   "strain": 15,
+   "mp": 4,
+   "cooldown": 2
+  },
+  "investida": {
+   "range": 5,
+   "power": 6,
+   "strain": 20,
+   "mp": 6,
+   "cooldown": 2
+  },
+  "cura": {
+   "range": 4,
+   "strain": 15,
+   "mp": 6,
+   "cooldown": 1,
+   "healPct": 0.22
+  },
+  "escudo": {
+   "range": 4,
+   "strain": 12,
+   "mp": 5,
+   "cooldown": 1,
+   "turns": 2
+  },
+  "inspirar": {
+   "radius": 2,
+   "strain": 15,
+   "mp": 6,
+   "cooldown": 2,
+   "turns": 2
+  },
+  "purificar": {
+   "radius": 1,
+   "range": 4,
+   "strain": 12,
+   "mp": 5,
+   "cooldown": 1,
+   "healPct": 0.12
+  },
+  "impulso": {
+   "range": 5,
+   "strain": 25,
+   "mp": 8,
+   "cooldown": 3
+  },
+  "prender": {
+   "range": 5,
+   "power": 3,
+   "strain": 15,
+   "mp": 5,
+   "cooldown": 1,
+   "turns": 1
+  },
+  "zona": {
+   "range": 5,
+   "power": 3,
+   "strain": 20,
+   "mp": 6,
+   "cooldown": 2,
+   "radius": 1,
+   "turns": 2
+  },
+  "puxao": {
+   "range": 5,
+   "power": 3,
+   "strain": 18,
+   "mp": 5,
+   "cooldown": 1,
+   "pull": 3
+  },
+  "empurrao": {
+   "range": 4,
+   "power": 4,
+   "strain": 18,
+   "mp": 5,
+   "cooldown": 1,
+   "push": 3
+  }
  },
  "overloads": {
-  "exaustao": { "name": "Exaustão", "text": "O corpo cede: fica lento e enfraquecido por 2 turnos.", "self": [{ "id": "lento", "turns": 2 }, { "id": "enfraquecido", "turns": 2 }] },
-  "choque": { "name": "Curto-circuito", "text": "A descarga volta: dano em si e atordoa quem estiver colado.", "selfDamagePct": 0.12, "self": [{ "id": "atordoado", "turns": 1 }], "around": { "radius": 1, "status": { "id": "eletrocutado", "turns": 1 } } },
-  "confusao": { "name": "Sobrecarga sensorial", "text": "A cabeça gira: confuso por 2 turnos.", "self": [{ "id": "confuso", "turns": 2 }] },
-  "fome": { "name": "Fome extrema", "text": "O Dom consome tudo: Stamina zera.", "drainMp": true, "self": [{ "id": "enfraquecido", "turns": 2 }] },
-  "trava": { "name": "Corpo travado", "text": "O corpo trava: imobilizado por 1 turno.", "self": [{ "id": "imobilizado", "turns": 1 }] },
-  "queimadura": { "name": "Superaquecimento", "text": "Queima a si mesmo e o chão em volta pega fogo.", "selfDamagePct": 0.1, "self": [{ "id": "queimando", "turns": 2 }], "surface": "fogo" },
-  "cegueira": { "name": "Cegueira", "text": "A visão apaga: cego por 2 turnos.", "self": [{ "id": "cegado", "turns": 2 }] },
-  "sangramento": { "name": "Hemorragia", "text": "O corpo abre: sangrando por 3 turnos.", "self": [{ "id": "sangramento", "turns": 3 }] },
-  "desmaio": { "name": "Apagão", "text": "Desmaia: perde o próximo turno.", "self": [{ "id": "atordoado", "turns": 1 }] },
-  "descontrole": { "name": "Descontrole", "text": "O Dom explode em volta — aliados também.", "selfDamagePct": 0.08, "around": { "radius": 1, "damagePct": 0.12 }, "self": [{ "id": "atordoado", "turns": 1 }] },
-  "envelhecer": { "name": "Desgaste do tempo", "text": "Perde 10% da vida máxima até o fim da batalha.", "maxHpCut": 0.1, "self": [{ "id": "lento", "turns": 1 }] },
-  "congelamento": { "name": "Congelamento", "text": "O frio toma o corpo: congelado por 1 turno.", "self": [{ "id": "congelado", "turns": 1 }] },
-  "desfaz": { "name": "Colapso das criações", "text": "Tudo o que criou se desfaz e fica atordoado.", "self": [{ "id": "atordoado", "turns": 1 }] }
+  "exaustao": {
+   "name": "Exaustão",
+   "text": "O corpo cede: fica lento e enfraquecido por 2 turnos.",
+   "self": [
+    {
+     "id": "lento",
+     "turns": 2
+    },
+    {
+     "id": "enfraquecido",
+     "turns": 2
+    }
+   ]
+  },
+  "choque": {
+   "name": "Curto-circuito",
+   "text": "A descarga volta: dano em si e atordoa quem estiver colado.",
+   "selfDamagePct": 0.12,
+   "self": [
+    {
+     "id": "atordoado",
+     "turns": 1
+    }
+   ],
+   "around": {
+    "radius": 1,
+    "status": {
+     "id": "eletrocutado",
+     "turns": 1
+    }
+   }
+  },
+  "confusao": {
+   "name": "Sobrecarga sensorial",
+   "text": "A cabeça gira: confuso por 2 turnos.",
+   "self": [
+    {
+     "id": "confuso",
+     "turns": 2
+    }
+   ]
+  },
+  "fome": {
+   "name": "Fome extrema",
+   "text": "O Dom consome tudo: Stamina zera.",
+   "drainMp": true,
+   "self": [
+    {
+     "id": "enfraquecido",
+     "turns": 2
+    }
+   ]
+  },
+  "trava": {
+   "name": "Corpo travado",
+   "text": "O corpo trava: imobilizado por 1 turno.",
+   "self": [
+    {
+     "id": "imobilizado",
+     "turns": 1
+    }
+   ]
+  },
+  "queimadura": {
+   "name": "Superaquecimento",
+   "text": "Queima a si mesmo e o chão em volta pega fogo.",
+   "selfDamagePct": 0.1,
+   "self": [
+    {
+     "id": "queimando",
+     "turns": 2
+    }
+   ],
+   "surface": "fogo"
+  },
+  "cegueira": {
+   "name": "Cegueira",
+   "text": "A visão apaga: cego por 2 turnos.",
+   "self": [
+    {
+     "id": "cegado",
+     "turns": 2
+    }
+   ]
+  },
+  "sangramento": {
+   "name": "Hemorragia",
+   "text": "O corpo abre: sangrando por 3 turnos.",
+   "self": [
+    {
+     "id": "sangramento",
+     "turns": 3
+    }
+   ]
+  },
+  "desmaio": {
+   "name": "Apagão",
+   "text": "Desmaia: perde o próximo turno.",
+   "self": [
+    {
+     "id": "atordoado",
+     "turns": 1
+    }
+   ]
+  },
+  "descontrole": {
+   "name": "Descontrole",
+   "text": "O Dom explode em volta — aliados também.",
+   "selfDamagePct": 0.08,
+   "around": {
+    "radius": 1,
+    "damagePct": 0.12
+   },
+   "self": [
+    {
+     "id": "atordoado",
+     "turns": 1
+    }
+   ]
+  },
+  "envelhecer": {
+   "name": "Desgaste do tempo",
+   "text": "Perde 10% da vida máxima até o fim da batalha.",
+   "maxHpCut": 0.1,
+   "self": [
+    {
+     "id": "lento",
+     "turns": 1
+    }
+   ]
+  },
+  "congelamento": {
+   "name": "Congelamento",
+   "text": "O frio toma o corpo: congelado por 1 turno.",
+   "self": [
+    {
+     "id": "congelado",
+     "turns": 1
+    }
+   ]
+  },
+  "desfaz": {
+   "name": "Colapso das criações",
+   "text": "Tudo o que criou se desfaz e fica atordoado.",
+   "self": [
+    {
+     "id": "atordoado",
+     "turns": 1
+    }
+   ]
+  }
  },
  "awakenings": {
-  "furia": { "name": "Fúria Desperta", "text": "O Dom transborda: inimigos a até 2 casas sofrem o efeito do Dom a cada rodada.", "fx": { "aura": { "radius": 2, "damagePct": 0.05 } } },
-  "couraca": { "name": "Corpo Inabalável", "text": "Recebe 30% menos dano e não pode ser derrubado nem empurrado.", "fx": { "reduce": { "physical": 0.3, "magic": 0.3 }, "immune": ["derrubado", "imobilizado"] } },
-  "mobilidade": { "name": "Passo Desperto", "text": "+3 de deslocamento e nunca provoca ataque de oportunidade.", "fx": { "moveBonus": 3, "noOpportunity": true } },
-  "guardiao": { "name": "Escudo Vivo", "text": "Aliados a até 2 casas ficam fortificados enquanto ele estiver de pé.", "fx": { "aura": { "radius": 2, "allies": true, "status": { "id": "fortificado", "turns": 1 } } } },
-  "imortal": { "name": "Recusa em Cair", "text": "Uma vez, um golpe fatal deixa com 1 de vida.", "fx": { "cheatDeath": true } },
-  "visao": { "name": "Olhar Desperto", "text": "Vê tudo o que se esconde e esquiva 25% a mais.", "fx": { "seeHidden": true, "evasion": 25 } },
-  "dominio": { "name": "Domínio Absoluto", "text": "O Dom não cansa: imune ao Overload pelo resto da batalha.", "fx": { "overloadImmune": true } }
+  "furia": {
+   "name": "Fúria Desperta",
+   "text": "O Dom transborda: inimigos a até 2 casas sofrem o efeito do Dom a cada rodada.",
+   "fx": {
+    "aura": {
+     "radius": 2,
+     "damagePct": 0.05
+    }
+   }
+  },
+  "couraca": {
+   "name": "Corpo Inabalável",
+   "text": "Recebe 30% menos dano e não pode ser derrubado nem empurrado.",
+   "fx": {
+    "reduce": {
+     "physical": 0.3,
+     "magic": 0.3
+    },
+    "immune": [
+     "derrubado",
+     "imobilizado"
+    ]
+   }
+  },
+  "mobilidade": {
+   "name": "Passo Desperto",
+   "text": "+3 de deslocamento e nunca provoca ataque de oportunidade.",
+   "fx": {
+    "moveBonus": 3,
+    "noOpportunity": true
+   }
+  },
+  "guardiao": {
+   "name": "Escudo Vivo",
+   "text": "Aliados a até 2 casas ficam fortificados enquanto ele estiver de pé.",
+   "fx": {
+    "aura": {
+     "radius": 2,
+     "allies": true,
+     "status": {
+      "id": "fortificado",
+      "turns": 1
+     }
+    }
+   }
+  },
+  "imortal": {
+   "name": "Recusa em Cair",
+   "text": "Uma vez, um golpe fatal deixa com 1 de vida.",
+   "fx": {
+    "cheatDeath": true
+   }
+  },
+  "visao": {
+   "name": "Olhar Desperto",
+   "text": "Vê tudo o que se esconde e esquiva 25% a mais.",
+   "fx": {
+    "seeHidden": true,
+    "evasion": 25
+   }
+  },
+  "dominio": {
+   "name": "Domínio Absoluto",
+   "text": "O Dom não cansa: imune ao Overload pelo resto da batalha.",
+   "fx": {
+    "overloadImmune": true
+   }
+  }
+ },
+ "rarityShare": {
+  "_doc": "Fatia da população com Dom de cada raridade (documento do diretor): 50–60% simples, 25–30% incomuns, 10–15% raros, 2–5% épicos, menos de 1% lendários; anômalos são praticamente únicos.",
+  "comum": 0.55,
+  "incomum": 0.28,
+  "raro": 0.12,
+  "epico": 0.04,
+  "lendario": 0.008,
+  "anomalo": 0.002
  }
 }

@@ -8,7 +8,7 @@ import { artFor } from '../render/sprite_anims';
 import BOND_DATA from '../data/base/bonds.json';
 import type { BattleUnit, Team } from './types';
 import { frictionLevel, quirkBattle } from '../rules/personality';
-import { giftDef } from '../rules/gifts';
+import { giftDef, giftStats } from '../rules/gifts';
 import { masteryRank } from '../rules/mastery';
 import { perkBattle, perkSkills } from '../rules/perks';
 
@@ -153,7 +153,7 @@ export function unitFromCharacter(c: Character, team: Team): BattleUnit {
     facing: team === 'player' ? 0 : 2,
     gauge: 0,
     skills: [...innateSkillIds(c.classId), ...giftInnate(c), ...c.skills.filter((id) => DB.skills[id]), ...grantedSkillIds(c.classId, c.skills), ...unlockedEvolutions(c.skills, c.skillRanks), ...jewelSkill(c), ...kitSkills(c), ...perkSkills(c)],
-    ...(c.gift && giftDef(c.gift.id) ? { gift: c.gift.id, strain: 0, giftPotential: c.gift.potential } : {}),
+    ...(c.gift && giftDef(c.gift.id) ? { gift: c.gift.id, strain: 0, giftPotential: c.gift.potential, giftPower: giftStats(c).power, giftControl: giftStats(c).control } : {}),
     title: c.storyId ? STORY_KITS[c.storyId]?.title : undefined,
     skillRanks: { ...grantedRanks(c), ...jewelRank(c) },
     ...(c.variants && Object.keys(c.variants).length ? { variants: { ...c.variants } } : {}),

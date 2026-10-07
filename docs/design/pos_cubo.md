@@ -61,7 +61,7 @@ Na prática, cada mecânica é julgada por estas perguntas:
 | 1 | "Executor" é subclasse (§15) e parte de uma fusão (§18) | É só nome de fusão. As subclasses são definidas em dados (a definir com o diretor). |
 | 2 | Vizinhança das classes não definida (exemplos cruzam Impacto–Movimento, Movimento–Controle e Impacto–Controle) | Cruz: **Impacto (N), Movimento (L), Suporte (S), Controle (O)**. Fusões nas diagonais: Impacto+Movimento (NE), Movimento+Suporte (SE), Suporte+Controle (SO), Controle+Impacto (NO). O exemplo "Acrobata + Manipulador" (Movimento + Controle, opostas) não vale — vira Acrobata + algo de Impacto ou Suporte. |
 | 3 | Fusão da Helena sem a segunda subclasse | Grappler = Manipulador (Controle) + uma subclasse de Impacto. |
-| 4 | "Anômalo" é família e raridade | Só família. Raridades: **Comum, Incomum, Raro, Excepcional, Lendário** (pesos 60/25/10/4/1, configuráveis). |
+| 4 | "Anômalo" é família e raridade | Atualizado pelo catálogo central ([dons.md](dons.md)): raridades **Comum, Incomum, Raro, Épico, Lendário, Anômalo**; a categoria XIV é toda anômala. |
 | 5 | Stamina citada e nunca definida | Stamina = custo de toda técnica (substitui o PM). Strain = só o Dom. |
 | 6 | "Slots de técnica do Dom" sem definição | O potencial (★) define quantas técnicas do Dom cabem no loadout de missão: ★ 2, ★★ 3, ★★★ 3, ★★★★ 4, ★★★★★ 5. |
 | 7 | Todo recruta tem Dom (spec) × muitos não têm (cenário) | Recruta pode vir **sem Dom**; os campos do Dom ficam vazios e ele usa só armas e classe. Fração configurável (ponto de partida: 35% sem Dom). |

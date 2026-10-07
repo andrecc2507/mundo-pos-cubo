@@ -4,7 +4,7 @@ import { MASTERY_RULES, VARIANTS, canChooseVariant, chooseVariant, masteryOf, ma
 import { ATTRS, ATTR_LABEL, DB, FIREARMS, type Attr, type ClassId, type SkillTree, type TreeNode } from '../../data';
 import { describeSkill } from '../../bestiary/describe';
 import { derive, learnSkill, statCost, utilitySlots, utilityUses, xpToNext, type Character } from '../../rules/character';
-import { AWAKENINGS, FAMILIES, GIFTS, OVERLOADS, PHILOSOPHY_LABEL, SIGNATURES_BY_GIFT, SIGNATURE_LEVEL, RARITY_LABEL, giftDef, giftSlots, giftTreeId, rollGift, type GiftFamily, type GiftRarity, type Philosophy } from '../../rules/gifts';
+import { AWAKENINGS, GIFT_CATEGORIES, GIFTS, OVERLOADS, PHILOSOPHY_LABEL, SIGNATURES_BY_GIFT, SIGNATURE_LEVEL, RARITY_LABEL, giftDef, giftSlots, giftStats, giftTreeId, rollGift, type GiftDef, type GiftRarity, type Philosophy } from '../../rules/gifts';
 import { CROSS_CLASS_LEVEL } from '../../rules/stats';
 import { chainOf, learnerTrees, lockReason } from '../../rules/skill_tree';
 import {
@@ -14,7 +14,7 @@ import {
 
 export type SheetTab = 'ficha' | 'classes' | 'dom' | 'armas';
 const TAB_LABEL: Record<SheetTab, string> = { ficha: 'Ficha', classes: 'Classes', dom: 'Dom', armas: 'Armas' };
-export const RARITY_COLOR: Record<GiftRarity, string> = { comum: '#b0a898', incomum: '#7fbf6e', raro: '#5ea8e0', excepcional: '#c08ae8', lendario: '#f0b54a' };
+export const RARITY_COLOR: Record<GiftRarity, string> = { comum: '#b0a898', incomum: '#7fbf6e', raro: '#5ea8e0', epico: '#c08ae8', lendario: '#f0b54a', anomalo: '#ff5c8a' };
 export const WEAPON_TYPE_LABEL: Record<string, string> = { pistola: 'Pistola', fuzil: 'Fuzil', escopeta: 'Escopeta', precisao: 'Fuzil de precisão', metralhadora: 'Metralhadora', lanca_granadas: 'Lança-granadas', punhos: 'Punhos', lamina: 'Lâmina', contundente: 'Contundente' };
 export const MODERN_UTILITY = ['kit_medico', 'granada_fragmentacao', 'granada_fumaca', 'granada_atordoante', 'estimulante'];
 export const MODERN_ARMOR = ['colete_tatico', 'armadura_pesada', 'traje_de_heroi'];
@@ -178,15 +178,16 @@ export class HeroSheet {
       giftBox.append(
         h('div', { class: 'row', style: 'gap:8px;align-items:baseline;flex-wrap:wrap' },
           h('b', { style: `font-size:16px;color:${RARITY_COLOR[g.rarity]}`, text: g.name }),
-          h('span', { class: 'muted', text: `${FAMILIES[g.family].label} · ${RARITY_LABEL[g.rarity]}${g.element ? ` · ${g.element}` : ''}` }),
+          h('span', { class: 'muted', text: `#${g.num} · ${g.categoryName} · ${RARITY_LABEL[g.rarity]}${g.element ? ` · ${g.element}` : ''}` }),
           pot,
-          h('span', { class: 'muted', style: 'font-size:11px', text: `${giftSlots(c.gift!.potential)} técnicas cabem` }),
+          h('span', { class: 'muted', style: 'font-size:11px', text: `${giftSlots(c.gift!.potential, giftStats(c).versatility)} técnicas cabem` }),
         ),
         h('div', { text: g.description }),
-        h('div', { style: 'color:#e08a7a', text: `Fraqueza: ${g.weakness}` }),
+        h('div', { style: 'color:#e08a7a', text: `Limitação: ${g.weakness}` }),
+        ...giftCatalogLines(c, g),
         ...giftUniqueLines(g.id),
       h('div', { class: 'muted', text: `💥 Overload — ${OVERLOADS[g.overload]?.name ?? g.overload}: ${OVERLOADS[g.overload]?.text ?? ''}` }),
-        h('div', { class: 'muted', text: `✨ Despertar (potencial ★4+) — ${AWAKENINGS[g.awakening]?.name ?? g.awakening}: ${AWAKENINGS[g.awakening]?.text ?? ''}` }),
+        h('div', { class: 'muted', text: `✨ Despertar (potencial ★4+) — ${g.awakeningText} (${AWAKENINGS[g.awakening]?.name ?? g.awakening}: ${AWAKENINGS[g.awakening]?.text ?? ''})` }),
       );
     } else {
       giftBox.append(h('div', { class: 'muted', text: 'Sem Dom: luta só com a teia de classe e a árvore de armas.' }));
@@ -322,22 +323,23 @@ export class HeroSheet {
     box.append(
       h('div', { class: 'row', style: 'gap:8px;align-items:baseline;flex-wrap:wrap' },
         h('b', { style: `font-size:16px;color:${RARITY_COLOR[g.rarity]}`, text: g.name }),
-        h('span', { class: 'muted', text: `${FAMILIES[g.family].label} · ${RARITY_LABEL[g.rarity]}${g.element ? ` · ${g.element}` : ''}` }),
+        h('span', { class: 'muted', text: `#${g.num} · ${g.categoryName} · ${RARITY_LABEL[g.rarity]}${g.element ? ` · ${g.element}` : ''}` }),
         h('span', { class: 'demo-stars', text: stars(pot), title: 'Potencial que se vê (o laboratório mede o real)' }),
-        h('span', { class: 'muted', style: 'font-size:11px', text: this.hidden(c) ? 'quantas técnicas cabem: ainda incerto' : `${giftSlots(c.gift!.potential)} técnicas cabem` }),
+        h('span', { class: 'muted', style: 'font-size:11px', text: this.hidden(c) ? 'quantas técnicas cabem: ainda incerto' : `${giftSlots(c.gift!.potential, giftStats(c).versatility)} técnicas cabem` }),
       ),
       h('div', { text: g.description }),
-      h('div', { style: 'color:#e08a7a', text: `Fraqueza: ${g.weakness}` }),
+      h('div', { style: 'color:#e08a7a', text: `Limitação: ${g.weakness}` }),
+      ...giftCatalogLines(c, g),
       ...giftUniqueLines(g.id),
       h('div', { class: 'muted', text: `💥 Overload — ${OVERLOADS[g.overload]?.name ?? g.overload}: ${OVERLOADS[g.overload]?.text ?? ''}` }),
-      h('div', { class: 'muted', text: `✨ Despertar (potencial ★4+) — ${AWAKENINGS[g.awakening]?.name ?? g.awakening}: ${AWAKENINGS[g.awakening]?.text ?? ''}` }),
+      h('div', { class: 'muted', text: `✨ Despertar (potencial ★4+) — ${g.awakeningText} (${AWAKENINGS[g.awakening]?.name ?? g.awakening}: ${AWAKENINGS[g.awakening]?.text ?? ''})` }),
     );
     return box;
   }
 
-  /** Escolher Dom: busca, família e raridade. */
+  /** Escolher Dom: busca, categoria (I–XIV) e raridade. */
   protected pickGift(c: Character): void {
-    let family: GiftFamily | '' = '';
+    let family = '';
     let rarity: GiftRarity | '' = '';
     let query = '';
     modal(`Dons (${GIFTS.length})`, (body, m) => {
@@ -347,12 +349,12 @@ export class HeroSheet {
       const draw = () => {
         clear(filters);
         filters.append(btn('Todas', () => ((family = ''), draw()), { class: `small${family === '' ? ' active' : ''}` }));
-        for (const f of Object.keys(FAMILIES) as GiftFamily[]) filters.append(btn(FAMILIES[f].label, () => ((family = f), draw()), { class: `small${family === f ? ' active' : ''}`, title: FAMILIES[f].desc }));
+        for (const cat of GIFT_CATEGORIES) filters.append(btn(`${cat.id} ${cat.name}`, () => ((family = cat.id), draw()), { class: `small${family === cat.id ? ' active' : ''}` }));
         filters.append(h('span', { style: 'width:12px' }));
         for (const r of Object.keys(RARITY_LABEL) as GiftRarity[]) filters.append(btn(RARITY_LABEL[r], () => ((rarity = rarity === r ? '' : r), draw()), { class: `small${rarity === r ? ' active' : ''}` }));
         clear(list);
         const q = query.toLowerCase();
-        const shown = GIFTS.filter((g) => (!family || g.family === family) && (!rarity || g.rarity === rarity) && (!q || g.name.toLowerCase().includes(q) || g.description.toLowerCase().includes(q)));
+        const shown = GIFTS.filter((g) => (!family || g.category === family) && (!rarity || g.rarity === rarity) && (!q || g.name.toLowerCase().includes(q) || g.description.toLowerCase().includes(q)));
         for (const g of shown)
           list.append(
             h('div', { class: `item demo-gift-row${c.gift?.id === g.id ? ' selected' : ''}`, onClick: () => {
@@ -361,7 +363,7 @@ export class HeroSheet {
               m.close();
               this.hooks.onChange();
             } },
-              h('div', { class: 'row', style: 'gap:6px;align-items:baseline' }, h('b', { style: `color:${RARITY_COLOR[g.rarity]}`, text: g.name }), h('span', { class: 'muted', style: 'font-size:11px', text: `${FAMILIES[g.family].label} · ${RARITY_LABEL[g.rarity]}` })),
+              h('div', { class: 'row', style: 'gap:6px;align-items:baseline' }, h('b', { style: `color:${RARITY_COLOR[g.rarity]}`, text: g.name }), h('span', { class: 'muted', style: 'font-size:11px', text: `#${g.num} · ${g.categoryName} · ${RARITY_LABEL[g.rarity]} · P${g.power} C${g.control} V${g.versatility}` })),
               h('div', { style: 'font-size:12px', text: g.description }),
             ),
           );
@@ -397,7 +399,7 @@ export class HeroSheet {
 
   protected renderGiftTree(el: HTMLElement, c: Character, tree: SkillTree): void {
     const g = giftDef(c.gift!.id)!;
-    const slots = giftSlots(c.gift!.potential);
+    const slots = giftSlots(c.gift!.potential, giftStats(c).versatility);
     const used = tree.nodes.flatMap((n) => n.skills).filter((s) => s.kind !== 'passive' && c.skills.includes(s.id)).length;
     el.append(
       h('div', { class: 'demo-group', style: `--cls:${RARITY_COLOR[g.rarity]}` },
@@ -515,4 +517,18 @@ function itemLabel(c: Character, i: number): string {
   if (i >= utilitySlots(c)) return `Item ${i + 1} (só sem Dom)`;
   const uses = utilityUses(c, 'x', i);
   return `Item ${i + 1} · ${uses} uso${uses > 1 ? 's' : ''}`;
+}
+
+/** Linhas do catálogo central: Potência / Controle / Versatilidade deste portador e os três estágios. */
+function giftCatalogLines(c: Character, g: GiftDef): HTMLElement[] {
+  const st = giftStats(c);
+  const bar = (label: string, v: number, title: string) => h('span', { title, text: `${label} ${'▰'.repeat(v)}${'▱'.repeat(10 - v)} ${v}` });
+  return [
+    h('div', { class: 'row', style: 'gap:14px;flex-wrap:wrap;font-size:12px' },
+      bar('Potência', st.power, 'Força do efeito: dano das técnicas do Dom'),
+      bar('Controle', st.control, 'Precisão: acerto das técnicas do Dom e menos Strain'),
+      bar('Versatilidade', st.versatility, 'Aplicações: 8+ dá uma técnica do Dom a mais no loadout (10: duas)'),
+    ),
+    h('div', { class: 'muted', style: 'font-size:12px', text: `Estágios — I Manifestação: ${g.stages[0]} · II Especialização: ${g.stages[1]} · III: ${g.stages[2]}` }),
+  ];
 }

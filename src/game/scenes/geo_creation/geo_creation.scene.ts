@@ -8,7 +8,7 @@ import { newGeoGame, partyBlock, villageSpotBlock, type PersonSpec } from '../..
 import { CONTINENT_LABEL, regionAt, regionById, type LonLat } from '../../geo/world';
 import { CanvasPointer } from '../../render/pointer';
 import { GlobeView, drawGlobe } from '../../render/globe';
-import { FAMILIES, giftDef } from '../../rules/gifts';
+import { giftDef } from '../../rules/gifts';
 import { GEO_SLOTS, geoStore, saveGeo } from '../../state/geo_store';
 import { RARITY_COLOR } from '../shared/hero_sheet';
 
@@ -118,9 +118,9 @@ export class GeoCreationScene extends Scene {
       grid.append(
         h('div', { class: `item geo-gift${selected === id ? ' selected' : ''}`, onClick: () => pick(id) },
           h('b', { style: `color:${RARITY_COLOR[g.rarity]}`, text: g.name }),
-          h('span', { class: 'muted', style: 'font-size:11px', text: ` ${FAMILIES[g.family].label}` }),
+          h('span', { class: 'muted', style: 'font-size:11px', text: ` #${g.num} · ${g.categoryName}` }),
           h('div', { style: 'font-size:12px', text: g.description }),
-          h('div', { style: 'font-size:11px;color:#e08a7a', text: `Fraqueza: ${g.weakness}` }),
+          h('div', { style: 'font-size:11px;color:#e08a7a', text: `Limitação: ${g.weakness}` }),
         ),
       );
     }

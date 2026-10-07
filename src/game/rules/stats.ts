@@ -418,3 +418,27 @@ export function travelCheckChance(best: number, level: number, difficulty = 0): 
   const target = t.checkBase + t.checkPerLevel * safe(level) + difficulty;
   return clamp(50 + t.checkPerPoint * (safe(best) - target), t.checkMin, t.checkMax);
 }
+
+// ───────────────────────────── Dom: Potência / Controle / Versatilidade ─────────────────────────────
+
+const GS = BALANCE.giftStats;
+
+/** Potência: multiplica o dano das técnicas do Dom (5 = ×1; cada ponto ±4%). */
+export function giftPowerMult(power: number): number {
+  return 1 + (power - 5) * GS.powerPerPoint;
+}
+
+/** Controle: acerto a mais nas técnicas do Dom (5 = 0; cada ponto ±2). */
+export function giftControlAccuracy(control: number): number {
+  return (control - 5) * GS.controlAccPerPoint;
+}
+
+/** Controle: Strain gerado pelas técnicas do Dom (5 = ×1; cada ponto ∓4%). */
+export function giftControlStrainMult(control: number): number {
+  return Math.max(0.5, 1 - (control - 5) * GS.controlStrainPerPoint);
+}
+
+/** Versatilidade: técnicas do Dom a mais no loadout (8+: +1; 10: +2). */
+export function versatilityExtraSlots(versatility: number): number {
+  return GS.versatilityExtraSlotAt.filter((at) => versatility >= at).length;
+}

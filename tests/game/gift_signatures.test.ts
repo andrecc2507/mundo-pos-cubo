@@ -24,6 +24,11 @@ describe('Dons únicos: passiva inata + técnica-assinatura', () => {
       expect(sig, g.id).toBeTruthy();
       expect(Object.keys(sig!.innate.fx ?? {}).length, `${g.id} inato sem efeito`).toBeGreaterThan(0);
       for (const k of Object.keys(sig!.innate.fx ?? {})) expect(FX_KEYS.has(k), `${g.id} inato: ${k}`).toBe(true);
+      // Efeitos que o motor lê como objeto (número aqui vira NaN no custo e no dano).
+      for (const k of ['mpDiscount', 'elementBoost', 'aura', 'react', 'vs', 'chargeEvery', 'intercept'] as const) {
+        const v = (sig!.innate.fx as Record<string, unknown> | undefined)?.[k];
+        if (v !== undefined) expect(typeof v, `${g.id} inato: ${k}`).toBe('object');
+      }
       const s = DB.skills[`${g.id}_sig`]!;
       expect(s, g.id).toBeTruthy();
       expect(s.gift).toBe(g.id);

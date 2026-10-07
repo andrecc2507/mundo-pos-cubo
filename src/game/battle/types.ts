@@ -276,6 +276,9 @@ export interface BattleUnit {
   /** Usou técnica do Dom desde o último turno (o Strain quase não cai em sequência). */
   strainHot?: boolean;
   giftPotential?: number;
+  /** Potência / Controle do Dom deste portador (1–10; rules/gifts.ts → giftStats). */
+  giftPower?: number;
+  giftControl?: number;
   awakened?: boolean;
   /** Atrito com outros heróis (charId → 1 Rivais, 2 Desafetos): efeito lado a lado. */
   rivals?: Record<string, number>;

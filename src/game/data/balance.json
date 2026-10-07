@@ -233,5 +233,16 @@
    "slots": 2,
    "uses": 1
   }
+ },
+ "giftStats": {
+  "_doc": "Potência / Controle / Versatilidade do Dom (1–10, 5 = neutro). Cada portador sorteia em volta do valor do catálogo (±spread). Potência: dano das técnicas do Dom; Controle: acerto e Strain; Versatilidade: técnicas extras no loadout.",
+  "spread": 2,
+  "powerPerPoint": 0.04,
+  "controlAccPerPoint": 2,
+  "controlStrainPerPoint": 0.04,
+  "versatilityExtraSlotAt": [
+   8,
+   10
+  ]
  }
 }

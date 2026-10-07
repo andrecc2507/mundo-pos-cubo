@@ -1,6 +1,7 @@
 import GIFT_DATA from '../data/gifts/gifts.json';
 import GIFT_RULES from '../data/gifts/gift_rules.json';
 import SIGNATURES from '../data/gifts/signatures.json';
+import * as stats from './stats';
 import type { Element, FxStatus, SkillFx, SkillTree, TreeNode, TreeSkill } from '../data/types';
 
 /**
@@ -12,7 +13,8 @@ import type { Element, FxStatus, SkillFx, SkillTree, TreeNode, TreeSkill } from 
  */
 
 export type GiftFamily = 'fisico' | 'emissor' | 'manipulador' | 'criador' | 'sensorial' | 'anomalo';
-export type GiftRarity = 'comum' | 'incomum' | 'raro' | 'excepcional' | 'lendario';
+export type GiftRarity = 'comum' | 'incomum' | 'raro' | 'epico' | 'lendario' | 'anomalo';
+export const RARITIES: GiftRarity[] = ['comum', 'incomum', 'raro', 'epico', 'lendario', 'anomalo'];
 export type Philosophy = 'impacto' | 'movimento' | 'suporte' | 'controle';
 export const PHILOSOPHIES: Philosophy[] = ['impacto', 'movimento', 'suporte', 'controle'];
 export const PHILOSOPHY_LABEL: Record<Philosophy, string> = { impacto: 'Impacto', movimento: 'Movimento', suporte: 'Suporte', controle: 'Controle' };
@@ -35,6 +37,24 @@ export interface GiftDef {
   weakness: string;
   /** Arquétipo de cada filosofia (ausente = padrão da família). */
   kit?: Partial<Record<Philosophy, string>>;
+  /** Número no catálogo central (1–335) e categoria (I–XIV). */
+  num: number;
+  category: string;
+  categoryName: string;
+  /** Potência, Controle e Versatilidade de base (1–10); cada portador sorteia em volta. */
+  power: number;
+  control: number;
+  versatility: number;
+  /** Estágios I (Manifestação), II (Especialização) e III (Despertar do Dom em si). */
+  stages: string[];
+  /** O que o Despertar revela (texto do catálogo; a mecânica vem de `awakening`). */
+  awakeningText: string;
+}
+
+/** Categorias do catálogo (I–XIV). */
+export const GIFT_CATEGORIES: { id: string; name: string }[] = [...new Map(GIFTS_RAW().map((g) => [g.category, { id: g.category, name: g.categoryName }])).values()];
+function GIFTS_RAW(): GiftDef[] {
+  return GIFT_DATA as GiftDef[];
 }
 
 export interface OverloadDef {
@@ -76,9 +96,39 @@ export function giftTreeId(giftId: string): string {
   return `dom_${giftId}`;
 }
 
-/** Técnicas de Dom que cabem no loadout pelo potencial (★). */
-export function giftSlots(potential: number): number {
-  return (GIFT_RULES.potentialSlots as Record<string, number>)[String(Math.max(1, Math.min(5, potential)))] ?? 3;
+/** Técnicas de Dom que cabem no loadout pelo potencial (★) — e pela Versatilidade (8+: +1; 10: +2). */
+export function giftSlots(potential: number, versatility = 5): number {
+  const base = (GIFT_RULES.potentialSlots as Record<string, number>)[String(Math.max(1, Math.min(5, potential)))] ?? 3;
+  return base + stats.versatilityExtraSlots(versatility);
+}
+
+export interface GiftStats {
+  power: number;
+  control: number;
+  versatility: number;
+}
+
+/** Sorteio estável (mesmo portador + mesmo Dom = mesmo resultado). */
+function hashUnit(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
+  return ((h >>> 0) % 10000) / 10000;
+}
+
+/**
+ * Potência / Controle / Versatilidade deste portador: o valor salvo na instância ou, se não houver,
+ * o do catálogo com uma variação estável por personagem (±spread).
+ */
+export function giftStats(holder: { id?: string; gift?: { id: string; power?: number; control?: number; versatility?: number } }): GiftStats {
+  const g = giftDef(holder.gift?.id);
+  if (!g || !holder.gift) return { power: 5, control: 5, versatility: 5 };
+  const spread = stats.BALANCE.giftStats.spread;
+  const roll = (base: number, k: string) => Math.max(1, Math.min(10, base + Math.round((hashUnit(`${holder.id ?? ''}|${g.id}|${k}`) * 2 - 1) * spread)));
+  return {
+    power: holder.gift.power ?? roll(g.power, 'p'),
+    control: holder.gift.control ?? roll(g.control, 'c'),
+    versatility: holder.gift.versatility ?? roll(g.versatility, 'v'),
+  };
 }
 
 /** Arquétipo padrão de cada filosofia pela família. */
@@ -305,15 +355,21 @@ export function allGiftTrees(): SkillTree[] {
   return GIFTS.map(buildGiftTree);
 }
 
-/** Sorteia um Dom pela raridade (pesos de gift_rules.json); `none` = chance de não ter Dom. */
-export function rollGift(next: () => number, noneChance = 0): GiftDef | undefined {
+/**
+ * Sorteia um Dom: primeiro a raridade pela fatia da população (gift_rules.json → rarityShare),
+ * depois um Dom dela; `none` = chance de não ter Dom; `exclude` = Dons que já estão em jogo (os
+ * anômalos são praticamente únicos: nunca saem repetidos).
+ */
+export function rollGift(next: () => number, noneChance = 0, exclude: Set<string> = new Set()): GiftDef | undefined {
   if (next() < noneChance) return undefined;
-  const w = GIFT_RULES.rarityWeight as Record<GiftRarity, number>;
-  const total = GIFTS.reduce((a, g) => a + w[g.rarity], 0);
-  let r = next() * total;
-  for (const g of GIFTS) {
-    r -= w[g.rarity];
-    if (r < 0) return g;
+  const share = GIFT_RULES.rarityShare as unknown as Record<GiftRarity, number>;
+  let r = next() * RARITIES.reduce((a, k) => a + share[k], 0);
+  let rarity: GiftRarity = 'comum';
+  for (const k of RARITIES) if ((r -= share[k]) < 0) {
+    rarity = k;
+    break;
   }
-  return GIFTS[0];
+  const pool = GIFTS.filter((g) => g.rarity === rarity && !(g.rarity === 'anomalo' && exclude.has(g.id)));
+  const list = pool.length ? pool : GIFTS.filter((g) => g.rarity === 'comum');
+  return list[Math.floor(next() * list.length)] ?? GIFTS[0];
 }

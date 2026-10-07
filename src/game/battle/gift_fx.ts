@@ -10,6 +10,7 @@
  *   meio da luta, uma vez por batalha: ganha uma passiva que muda uma regra, zera o Strain, as
  *   técnicas ficam mais fortes e mais baratas, e a barra de ação enche pela metade.
  */
+import * as stats from '../rules/stats';
 import { DB, type SkillDef } from '../data';
 import { AWAKENING, AWAKENINGS, OVERLOADS, STRAIN, giftDef } from '../rules/gifts';
 import { variantDef } from '../rules/mastery';
@@ -40,7 +41,8 @@ export function giftDamageMult(u: BattleUnit, def: SkillDef | undefined): number
   let m = 1;
   if ((u.strain ?? 0) >= STRAIN.plusUltraAt) m *= 1 + STRAIN.plusUltraDamage;
   if (u.awakened) m *= 1 + AWAKENING.damage;
-  return m;
+  // Potência do Dom deste portador.
+  return m * stats.giftPowerMult(u.giftPower ?? 5);
 }
 
 /** Depois de usar uma técnica do Dom: soma Strain, avisa quando passa do limite e dispara o Overload. */
@@ -48,7 +50,7 @@ export function afterGiftCast(state: BattleState, u: BattleUnit, def: SkillDef |
   if (!def?.strain || !u.alive) return;
   const before = u.strain ?? 0;
   const variant = variantDef(u.variants?.[def.id]);
-  u.strain = Math.min(100, before + Math.round(def.strain * (u.awakened ? AWAKENING.strainMult : 1) * (1 + (variant?.strain ?? 0)) * (u.strainMult ?? 1)));
+  u.strain = Math.min(100, before + Math.round(def.strain * (u.awakened ? AWAKENING.strainMult : 1) * (1 + (variant?.strain ?? 0)) * (u.strainMult ?? 1) * stats.giftControlStrainMult(u.giftControl ?? 5)));
   u.strainHot = true;
   if (before < STRAIN.plusUltraAt && u.strain >= STRAIN.plusUltraAt && u.strain < 100) {
     state.log.push(`🔥 ${u.name} força o Dom além do limite! (Strain ${u.strain})`);
