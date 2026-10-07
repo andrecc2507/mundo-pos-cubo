@@ -230,7 +230,7 @@ export function villainSquad(rng: Rng, squad: Character[], opts: DemoOptions): B
   return out;
 }
 
-/** Monta a batalha: cruzamento urbano, turnos por time, eliminar o bando. */
+/** Monta a batalha: cruzamento urbano, linha do tempo, eliminar o bando. */
 export function demoSetup(squad: Character[], opts: DemoOptions = DEFAULT_OPTIONS): BattleSetup {
   const seed = opts.seed ?? Math.floor(Math.random() * 1e9);
   const rng = new Rng(seed);
@@ -243,7 +243,6 @@ export function demoSetup(squad: Character[], opts: DemoOptions = DEFAULT_OPTION
   }
   return {
     map: generateUrbanMap({ seed: rng.int(1, 1e9) }),
-    teamTurns: true,
     players: squad.map((c) => unitFromCharacter(c, 'player')),
     enemies: villainSquad(rng, squad, opts),
     victory: { type: 'eliminate' },

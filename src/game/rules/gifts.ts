@@ -203,15 +203,15 @@ function movimento1(g: GiftDef, arch: string, id: string): TreeSkill {
   const common = { kind: 'utility' as const, target: 'tile' as const, apCost: 1 };
   switch (arch) {
     case 'propulsao':
-      return base(g, id, `Propulsão ${de(g)}`, a, { ...common, anim: 'leap', fx: { teleport: true, self: { id: 'veloz', turns: 1 } }, description: `Dispara-se até ${a.range} casas (1 ação: ainda pode agir).` });
+      return base(g, id, `Propulsão ${de(g)}`, a, { ...common, anim: 'leap', fx: { teleport: true, self: { id: 'veloz', turns: 1 } }, description: `Dispara-se até ${a.range} casas (ação rápida).` });
     case 'deslize':
-      return base(g, id, `Deslize ${de(g)}`, a, { ...common, anim: 'dash', fx: { teleport: true }, description: `Desliza até ${a.range} casas sem provocar ataques (1 ação).` });
+      return base(g, id, `Deslize ${de(g)}`, a, { ...common, anim: 'dash', fx: { teleport: true }, description: `Desliza até ${a.range} casas sem provocar ataques (ação rápida).` });
     case 'fase':
-      return base(g, id, `Fase ${de(g)}`, a, { ...common, anim: 'blink', fx: { teleport: true, self: { id: 'intangivel', turns: 1 } }, description: `Some e reaparece até ${a.range} casas, intangível por 1 turno (1 ação).` });
+      return base(g, id, `Fase ${de(g)}`, a, { ...common, anim: 'blink', fx: { teleport: true, self: { id: 'intangivel', turns: 1 } }, description: `Some e reaparece até ${a.range} casas, intangível por 1 turno (ação rápida).` });
     case 'troca':
-      return base(g, id, `Troca ${de(g)}`, a, { kind: 'utility', target: 'enemy', apCost: 1, anim: 'blink', fx: { swap: true }, description: `Troca de lugar com um inimigo a até ${a.range} casas (1 ação).` });
+      return base(g, id, `Troca ${de(g)}`, a, { kind: 'utility', target: 'enemy', apCost: 1, anim: 'blink', fx: { swap: true }, description: `Troca de lugar com um inimigo a até ${a.range} casas (ação rápida).` });
     default:
-      return base(g, id, `Salto ${de(g)}`, a, { ...common, anim: 'leap', fx: { teleport: true }, description: `Salta até ${a.range} casas, por cima de tudo (1 ação: ainda pode agir).` });
+      return base(g, id, `Salto ${de(g)}`, a, { ...common, anim: 'leap', fx: { teleport: true }, description: `Salta até ${a.range} casas, por cima de tudo (ação rápida).` });
   }
 }
 
@@ -270,7 +270,7 @@ export function buildGiftTree(g: GiftDef): SkillTree {
     node('suporte', 'Suporte', 'evolucao', 0, 160, `Usar ${g.name} para proteger.`, [
       lv(suporte1(g, kit.suporte, sid('s', 1)), 1),
       lv(passive(sid('s', 2), g.family === 'fisico' || g.family === 'criador' ? { name: `Guarda ${de(g)}`, description: 'Intercepta 35% dos golpes que um aliado ao lado receberia (com 30% menos dano).', fx: { intercept: { radius: 1, pct: 0.35, mitigate: 0.3 } } } : { name: `Presença ${de(g)}`, description: 'Aliados ao lado ficam afiados (+acerto).', fx: { aura: { radius: 1, allies: true, status: { id: 'afiado', turns: 1 } } } }), 3),
-      lv(base(g, sid('s', 3), `Impulso ${de(g)}`, ARCH.impulso!, { kind: 'buff', target: 'ally', anim: 'buff', fx: { grantAp: 1 }, description: 'Dá 1 ação a mais a um aliado (mesmo que ele já tenha encerrado o turno).' }), 6),
+      lv(base(g, sid('s', 3), `Impulso ${de(g)}`, ARCH.impulso!, { kind: 'buff', target: 'ally', anim: 'buff', fx: { grantAp: 1 }, description: 'Enche metade da barra de ação de um aliado: a vez dele chega bem antes.' }), 6),
     ]),
     node('controle', 'Controle', 'evolucao', -160, 0, `Usar ${g.name} para conter.`, [
       lv(base(g, sid('c', 1), `Contenção ${de(g)}`, ARCH.prender!, { kind: 'magic', element: g.element, anim: 'orb', status: controlStatus(g, ARCH.prender!.turns ?? 1), description: `Aplica o efeito do Dom (${g.status ?? 'lento'}) a até ${ARCH.prender!.range} casas.` }), 1),

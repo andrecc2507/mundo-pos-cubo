@@ -448,7 +448,7 @@
     {
      "id": "corredor_arrancada",
      "name": "Arrancada",
-     "description": "Ganha um deslocamento completo a mais (1 ação).",
+     "description": "Ganha um deslocamento completo a mais (ação rápida).",
      "kind": "utility",
      "range": 0,
      "power": 0,
@@ -523,7 +523,7 @@
     {
      "id": "acrobata_salto",
      "name": "Salto Acrobático",
-     "description": "Salta até 4 casas, por cima de tudo (1 ação).",
+     "description": "Salta até 4 casas, por cima de tudo (ação rápida).",
      "kind": "utility",
      "range": 4,
      "power": 0,
@@ -632,7 +632,7 @@
     {
      "id": "batedor_correr_atirar",
      "name": "Correr e Atirar",
-     "description": "Tiro que não encerra o turno (1 ação).",
+     "description": "Tiro rápido: a próxima vez chega na metade do tempo.",
      "kind": "ranged",
      "range": -1,
      "power": 5,
@@ -746,7 +746,7 @@
     {
      "id": "resgatista_puxar",
      "name": "Puxar para Cobertura",
-     "description": "Puxa um aliado 3 casas para perto (1 ação).",
+     "description": "Puxa um aliado 3 casas para perto (ação rápida).",
      "kind": "utility",
      "range": 5,
      "power": 0,
@@ -862,7 +862,7 @@
     {
      "id": "socorrista_adrenalina",
      "name": "Injeção de Adrenalina",
-     "description": "Um aliado ao lado ganha 1 ação a mais.",
+     "description": "Um aliado ao lado age bem antes (enche metade da barra de ação).",
      "kind": "buff",
      "range": 1,
      "power": 0,
@@ -995,7 +995,7 @@
     {
      "id": "estrategista_ordem",
      "name": "Ordem: Avançar!",
-     "description": "Um aliado a até 6 casas ganha 1 ação a mais.",
+     "description": "Um aliado a até 6 casas age bem antes (enche metade da barra de ação).",
      "kind": "buff",
      "range": 6,
      "power": 0,
@@ -1198,7 +1198,7 @@
     {
      "id": "manipulador_troca",
      "name": "Reposicionar",
-     "description": "Troca de lugar com um aliado a até 5 casas (1 ação).",
+     "description": "Troca de lugar com um aliado a até 5 casas (ação rápida).",
      "kind": "utility",
      "range": 5,
      "power": 0,
@@ -1556,7 +1556,7 @@
     {
      "id": "extrator_troca",
      "name": "Extração",
-     "description": "Troca de lugar com um aliado a até 6 casas e fica camuflado (1 ação).",
+     "description": "Troca de lugar com um aliado a até 6 casas e fica camuflado (ação rápida).",
      "kind": "utility",
      "range": 6,
      "power": 0,
@@ -1626,7 +1626,7 @@
     {
      "id": "paramedico_corrida",
      "name": "Corrida de Socorro",
-     "description": "Cura 25% de um aliado a até 6 casas (1 ação).",
+     "description": "Cura 25% de um aliado a até 6 casas (ação rápida).",
      "kind": "heal",
      "range": 6,
      "power": 0,
@@ -1775,7 +1775,7 @@
     {
      "id": "maestro_regencia",
      "name": "Regência",
-     "description": "Um aliado a até 8 casas ganha 1 ação a mais.",
+     "description": "Um aliado a até 8 casas age bem antes (enche metade da barra de ação).",
      "kind": "buff",
      "range": 8,
      "power": 0,

@@ -139,7 +139,7 @@
     {
      "id": "assalto_correr",
      "name": "Correr e Atirar",
-     "description": "Tiro que não encerra o turno (1 ação).",
+     "description": "Tiro rápido: a próxima vez chega na metade do tempo.",
      "kind": "ranged",
      "range": -1,
      "power": 5,

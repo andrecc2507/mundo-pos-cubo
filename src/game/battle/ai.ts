@@ -10,7 +10,6 @@ import {
   endTurn,
   inRange,
   isFree,
-  moveBudget,
   moveUnit,
   opponents,
   reload,
@@ -321,10 +320,7 @@ export function planTurn(state: BattleState, u: BattleUnit): AiPlan {
     const moveCost = reach.cost.get(ti) ?? 0;
     const posMelee = positionValue(state, u, targets, false);
     const posRanged = positionValue(state, u, targets, true);
-    // Turnos por time: correr (além do deslocamento) gasta as 2 ações — dali não dá para agir.
-    const dashed = !!state.teamTurns && moveCost > moveBudget(u);
     const consider = (score: number, action: AiPlan['action']) => {
-      if (dashed && action) return;
       if (score > best.score) best = { score, plan: { moveTo: ti === ocell ? null : [tx, ty], moveLevel: tl, action } };
     };
     // Táticas do mapa: estabilizar, barris, lustres, arremessos, sino.
@@ -340,7 +336,6 @@ export function planTurn(state: BattleState, u: BattleUnit): AiPlan {
       if (b) consider(b.value - s.mp * 0.1 - moveCost * 0.2, { kind: 'skill', skill: s, x: b.x, y: b.y });
     }
     for (const s of options) {
-      if (dashed) break;
       if (DB.skills[s.id]?.fx?.randomTargets && (tx !== ox || ty !== oy)) continue;
       for (const [cx, cy] of aimPoints(state, u, s, targets)) {
         const ranged = s.id === 'ataque' ? u.weaponRange > 1 : skillRange(u, s) > 1;

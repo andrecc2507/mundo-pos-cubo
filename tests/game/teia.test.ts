@@ -39,7 +39,7 @@ describe('teia única das classes + armas + Dom', () => {
     c.skills = ['sniper_mirado'];
     c.equipment.weapon = 'fuzil_assalto';
     const u = unitFromCharacter(c, 'player');
-    const s = createBattle({ teamTurns: true, map: createEmptyMap(8, 8, 'planicie'), players: [u], enemies: [], victory: { type: 'eliminate' }, ambush: false, canFlee: false, seed: 1, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' } });
+    const s = createBattle({ map: createEmptyMap(8, 8, 'planicie'), players: [u], enemies: [], victory: { type: 'eliminate' }, ambush: false, canFlee: false, seed: 1, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' } });
     expect(castBlockReason(s, s.units[0]!, DB.skills.sniper_mirado! as never)).toContain('REQUER');
     expect(u.maxAmmo).toBe(4);
   });

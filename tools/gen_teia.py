@@ -83,13 +83,13 @@ TEIA = [
 
     # ── MOVIMENTO (L) ──
     node('corredor', 'Corredor', 'evolucao', 280, -140, 'Velocidade e investidas em linha reta.', [
-        sk('corredor_arrancada', 'Arrancada', 'Ganha um deslocamento completo a mais (1 ação).', kind='utility', range=0, cd=2, mp=3, target='self', fx={'extraMove': True}, apCost=1, anim='dash'),
+        sk('corredor_arrancada', 'Arrancada', 'Ganha um deslocamento completo a mais (ação rápida).', kind='utility', range=0, cd=2, mp=3, target='self', fx={'extraMove': True}, apCost=1, anim='dash'),
         passive('corredor_pernas', 'Pernas de Atleta', '+2 de deslocamento.', {'moveBonus': 2}, lv=2),
         sk('corredor_investida', 'Investida', 'Corre até 4 casas em linha, golpeando quem estiver no caminho.', range=4, power=6, cd=2, mp=5, target='tile', shape='line', fx={'dashThrough': True}, anim='dash', lv=4),
         passive('corredor_embalo', 'Embalo', 'Sair do lado de inimigos não provoca ataque de oportunidade.', {'noOpportunity': True}, lv=7),
     ], group='movimento', short='Corredor'),
     node('acrobata', 'Acrobata', 'evolucao', 330, -50, 'Saltos, altura e esquiva; ignora o terreno.', [
-        sk('acrobata_salto', 'Salto Acrobático', 'Salta até 4 casas, por cima de tudo (1 ação).', kind='utility', range=4, cd=1, mp=3, target='tile', fx={'teleport': True}, apCost=1, anim='leap'),
+        sk('acrobata_salto', 'Salto Acrobático', 'Salta até 4 casas, por cima de tudo (ação rápida).', kind='utility', range=4, cd=1, mp=3, target='tile', fx={'teleport': True}, apCost=1, anim='leap'),
         passive('acrobata_parkour', 'Parkour', 'Escala paredes e prédios; pula até 4 níveis.', {'climb': True, 'jumpTo': 4}, lv=2),
         sk('acrobata_aereo', 'Ataque Aéreo', 'Salta sobre o alvo e golpeia (+50% de dano vindo de cima).', range=3, power=7, cd=2, mp=5, fx={'leap': True, 'fromAbove': 1.5}, anim='leap', lv=4),
         passive('acrobata_esquiva', 'Corpo Leve', 'Esquiva 20% a mais.', {'evasion': 20}, lv=7),
@@ -97,7 +97,7 @@ TEIA = [
     node('batedor', 'Batedor', 'evolucao', 330, 50, 'Reconhecimento, visão longa, abre caminho.', [
         sk('batedor_sinal', 'Sinalizar', 'Marca todos numa área 3×3 por 2 turnos.', kind='utility', range=9, cd=2, mp=3, target='tile', shape='radius', radius=1, status={'id': 'marcado', 'turns': 2}, apCost=1, anim='arrow'),
         passive('batedor_olhos', 'Olhos Abertos', 'Enxerga inimigos escondidos.', {'seeHidden': True}, lv=2),
-        sk('batedor_correr_atirar', 'Correr e Atirar', 'Tiro que não encerra o turno (1 ação).', kind='ranged', range=W, power=5, cd=1, mp=4, apCost=1, anim='arrow', lv=4),
+        sk('batedor_correr_atirar', 'Correr e Atirar', 'Tiro rápido: a próxima vez chega na metade do tempo.', kind='ranged', range=W, power=5, cd=1, mp=4, apCost=1, anim='arrow', lv=4),
         passive('batedor_trilha', 'Trilha', '+1 de deslocamento.', {'moveBonus': 1}, lv=7),
     ], group='movimento', short='Batedor'),
     node('infiltrador', 'Infiltrador', 'evolucao', 280, 140, 'Furtividade e flanco.', [
@@ -109,7 +109,7 @@ TEIA = [
 
     # ── SUPORTE (S) ──
     node('resgatista', 'Resgatista', 'evolucao', 120, 260, 'Carrega caídos e civis; evacuação.', [
-        sk('resgatista_puxar', 'Puxar para Cobertura', 'Puxa um aliado 3 casas para perto (1 ação).', kind='utility', range=5, cd=1, mp=3, target='ally', fx={'pull': 3}, apCost=1, anim='buff'),
+        sk('resgatista_puxar', 'Puxar para Cobertura', 'Puxa um aliado 3 casas para perto (ação rápida).', kind='utility', range=5, cd=1, mp=3, target='ally', fx={'pull': 3}, apCost=1, anim='buff'),
         passive('resgatista_ombro', 'Ombro Forte', '+1 de deslocamento (carrega o caído sem perder o passo).', {'moveBonus': 1}, lv=2),
         sk('resgatista_estabilizar', 'Socorro à Distância', 'Cura 15% da vida de um aliado e limpa estados.', kind='heal', range=3, cd=1, mp=5, target='ally', fx={'healPct': 0.15, 'cleanse': True}, anim='heal', lv=4),
         passive('resgatista_escudo', 'Corpo na Frente', 'Intercepta 30% dos golpes contra um aliado ao lado.', {'intercept': {'radius': 1, 'pct': 0.3, 'mitigate': 0.2}}, lv=7),
@@ -117,7 +117,7 @@ TEIA = [
     node('socorrista', 'Socorrista', 'evolucao', 270, 200, 'Cura, estabiliza, limpa estados.', [
         sk('socorrista_socorros', 'Primeiros Socorros', 'Cura 30% da vida de um aliado ao lado.', kind='heal', range=1, mp=4, target='ally', fx={'healPct': 0.3}, anim='heal'),
         passive('socorrista_kit', 'Kit Ampliado', 'Aliados ao lado regeneram vida a cada rodada.', {'aura': {'radius': 1, 'allies': True, 'status': {'id': 'regenerando', 'turns': 1}}}, lv=2),
-        sk('socorrista_adrenalina', 'Injeção de Adrenalina', 'Um aliado ao lado ganha 1 ação a mais.', kind='buff', range=1, cd=3, mp=6, target='ally', fx={'grantAp': 1}, anim='buff', lv=4),
+        sk('socorrista_adrenalina', 'Injeção de Adrenalina', 'Um aliado ao lado age bem antes (enche metade da barra de ação).', kind='buff', range=1, cd=3, mp=6, target='ally', fx={'grantAp': 1}, anim='buff', lv=4),
         sk('socorrista_area', 'Hospital de Campanha', 'Cura 18% da vida de todos numa área 3×3.', kind='heal', range=4, cd=3, mp=9, target='tile', shape='radius', radius=1, fx={'healPct': 0.18, 'cleanse': True}, anim='heal', lv=7),
     ], group='suporte', short='Socorrista'),
     node('guardiao', 'Guardião', 'evolucao', -120, 260, 'Escudos; intercepta golpes de aliados ao lado.', [
@@ -127,7 +127,7 @@ TEIA = [
         sk('guardiao_muralha', 'Muralha Viva', 'Aliados a até 1 casa ficam fortificados por 2 turnos.', kind='buff', range=0, cd=3, mp=7, target='self', shape='radius', radius=1, status={'id': 'fortificado', 'turns': 2}, anim='shout', lv=7),
     ], group='suporte', short='Guardião'),
     node('estrategista', 'Estrategista', 'evolucao', -270, 200, 'Ordens: ações extras e bônus de equipe.', [
-        sk('estrategista_ordem', 'Ordem: Avançar!', 'Um aliado a até 6 casas ganha 1 ação a mais.', kind='buff', range=6, cd=3, mp=6, target='ally', fx={'grantAp': 1}, anim='shout'),
+        sk('estrategista_ordem', 'Ordem: Avançar!', 'Um aliado a até 6 casas age bem antes (enche metade da barra de ação).', kind='buff', range=6, cd=3, mp=6, target='ally', fx={'grantAp': 1}, anim='shout'),
         passive('estrategista_presenca', 'Presença de Comando', 'Aliados a até 2 casas ficam afiados (+acerto).', {'aura': {'radius': 2, 'allies': True, 'status': {'id': 'afiado', 'turns': 1}}}, lv=2),
         sk('estrategista_plano', 'Plano de Ataque', 'Aliados a até 3 casas ficam inspirados (+dano) por 2 turnos.', kind='buff', range=0, cd=4, mp=8, target='self', shape='radius', radius=3, status={'id': 'inspirado', 'turns': 2}, anim='shout', lv=4),
         sk('estrategista_leitura', 'Leitura do Campo', 'Marca todos numa área 5×5 por 2 turnos.', kind='utility', range=9, cd=3, mp=6, target='tile', shape='radius', radius=2, status={'id': 'marcado', 'turns': 2}, apCost=1, anim='arrow', lv=7),
@@ -143,7 +143,7 @@ TEIA = [
     node('manipulador', 'Manipulador', 'evolucao', -330, -50, 'Empurra, puxa e reposiciona.', [
         sk('manipulador_puxao', 'Puxão', 'Puxa o alvo 3 casas para perto.', kind='magic', range=5, power=2, cd=1, mp=4, fx={'pull': 3}, anim='orb'),
         sk('manipulador_empurrao', 'Empurrão Forte', 'Arremessa o alvo ao lado 3 casas.', range=1, power=4, cd=1, mp=4, fx={'push': 3}, anim='charge', lv=2),
-        sk('manipulador_troca', 'Reposicionar', 'Troca de lugar com um aliado a até 5 casas (1 ação).', kind='utility', range=5, cd=2, mp=4, target='ally', fx={'swap': True}, apCost=1, anim='blink', lv=4),
+        sk('manipulador_troca', 'Reposicionar', 'Troca de lugar com um aliado a até 5 casas (ação rápida).', kind='utility', range=5, cd=2, mp=4, target='ally', fx={'swap': True}, apCost=1, anim='blink', lv=4),
         passive('manipulador_ancora', 'Âncora', 'Não pode ser empurrado nem derrubado.', {'immune': ['derrubado']}, lv=7),
     ], group='controle', short='Manipulador'),
     node('supressor', 'Supressor', 'evolucao', -330, 50, 'Negação de área, supressão, zonas.', [
@@ -171,12 +171,12 @@ TEIA = [
         sk('bombardeiro_chuva', 'Chuva do Alto', 'Explosão 5×5 a até 7 casas: +50% vindo de cima.', kind='ranged', range=7, power=7, cd=4, mp=10, target='tile', shape='radius', radius=2, fx={'fromAbove': 1.5, 'destroyProps': True}, anim='meteor', lv=11),
     ], parents=['artilheiro', 'acrobata'], unlockAt=2, short='Bombardeiro'),
     node('extrator', 'Extrator', 'hibrida', 330, 200, 'Infiltrador + Resgatista: tira o ferido de lá sem ser visto.', [
-        sk('extrator_troca', 'Extração', 'Troca de lugar com um aliado a até 6 casas e fica camuflado (1 ação).', kind='utility', range=6, cd=2, mp=5, target='ally', fx={'swap': True, 'self': {'id': 'camuflado', 'turns': 1}}, apCost=1, anim='blink', lv=8),
+        sk('extrator_troca', 'Extração', 'Troca de lugar com um aliado a até 6 casas e fica camuflado (ação rápida).', kind='utility', range=6, cd=2, mp=5, target='ally', fx={'swap': True, 'self': {'id': 'camuflado', 'turns': 1}}, apCost=1, anim='blink', lv=8),
         passive('extrator_fantasma', 'Fantasma', 'Não provoca ataques de oportunidade; +1 de deslocamento.', {'noOpportunity': True, 'moveBonus': 1}, lv=9),
         sk('extrator_sumir', 'Sumir com o Ferido', 'Some da vista por 2 turnos e limpa estados.', kind='utility', range=0, cd=3, mp=5, target='self', fx={'hide': 'any', 'cleanse': True}, value=2, anim='smoke', lv=11),
     ], parents=['infiltrador', 'resgatista'], unlockAt=2, short='Extrator'),
     node('paramedico', 'Paramédico de Campo', 'hibrida', 200, 330, 'Batedor + Socorrista: correr e curar numa ação só.', [
-        sk('paramedico_corrida', 'Corrida de Socorro', 'Cura 25% de um aliado a até 6 casas (1 ação).', kind='heal', range=6, cd=2, mp=6, target='ally', fx={'healPct': 0.25}, apCost=1, anim='heal', lv=8),
+        sk('paramedico_corrida', 'Corrida de Socorro', 'Cura 25% de um aliado a até 6 casas (ação rápida).', kind='heal', range=6, cd=2, mp=6, target='ally', fx={'healPct': 0.25}, apCost=1, anim='heal', lv=8),
         passive('paramedico_aura', 'Mãos que Curam', 'Aliados a até 2 casas regeneram vida a cada rodada.', {'aura': {'radius': 2, 'allies': True, 'status': {'id': 'regenerando', 'turns': 1}}}, lv=9),
         sk('paramedico_reanimar', 'Reanimação', 'Cura 50% de um aliado ao lado e limpa estados.', kind='heal', range=1, cd=4, mp=10, target='ally', fx={'healPct': 0.5, 'cleanse': True}, anim='heal', lv=11),
     ], parents=['batedor', 'socorrista'], unlockAt=2, short='Paramédico'),
@@ -186,7 +186,7 @@ TEIA = [
         sk('muralha_zona', 'Zona Proibida', 'Espalha 5 armadilhas que prendem numa área 5×5.', kind='utility', range=4, cd=4, mp=9, target='tile', shape='radius', radius=2, fx={'trap': {'status': {'id': 'imobilizado', 'turns': 1}, 'damage': 4, 'count': 5}}, anim='trap', lv=11),
     ], parents=['guardiao', 'supressor'], unlockAt=2, short='Muralha'),
     node('maestro', 'Maestro', 'hibrida', -330, 200, 'Estrategista + Perturbador: reordena o turno.', [
-        sk('maestro_regencia', 'Regência', 'Um aliado a até 8 casas ganha 1 ação a mais.', kind='buff', range=8, cd=2, mp=7, target='ally', fx={'grantAp': 1}, anim='shout', lv=8),
+        sk('maestro_regencia', 'Regência', 'Um aliado a até 8 casas age bem antes (enche metade da barra de ação).', kind='buff', range=8, cd=2, mp=7, target='ally', fx={'grantAp': 1}, anim='shout', lv=8),
         passive('maestro_compasso', 'Compasso', 'Inimigos a até 1 casa ficam lentos.', {'aura': {'radius': 1, 'status': {'id': 'lento', 'turns': 1}}}, lv=9),
         sk('maestro_caos', 'Sinfonia do Caos', 'Confunde (60%) todos numa área 5×5.', kind='magic', range=7, power=2, cd=4, mp=10, target='tile', shape='radius', radius=2, status={'id': 'confuso', 'turns': 1, 'chance': 60}, anim='nova', lv=11),
     ], parents=['estrategista', 'perturbador'], unlockAt=2, short='Maestro'),
@@ -218,7 +218,7 @@ ARMAS = [
         sk('sniper_cabeca', 'Tiro na Cabeça', 'Ignora metade da defesa e tem +40% de crítico.', kind='ranged', range=W, power=12, cd=4, mp=8, fx={'crit': 40, 'pierce': 0.5}, needsWeapon=SNIPER, anim='arrow', lv=9),
     ]),
     node('assalto', 'Assalto', 'evolucao', 160, 0, 'Perto, mobilidade, pressão. (Fuzil ou escopeta.)', [
-        sk('assalto_correr', 'Correr e Atirar', 'Tiro que não encerra o turno (1 ação).', kind='ranged', range=W, power=5, cd=1, mp=3, apCost=1, needsWeapon=ASSALTO, anim='arrow'),
+        sk('assalto_correr', 'Correr e Atirar', 'Tiro rápido: a próxima vez chega na metade do tempo.', kind='ranged', range=W, power=5, cd=1, mp=3, apCost=1, needsWeapon=ASSALTO, anim='arrow'),
         passive('assalto_agil', 'Ágil', '+1 de deslocamento.', {'moveBonus': 1}, lv=3),
         sk('assalto_rajada', 'Rajada', 'Dois tiros seguidos (gasta munição como um).', kind='ranged', range=W, power=4, cd=2, mp=4, fx={'hits': 2}, needsWeapon=ASSALTO, anim='volley', lv=5),
         passive('assalto_frio', 'Sangue Frio', 'Recebe 15% menos dano de tiros.', {'reduce': {'ranged': 0.15}}, lv=7),

@@ -328,8 +328,6 @@ export type BattleEvent =
   | { type: 'fx'; x: number; y: number; element: Element | 'hit' }
   /** Saiu do esconderijo por ter sido visto ("!" na cabeça, estilo Metal Gear). */
   | { type: 'spotted'; uid: string }
-  /** Começou a fase de um time (turnos por time). */
-  | { type: 'phase'; team: Team }
   /** Momentos do Dom: Overload (passou do limite) e Despertar. */
   | { type: 'gift'; uid: string; moment: 'overload' | 'awaken' | 'plusUltra'; text: string };
 
@@ -343,24 +341,11 @@ export interface TurnState {
   timeMult?: number;
   /** Movimento que ainda sobra no turno (andar, agir e andar o resto). Ausente = deslocamento cheio. */
   moveLeft?: number;
-  /**
-   * Turnos por time (XCOM): ações que sobram (2 no começo). Andar até o deslocamento gasta 1;
-   * correr (até o dobro) gasta as 2; atirar ou usar habilidade encerra o turno.
-   */
-  ap?: number;
 }
 
 export interface BattleState {
   map: BattleMap;
   units: BattleUnit[];
-  /** Turnos por time (XCOM/Xenonauts): o jogador move todo o esquadrão, depois os inimigos. */
-  teamTurns?: boolean;
-  /** Time da vez (turnos por time). */
-  phase?: Team;
-  /** Quem já encerrou o turno nesta fase. */
-  phaseDone?: string[];
-  /** Turno guardado de cada unidade da fase (dá para trocar de unidade no meio). */
-  turns?: Record<string, TurnState>;
   time: number;
   round: number;
   nextRoundAt: number;
@@ -481,8 +466,6 @@ export interface BattleSetup {
   map: BattleMap;
   /** Falas dos vilões (demo): no começo, quando um deles cai e quando o chefe fica na pior. */
   villainLines?: { start: string[]; allyDown: string[]; bossHurt: string[] };
-  /** Turnos por time (XCOM/Xenonauts) em vez da linha do tempo. */
-  teamTurns?: boolean;
   players: BattleUnit[];
   enemies: BattleUnit[];
   victory: Victory;

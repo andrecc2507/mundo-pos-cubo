@@ -1,6 +1,6 @@
 /**
  * Dons em batalha (Mundo Pós-Cubo): Strain, "além do limite", Overload, Despertar e o Impulso que
- * devolve ação a um aliado. Números em data/gifts/gift_rules.json; o que cada Dom faz em
+ * adianta a vez de um aliado. Números em data/gifts/gift_rules.json; o que cada Dom faz em
  * rules/gifts.ts.
  *
  * - Cada técnica do Dom soma Strain. A partir de `plusUltraAt` as técnicas do Dom batem mais forte
@@ -8,7 +8,7 @@
  * - O Strain cai `decayPerTurn` no começo de cada turno da unidade.
  * - Despertar: potencial alto + Strain alto + um aliado caído (ou a vida baixa) → o Dom desperta no
  *   meio da luta, uma vez por batalha: ganha uma passiva que muda uma regra, zera o Strain, as
- *   técnicas ficam mais fortes e mais baratas, e ganha uma ação a mais na hora.
+ *   técnicas ficam mais fortes e mais baratas, e a barra de ação enche pela metade.
  */
 import { DB, type SkillDef } from '../data';
 import { AWAKENING, AWAKENINGS, OVERLOADS, STRAIN, giftDef } from '../rules/gifts';
@@ -16,7 +16,11 @@ import { applyElementToTile } from './elements';
 import { applyStatus, passiveFx } from './creature_fx';
 import { chebyshev } from './map';
 import type { BattleState, BattleUnit } from './types';
-import { damage, moveBudget, TEAM_AP } from './engine';
+import { damage } from './engine';
+
+/** Barra (%) que o Impulso enche por "ação" e com que o Despertar deixa quem despertou. */
+const IMPULSE_GAUGE = 50;
+const AWAKENING_GAUGE = 50;
 
 /** Id da passiva de Despertar de um tipo. */
 export function awakeningSkillId(kind: string): string {
@@ -111,32 +115,17 @@ export function checkAwakening(state: BattleState, u: BattleUnit): boolean {
   if (a) u.skills = [...u.skills, awakeningSkillId(g.awakening)];
   state.log.push(`✨ DESPERTAR — ${u.name}: ${g.name} desperta! ${a ? `${a.name}: ${a.text}` : ''}`);
   state.events.push({ type: 'gift', uid: u.uid, moment: 'awaken', text: `DESPERTAR: ${a?.name ?? g.name}` });
-  // Ganha fôlego na hora: uma ação a mais neste turno.
-  if (state.teamTurns && state.activeUid === u.uid) {
-    state.turn.ap = Math.min(TEAM_AP + 1, (state.turn.ap ?? TEAM_AP) + 1);
-    state.turn.moveLeft = state.turn.ap * moveBudget(u);
-    state.turn.acted = false;
-  }
+  // Ganha fôlego na hora: a barra enche de novo pela metade (volta a agir logo).
+  u.gauge = Math.max(u.gauge, AWAKENING_GAUGE);
   return true;
 }
 
-/** Impulso: um aliado ganha ações (turnos por time); se já tinha encerrado, volta a agir. */
+/** Impulso: a barra do aliado enche (`n` × 50%) — ele age bem antes. */
 export function grantAp(state: BattleState, target: BattleUnit, n: number, by: BattleUnit): void {
-  if (!target.alive || target.team !== by.team) return;
-  state.log.push(`⚡ ${by.name} dá fôlego a ${target.name}: +${n} ação!`);
-  state.events.push({ type: 'text', x: target.x, y: target.y, text: `+${n} ação!`, color: '#ffd54f' });
-  if (!state.teamTurns) {
-    target.gauge = Math.min(100, (target.gauge ?? 0) + 50 * n);
-    return;
-  }
-  if (state.phase !== target.team) return;
-  state.phaseDone = (state.phaseDone ?? []).filter((id) => id !== target.uid);
-  const turns = (state.turns ??= {});
-  const t = target.uid === state.activeUid ? state.turn : turns[target.uid] ?? { moved: false, acted: false, startX: target.x, startY: target.y, ap: 0, moveLeft: 0 };
-  t.ap = Math.min(TEAM_AP, (t.ap ?? 0) + n);
-  t.moveLeft = t.ap * moveBudget(target);
-  t.acted = false;
-  if (target.uid !== state.activeUid) turns[target.uid] = t;
+  if (!target.alive || target.team !== by.team || target === by) return;
+  target.gauge = Math.min(99.9, (target.gauge ?? 0) + IMPULSE_GAUGE * n);
+  state.log.push(`⚡ ${by.name} dá fôlego a ${target.name}: a vez dele chega antes!`);
+  state.events.push({ type: 'text', x: target.x, y: target.y, text: '⚡ Fôlego!', color: '#ffd54f' });
 }
 
 /** Aliado caiu: quem está perto e no limite pode despertar na hora (a cena mais Boku no Hero). */

@@ -40,12 +40,13 @@ describe('Dons em batalha: Strain, Overload, Despertar, Impulso', async () => {
     const a = unitFromCharacter(c, 'player');
     const b = unitFromCharacter(makeCharacter(new Rng(2), { classId: 'guerreiro', level: 10 }), 'player');
     const e = unitFromEnemy(DB.enemies.soldado_real!, 10, new Rng(3));
-    const s = createBattle({ teamTurns: true, map: createEmptyMap(14, 14, 'planicie'), players: [a, b], enemies: [e], victory: { type: 'eliminate' }, ambush: false, canFlee: false, seed: 5, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' } });
+    const s = createBattle({ map: createEmptyMap(14, 14, 'planicie'), players: [a, b], enemies: [e], victory: { type: 'eliminate' }, ambush: false, canFlee: false, seed: 5, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' } });
     const [pa, pb] = s.units.filter((u) => u.team === 'player');
     const pe = s.units.find((u) => u.team === 'enemy')!;
     [pa!.x, pa!.y, pb!.x, pb!.y, pe.x, pe.y] = [3, 3, 3, 5, 4, 3];
     pa!.mp = pa!.maxMp = 999;
     pe.hp = pe.maxHp = 99999;
+    pa!.gauge = 99.9;
     advance(s);
     return { s, u: pa!, ally: pb!, foe: pe };
   };
@@ -57,20 +58,27 @@ describe('Dons em batalha: Strain, Overload, Despertar, Impulso', async () => {
     expect(u.strain).toBe(DB.skills.eletricidade_i1!.strain);
     u.strain = 95;
     s.turn.acted = false;
-    s.turn.ap = 2;
     u.cooldowns = {};
     castSkill(s, u, DB.skills.eletricidade_i1! as never, foe.x, foe.y);
     expect(u.strain).toBe(STRAIN.afterOverload);
     expect(s.log.some((l) => l.includes('OVERLOAD'))).toBe(true);
   });
 
-  it('técnica de movimento do Dom custa 1 ação e não encerra o turno', () => {
+  it('técnica de movimento do Dom é rápida: a próxima vez chega na metade do tempo', async () => {
+    const { QUICK_TIME_MULT } = await import('@game/battle/engine');
     const { s, u } = setup('eletricidade');
-    expect(s.turn.ap).toBe(2);
+    expect(s.activeUid).toBe(u.uid);
     castSkill(s, u, DB.skills.eletricidade_m1! as never, 6, 6);
     expect([u.x, u.y]).toEqual([6, 6]);
-    expect(s.turn.ap).toBe(1);
-    expect(s.turn.acted).toBe(false);
+    expect(s.turn.timeMult).toBe(QUICK_TIME_MULT);
+  });
+
+  it('Impulso adianta a barra do aliado', async () => {
+    const { grantAp } = await import('@game/battle/gift_fx');
+    const { s, u, ally } = setup('eletricidade');
+    ally.gauge = 10;
+    grantAp(s, ally, 1, u);
+    expect(ally.gauge).toBe(60);
   });
 
   it('Despertar: aliado caído + Strain alto + potencial alto → desperta (uma vez)', async () => {

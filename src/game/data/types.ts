@@ -62,7 +62,7 @@ export interface SkillDef {
   strain?: number;
   /** Dom de onde vem a técnica. */
   gift?: string;
-  /** Turnos por time: custa só 1 ação e não encerra o turno. */
+  /** Ação rápida: gasta a ação, mas a próxima vez chega na metade do tempo. */
   apCost?: number;
   /** Só com estas armas na mão (árvore de armas). */
   needsWeapon?: WeaponType[];
@@ -390,7 +390,7 @@ export interface SkillFx {
   shieldFromLost?: number;
   /** Soma a defesa de quem ataca ao poder (× fator). */
   defScaling?: number;
-  /** Dá N ações a um aliado (turnos por time); se ele já tinha encerrado, volta a agir. */
+  /** Impulso: enche N × 50% da barra de ação de um aliado. */
   grantAp?: number;
   /** Investida (dashThrough): +fração do dano por casa percorrida (Aríete). */
   ram?: number;
@@ -673,7 +673,7 @@ export interface TreeSkill extends CreatureSkill {
   strain?: number;
   /** Dom de onde vem a técnica. */
   gift?: string;
-  /** Turnos por time: custa só 1 ação e não encerra o turno (técnicas de movimento). */
+  /** Ação rápida (técnicas de movimento): a próxima vez chega na metade do tempo. */
   apCost?: number;
   /** Só com estas armas na mão (árvore de armas). */
   needsWeapon?: WeaponType[];

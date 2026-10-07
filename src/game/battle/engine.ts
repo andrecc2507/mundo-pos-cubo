@@ -16,7 +16,7 @@ import * as patrol from './patrol';
 import * as gift from './gift_fx';
 import * as scenery from './scenery';
 import * as confine from './confine';
-import type { BattleContext, BattleResult, BattleSetup, BattleState, BattleUnit, Objective, StatusId, Team, TurnState, Wave } from './types';
+import type { BattleContext, BattleResult, BattleSetup, BattleState, BattleUnit, Objective, StatusId, Team, Wave } from './types';
 import * as fx from './creature_fx';
 import * as stats from '../rules/stats';
 import { SKILL_MAX_RANK, isNewClass, rankCooldown } from '../rules/skill_tree';
@@ -113,7 +113,6 @@ export function createBattle(setup: BattleSetup): BattleState {
   const state: BattleState = {
     map,
     units: [],
-    teamTurns: setup.teamTurns || undefined,
     time: 0,
     round: 1,
     nextRoundAt: ROUND_TIME,
@@ -493,8 +492,7 @@ export function reachable(state: BattleState, u: BattleUnit): Reach {
   const start = stack.unitCell(map, u);
   const cost = new Map<number, number>([[start, 0]]);
   const prev = new Map<number, number>();
-  // Turnos por time: com as 2 ações, alcança até o dobro (correr).
-  const budget = state.activeUid === u.uid ? (state.teamTurns ? Math.min(TEAM_AP * moveBudget(u), state.turn.moveLeft ?? Infinity) : Math.min(moveBudget(u), state.turn.moveLeft ?? Infinity)) : moveBudget(u);
+  const budget = state.activeUid === u.uid ? Math.min(moveBudget(u), state.turn.moveLeft ?? Infinity) : moveBudget(u);
   const steps = stepper(state, u);
   const queue: number[] = [start];
   while (queue.length) {
@@ -784,8 +782,7 @@ export function moveUnit(state: BattleState, u: BattleUnit, tx: number, ty: numb
   // Gasta só o caminho feito: o resto do deslocamento fica para depois (andar, agir, andar).
   const smart = reach.smart?.(target);
   const spent = smart ? smart.costs[done.length - 1] ?? 0 : reach.cost.get(stack.unitCell(state.map, u)) ?? 0;
-  if (state.activeUid === u.uid && state.teamTurns) spendMoveAp(state, u, spent);
-  else if (state.activeUid === u.uid) state.turn.moveLeft = Math.max(0, (state.turn.moveLeft ?? moveBudget(u)) - spent);
+  if (state.activeUid === u.uid) state.turn.moveLeft = Math.max(0, (state.turn.moveLeft ?? moveBudget(u)) - spent);
   if (done.length) fx.bag(u).still = 0;
   for (const o of chasers) {
     const gain = Math.floor(done.length / 2);
@@ -1326,11 +1323,6 @@ export function resolveAttack(state: BattleState, a: BattleUnit, d: BattleUnit, 
 
 export function finishAction(state: BattleState, u: BattleUnit, keepHidden = false): void {
   state.turn.acted = true;
-  // Turnos por time: agir encerra o turno (como atirar no XCOM).
-  if (state.teamTurns) {
-    state.turn.ap = 0;
-    state.turn.moveLeft = 0;
-  }
   if (!keepHidden && u.hidden) {
     u.hidden = false;
     state.log.push(`👁 ${u.name} saiu do esconderijo.`);
@@ -1729,7 +1721,6 @@ export function castSkill(state: BattleState, u: BattleUnit, s: SkillLike, x: nu
   if (keep && state.conc?.[u.uid] && canCast(u, s)) conc.end(state, u, 'troca de foco');
   const before = keep ? conc.snapshot(state) : undefined;
   const dealt0 = u.dealt ?? 0;
-  const apBefore = state.turn.ap ?? 0;
   const ok = castSkillInner(state, u, s, x, y, combo);
   const def = DB.skills[s.id];
   if (ok && def) {
@@ -1740,12 +1731,8 @@ export function castSkill(state: BattleState, u: BattleUnit, s: SkillLike, x: nu
       const t = unitAt(state, x, y);
       if (t) gift.grantAp(state, t, def.fx.grantAp, u);
     }
-    // Turnos por time: técnica de 1 ação não encerra o turno (se sobrava outra).
-    if (state.teamTurns && def.apCost === 1 && apBefore >= 2 && u.alive && state.activeUid === u.uid) {
-      state.turn.ap = apBefore - 1;
-      state.turn.acted = false;
-      state.turn.moveLeft = state.turn.ap * moveBudget(u);
-    }
+    // Técnica rápida (meia ação): a próxima vez chega na metade do tempo.
+    if (def.apCost === 1 && u.alive && state.activeUid === u.uid) state.turn.timeMult = Math.min(state.turn.timeMult ?? 1, QUICK_TIME_MULT);
   }
   // Telemetria: parte do dano que veio de habilidades (simulação de balanceamento).
   if (ok) {
@@ -2083,19 +2070,14 @@ export function capture(state: BattleState, u: BattleUnit, x: number, y: number)
  * Desengajar: gasta a ação do turno para recuar com cuidado — o resto do movimento deste turno não
  * provoca ataques de oportunidade.
  */
-/**
- * Recarregar a arma de fogo. Turnos por time: gasta 1 ação e não encerra o turno (se sobrar ação);
- * na linha do tempo, gasta a ação.
- */
+/** Recarregar a arma de fogo: gasta a ação, mas é rápido (a próxima vez chega na metade do tempo). */
 export function reload(state: BattleState, u: BattleUnit): boolean {
   if (!u.maxAmmo || (u.ammo ?? 0) >= u.maxAmmo) return false;
   u.ammo = u.maxAmmo;
   state.log.push(`🔫 ${u.name} recarrega (${u.ammo}/${u.maxAmmo}).`);
   state.events.push({ type: 'text', x: u.x, y: u.y, text: '🔫 Recarregou', color: '#e0e0e0' });
-  if (state.teamTurns && (state.turn.ap ?? 0) >= 2) {
-    state.turn.ap = 1;
-    state.turn.moveLeft = moveBudget(u);
-  } else finishAction(state, u, true);
+  finishAction(state, u, true);
+  state.turn.timeMult = Math.min(state.turn.timeMult ?? 1, QUICK_TIME_MULT);
   return true;
 }
 
@@ -2265,96 +2247,8 @@ function roundTick(state: BattleState): void {
   checkVictory(state);
 }
 
-// ───────────────────────────── turnos por time (XCOM) ─────────────────────────────
-
-/** Ações por turno no modo por time. */
-export const TEAM_AP = 2;
-
-function freshTurn(u: BattleUnit): TurnState {
-  return { moved: false, acted: false, startX: u.x, startY: u.y, startZ: u.z, moveLeft: TEAM_AP * moveBudget(u), ap: TEAM_AP };
-}
-
-/** Começa a fase de um time: o começo de turno de cada unidade dele (estados, recargas). */
-function startPhase(state: BattleState, team: Team): void {
-  state.phase = team;
-  state.phaseDone = [];
-  state.turns = {};
-  for (const u of state.units.filter((x) => x.alive && x.team === team)) {
-    state.activeUid = u.uid;
-    state.turn = freshTurn(u);
-    const ok = beginTurn(state, u);
-    state.turns[u.uid] = { ...state.turn, moveLeft: TEAM_AP * moveBudget(u) };
-    if (!ok || !u.alive) state.phaseDone.push(u.uid);
-  }
-  state.activeUid = null;
-  state.log.push(team === 'player' ? `— Rodada ${state.round}: turno do esquadrão —` : '— Turno inimigo —');
-  state.events.push({ type: 'phase', team });
-}
-
-/** Unidades da fase que ainda podem agir (jogador primeiro os que ele controla). */
-export function phaseReady(state: BattleState): BattleUnit[] {
-  const done = new Set(state.phaseDone ?? []);
-  return state.units.filter((u) => u.alive && u.team === state.phase && !done.has(u.uid) && !u.bound).sort((a, b) => Number(!!a.ai) - Number(!!b.ai));
-}
-
-function activate(state: BattleState, u: BattleUnit): void {
-  state.activeUid = u.uid;
-  state.turn = state.turns?.[u.uid] ?? freshTurn(u);
-}
-
-function stepPhase(state: BattleState): BattleUnit | null {
-  const current = activeUnit(state);
-  if (current) return current;
-  if (!state.phase) startPhase(state, 'player');
-  for (let guard = 0; guard < 4 && !state.outcome; guard++) {
-    const next = phaseReady(state)[0];
-    if (next) {
-      activate(state, next);
-      return next;
-    }
-    // Fase acabou: passa a vez. Depois do inimigo, vira a rodada.
-    const other: Team = state.phase === 'player' ? 'enemy' : 'player';
-    if (other === 'player') roundTick(state);
-    if (state.outcome) return null;
-    startPhase(state, other);
-  }
-  return null;
-}
-
-/** Troca a unidade ativa do jogador (turnos por time): o turno da anterior fica guardado. */
-export function selectUnit(state: BattleState, uid: string): boolean {
-  if (!state.teamTurns || state.phase !== 'player') return false;
-  const u = unitById(state, uid);
-  if (!u || !phaseReady(state).includes(u) || u.ai) return false;
-  const cur = activeUnit(state);
-  if (cur === u) return true;
-  if (cur) (state.turns ??= {})[cur.uid] = state.turn;
-  activate(state, u);
-  return true;
-}
-
-/** Encerra o turno de todo o esquadrão (o que sobrou de ação se perde). */
-export function endPhase(state: BattleState): void {
-  if (!state.teamTurns) return endTurn(state);
-  const cur = activeUnit(state);
-  if (cur) fx.turnEnd(state, cur);
-  state.phaseDone = state.units.filter((u) => u.team === state.phase).map((u) => u.uid);
-  state.activeUid = null;
-  patrol.checkAlerts(state);
-  checkVictory(state);
-}
-
-/** Gasta ações depois de andar `spent` (turnos por time): até o deslocamento 1, além disso (correr) 2. */
-function spendMoveAp(state: BattleState, u: BattleUnit, spent: number): void {
-  if (spent <= 0) return;
-  const mb = moveBudget(u);
-  const ap = state.turn.ap ?? TEAM_AP;
-  const used = spent > mb ? 2 : 1;
-  state.turn.ap = Math.max(0, ap - used);
-  state.turn.moveLeft = state.turn.ap * mb;
-  // Correu (ou andou duas vezes): o turno acabou.
-  if (state.turn.ap === 0) state.turn.acted = true;
-}
+/** Ação rápida (recarregar, técnica de meia ação): multiplicador do tempo até a próxima vez. */
+export const QUICK_TIME_MULT = 0.5;
 
 /**
  * Avança a linha do tempo no máximo `maxDt` segundos (ou até alguém encher a barra) e, se alguém
@@ -2363,7 +2257,6 @@ function spendMoveAp(state: BattleState, u: BattleUnit, spent: number): void {
  */
 export function stepTime(state: BattleState, maxDt: number): BattleUnit | null {
   if (state.outcome) return null;
-  if (state.teamTurns) return stepPhase(state);
   const current = activeUnit(state);
   if (current) return current;
   const alive = () => state.units.filter((u) => u.alive);
@@ -2404,17 +2297,6 @@ export function advance(state: BattleState): BattleUnit | null {
 /** Encerra o turno. Sem agir (só andar ou esperar) a próxima barra começa em 50%. */
 export function endTurn(state: BattleState): void {
   const u = activeUnit(state);
-  if (state.teamTurns) {
-    if (u) {
-      fx.turnEnd(state, u);
-      (state.phaseDone ??= []).push(u.uid);
-      if (state.turns) delete state.turns[u.uid];
-    }
-    state.activeUid = null;
-    patrol.checkAlerts(state);
-    checkVictory(state);
-    return;
-  }
   // Habilidades lentas (custo de tempo > 1) começam a próxima espera abaixo de zero; rápidas, acima.
   if (u) u.gauge = (!state.turn.acted ? MOVE_ONLY_GAUGE : 0) - 100 * ((state.turn.timeMult ?? 1) - 1);
   if (u) fx.turnEnd(state, u);

@@ -56,7 +56,7 @@ function stars(n: number, max = 5): string {
 
 /**
  * Demo de batalha: montar o esquadrão (classe, Dom, nível, equipamento, atributos e as três árvores —
- * Classes, Dom e Armas) e entrar na luta contra um bando de vilões com Dons, em turnos por time.
+ * Classes, Dom e Armas) e entrar na luta contra um bando de vilões com Dons, na linha do tempo (velocidade).
  */
 export class DemoScene extends Scene {
   readonly id = 'demo';
@@ -171,7 +171,7 @@ export class DemoScene extends Scene {
       h('div', { class: 'demo-opt' }, h('span', { text: 'Vilões' }), extra),
       h('div', { class: 'demo-opt' }, h('span', { text: 'Feras alteradas' }), beasts),
       h('label', { class: 'demo-opt', style: 'cursor:pointer' }, h('span', { text: 'Vilão chefe (Dom ★5)' }), boss),
-      h('div', { class: 'muted', style: 'font-size:11px;margin:4px 0 8px', text: 'Cruzamento da avenida, turnos por time (2 ações por herói), cobertura, flanco, Dons com Strain, Overload e Despertar.' }),
+      h('div', { class: 'muted', style: 'font-size:11px;margin:4px 0 8px', text: 'Cruzamento da avenida, linha do tempo (velocidade), cobertura, flanco, Dons com Strain, Overload e Despertar.' }),
       btn('⚔ LUTAR', () => this.fight(), { class: 'primary demo-fight' }),
       btn('← Menu', () => this.ctx.scenes.go('main_menu'), { class: 'small', title: 'Volta ao menu (o esquadrão fica guardado)' }),
     );
@@ -476,7 +476,7 @@ export class DemoScene extends Scene {
         const why = learned ? null : lockReason(c, s.id);
         const def = DB.skills[s.id];
         const wrongWeapon = def?.needsWeapon && !def.needsWeapon.includes(weaponType as never);
-        const meta = [def?.passive ? 'passiva' : '', def?.mp ? `${def.mp} STA` : '', def?.strain ? `+${def.strain} Strain` : '', def?.apCost === 1 ? 'meia ação' : '', def?.ultimate ? 'FINALIZADOR' : ''].filter(Boolean).join(' · ');
+        const meta = [def?.passive ? 'passiva' : '', def?.mp ? `${def.mp} STA` : '', def?.strain ? `+${def.strain} Strain` : '', def?.apCost === 1 ? 'rápida' : '', def?.ultimate ? 'FINALIZADOR' : ''].filter(Boolean).join(' · ');
         col.append(
           h('div', {
             class: `demo-skill ${learned ? 'learned' : why ? 'locked' : 'avail'}${this.skillSel === s.id ? ' selected' : ''}`,
@@ -512,7 +512,7 @@ export class DemoScene extends Scene {
     const why = learned ? null : lockReason(c, id);
     el.append(
       h('b', { class: def.ultimate ? 'gold' : '', style: 'font-size:15px', text: def.name }),
-      h('div', { class: 'muted', style: 'font-size:12px', text: [def.passive ? 'Passiva' : `Alcance ${def.range}`, def.mp ? `${def.mp} Stamina` : '', def.strain ? `+${def.strain} Strain` : '', def.cooldown ? `recarga ${def.cooldown}` : '', def.apCost === 1 ? 'meia ação (não encerra o turno)' : ''].filter(Boolean).join(' · ') }),
+      h('div', { class: 'muted', style: 'font-size:12px', text: [def.passive ? 'Passiva' : `Alcance ${def.range}`, def.mp ? `${def.mp} Stamina` : '', def.strain ? `+${def.strain} Strain` : '', def.cooldown ? `recarga ${def.cooldown}` : '', def.apCost === 1 ? 'rápida (a próxima vez chega na metade do tempo)' : ''].filter(Boolean).join(' · ') }),
       h('div', { style: 'margin:6px 0', text: def.description }),
       treeSkill ? h('div', { class: 'muted', style: 'font-size:12px', text: describeSkill(treeSkill) }) : '',
       def.needsWeapon ? h('div', { style: 'color:#e0b070;font-size:12px', text: `Requer arma: ${def.needsWeapon.map((t) => WEAPON_TYPE_LABEL[t] ?? t).join(' ou ')}` }) : '',

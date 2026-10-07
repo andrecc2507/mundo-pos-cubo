@@ -69,8 +69,6 @@ import {
   skillRange,
   skillTargets,
   stepTime,
-  endPhase,
-  selectUnit,
   reload,
   deploymentTiles,
   deployUnit,
@@ -831,16 +829,6 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
     el.classList.add('show');
   }
 
-  /** Turnos por time: faixa grande "TURNO DO ESQUADRÃO" / "TURNO INIMIGO" (segura o fluxo um instante). */
-  private phaseBanner(team: 'player' | 'enemy'): void {
-    const el = this.hud.banner!;
-    clear(el);
-    el.append(h('div', { class: 'what', text: team === 'player' ? 'TURNO DO ESQUADRÃO' : 'TURNO INIMIGO', style: `font-size:28px;letter-spacing:3px;color:${team === 'player' ? '#81d4fa' : '#ef5350'}` }));
-    el.classList.add('show');
-    Audio.sfx('turn');
-    this.wait(1.0, () => this.hideBanner());
-  }
-
   /**
    * Grito de golpe (Boku no Hero): faixa diagonal enorme com o nome do golpe ou o momento do Dom
    * (além do limite, Overload, Despertar). Não segura o fluxo; treme a tela.
@@ -885,10 +873,6 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
       }
       if (e.type === 'text') {
         this.floaters.push({ x: e.x, y: e.y, h: 0, text: e.text, color: e.color, age: 0 });
-        continue;
-      }
-      if (e.type === 'phase') {
-        this.phaseBanner(e.team);
         continue;
       }
       const u = unitById(this.state, e.uid);
@@ -952,17 +936,6 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
     }
     const u = activeUnit(this.state);
     if (!this.hover || !u || u.team !== 'player' || this.anim) return;
-    // Turnos por time: clicar em outro soldado do esquadrão (que ainda tem ações) troca a vez.
-    if (this.state.teamTurns && (this.mode.kind === 'menu' || this.mode.kind === 'move')) {
-      const there = unitAt(this.state, this.hover[0], this.hover[1]);
-      if (there && there !== u && there.team === 'player' && selectUnit(this.state, there.uid)) {
-        this.hudFor = null;
-        this.undoMove = null;
-        Audio.sfx('step');
-        this.refresh();
-        return;
-      }
-    }
     const [x, y] = this.hover;
     const i = idx(this.state.map, x, y);
     const m = this.mode;
@@ -980,7 +953,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
         () => {
           const calm = this.state.log.length === logBefore && this.visibleEnemyIds() === seenBefore && u.alive;
           this.undoMove = calm ? { uid: u.uid, snap } : null;
-          this.moveWithShots(u, from, steps, () => this.afterPlayerStep(u, !!this.state.teamTurns && this.state.turn.acted));
+          this.moveWithShots(u, from, steps, () => this.afterPlayerStep(u, false));
         },
       );
     } else if (m.kind === 'target' && (m.tiles.has(i) || (m.ground?.has(i) && !!m.skill))) {
@@ -1270,7 +1243,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
     clear(el);
     const u = activeUnit(this.state);
     if (!u) {
-      el.append(h('div', { class: 'muted', text: this.state.teamTurns ? (this.state.phase === 'enemy' ? 'Turno inimigo…' : 'Escolha um herói do esquadrão.') : 'Aguardando a próxima barra de ação…' }));
+      el.append(h('div', { class: 'muted', text: 'Aguardando a próxima barra de ação…' }));
       return;
     }
     const visible = visibleToPlayer(this.state, u, this.vision);
@@ -1278,7 +1251,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
       el.append(h('div', { class: 'muted', text: 'Um inimigo oculto está agindo…' }));
       return;
     }
-    el.append(unitCard(u, !!this.state.teamTurns));
+    el.append(unitCard(u));
   }
 
   /** Registro: minimizável, arrastável e com os nomes das habilidades explicados ao passar o mouse. */
@@ -1351,19 +1324,16 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
     const s = this.state;
     const acted = s.turn.acted;
     // Movimento que ainda sobra no turno (0 se não há para onde ir).
-    const moveLeft = moveTargets(s, u).length ? Math.min(s.teamTurns ? 2 * moveBudget(u) : moveBudget(u), s.turn.moveLeft ?? moveBudget(u)) : 0;
-    const ap = s.turn.ap ?? 0;
+    const moveLeft = moveTargets(s, u).length ? Math.min(moveBudget(u), s.turn.moveLeft ?? moveBudget(u)) : 0;
     const row = h('div', { class: 'row' });
-    // Turnos por time: as ações que sobram (◆) e quanto dá para andar (azul) ou correr (amarelo).
-    if (s.teamTurns) row.append(h('span', { class: 'ap-pips', title: 'Ações: andar gasta 1; correr gasta 2; atacar ou usar habilidade encerra o turno.', text: `${'◆'.repeat(ap)}${'◇'.repeat(Math.max(0, 2 - ap))}` }));
     // Barra enxuta: mover, atacar, habilidades, itens e as janelas de ações básicas e especiais.
     // O que só aparece no contexto (interagir, estabilizar, carregar, porta) fica à vista.
     const basics = this.basicActions(u);
     row.append(
       ...(s.turn.moved && !s.turn.acted && this.undoMove?.uid === u.uid ? [btn('↩ Desfazer movimento', () => this.doUndoMove(u))] : []),
-      btn(s.teamTurns ? `${t('🥾 Mover')} (${Math.min(moveBudget(u), moveLeft)} m${ap >= 2 ? ` · correr ${moveLeft} m` : ''})` : `${t('🥾 Mover')} (${moveLeft} m)`, () => this.startMove(u), { disabled: moveLeft <= 0 }),
+      btn(`${t('🥾 Mover')} (${moveLeft} m)`, () => this.startMove(u), { disabled: moveLeft <= 0 }),
       btn(u.maxAmmo ? `${t('⚔ Atirar')} (${u.ammo ?? 0}/${u.maxAmmo})` : t('⚔ Atacar'), () => this.startAttack(u), { disabled: acted || !canStrike(u) || (!!u.maxAmmo && !u.ammo), title: acted ? 'Já agiu neste turno' : !canStrike(u) ? 'Não pode atacar agora' : u.maxAmmo && !u.ammo ? 'SEM MUNIÇÃO — recarregue' : '' }),
-      ...(u.maxAmmo ? [btn('🔫 Recarregar', () => this.doReload(u), { disabled: acted || (u.ammo ?? 0) >= u.maxAmmo, class: !u.ammo ? 'primary' : '', title: s.teamTurns ? 'Gasta 1 ação (não encerra o turno se sobrar outra).' : 'Gasta a ação.' })] : []),
+      ...(u.maxAmmo ? [btn('🔫 Recarregar', () => this.doReload(u), { disabled: acted || (u.ammo ?? 0) >= u.maxAmmo, class: !u.ammo ? 'primary' : '', title: 'Gasta a ação, mas é rápido: a próxima vez chega na metade do tempo.' })] : []),
       btn(t('✨ Habilidades'), () => this.openSkills(u), { disabled: (acted && !freeSkills(s, u).length) || (!u.skills.length && !comboOptions(s, u).length) }),
       btn(t('🎒 Itens'), () => this.openItems(u), { disabled: acted || !u.items.some(Boolean) || !!u.statuses.sem_itens }),
       btn(`📋 Ações básicas (${basics.filter((b) => !b.disabled).length})`, () => this.openBasicActions(u), { title: 'Defender, Procurar, Empurrar, Esconder, Desengajar, Prontidão, Esperar, Fugir…' }),
@@ -1381,31 +1351,13 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
       ...(doorTargets(s, u).length
         ? [btn('🚪 Porta', () => this.setMode({ kind: 'target', label: 'Porta: abrir ou fechar (ação livre — espie antes de entrar)', tiles: new Set(doorTargets(s, u)), range: this.rangeOf(u, undefined, 1), interact: true }))]
         : []),
-      ...(s.teamTurns
-        ? [
-            btn('⏭ Encerrar unidade', () => this.endTurnNow(), { class: acted ? 'primary' : '', title: 'Esta unidade não faz mais nada neste turno.' }),
-            btn('⏩ Fim do turno', () => this.endPhaseNow(), { title: 'Encerra o turno de todo o esquadrão (o que sobrou de ação se perde).' }),
-          ]
-        : acted
-          ? [btn(t('⏭ Encerrar turno'), () => this.endTurnNow(), { class: 'primary' })]
-          : []),
+      ...(acted ? [btn(t('⏭ Encerrar turno'), () => this.endTurnNow(), { class: 'primary' })] : []),
     );
     el.append(row);
   }
 
   private doReload(u: BattleUnit): void {
     this.perform(u, '🔫 Recarregar', 'buff', ELEMENT_PALETTE.fisico, u.x, u.y, 0, () => reload(this.state, u), () => this.afterPlayerStep(u, this.state.turn.acted));
-  }
-
-  private endPhaseNow(): void {
-    this.setMode({ kind: 'busy' });
-    this.guarded(
-      () => endPhase(this.state),
-      () => {
-        this.hudFor = null;
-        this.refresh();
-      },
-    );
   }
 
   private endTurnNow(): void {
@@ -1766,9 +1718,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
       if (sel) highlights.set(idx(this.state.map, sel.x, sel.y), 'rgba(255,245,157,0.6)');
       glow = m.tiles;
     } else if (m.kind === 'move') {
-      // Turnos por time (XCOM): azul = anda e ainda age; amarelo = corre (gasta as 2 ações).
-      const walk = this.state.teamTurns && u && (this.state.turn.ap ?? 0) >= 2 ? moveBudget(u) : Infinity;
-      for (const i of m.tiles) highlights.set(i, (m.reach.cost.get(i) ?? 0) > walk ? 'rgba(255,200,60,0.38)' : 'rgba(80,160,255,0.35)');
+      for (const i of m.tiles) highlights.set(i, 'rgba(80,160,255,0.35)');
       if (this.hover && u && this.hoverCell !== null) {
         const hi = this.hoverCell;
         if (m.tiles.has(hi)) {
@@ -2056,7 +2006,7 @@ function giftLine(u: BattleUnit): HTMLElement | null {
   );
 }
 
-export function unitCard(u: BattleUnit, teamTurns = false): HTMLElement {
+export function unitCard(u: BattleUnit): HTMLElement {
   const chips = (Object.keys(u.statuses) as StatusId[]).map((s) => {
     const info = STATUS_INFO[s];
     // 99+ turnos = enquanto durar o efeito (concentração, aura): mostra ∞.
@@ -2079,7 +2029,7 @@ export function unitCard(u: BattleUnit, teamTurns = false): HTMLElement {
     bar(u.hp, u.maxHp, '#66bb6a', `HP ${u.hp}/${u.maxHp}`),
     u.maxMp ? bar(u.mp, u.maxMp, '#42a5f5', `${isNewClass(u.classId) ? 'Stamina' : 'MP'} ${u.mp}/${u.maxMp}`) : null,
     giftLine(u),
-    teamTurns ? null : bar(Math.min(100, u.gauge), 100, '#fdd835', `Barra ${Math.floor(Math.min(100, u.gauge))}%`),
+    bar(Math.min(100, u.gauge), 100, '#fdd835', `Barra ${Math.floor(Math.min(100, u.gauge))}%`),
     h('div', { class: 'muted', style: 'font-size:11px', text: `FOR ${u.attrs.str} DES ${u.attrs.dex} VEL ${u.attrs.spd} INT ${u.attrs.int} VIT ${u.attrs.vit} · Mov ${u.move} · ${actionInterval(u.attrs.spd).toFixed(1)} s/ação` }),
     chips.length ? h('div', { class: 'status-chips' }, ...chips) : null,
     chips.length ? h('div', { class: 'muted', style: 'font-size:10px', text: chips.map((c) => c.title.split(' · ')[0] ?? '').filter((t) => t.includes(' — ')).join(' | ') }) : null,

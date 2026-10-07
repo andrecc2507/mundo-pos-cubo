@@ -53,9 +53,8 @@ describe('demo de batalha', () => {
     expect(v.some((u) => u.name.includes('alterado'))).toBe(true);
   });
 
-  it('setup em turnos por time', () => {
+  it('setup da luta (linha do tempo)', () => {
     const s = demoSetup(defaultSquad(4), { ...DEFAULT_OPTIONS, seed: 5 });
-    expect(s.teamTurns).toBe(true);
     expect(s.players).toHaveLength(6);
   });
 });

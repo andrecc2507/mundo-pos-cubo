@@ -1,6 +1,6 @@
 {
  "_doc": "Batalha de demonstração (game/demo/demo_squad.ts): esquadrão inicial, nomes, armas dos vilões e o tamanho do bando.",
- "title": "Demo — Cruzamento da Avenida (turnos por time)",
+ "title": "Demo — Cruzamento da Avenida (velocidade)",
  "maxSquad": 6,
  "levels": [
   1,

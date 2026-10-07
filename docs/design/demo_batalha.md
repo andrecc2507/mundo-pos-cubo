@@ -38,18 +38,15 @@ missões, globo nem vila. Para abrir: menu principal → **⚔ Demo de batalha**
    - prédios com andares, janelas e telhado, que podem ser destruídos;
    - carros que explodem, barreiras de concreto, lixeiras e caixas.
 
-## Regras da luta (XCOM/Xenonauts)
+## Regras da luta
 
-- **Turnos por time**: o esquadrão inteiro age, depois o bando inteiro.
-- Cada herói tem **2 ações**:
-  - andar até o deslocamento custa 1 ação;
-  - correr até o dobro custa as 2;
-  - atacar ou usar uma técnica encerra o turno;
-  - técnicas de "meia ação" não encerram o turno.
-- Dá para **trocar de herói** clicando nele, e **⏩ Fim do turno** encerra a vez do esquadrão.
+- **Linha do tempo (velocidade)**, como no molde: cada um age quando a sua barra enche. A
+  Velocidade decide quem age mais vezes.
+- No turno, cada unidade anda e age (atacar, técnica, item) e pode andar o resto do deslocamento.
+- **Ações rápidas** (recarregar, técnicas de Movimento do Dom) gastam a ação, mas a próxima vez
+  chega na metade do tempo.
 - **Cobertura e flanco**: atacar por um lado sem cobertura dá crítico extra.
-- **Munição**: cada arma tem um pente; recarregar gasta a ação. O alcance muda a precisão de cada
-  tipo de arma.
+- **Munição**: cada arma tem um pente. O alcance muda a precisão de cada tipo de arma.
 
 ## O feeling Boku no Hero
 
@@ -61,12 +58,12 @@ missões, globo nem vila. Para abrir: menu principal → **⚔ Demo de batalha**
 - **Despertar**: só com potencial ★4+.
   - Acontece com Strain alto e um aliado caído perto (ou a vida baixa).
   - O Dom desperta no meio da luta, uma vez por batalha.
-  - Ganha uma passiva que muda uma regra, as técnicas ficam mais fortes e baratas, e o herói ganha
-    uma ação na hora.
+  - Ganha uma passiva que muda uma regra, as técnicas ficam mais fortes e baratas, e a barra de
+    ação enche pela metade.
 - **Gritos de golpe**: o nome do finalizador (a suprema do Dom) e os momentos do Dom (além do
   limite, Overload, Despertar) aparecem numa faixa diagonal enorme, com tremor de tela.
-- **Impulso**: a técnica de Suporte do Dom devolve 1 ação a um aliado, mesmo que ele já tenha
-  encerrado o turno. É o "vai, eu seguro!".
+- **Impulso**: a técnica de Suporte do Dom enche metade da barra de um aliado, que age bem antes.
+  É o "vai, eu seguro!".
 - **Falas**:
   - o chefe provoca no começo;
   - o bando reage quando um vilão cai;
