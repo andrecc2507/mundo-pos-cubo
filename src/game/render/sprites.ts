@@ -36,19 +36,9 @@ const HAIR: string[][] = [
 
 /** Chapéus / elmos por classe (sobrepõem as primeiras linhas). */
 const HATS: Partial<Record<ClassId, string[]>> = {
-  mago: ['.....TT.....', '....TTTT....', '...TTTTTT...', '..TTTTTTTT..'],
-  guerreiro: ['............', '....MMMM....', '...MMMMMM...', '...MSSSSM...'],
-  clerigo: ['....TTTT....', '...TTTTTT...', '..TTTTTTTT..', '..TTSSSSTT..'],
-  ladrao: ['............', '............', '...DDDDDD...', '...DSSSSD...'],
-  arqueiro: ['............', '....TTTT....', '...TTTTTTT..', '...HSSSSH...'],
 };
 
 const WEAPONS: Partial<Record<ClassId, [number, number, string][]>> = {
-  guerreiro: [[10, 5, 'M'], [10, 6, 'M'], [10, 7, 'M'], [10, 8, 'M'], [9, 9, 'W'], [10, 9, 'W'], [11, 9, 'W'], [10, 10, 'W']],
-  arqueiro: [[10, 4, 'W'], [11, 5, 'W'], [11, 6, 'W'], [11, 7, 'W'], [11, 8, 'W'], [11, 9, 'W'], [10, 10, 'W'], [10, 5, 'L'], [10, 6, 'L'], [10, 7, 'L'], [10, 8, 'L'], [10, 9, 'L']],
-  mago: [[10, 3, 'G'], [10, 4, 'W'], [10, 5, 'W'], [10, 6, 'W'], [10, 7, 'W'], [10, 8, 'W'], [10, 9, 'W'], [10, 10, 'W'], [10, 11, 'W']],
-  clerigo: [[10, 3, 'Y'], [9, 4, 'Y'], [11, 4, 'Y'], [10, 4, 'W'], [10, 5, 'W'], [10, 6, 'W'], [10, 7, 'W'], [10, 8, 'W'], [10, 9, 'W'], [10, 10, 'W']],
-  ladrao: [[10, 8, 'M'], [10, 9, 'M'], [10, 10, 'W']],
   aprendiz: [[10, 8, 'M'], [10, 9, 'M'], [10, 10, 'W']],
 };
 

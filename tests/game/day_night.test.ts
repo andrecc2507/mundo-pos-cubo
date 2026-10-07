@@ -8,7 +8,7 @@ import { unitFromCharacter, unitFromEnemy } from '@game/battle/units';
 import { makeCharacter } from '@game/rules/recruit';
 
 function battle(timeOfDay?: TimeOfDay) {
-  const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'guerreiro', level: 5 }), 'player');
+  const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'impacto', level: 5 }), 'player');
   const foe = unitFromEnemy(DB.enemies.lobo_da_silvia!, 5, new Rng(2));
   const setup: BattleSetup = { map: createEmptyMap(30, 30, 'planicie'), players: [hero], enemies: [foe], victory: { type: 'eliminate' }, ambush: false, canFlee: true, seed: 1, timeOfDay, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' } };
   const s = createBattle(setup);

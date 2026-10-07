@@ -25,7 +25,7 @@ describe('utilitários: sem Dom carrega mais e usa mais', () => {
     expect(a.itemUses).toEqual([2, 2, 2]);
     expect(b.itemUses).toEqual([1, 1, 0]);
     expect(b.itemSlots).toBe(2);
-    const e = unitFromEnemy(DB.enemies.soldado_real!, 5, new Rng(3));
+    const e = unitFromEnemy(DB.enemies.miliciano!, 5, new Rng(3));
     const s = createBattle({ map: createEmptyMap(10, 10, 'planicie'), players: [a], enemies: [e], victory: { type: 'eliminate' }, ambush: false, canFlee: false, seed: 5, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' } });
     const u = s.units.find((x) => x.team === 'player')!;
     u.gauge = 99.9;

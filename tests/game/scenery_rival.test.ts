@@ -13,8 +13,8 @@ import { makeCharacter } from '@game/rules/recruit';
 const CTX: BattleContext = { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' };
 
 function battle(inverted = false): { s: BattleState; hero: BattleUnit; foe: BattleUnit } {
-  const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'ladrao', level: 8 }), 'player');
-  const foe = unitFromEnemy(DB.enemies.lamina_do_veu!, 5, new Rng(2));
+  const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'movimento', level: 8 }), 'player');
+  const foe = unitFromEnemy(DB.enemies.saqueador!, 5, new Rng(2));
   const map = createEmptyMap(16, 16, 'planicie');
   building(map, 5, 5, 4, 4, 1, { wall: 'muralha', floor: 'madeira', roof: 'ardosia', windows: 0, furniture: [] });
   const s = createBattle({ map, players: [hero], enemies: [foe], victory: { type: 'eliminate' }, ambush: false, canFlee: true, seed: 3, inverted, context: CTX });
@@ -62,16 +62,6 @@ describe('cenário interativo', () => {
     s.traps = [{ x: 6, y: 10, team: 'enemy', ownerUid: 'x', name: 'Espinhos', armed: true, spotted: ['player'] }];
     expect(scenery.disarm(s, hero, 6, 10)).toBe(true);
     expect(s.traps.length).toBe(0);
-  });
-
-  it('sino de Aster atordoa os corrompidos e revela escondidos', () => {
-    const { s, hero, foe } = battle();
-    [foe.x, foe.y] = [9, 11];
-    foe.hidden = true;
-    tileAt(s.map, 6, 10)!.p = 'sino';
-    expect(scenery.useScenery(s, hero, 6, 10)).toBe(true);
-    expect(foe.hidden).toBe(false);
-    expect(foe.statuses.atordoado).toBeGreaterThan(0);
   });
 });
 

@@ -12,7 +12,7 @@ import { shoveChance, advantageChance, concentrationChance } from '@game/rules/s
 import { damageProp } from '@game/battle/props';
 
 function battle(timeOfDay?: TimeOfDay): { s: BattleState; hero: BattleUnit; foe: BattleUnit } {
-  const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'guerreiro', level: 5 }), 'player');
+  const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'impacto', level: 5 }), 'player');
   const foe = unitFromEnemy(DB.enemies.lobo_da_silvia!, 5, new Rng(2));
   const s = createBattle({ map: createEmptyMap(16, 16, 'planicie'), players: [hero], enemies: [foe], victory: { type: 'eliminate' }, ambush: false, canFlee: true, seed: 3, timeOfDay, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' } });
   const h = s.units.find((u) => u.team === 'player')!;
@@ -117,7 +117,7 @@ describe('táticas: supressão, tiro perdido, luz', () => {
   it('tiro perdido segue a linha e pode pegar quem está atrás (de qualquer lado)', () => {
     const { s, hero, foe } = battle();
     [foe.x, foe.y] = [5, 8];
-    const ally = unitFromCharacter(makeCharacter(new Rng(9), { classId: 'mago', level: 5 }), 'player');
+    const ally = unitFromCharacter(makeCharacter(new Rng(9), { classId: 'controle', level: 5 }), 'player');
     [ally.x, ally.y] = [5, 10];
     s.units.push(ally);
     const hp = ally.hp;
@@ -134,7 +134,7 @@ describe('táticas: supressão, tiro perdido, luz', () => {
     const { s, hero } = battle('noite');
     hero.items = ['pocao_de_vida', 'tocha'];
     delete hero.itemUses;
-    const ally = unitFromCharacter(makeCharacter(new Rng(9), { classId: 'mago', level: 5 }), 'player');
+    const ally = unitFromCharacter(makeCharacter(new Rng(9), { classId: 'controle', level: 5 }), 'player');
     [ally.x, ally.y] = [5, 8];
     ally.hp = 1;
     s.units.push(ally);

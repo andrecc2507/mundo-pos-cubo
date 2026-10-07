@@ -1,24 +1,14 @@
 import type { DataRegistry } from '@core';
 import classes from './classes/classes.json';
 import combos from './skills/combos.json';
-import orbCombos from './skills/orb_combos.json';
 import skills from './skills/skills.json';
 import items from './items/items.json';
 import enemies from './enemies/enemies.json';
 import creatures from './bestiary/creatures.json';
-import distantCreatures from './bestiary/distant.json';
-import materials from './materials/materials.json';
-import treeLadrao from './skills/trees/ladrao.json';
-import treeMago from './skills/trees/mago.json';
-import treeArqueiro from './skills/trees/arqueiro.json';
-import treeClerigo from './skills/trees/clerigo.json';
-import treeGuerreiro from './skills/trees/guerreiro.json';
 import treeTeia from './skills/trees/teia.json';
 import treeArmas from './skills/trees/armas.json';
 import { allGiftTrees } from '../rules/gifts';
-import storyKits from './skills/story_kits.json';
-import { fortify } from '../rules/empower';
-import type { ClassDef, ClassId, ComboDef, CreatureDef, CreatureSkill, EnemyDef, ItemDef, MaterialDef, MaterialFamily, Rarity, SkillDef, SkillFx, SkillTree, TreeNode, TreeSkill } from './types';
+import type { ClassDef, ClassId, ComboDef, CreatureDef, CreatureSkill, EnemyDef, ItemDef, SkillDef, SkillFx, SkillTree, TreeNode, TreeSkill } from './types';
 
 export * from './types';
 
@@ -43,26 +33,11 @@ export const DB = {
   enemies: index(enemies as EnemyDef[]),
   /** Bestiário ativo (repositório + edições locais). */
   creatures: {} as Record<string, CreatureDef>,
-  /** Rosas das classes (árvores de habilidades) por classe. */
+  /** Teia das classes (árvore de habilidades) por classe. */
   trees: {} as Partial<Record<ClassId, SkillTree>>,
   /** Árvores de Dom e de armas (Mundo Pós-Cubo), por id. */
   auxTrees: {} as Record<string, SkillTree>,
-  /** Materiais de drop (repositório + edições locais). */
-  materials: {} as Record<string, MaterialDef>,
 };
-
-/** Famílias de material, valores padrão de drop por raridade e preços de troféu/joia (data/materials). */
-export const MATERIAL_FAMILIES = materials.families as MaterialFamily[];
-export const DROP_DEFAULTS = materials.defaults as Record<Rarity, { common: [number, number, number]; rare: number; elemental: number; trophy: boolean; jewel: number }>;
-export const DROP_PRICES = materials.prices as { trophy: number; jewel: number };
-export const REPO_MATERIALS = materials.materials as MaterialDef[];
-
-/** Instala (ou reinstala) a lista de materiais. */
-export function applyMaterials(list: MaterialDef[]): void {
-  DB.materials = {};
-  for (const m of list) DB.materials[m.id] = m;
-}
-applyMaterials(REPO_MATERIALS);
 
 const KIND_MAP: Record<CreatureSkill['kind'], SkillDef['kind']> = {
   physical: 'physical',
@@ -151,7 +126,6 @@ export const REPO_ITEMS = items as ItemDef[];
 /** Instala (ou reinstala) a lista de itens no banco de dados do jogo. */
 export function applyItems(list: ItemDef[]): void {
   DB.items = {};
-  // Itens únicos das lendas e masmorras (D127) vêm sempre junto, como as criaturas distantes.
   for (const it of list) DB.items[it.id] = it;
 }
 
@@ -159,9 +133,7 @@ export function applyItems(list: ItemDef[]): void {
 export function applyCreatures(list: CreatureDef[]): void {
   for (const id of Object.keys(DB.creatures)) delete DB.enemies[id];
   DB.creatures = {};
-  // As criaturas das terras distantes e das transições (D125) vêm sempre junto do bestiário-base.
-  const ids = new Set(list.map((c) => c.id));
-  for (const c of [...list, ...DISTANT_CREATURES.filter((d) => !ids.has(d.id))]) {
+  for (const c of list) {
     DB.creatures[c.id] = c;
     DB.enemies[c.id] = creatureToEnemy(c);
     for (const s of c.skills) DB.skills[s.id] = creatureSkillToSkill(s);
@@ -213,13 +185,6 @@ export function applyTrees(list: SkillTree[]): void {
           installedTreeSkills.add(e.id);
           DB.skills[s.id] = { ...DB.skills[s.id]!, evolutions: [...(DB.skills[s.id]!.evolutions ?? []), e.id] };
         }
-        // Forma fortificada (Nv 5): habilidade gêmea, mais cara e com um bônus (segredo do treino).
-        const f = (t.maxRank ?? 5) >= 5 ? fortify(s) : null;
-        if (f) {
-          DB.skills[f.skill.id] = { ...treeSkillToSkill(f.skill, t, n), fortifiedOf: s.id };
-          DB.skills[s.id] = { ...DB.skills[s.id]!, fortified: f.skill.id, fortifiedBonus: f.bonus };
-          installedTreeSkills.add(f.skill.id);
-        }
       }
   }
 }
@@ -249,40 +214,15 @@ export function nodeOfSkill(skillId: string): TreeNode | undefined {
   return undefined;
 }
 
-export const REPO_TREES = [treeArqueiro, treeClerigo, treeGuerreiro, treeLadrao, treeMago, treeTeia] as unknown as SkillTree[];
+/** Teia das classes (Impacto/Movimento/Suporte/Controle). */
+export const REPO_TREES = [treeTeia] as unknown as SkillTree[];
 /** Árvore de armas (estilo XCOM). */
 export const WEAPON_TREE = treeArmas as unknown as SkillTree;
 
 export const REPO_CREATURES = creatures as unknown as CreatureDef[];
-export const DISTANT_CREATURES = distantCreatures as unknown as CreatureDef[];
 applyCreatures(REPO_CREATURES);
 applyTrees(REPO_TREES);
 applyAuxTrees([WEAPON_TREE, ...allGiftTrees()]);
-
-/** Kits únicos dos personagens da história (data/skills/story_kits.json). */
-export interface StoryKit {
-  title: string;
-  desc: string;
-  skills: string[];
-  ultimate: string;
-  personal: string;
-}
-/**
- * Combos de orbes da alma: dois orbes (do mesmo herói ou de aliados próximos) cujos elementos combinam
- * viram um golpe novo. Mesmo elemento = Ressonância.
- */
-export interface OrbComboRule {
-  id: string;
-  name: string;
-  elements?: [string, string];
-  result: ComboDef['result'];
-  description: string;
-}
-export const ORB_COMBOS = orbCombos as { partnerRange: number; cooldown: number; powerPerRank: number; combos: OrbComboRule[]; resonance: OrbComboRule };
-
-export const STORY_KITS = storyKits.kits as Record<string, StoryKit>;
-for (const s of storyKits.skills as (CreatureSkill & { classId: ClassId; mp: number; ultimate?: boolean })[])
-  DB.skills[s.id] = { ...creatureSkillToSkill(s, s.classId, s.mp), ultimate: s.ultimate };
 
 export function skill(id: string): SkillDef {
   const s = DB.skills[id];
@@ -305,5 +245,4 @@ export function registerGameData(data: DataRegistry): void {
   data.register('creatures', Object.values(DB.creatures));
   // A teia única serve às quatro classes novas: registra cada árvore uma vez.
   data.register('trees', [...new Set(Object.values(DB.trees))] as SkillTree[]);
-  data.register('materials', Object.values(DB.materials));
 }

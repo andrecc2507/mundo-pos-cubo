@@ -14,7 +14,7 @@ export const ATTR_LABEL: Record<Attr, string> = {
 };
 export const ATTR_SHORT: Record<Attr, string> = { str: 'FOR', dex: 'DES', spd: 'VEL', int: 'INT', vit: 'VIT' };
 
-export type ClassId = 'aprendiz' | 'guerreiro' | 'arqueiro' | 'mago' | 'clerigo' | 'ladrao' | 'fera' | 'impacto' | 'movimento' | 'suporte' | 'controle';
+export type ClassId = 'aprendiz' | 'fera' | 'impacto' | 'movimento' | 'suporte' | 'controle';
 /** Classes do Mundo Pós-Cubo (teia única). */
 export const NEW_CLASSES = ['impacto', 'movimento', 'suporte', 'controle'] as const;
 export type WeaponType =
@@ -66,12 +66,6 @@ export interface SkillDef {
   apCost?: number;
   /** Só com estas armas na mão (árvore de armas). */
   needsWeapon?: WeaponType[];
-  /** Id da forma fortificada (habilidades de teia no Nv 5). */
-  fortified?: string;
-  /** Bônus da forma fortificada (texto). */
-  fortifiedBonus?: string;
-  /** Na forma fortificada: id da habilidade normal (recarga e nível compartilhados). */
-  fortifiedOf?: string;
   /** Evoluções desta habilidade (ids). */
   evolutions?: string[];
   /** Evolução: id da habilidade base (recarga e nível compartilhados), nível e requisito. */
@@ -780,64 +774,10 @@ export interface CreatureDef {
   /** Voa ou flutua: ignora altura e lama. */
   fly?: boolean;
   skills: CreatureSkill[];
-  /** O que deixa ao ser derrotada (sem isso, nada — ex.: invocações). Ver docs/design/base_pesquisa_craft.md. */
-  drops?: CreatureDrops;
   /** Pixel art de combate: linhas de letras mapeadas na paleta ('.' = transparente). */
   sprite: string[];
   palette: Record<string, string>;
 }
-
-/** Tipo de material: comum e raro vêm da família da fera; elemental, do elemento dela. */
-export type MaterialKind = 'comum' | 'raro' | 'elemental';
-
-export interface MaterialDef {
-  id: string;
-  name: string;
-  description: string;
-  kind: MaterialKind;
-  /** Família de material de onde vem (comum/raro). */
-  family?: string;
-  /** Elemento de origem (elemental). */
-  element?: Element;
-  /** Preço de venda por unidade (ouro). */
-  price: number;
-}
-
-/** Família de material: grupo de feras que deixam os mesmos materiais (ex.: serpentes). */
-export interface MaterialFamily {
-  id: string;
-  name: string;
-  common: string;
-  rare: string;
-}
-
-export interface DropEntry {
-  material: string;
-  /** Chance de 0 a 1. */
-  chance: number;
-  min: number;
-  max: number;
-}
-
-/** Joia da alma: o tipo é escolhido à mão por espécie (habilidade = espaço próprio; forja = itens mágicos). */
-export type JewelType = 'indefinida' | 'habilidade' | 'forja';
-
-export interface CreatureDrops {
-  /** Família de material (define o material comum e o raro padrão). */
-  family: string;
-  table: DropEntry[];
-  /** Troféu da espécie (épicas e lendárias). */
-  trophy: boolean;
-  jewel: {
-    chance: number;
-    type: JewelType;
-    /** Habilidade da besta que a joia dá (tipo habilidade). */
-    skill?: string;
-    /** Bônus dos itens mágicos feitos com ela (tipo forja), em texto até existir a Forja. */
-    bonus?: string;
-  };
-}
-
 
 declare module '@core/data/data_registry' {
   interface DataCatalog {
@@ -848,6 +788,5 @@ declare module '@core/data/data_registry' {
     enemies: EnemyDef;
     creatures: CreatureDef;
     trees: SkillTree;
-    materials: MaterialDef;
   }
 }

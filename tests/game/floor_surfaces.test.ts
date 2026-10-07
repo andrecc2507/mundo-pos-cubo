@@ -13,7 +13,7 @@ import { makeCharacter } from '@game/rules/recruit';
 function setup() {
   const map = createEmptyMap(12, 12, 'planicie');
   building(map, 4, 4, 4, 4, 1, { wall: 'enxaimel', floor: 'madeira', roof: 'palha', windows: 0, furniture: [] });
-  const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'guerreiro', level: 5 }), 'player');
+  const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'impacto', level: 5 }), 'player');
   const foe = unitFromEnemy(DB.enemies.lobo_da_silvia!, 5, new Rng(2));
   const s = createBattle({ map, players: [hero], enemies: [foe], victory: { type: 'eliminate' }, ambush: false, canFlee: true, seed: 1, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' } });
   const h = s.units.find((u) => u.team === 'player')!;
@@ -67,7 +67,7 @@ describe('superfícies nos andares', () => {
     const map = createEmptyMap(8, 8, 'planicie');
     const t = tileAt(map, 3, 3)!;
     t.up = [{ b: 1, h: 4, t: 'muralha' }, { b: 6, h: 7, t: 'madeira' }];
-    const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'mago', level: 5 }), 'player');
+    const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'controle', level: 5 }), 'player');
     const foe = unitFromEnemy(DB.enemies.lobo_da_silvia!, 5, new Rng(2));
     const s = createBattle({ map, players: [hero], enemies: [foe], victory: { type: 'eliminate' }, ambush: false, canFlee: true, seed: 1, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' } });
     const h = s.units.find((u) => u.team === 'player')!;

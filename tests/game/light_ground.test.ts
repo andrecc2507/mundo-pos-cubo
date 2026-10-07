@@ -11,7 +11,7 @@ import { LIGHT } from '@game/rules/stats';
 const FIREBALL: SkillLike = { id: 'teste_bola_de_fogo', name: 'Bola de fogo', mp: 0, range: 4, target: 'enemy', shape: 'single', kind: 'magic', power: 1, element: 'fogo' };
 
 function battle(timeOfDay?: TimeOfDay): BattleState {
-  const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'mago', level: 5 }), 'player');
+  const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'controle', level: 5 }), 'player');
   const foe = unitFromEnemy(DB.enemies.lobo_da_silvia!, 5, new Rng(2));
   const map = createEmptyMap(24, 24, 'planicie');
   for (const t of map.tiles) t.t = 'pedra';

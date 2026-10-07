@@ -13,7 +13,7 @@ function firstSkills(cls: ClassId, per = 2): string[] {
 /** Esquadrão de teste com o começo de cada teia da classe e itens de campo. */
 export function devCharacters(level: number, seed = 7): Character[] {
   const rng = new Rng(seed);
-  const classes: ClassId[] = ['guerreiro', 'arqueiro', 'mago', 'mago', 'clerigo', 'ladrao'];
+  const classes: ClassId[] = ['impacto', 'movimento', 'suporte', 'controle', 'impacto', 'movimento'];
   return classes.map((cls, i) => {
     const c = makeCharacter(rng, { classId: cls, level });
     c.skills = firstSkills(cls);

@@ -1,5 +1,5 @@
 import type { Rng } from '@core';
-import { DB, STORY_KITS, type EnemyDef, type Rarity } from '../data';
+import { DB, type EnemyDef, type Rarity } from '../data';
 import { derive, utilitySlots, utilityUses, type Character } from '../rules/character';
 import { makeCharacter } from '../rules/recruit';
 import { grantedSkillIds, innateSkillIds, outfitKey, unlockedEvolutions } from '../rules/skill_tree';
@@ -35,13 +35,6 @@ function ammoOf(c: Character): { ammo?: number; maxAmmo?: number } {
 }
 
 
-/** Habilidades do kit único (personagens da história); a suprema vem da missão pessoal. */
-export function kitSkills(c: Character): string[] {
-  const kit = c.storyId ? STORY_KITS[c.storyId] : undefined;
-  if (!kit) return [];
-  return [...kit.skills, ...(c.kitUltimate ? [kit.ultimate] : [])].filter((id) => DB.skills[id]);
-}
-
 let uidCounter = 0;
 function uid(prefix: string): string {
   uidCounter += 1;
@@ -57,43 +50,11 @@ function grantedRanks(c: Character): Record<string, number> {
     const by = DB.skills[id]?.tree ? Object.values(DB.trees).flatMap((t) => t!.nodes.flatMap((n) => n.skills)).find((s) => s.id === id)?.grantedBy : undefined;
     if (by) ranks[id] = c.skillRanks?.[by] ?? 1;
   }
-  // Forma fortificada e evoluções: mesmo nível da habilidade normal.
+  // Evoluções: mesmo nível da habilidade normal.
   for (const [id, r] of Object.entries(ranks)) {
-    const f = DB.skills[id]?.fortified;
-    if (f) ranks[f] = r;
     for (const e of DB.skills[id]?.evolutions ?? []) ranks[e] = r;
   }
   return ranks;
-}
-
-/** Habilidade da besta dada por um orbe da alma (joia de habilidade), se houver. */
-function orbSkillOf(species: string): string | undefined {
-  const id = DB.creatures[species]?.drops?.jewel.skill;
-  return id && DB.skills[id] ? id : undefined;
-}
-
-/** Habilidades dos orbes equipados (até dois). */
-function jewelSkill(c: Character): string[] {
-  return (c.jewels ?? []).map((j) => orbSkillOf(j.species)).filter((x): x is string => !!x);
-}
-
-function jewelRank(c: Character): Record<string, number> {
-  const out: Record<string, number> = {};
-  for (const j of c.jewels ?? []) {
-    const id = orbSkillOf(j.species);
-    if (id) out[id] = j.rank;
-  }
-  return out;
-}
-
-/** Elemento de cada habilidade de orbe (o da habilidade ou, sem ele, o da besta): base dos combos de orbes. */
-function orbElements(c: Character): Record<string, string> {
-  const out: Record<string, string> = {};
-  for (const j of c.jewels ?? []) {
-    const id = orbSkillOf(j.species);
-    if (id) out[id] = DB.skills[id]?.element ?? DB.creatures[j.species]?.element ?? 'neutro';
-  }
-  return out;
 }
 
 export function unitFromCharacter(c: Character, team: Team): BattleUnit {
@@ -138,12 +99,10 @@ export function unitFromCharacter(c: Character, team: Team): BattleUnit {
     y: 0,
     facing: team === 'player' ? 0 : 2,
     gauge: 0,
-    skills: [...innateSkillIds(c.classId), ...giftInnate(c), ...c.skills.filter((id) => DB.skills[id]), ...grantedSkillIds(c.classId, c.skills), ...unlockedEvolutions(c.skills, c.skillRanks), ...jewelSkill(c), ...kitSkills(c), ...perkSkills(c)],
+    skills: [...innateSkillIds(c.classId), ...giftInnate(c), ...c.skills.filter((id) => DB.skills[id]), ...grantedSkillIds(c.classId, c.skills), ...unlockedEvolutions(c.skills, c.skillRanks), ...perkSkills(c)],
     ...(c.gift && giftDef(c.gift.id) ? { gift: c.gift.id, strain: 0, giftPotential: c.gift.potential, giftPower: giftStats(c).power, giftControl: giftStats(c).control } : {}),
-    title: c.storyId ? STORY_KITS[c.storyId]?.title : undefined,
-    skillRanks: { ...grantedRanks(c), ...jewelRank(c) },
+    skillRanks: grantedRanks(c),
     ...(c.variants && Object.keys(c.variants).length ? { variants: { ...c.variants } } : {}),
-    orbs: orbElements(c),
     items: [...c.equipment.utility],
     itemUses: c.equipment.utility.map((id, i) => utilityUses(c, id, i)),
     itemUsesMax: c.equipment.utility.map((id, i) => utilityUses(c, id, i)),

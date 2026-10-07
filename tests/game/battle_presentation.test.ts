@@ -1,3 +1,4 @@
+import './fixtures/test_skills';
 import { describe, expect, it } from 'vitest';
 import { Rng } from '@core';
 import { ANIM_STYLES, DB, REPO_TREES, creatureSkillToSkill } from '@game/data';
@@ -14,7 +15,7 @@ import { animFor, moveSpeed } from '@game/render/anim_style';
 import { styleTiming } from '@game/render/battle_fx';
 
 function battle() {
-  const c = makeCharacter(new Rng(3), { classId: 'arqueiro', level: 20 });
+  const c = makeCharacter(new Rng(3), { classId: 'movimento', level: 20 });
   c.skills = [];
   const a = unitFromCharacter(c, 'player');
   const d = unitFromEnemy(DB.enemies.lobo_da_silvia!, 20, new Rng(1));
@@ -127,11 +128,11 @@ describe('animações', () => {
 describe('regras do pacote de ajustes', () => {
   it('fogo amigo: magia em área atinge o aliado, mas nunca quem lançou', async () => {
     const { castSkill } = await import('@game/battle/engine');
-    const c = makeCharacter(new Rng(3), { classId: 'mago', level: 20 });
+    const c = makeCharacter(new Rng(3), { classId: 'controle', level: 20 });
     c.skills = ['fogo_bola_de_fogo_maior'];
     c.skillRanks = {};
     const mage = unitFromCharacter(c, 'player');
-    const friend = unitFromCharacter(makeCharacter(new Rng(4), { classId: 'guerreiro', level: 20 }), 'player');
+    const friend = unitFromCharacter(makeCharacter(new Rng(4), { classId: 'impacto', level: 20 }), 'player');
     const foe = unitFromEnemy(DB.enemies.lobo_da_silvia!, 20, new Rng(1));
     const s = createBattle({ map: createEmptyMap(12, 12, 'planicie'), players: [mage, friend], enemies: [foe], victory: { type: 'eliminate' }, ambush: false, canFlee: false, seed: 5, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' } });
     const [m, f, e] = s.units as [BattleUnit, BattleUnit, BattleUnit];
@@ -164,8 +165,8 @@ describe('regras do pacote de ajustes', () => {
 describe('formação inicial', () => {
   it('heróis só vão para a área inicial e trocam de lugar entre si', async () => {
     const { deploymentTiles, deployUnit } = await import('@game/battle/engine');
-    const a = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'guerreiro', level: 5 }), 'player');
-    const b = unitFromCharacter(makeCharacter(new Rng(2), { classId: 'mago', level: 5 }), 'player');
+    const a = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'impacto', level: 5 }), 'player');
+    const b = unitFromCharacter(makeCharacter(new Rng(2), { classId: 'controle', level: 5 }), 'player');
     const e = unitFromEnemy(DB.enemies.lobo_da_silvia!, 5, new Rng(1));
     const s = createBattle({ map: createEmptyMap(12, 12, 'planicie'), players: [a, b], enemies: [e], victory: { type: 'eliminate' }, ambush: false, canFlee: false, seed: 5, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' } });
     const [pa, pb, pe] = s.units as [BattleUnit, BattleUnit, BattleUnit];

@@ -1,3 +1,4 @@
+import './fixtures/test_skills';
 import { describe, expect, it } from 'vitest';
 import { Rng } from '@core';
 import { DB } from '@game/data';
@@ -9,7 +10,7 @@ import { unitFromCharacter } from '@game/battle/units';
 import { makeCharacter } from '@game/rules/recruit';
 import { BALANCE } from '@game/rules/stats';
 
-function unit(classId: 'guerreiro' | 'arqueiro' | 'mago', team: 'player' | 'enemy', seed: number): BattleUnit {
+function unit(classId: 'impacto' | 'movimento' | 'controle', team: 'player' | 'enemy', seed: number): BattleUnit {
   const c = makeCharacter(new Rng(seed), { classId, level: 3 });
   c.skills = [];
   return unitFromCharacter(c, team);
@@ -20,8 +21,8 @@ function setup(map: BattleMap, players: BattleUnit[], enemies: BattleUnit[]): Ba
 }
 
 function duel(ax: number, ay: number, bx: number, by: number): { s: BattleState; a: BattleUnit; d: BattleUnit } {
-  const a = unit('arqueiro', 'player', 1);
-  const d = unit('guerreiro', 'enemy', 2);
+  const a = unit('movimento', 'player', 1);
+  const d = unit('impacto', 'enemy', 2);
   const s = createBattle(setup(createEmptyMap(10, 10, 'planicie'), [a], [d]));
   const [pa, pd] = [s.units.find((u) => u.team === 'player')!, s.units.find((u) => u.team === 'enemy')!];
   [pa.x, pa.y, pd.x, pd.y] = [ax, ay, bx, by];

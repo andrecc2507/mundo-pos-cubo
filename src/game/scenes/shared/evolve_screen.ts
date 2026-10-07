@@ -1,5 +1,5 @@
 import { btn, clear, h, modal } from '@ui/dom';
-import { DB, type ClassId } from '../../data';
+import { DB, NEW_CLASSES, type ClassId } from '../../data';
 import { canPromote, derive, promote, xpToNext, type Character } from '../../rules/character';
 import { attrSaveBar, attrTable, confirmPendingAttrs } from './attr_panel';
 import { suggestedClass } from '../../rules/recruit';
@@ -126,7 +126,7 @@ function renderPromotion(el: HTMLElement, ch: Character, render: () => void): vo
   const sug = suggestedClass(ch);
   box.append(h('div', { class: 'evolve-title', text: 'Escolha o caminho' }), h('div', { class: 'muted', style: 'margin-bottom:8px', text: 'A classe abre a teia de habilidades. ★ = sugestão pelos atributos.' }));
   const row = h('div', { class: 'row', style: 'justify-content:center' });
-  for (const id of ['guerreiro', 'arqueiro', 'mago', 'clerigo', 'ladrao'] as ClassId[])
+  for (const id of NEW_CLASSES)
     row.append(btn(`${DB.classes[id].name}${id === sug ? ' ★' : ''}`, () => (promote(ch, id), render()), { class: id === sug ? 'primary' : '' }));
   box.append(row);
   el.append(box);

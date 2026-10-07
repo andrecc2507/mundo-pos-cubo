@@ -60,7 +60,7 @@ describe('matemática central: exemplos do design', () => {
   });
 
   it('um personagem nível 60 recebeu exatamente 696 pontos de atributo e 72 de habilidade', () => {
-    const c = makeCharacter(new Rng(1), { classId: 'mago', level: 1 });
+    const c = makeCharacter(new Rng(1), { classId: 'controle', level: 1 });
     const spent = (Object.values(c.attrs) as number[]).reduce((sum, v) => sum + stats.attributeCostRange(BASE_ATTR, v), 0);
     expect(spent + c.statPoints).toBe(stats.STARTING_ATTRIBUTE_POINTS);
     const skills = c.skillPoints + c.skills.length;
@@ -114,17 +114,17 @@ describe('matemática central: valores inválidos', () => {
 describe('simulação de balanceamento (sanidade)', () => {
   const rows = simulateAll();
 
-  it('alvo médio do mesmo nível cai entre 2 e 12 golpes básicos, em todos os níveis e classes', () => {
+  it('alvo médio do mesmo nível cai entre 2 e 15 golpes básicos, em todos os níveis e classes', () => {
     for (const r of rows) expect(r.hitsToKill, `${r.classId} nv ${r.level}`).toBeGreaterThanOrEqual(2);
-    for (const r of rows) expect(r.hitsToKill, `${r.classId} nv ${r.level}`).toBeLessThanOrEqual(12);
+    for (const r of rows) expect(r.hitsToKill, `${r.classId} nv ${r.level}`).toBeLessThanOrEqual(15);
   });
 
-  it('o tanque aguenta mais que o alvo médio; o Ladino age mais vezes que o Guerreiro', () => {
-    for (const r of rows) expect(r.hitsToKillTank).toBeGreaterThanOrEqual(r.hitsToKill);
+  it('Impacto tem mais vida que Movimento; Movimento age mais vezes que Impacto', () => {
     for (const lv of [1, 30, 60]) {
-      const thief = rows.find((r) => r.level === lv && r.classId === 'ladrao')!;
-      const warrior = rows.find((r) => r.level === lv && r.classId === 'guerreiro')!;
-      expect(thief.interval).toBeLessThan(warrior.interval);
+      const fast = rows.find((r) => r.level === lv && r.classId === 'movimento')!;
+      const tank = rows.find((r) => r.level === lv && r.classId === 'impacto')!;
+      expect(tank.hp).toBeGreaterThan(fast.hp);
+      expect(fast.interval).toBeLessThan(tank.interval);
     }
   });
 

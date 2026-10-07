@@ -1,4 +1,3 @@
-import PASSIVE_RANKS from '../data/skills/passive_ranks.json';
 import { variantDef } from '../rules/mastery';
 import { DB, type Element, type FxCondition, type FxReaction, type FxStance, type FxStatus, type SkillDef, type SkillFx } from '../data';
 import { addStatus, applyElementToTile, castSmoke, raiseIceBridge, removeStatus, smokeDirection, surfaceUnder, tileEffectsOnUnit, unitAt } from './elements';
@@ -64,11 +63,9 @@ export function rankPower(u: BattleUnit, skillId: string): number {
 
 /**
  * Bônus numéricos de passiva que crescem com o nível da habilidade (`k` = multiplicador do nível).
- * Passivas de "liga/desliga" ganham o bônus próprio de data/skills/passive_ranks.json por nível.
  */
-function scaledFx(f: SkillFx, k: number, rank = 1, id = ''): SkillFx {
-  const extra = (PASSIVE_RANKS as unknown as Record<string, Partial<SkillFx>>)[id];
-  if (k === 1 && (!extra || rank <= 1)) return f;
+function scaledFx(f: SkillFx, k: number): SkillFx {
+  if (k === 1) return f;
   const out: SkillFx = { ...f };
   for (const key of ['physBoost', 'magicBoost', 'haste', 'healBoost', 'critDamage', 'massBoost', 'regen', 'mpRegen', 'summonLifelink', 'summonPower', 'trapRefund', 'perTile', 'flank', 'lifesteal'] as const) if (f[key]) out[key] = (f[key] as number) * k;
   for (const key of ['steadyAim', 'evasion', 'critBonus', 'moveBonus', 'freeHide', 'demolish'] as const) if (f[key]) out[key] = Math.round((f[key] as number) * k);
@@ -84,16 +81,6 @@ function scaledFx(f: SkillFx, k: number, rank = 1, id = ''): SkillFx {
   if (f.intercept) out.intercept = { ...f.intercept, pct: Math.min(1, f.intercept.pct * k), mitigate: f.intercept.mitigate && Math.min(0.9, f.intercept.mitigate * k) };
   if (f.chargeEvery) out.chargeEvery = { ...f.chargeEvery, power: Math.round(f.chargeEvery.power * k) };
   if (f.reduce) out.reduce = Object.fromEntries(Object.entries(f.reduce).map(([t, v]) => [t, Math.min(0.9, (v as number) * k)]));
-  if (extra && rank > 1) {
-    const n = rank - 1;
-    for (const [key, v] of Object.entries(extra)) {
-      if (key === 'reduce') {
-        const r = { ...(out.reduce ?? {}) } as Record<string, number>;
-        for (const [t, x] of Object.entries(v as Record<string, number>)) r[t] = Math.min(0.9, (r[t] ?? 0) + x * n);
-        out.reduce = r;
-      } else if (typeof v === 'number') (out as Record<string, unknown>)[key] = ((out as Record<string, number>)[key] ?? 0) + v * n;
-    }
-  }
   return out;
 }
 
@@ -106,7 +93,7 @@ export function reactionUses(u: BattleUnit, skillId: string): number {
 export function passiveFx(u: BattleUnit): SkillFx[] {
   return skillsOf(u)
     .filter((s) => s.passive && s.fx)
-    .map((s) => scaledFx(s.fx!, rankPower(u, s.id), skillRank(u, s.id), s.id));
+    .map((s) => scaledFx(s.fx!, rankPower(u, s.id)));
 }
 
 export function bag(u: BattleUnit): Record<string, number | string> {

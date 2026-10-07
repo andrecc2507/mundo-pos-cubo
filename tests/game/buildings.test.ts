@@ -19,7 +19,7 @@ function town(windows = 0): BattleMap {
 }
 
 function battle(map: BattleMap, timeOfDay?: TimeOfDay): { s: BattleState; hero: BattleUnit; foe: BattleUnit } {
-  const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'guerreiro', level: 5 }), 'player');
+  const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'impacto', level: 5 }), 'player');
   const foe = unitFromEnemy(DB.enemies.lobo_da_silvia!, 5, new Rng(2));
   const s = createBattle({ map, players: [hero], enemies: [foe], victory: { type: 'eliminate' }, ambush: false, canFlee: true, seed: 1, timeOfDay, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' } });
   const h = s.units.find((u) => u.team === 'player')!;

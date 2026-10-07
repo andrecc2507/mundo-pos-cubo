@@ -1511,28 +1511,12 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
               h('div', { class: 'muted', text: skill(id).description }),
               castBlockReason(s, u, sk) ? h('div', { style: 'color:#e57373;font-weight:bold;font-size:12px', text: `✖ ${castBlockReason(s, u, sk)}` }) : '',
             ),
-            btn(skill(id).fortified && (u.skillRanks?.[id] ?? 1) >= 5 ? 'Normal' : 'Usar', () => {
+            btn('Usar', () => {
               self.close();
               this.setMode({ kind: 'target', label: `${sk.name}: escolha o alvo${groundAimable(u, sk) ? ' (ou mire no chão, mais longe: ilumina, incendeia, quebra)' : ''}`, tiles: new Set(skillTargets(s, u, sk, this.vision)), range: this.rangeOf(u, sk), skill: sk, ground: new Set(groundTargets(s, u, sk, this.vision)) });
             }, { disabled: !skillUsable(s, u, sk) || (s.turn.acted && !free) }),
           ),
         );
-        // Nv 5: a forma fortificada aparece logo abaixo (mais MP, um algo a mais).
-        const fid = skill(id).fortified;
-        if (fid && (u.skillRanks?.[id] ?? 1) >= 5) {
-          const fk = skill(fid) as SkillLike;
-          body.append(
-            h(
-              'div',
-              { class: 'item row', style: 'justify-content:space-between;border-color:#c9a14a;background:rgba(201,161,74,0.08);margin-top:-2px' },
-              h('div', {}, h('b', { class: 'gold', text: `✦ ${sk.name} — Fortificada` }), h('span', { class: 'muted', text: ` · ${mpCost(u, fk)} MP` }), h('div', { style: 'color:#f3d58a;font-size:12px', text: skill(id).fortifiedBonus ?? '' }), castBlockReason(s, u, fk) ? h('div', { style: 'color:#e57373;font-weight:bold;font-size:12px', text: `✖ ${castBlockReason(s, u, fk)}` }) : ''),
-              btn('✦ Fortificada', () => {
-                self.close();
-                this.setMode({ kind: 'target', label: `✦ ${sk.name} (fortificada): escolha o alvo`, tiles: new Set(skillTargets(s, u, fk, this.vision)), range: this.rangeOf(u, fk), skill: fk, ground: new Set(groundTargets(s, u, fk, this.vision)) });
-              }, { class: 'primary', disabled: !skillUsable(s, u, fk) }),
-            ),
-          );
-        }
       }
       const combos = comboOptions(s, u);
       if (combos.length) body.append(h('h3', { class: 'gold', text: '⚡ Combos disponíveis' }));
@@ -1542,7 +1526,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
           h(
             'div',
             { class: 'item row', style: 'justify-content:space-between' },
-            h('div', {}, h('b', { text: `${c.combo.name}` }), h('span', { class: 'muted', text: ` ${c.partner === u ? 'com os dois orbes' : `com ${c.partner.name}`} · ${skill(c.mySkill).name} + ${skill(c.partnerSkill).name}` }), h('div', { class: 'muted', text: c.combo.description + (c.partner === u ? '' : ' A barra do parceiro também zera.') + (c.orb ? ' Os dois orbes entram em recarga.' : '') })),
+            h('div', {}, h('b', { text: `${c.combo.name}` }), h('span', { class: 'muted', text: ` com ${c.partner.name} · ${skill(c.mySkill).name} + ${skill(c.partnerSkill).name}` }), h('div', { class: 'muted', text: c.combo.description + ' A barra do parceiro também zera.' })),
             btn('Combar', () => {
               self.close();
               this.setMode({ kind: 'target', label: `⚡ ${c.combo.name}: escolha o alvo`, tiles: new Set(skillTargets(s, u, sk, this.vision)), range: this.rangeOf(u, sk), skill: sk, combo: c });

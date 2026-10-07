@@ -27,7 +27,7 @@ export interface SimRow {
   /** Segundos entre ações e dano por minuto do básico (DPT). */
   interval: number;
   dpm: number;
-  /** Golpes básicos para derrubar o alvo médio (Arqueiro), o tanque (Guerreiro) e a fera de referência do nível. */
+  /** Golpes básicos para derrubar o alvo médio (Movimento), o tanque (Impacto) e a fera de referência do nível. */
   hitsToKill: number;
   hitsToKillTank: number;
   hitsToKillBeast: number;
@@ -35,7 +35,7 @@ export interface SimRow {
   beast: string;
 }
 
-export const SIM_CLASSES: ClassId[] = ['guerreiro', 'arqueiro', 'mago', 'clerigo', 'ladrao'];
+export const SIM_CLASSES: ClassId[] = ['impacto', 'movimento', 'suporte', 'controle'];
 export const SIM_LEVELS = [1, 10, 20, 30, 40, 50, 60];
 
 function unitOf(classId: ClassId, level: number, seed: number): BattleUnit {
@@ -57,18 +57,18 @@ function beastAt(level: number, rng: Rng): BattleUnit | null {
 
 export function simulate(level: number, classId: ClassId, seed = 7): SimRow {
   const a = unitOf(classId, level, seed);
-  // Alvos de referência do mesmo nível: médio (Arqueiro) e tanque (Guerreiro).
-  const d = unitOf('arqueiro', level, seed + 1);
-  const tank = unitOf('guerreiro', level, seed + 3);
+  // Alvos de referência do mesmo nível: médio (Movimento) e tanque (Impacto).
+  const d = unitOf('movimento', level, seed + 1);
+  const tank = unitOf('impacto', level, seed + 3);
   const beast = beastAt(level, new Rng(seed + 2));
   const s = createBattle({ map: createEmptyMap(8, 8, 'planicie'), players: [a], enemies: beast ? [d, tank, beast] : [d, tank], victory: { type: 'eliminate' }, ambush: false, canFlee: false, seed, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 'sim' } });
   const [pa, pd, pt, pb] = s.units as [BattleUnit, BattleUnit, BattleUnit, BattleUnit | undefined];
   [pa.x, pa.y, pd.x, pd.y, pt.x, pt.y] = [3, 3, 4, 3, 2, 3];
   if (pb) [pb.x, pb.y] = [3, 4];
-  const kind = pa.weaponType === 'varinha' ? 'magic' : 'basic';
+  const kind = 'basic';
   const avg = (p: { min: number; max: number; chance: number; crit: number }) => ((p.min + p.max) / 2) * (1 + (p.crit / 100) * 0.5) * (p.chance / 100);
   const basic = previewHit(s, pa, pd, kind, 0);
-  const skill = previewHit(s, pa, pd, pa.weaponType === 'varinha' || pa.classId === 'clerigo' ? 'magic' : 'physical', 6);
+  const skill = previewHit(s, pa, pd, 'physical', 6);
   const vsBeast = pb ? previewHit(s, pa, pb, kind, 0) : basic;
   const vsTank = previewHit(s, pa, pt, kind, 0);
   const interval = actionInterval(pa.attrs.spd);

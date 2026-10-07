@@ -1,6 +1,6 @@
 import { Rng } from '@core';
 import BONDS from '../data/battle/bonds.json';
-import { DB, ORB_COMBOS, item, skill, type ComboDef, type Element, type OrbComboRule, type SkillDef } from '../data';
+import { DB, item, skill, type ComboDef, type Element, type SkillDef } from '../data';
 import { addStatus, applyElementToTile, applyElementToUnit, dissipateClouds, driftSmoke, environmentTick, removeStatus, tileEffectsOnUnit, unitAt } from './elements';
 import { COVER_PENALTY, coverAgainst, coverPropAgainst, coverSides, type CoverLevel } from './cover';
 import { damageProp, propHp } from './props';
@@ -1551,8 +1551,6 @@ export interface ComboOption {
   mySkill: string;
   partner: BattleUnit;
   partnerSkill: string;
-  /** Combo de orbes da alma (o parceiro pode ser o próprio herói, com os dois orbes). */
-  orb?: boolean;
 }
 
 export function comboOptions(state: BattleState, u: BattleUnit): ComboOption[] {
@@ -1570,51 +1568,6 @@ export function comboOptions(state: BattleState, u: BattleUnit): ComboOption[] {
       }
     }
   }
-  return [...out, ...orbComboOptions(state, u)];
-}
-
-/** Regra de combo para dois elementos de orbe (mesmo elemento = Ressonância). */
-export function orbComboRule(a: string, b: string): OrbComboRule | undefined {
-  if (a === b) return a === 'neutro' ? undefined : ORB_COMBOS.resonance;
-  return ORB_COMBOS.combos.find((r) => r.elements && r.elements.includes(a) && r.elements.includes(b));
-}
-
-/** Habilidade de orbe pronta para combo: ativa e fora de recarga. */
-function orbReady(u: BattleUnit, id: string): boolean {
-  return !!u.orbs?.[id] && !DB.skills[id]?.passive && !((u.cooldowns[id] ?? 0) > 0);
-}
-
-/**
- * Combos de orbes: um orbe deste herói com o outro orbe dele, ou com o orbe de um aliado por perto.
- * O golpe ganha força com o nível dos dois orbes e põe os dois em recarga.
- */
-function orbComboOptions(state: BattleState, u: BattleUnit): ComboOption[] {
-  const out: ComboOption[] = [];
-  if (!u.orbs || u.statuses.silenciado) return out;
-  const partners = [u, ...allies(state, u).filter((p) => p !== u && !p.statuses.congelado && manhattan(u.x, u.y, p.x, p.y) <= ORB_COMBOS.partnerRange)];
-  for (const mine of Object.keys(u.orbs)) {
-    if (!orbReady(u, mine)) continue;
-    for (const p of partners)
-      for (const theirs of Object.keys(p.orbs ?? {})) {
-        if ((p === u && theirs === mine) || !orbReady(p, theirs)) continue;
-        // Com os dois orbes do mesmo herói, cada par aparece uma vez só.
-        if (p === u && theirs < mine) continue;
-        const elA = u.orbs[mine]!;
-        const elB = p.orbs![theirs]!;
-        const rule = orbComboRule(elA, elB);
-        if (!rule) continue;
-        const ranks = (u.skillRanks?.[mine] ?? 1) + (p.skillRanks?.[theirs] ?? 1) - 2;
-        const result = { ...rule.result, power: rule.result.power + ORB_COMBOS.powerPerRank * ranks };
-        if (!rule.elements) result.element = elA as Element;
-        out.push({
-          combo: { id: `orbe_${rule.id}`, name: `💎 ${rule.name}`, a: mine, b: theirs, partnerRange: ORB_COMBOS.partnerRange, result, description: rule.description },
-          mySkill: mine,
-          partner: p,
-          partnerSkill: theirs,
-          orb: true,
-        });
-      }
-  }
   return out;
 }
 
@@ -1625,10 +1578,8 @@ export function comboAsSkill(c: ComboOption): SkillLike {
 export function canCast(u: BattleUnit, s: SkillLike): boolean {
   const def = DB.skills[s.id];
   if (def?.passive) return false;
-  // A forma fortificada divide a recarga com a normal e só existe com a habilidade no Nv 5.
-  const cdId = def?.fortifiedOf ?? def?.evolvedOf ?? s.id;
+  const cdId = def?.evolvedOf ?? s.id;
   if ((u.cooldowns[cdId] ?? 0) > 0) return false;
-  if (def?.fortifiedOf && ((u.skillRanks?.[def.fortifiedOf] ?? 1) < SKILL_MAX_RANK || !u.skills.includes(def.fortifiedOf))) return false;
   if (u.statuses.silenciado && s.id !== BASIC_ATTACK.id) return false;
   if ((s.kind === 'physical' || s.kind === 'ranged') && !fx.canStrike(u)) return false;
   // Árvore de armas: técnica que pede a arma certa na mão.
@@ -1642,7 +1593,7 @@ const WEAPON_NAME: Record<string, string> = { pistola: 'pistola', fuzil: 'fuzil'
 export function castBlockReason(state: BattleState, u: BattleUnit, s: SkillLike): string | null {
   const def = DB.skills[s.id];
   if (def?.passive) return 'Passiva: age sozinha';
-  const cdId = def?.fortifiedOf ?? def?.evolvedOf ?? s.id;
+  const cdId = def?.evolvedOf ?? s.id;
   const cd = u.cooldowns[cdId] ?? 0;
   if (cd > 0) return `EM RECARGA (${cd} turno${cd > 1 ? 's' : ''})`;
   if (u.statuses.silenciado && s.id !== BASIC_ATTACK.id) return 'SILENCIADO';
@@ -1698,8 +1649,7 @@ export function castSkill(state: BattleState, u: BattleUnit, s: SkillLike, x: nu
   if (ok) {
     u.skillDealt = (u.skillDealt ?? 0) + (u.dealt ?? 0) - dealt0;
     u.casts = (u.casts ?? 0) + 1;
-    const baseId = DB.skills[s.id]?.fortifiedOf ?? s.id;
-    (u.castLog ??= {})[baseId] = (u.castLog[baseId] ?? 0) + 1;
+    (u.castLog ??= {})[s.id] = (u.castLog[s.id] ?? 0) + 1;
   }
   if (ok && before && u.alive) conc.begin(state, u, s.id, before);
   return ok;
@@ -1711,18 +1661,13 @@ function castSkillInner(state: BattleState, u: BattleUnit, s: SkillLike, x: numb
   u.mp -= fx.mpCost(u, s);
   // Nv 4+: recarga um turno menor.
   const cd = Math.max(0, rankCooldown(DB.skills[s.id]?.cooldown ?? 0, u.skillRanks?.[s.id] ?? 1) + (variantDef(u.variants?.[s.id])?.cooldown ?? 0));
-  if (cd > 0) u.cooldowns[DB.skills[s.id]?.fortifiedOf ?? DB.skills[s.id]?.evolvedOf ?? s.id] = cd;
+  if (cd > 0) u.cooldowns[DB.skills[s.id]?.evolvedOf ?? s.id] = cd;
   if (combo) {
     if (combo.partner !== u) {
       combo.partner.mp -= skill(combo.partnerSkill).mp;
       combo.partner.gauge = 0;
     }
-    if (combo.orb) {
-      // Os dois orbes entram em recarga.
-      u.cooldowns[combo.mySkill] = ORB_COMBOS.cooldown;
-      combo.partner.cooldowns[combo.partnerSkill] = ORB_COMBOS.cooldown;
-    }
-    state.log.push(combo.partner === u ? `💎 Combo de orbes! ${u.name}: ${s.name}` : `⚡ Combo! ${u.name} + ${combo.partner.name}: ${s.name}`);
+    state.log.push(`⚡ Combo! ${u.name} + ${combo.partner.name}: ${s.name}`);
   } else state.log.push(`${u.name} usa ${s.name}.`);
   // Ação sem custo não mexe no tempo da ação do turno.
   if (!DB.skills[s.id]?.fx?.free) state.turn.timeMult = DB.skills[s.id]?.timeMult ?? 1;
@@ -2058,7 +2003,7 @@ export function hideChance(state: BattleState, u: BattleUnit): number {
   // Tocha acesa ou sob fogo de supressão: impossível sumir.
   if (u.statuses.tocha || u.statuses.suprimido) return 0;
   if (!detectedBy(state, u)) return 100;
-  let chance = u.classId === 'ladrao' ? 50 : 0;
+  let chance = 0;
   const t = tileAt(state.map, u.x, u.y);
   if (t?.p === 'arbusto' || t?.c === 'fumaca') chance += 30;
   // Luz: aceso à noite atrapalha, escuro ajuda; de dia, sob teto (sombra) ajuda um pouco.

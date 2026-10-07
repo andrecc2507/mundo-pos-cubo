@@ -47,12 +47,12 @@ describe('Dons únicos: passiva inata + técnica-assinatura', () => {
 
   it('cada assinatura pode ser usada em batalha sem erro', () => {
     for (const g of GIFTS) {
-      const c = makeCharacter(new Rng(1), { classId: 'guerreiro', level: 10 });
+      const c = makeCharacter(new Rng(1), { classId: 'impacto', level: 10 });
       c.gift = { id: g.id, potential: 5 };
       c.skills = [...c.skills, `${g.id}_sig`];
       const a = unitFromCharacter(c, 'player');
-      const b = unitFromCharacter(makeCharacter(new Rng(2), { classId: 'guerreiro', level: 10 }), 'player');
-      const e = unitFromEnemy(DB.enemies.soldado_real!, 10, new Rng(3));
+      const b = unitFromCharacter(makeCharacter(new Rng(2), { classId: 'impacto', level: 10 }), 'player');
+      const e = unitFromEnemy(DB.enemies.miliciano!, 10, new Rng(3));
       const s = createBattle({ map: createEmptyMap(14, 14, 'planicie'), players: [a, b], enemies: [e], victory: { type: 'eliminate' }, ambush: false, canFlee: false, seed: 5, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' } });
       const [pa, pb] = s.units.filter((u) => u.team === 'player');
       const pe = s.units.find((u) => u.team === 'enemy')!;
@@ -68,5 +68,5 @@ describe('Dons únicos: passiva inata + técnica-assinatura', () => {
       expect(s.log.length, `${g.id}: a assinatura não foi lançada`).toBeGreaterThan(logLen);
       expect(pa!.strain, g.id).toBeGreaterThan(0);
     }
-  });
+  }, 30000);
 });

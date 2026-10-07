@@ -82,29 +82,6 @@
    "N": "#3b2a1a",
    "E": "#14101a",
    "K": "#402112"
-  },
-  "drops": {
-   "family": "roedor",
-   "table": [
-    {
-     "material": "pelagem_macia",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "dente_afiado",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "acrobacia_arborea"
-   }
   }
  },
  {
@@ -209,29 +186,6 @@
    "N": "#6b8e23",
    "E": "#14101a",
    "K": "#382c1e"
-  },
-  "drops": {
-   "family": "casco",
-   "table": [
-    {
-     "material": "couro_curtido",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "chifre",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "salto_aprimorado"
-   }
   }
  },
  {
@@ -320,35 +274,6 @@
    "N": "#efe6d0",
    "E": "#14101a",
    "K": "#2c1e1a"
-  },
-  "drops": {
-   "family": "casco",
-   "table": [
-    {
-     "material": "couro_curtido",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "chifre",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_terroso",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "furia_cega"
-   }
   }
  },
  {
@@ -439,29 +364,6 @@
    "N": "#202020",
    "E": "#14101a",
    "K": "#313133"
-  },
-  "drops": {
-   "family": "ursideo",
-   "table": [
-    {
-     "material": "couro_grosso",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "garra_pesada",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "cortina_fetida"
-   }
   }
  },
  {
@@ -553,35 +455,6 @@
    "N": "#e0a030",
    "E": "#14101a",
    "K": "#2b241c"
-  },
-  "drops": {
-   "family": "ave",
-   "table": [
-    {
-     "material": "pena",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "pena_de_rapina",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "pluma_do_vento",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "pio_atordoante"
-   }
   }
  },
  {
@@ -680,35 +553,6 @@
    "N": "#efe6d0",
    "E": "#14101a",
    "R": "#c62828"
-  },
-  "drops": {
-   "family": "serpente",
-   "table": [
-    {
-     "material": "escama_de_serpente",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "glandula_de_veneno",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "resina_toxica",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "toxina_paralisante"
-   }
   }
  },
  {
@@ -810,29 +654,6 @@
    "N": "#efe6d0",
    "E": "#14101a",
    "K": "#31381e"
-  },
-  "drops": {
-   "family": "canideo",
-   "table": [
-    {
-     "material": "couro_de_canideo",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "presa",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "passo_veloz"
-   }
   }
  },
  {
@@ -905,35 +726,6 @@
    "P": "#7d6b9a",
    "N": "#2a2633",
    "E": "#e53935"
-  },
-  "drops": {
-   "family": "aracnideo",
-   "table": [
-    {
-     "material": "quitina",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "glandula_de_veneno",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "resina_toxica",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "disparar_teia"
-   }
   }
  },
  {
@@ -1031,35 +823,6 @@
    "N": "#efe6d0",
    "E": "#14101a",
    "K": "#2b1b0e"
-  },
-  "drops": {
-   "family": "ursideo",
-   "table": [
-    {
-     "material": "couro_grosso",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "garra_pesada",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_terroso",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "rugido_intimidador"
-   }
   }
  },
  {
@@ -1152,29 +915,6 @@
    "E": "#14101a",
    "K": "#323235",
    "R": "#b3261e"
-  },
-  "drops": {
-   "family": "canideo",
-   "table": [
-    {
-     "material": "couro_de_canideo",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "presa",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "tatica_de_flanqueio"
-   }
   }
  },
  {
@@ -1264,35 +1004,6 @@
    "G": "#ffe082",
    "E": "#14101a",
    "H": "#8d5a00"
-  },
-  "drops": {
-   "family": "feerico",
-   "table": [
-    {
-     "material": "po_feerico",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "essencia_espiritual",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "lasca_de_luz",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "camuflagem_de_folhas"
-   }
   }
  },
  {
@@ -1392,35 +1103,6 @@
    "N": "#d9c9a0",
    "E": "#14101a",
    "K": "#243117"
-  },
-  "drops": {
-   "family": "ursideo",
-   "table": [
-    {
-     "material": "couro_grosso",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "garra_pesada",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_terroso",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "armadura_de_musgo"
-   }
   }
  },
  {
@@ -1517,35 +1199,6 @@
    "N": "#efe6d0",
    "E": "#d1c4e9",
    "R": "#7e57c2"
-  },
-  "drops": {
-   "family": "serpente",
-   "table": [
-    {
-     "material": "escama_de_serpente",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "glandula_de_veneno",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "fragmento_de_sombra",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "veneno_do_eclipse"
-   }
   }
  },
  {
@@ -1646,35 +1299,6 @@
    "G": "#fff176",
    "E": "#14101a",
    "H": "#f9a825"
-  },
-  "drops": {
-   "family": "feerico",
-   "table": [
-    {
-     "material": "po_feerico",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "essencia_espiritual",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "lasca_de_luz",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "flash_ofuscante"
-   }
   }
  },
  {
@@ -1770,35 +1394,6 @@
    "P": "#f5e6c8",
    "E": "#14101a",
    "K": "#4d1711"
-  },
-  "drops": {
-   "family": "planta",
-   "table": [
-    {
-     "material": "fibra_vegetal",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "esporo",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "resina_toxica",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "nuvem_de_esporos"
-   }
   }
  },
  {
@@ -1886,35 +1481,6 @@
    "N": "#efe6d0",
    "E": "#ffeb3b",
    "K": "#263317"
-  },
-  "drops": {
-   "family": "felino",
-   "table": [
-    {
-     "material": "pelagem_fina",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "garra_afiada",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_terroso",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "purificacao_natural"
-   }
   }
  },
  {
@@ -1997,35 +1563,6 @@
    "G": "#69f0ae",
    "E": "#004d40",
    "R": "#1b5e20"
-  },
-  "drops": {
-   "family": "feerico",
-   "table": [
-    {
-     "material": "po_feerico",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "essencia_espiritual",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "pluma_do_vento",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "gargalhada_ecoante"
-   }
   }
  },
  {
@@ -2118,35 +1655,6 @@
    "E": "#4527a0",
    "K": "#4a2f7d",
    "R": "#b3261e"
-  },
-  "drops": {
-   "family": "feerico",
-   "table": [
-    {
-     "material": "po_feerico",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "essencia_espiritual",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "lasca_de_luz",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "uivo_sincronizado"
-   }
   }
  },
  {
@@ -2273,35 +1781,6 @@
    "G": "#4caf50",
    "E": "#ffeb3b",
    "R": "#3e2723"
-  },
-  "drops": {
-   "family": "planta",
-   "table": [
-    {
-     "material": "fibra_vegetal",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "esporo",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_terroso",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "coracao_da_floresta"
-   }
   }
  },
  {
@@ -2454,35 +1933,6 @@
    "E": "#14101a",
    "K": "#483718",
    "R": "#b3261e"
-  },
-  "drops": {
-   "family": "mitico",
-   "table": [
-    {
-     "material": "reliquia_mitica",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "sangue_ancestral",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "resina_toxica",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "veneno_mortal"
-   }
   }
  },
  {
@@ -2601,35 +2051,6 @@
    "P": "#9c64c4",
    "N": "#2c1a36",
    "E": "#ff5252"
-  },
-  "drops": {
-   "family": "aracnideo",
-   "table": [
-    {
-     "material": "quitina",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "glandula_de_veneno",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "resina_toxica",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "fios_do_destino"
-   }
   }
  },
  {
@@ -2773,35 +2194,6 @@
    "E": "#14101a",
    "K": "#4d2911",
    "R": "#7b1f1f"
-  },
-  "drops": {
-   "family": "canideo",
-   "table": [
-    {
-     "material": "couro_de_canideo",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "presa",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "fragmento_de_sombra",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "predador_da_lua"
-   }
   }
  },
  {
@@ -2941,35 +2333,6 @@
    "N": "#ffd54f",
    "E": "#14101a",
    "K": "#485b63"
-  },
-  "drops": {
-   "family": "ave",
-   "table": [
-    {
-     "material": "pena",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "pena_de_rapina",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "lasca_de_luz",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "olhar_hipnotico"
-   }
   }
  },
  {
@@ -3174,35 +2537,6 @@
    "G": "#2e7d32",
    "E": "#c6ff00",
    "R": "#1b1b1b"
-  },
-  "drops": {
-   "family": "planta",
-   "table": [
-    {
-     "material": "fibra_vegetal",
-     "chance": 1,
-     "min": 2,
-     "max": 4
-    },
-    {
-     "material": "esporo",
-     "chance": 0.4,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_terroso",
-     "chance": 0.5,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.03,
-    "type": "habilidade",
-    "skill": "fusao_com_a_mata"
-   }
   }
  },
  {
@@ -3356,35 +2690,6 @@
    "E": "#14101a",
    "K": "#123220",
    "R": "#ffb300"
-  },
-  "drops": {
-   "family": "draconico",
-   "table": [
-    {
-     "material": "escama_de_dragao",
-     "chance": 1,
-     "min": 2,
-     "max": 4
-    },
-    {
-     "material": "sangue_de_dragao",
-     "chance": 0.4,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_terroso",
-     "chance": 0.5,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.03,
-    "type": "habilidade",
-    "skill": "drenagem_vital_de_raiz"
-   }
   }
  },
  {
@@ -3470,35 +2775,6 @@
    "N": "#3b2a1a",
    "E": "#14101a",
    "K": "#483722"
-  },
-  "drops": {
-   "family": "roedor",
-   "table": [
-    {
-     "material": "pelagem_macia",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "dente_afiado",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "pluma_do_vento",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "audicao_agucada"
-   }
   }
  },
  {
@@ -3586,35 +2862,6 @@
    "N": "#3b2a1a",
    "E": "#14101a",
    "K": "#543f1e"
-  },
-  "drops": {
-   "family": "canideo",
-   "table": [
-    {
-     "material": "couro_de_canideo",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "presa",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_terroso",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "assobio_de_alerta"
-   }
   }
  },
  {
@@ -3709,35 +2956,6 @@
    "N": "#ffc107",
    "E": "#14101a",
    "K": "#312417"
-  },
-  "drops": {
-   "family": "ave",
-   "table": [
-    {
-     "material": "pena",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "pena_de_rapina",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "pluma_do_vento",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "grito_agudo"
-   }
   }
  },
  {
@@ -3832,29 +3050,6 @@
    "N": "#efe6d0",
    "E": "#14101a",
    "K": "#382411"
-  },
-  "drops": {
-   "family": "casco",
-   "table": [
-    {
-     "material": "couro_curtido",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "chifre",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "relincho_desafiador"
-   }
   }
  },
  {
@@ -3944,35 +3139,6 @@
    "N": "#2a1f18",
    "E": "#14101a",
    "K": "#553719"
-  },
-  "drops": {
-   "family": "casco",
-   "table": [
-    {
-     "material": "couro_curtido",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "chifre",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "pluma_do_vento",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "salto_de_longa_distancia"
-   }
   }
  },
  {
@@ -4068,29 +3234,6 @@
    "E": "#14101a",
    "K": "#4a3823",
    "R": "#b3261e"
-  },
-  "drops": {
-   "family": "canideo",
-   "table": [
-    {
-     "material": "couro_de_canideo",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "presa",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "uivo_de_caca"
-   }
   }
  },
  {
@@ -4183,35 +3326,6 @@
    "N": "#e0b0a0",
    "E": "#14101a",
    "K": "#2c2c2e"
-  },
-  "drops": {
-   "family": "ave",
-   "table": [
-    {
-     "material": "pena",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "pena_de_rapina",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "resina_toxica",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "sentir_a_morte"
-   }
   }
  },
  {
@@ -4289,29 +3403,6 @@
    "N": "#2a1f18",
    "E": "#14101a",
    "K": "#6b532c"
-  },
-  "drops": {
-   "family": "roedor",
-   "table": [
-    {
-     "material": "pelagem_macia",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "dente_afiado",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "corpo_flexivel"
-   }
   }
  },
  {
@@ -4405,29 +3496,6 @@
    "N": "#efe6d0",
    "E": "#14101a",
    "K": "#251a13"
-  },
-  "drops": {
-   "family": "casco",
-   "table": [
-    {
-     "material": "couro_curtido",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "chifre",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "carapaca_de_bisao"
-   }
   }
  },
  {
@@ -4507,35 +3575,6 @@
    "E": "#14101a",
    "K": "#32481a",
    "R": "#b3261e"
-  },
-  "drops": {
-   "family": "reptil",
-   "table": [
-    {
-     "material": "pele_escamosa",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "pele_viscosa",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "pele_escorregadia"
-   }
   }
  },
  {
@@ -4627,29 +3666,6 @@
    "N": "#fffde7",
    "E": "#14101a",
    "K": "#594220"
-  },
-  "drops": {
-   "family": "felino",
-   "table": [
-    {
-     "material": "pelagem_fina",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "garra_afiada",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "cerco_veloz"
-   }
   }
  },
  {
@@ -4754,35 +3770,6 @@
    "T": "#8d6e63",
    "E": "#ff9800",
    "K": "#634c1c"
-  },
-  "drops": {
-   "family": "planta",
-   "table": [
-    {
-     "material": "fibra_vegetal",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "esporo",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "fragmento_de_sombra",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "foice_maldita"
-   }
   }
  },
  {
@@ -4873,35 +3860,6 @@
    "N": "#efe6d0",
    "E": "#14101a",
    "K": "#38372a"
-  },
-  "drops": {
-   "family": "casco",
-   "table": [
-    {
-     "material": "couro_curtido",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "chifre",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_terroso",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "carga_terrestre"
-   }
   }
  },
  {
@@ -5005,35 +3963,6 @@
    "N": "#bcaaa4",
    "E": "#14101a",
    "K": "#382411"
-  },
-  "drops": {
-   "family": "mitico",
-   "table": [
-    {
-     "material": "reliquia_mitica",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "sangue_ancestral",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "pluma_do_vento",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "velocidade_maxima"
-   }
   }
  },
  {
@@ -5138,35 +4067,6 @@
    "N": "#efe6d0",
    "E": "#4fc3f7",
    "K": "#604d46"
-  },
-  "drops": {
-   "family": "casco",
-   "table": [
-    {
-     "material": "couro_curtido",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "chifre",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "pluma_do_vento",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "forma_intangivel"
-   }
   }
  },
  {
@@ -5269,35 +4169,6 @@
    "N": "#efe6d0",
    "E": "#14101a",
    "R": "#29b6f6"
-  },
-  "drops": {
-   "family": "serpente",
-   "table": [
-    {
-     "material": "escama_de_serpente",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "glandula_de_veneno",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_carregado",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "rastro_eletrico"
-   }
   }
  },
  {
@@ -5396,35 +4267,6 @@
    "G": "#f48fb1",
    "E": "#14101a",
    "H": "#ad1457"
-  },
-  "drops": {
-   "family": "feerico",
-   "table": [
-    {
-     "material": "po_feerico",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "essencia_espiritual",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "lasca_de_luz",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "poeira_do_riso"
-   }
   }
  },
  {
@@ -5526,35 +4368,6 @@
    "E": "#14101a",
    "K": "#2f3a40",
    "R": "#e0e0e0"
-  },
-  "drops": {
-   "family": "canideo",
-   "table": [
-    {
-     "material": "couro_de_canideo",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "presa",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "pluma_do_vento",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "salto_cortante"
-   }
   }
  },
  {
@@ -5691,35 +4504,6 @@
    "E": "#14101a",
    "K": "#482211",
    "R": "#b3261e"
-  },
-  "drops": {
-   "family": "mitico",
-   "table": [
-    {
-     "material": "reliquia_mitica",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "sangue_ancestral",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "resina_toxica",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "rugido_de_leao"
-   }
   }
  },
  {
@@ -5851,35 +4635,6 @@
    "E": "#ffeb3b",
    "K": "#2b392d",
    "R": "#b3261e"
-  },
-  "drops": {
-   "family": "mitico",
-   "table": [
-    {
-     "material": "reliquia_mitica",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "sangue_ancestral",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_terroso",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "reflexo_condenado"
-   }
   }
  },
  {
@@ -6016,35 +4771,6 @@
    "N": "#ffeb3b",
    "E": "#14101a",
    "K": "#192048"
-  },
-  "drops": {
-   "family": "ave",
-   "table": [
-    {
-     "material": "pena",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "pena_de_rapina",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_carregado",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "sobrecarga_de_estatica"
-   }
   }
  },
  {
@@ -6161,35 +4887,6 @@
    "N": "#b0bec5",
    "E": "#14101a",
    "K": "#1f1512"
-  },
-  "drops": {
-   "family": "casco",
-   "table": [
-    {
-     "material": "couro_curtido",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "chifre",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_terroso",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "pele_impenetravel"
-   }
   }
  },
  {
@@ -6334,35 +5031,6 @@
    "B": "#fff3c4",
    "G": "#c49a2c",
    "E": "#5d4037"
-  },
-  "drops": {
-   "family": "planta",
-   "table": [
-    {
-     "material": "fibra_vegetal",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "esporo",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_terroso",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "reabsorcao_de_nutrientes"
-   }
   }
  },
  {
@@ -6531,35 +5199,6 @@
    "N": "#efe6d0",
    "E": "#00838f",
    "K": "#26c6da"
-  },
-  "drops": {
-   "family": "casco",
-   "table": [
-    {
-     "material": "couro_curtido",
-     "chance": 1,
-     "min": 2,
-     "max": 4
-    },
-    {
-     "material": "chifre",
-     "chance": 0.4,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "pluma_do_vento",
-     "chance": 0.5,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.03,
-    "type": "habilidade",
-    "skill": "dilema_do_tempo"
-   }
   }
  },
  {
@@ -6700,35 +5339,6 @@
    "N": "#fff8e1",
    "E": "#6d4c41",
    "K": "#866600"
-  },
-  "drops": {
-   "family": "feerico",
-   "table": [
-    {
-     "material": "po_feerico",
-     "chance": 1,
-     "min": 2,
-     "max": 4
-    },
-    {
-     "material": "essencia_espiritual",
-     "chance": 0.4,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "lasca_de_luz",
-     "chance": 0.5,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.03,
-    "type": "habilidade",
-    "skill": "salto_solar"
-   }
   }
  },
  {
@@ -6817,35 +5427,6 @@
    "N": "#e88a9a",
    "G": "#aab7c2",
    "T": "#ffffff"
-  },
-  "drops": {
-   "family": "roedor",
-   "table": [
-    {
-     "material": "pelagem_macia",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "dente_afiado",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "velocidade_branca"
-   }
   }
  },
  {
@@ -6937,35 +5518,6 @@
    "N": "#263238",
    "E": "#14101a",
    "K": "#0d6db3"
-  },
-  "drops": {
-   "family": "canideo",
-   "table": [
-    {
-     "material": "couro_de_canideo",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "presa",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "audicao_subterranea"
-   }
   }
  },
  {
@@ -7086,35 +5638,6 @@
    "N": "#ffca28",
    "E": "#f9a825",
    "K": "#646464"
-  },
-  "drops": {
-   "family": "ave",
-   "table": [
-    {
-     "material": "pena",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "pena_de_rapina",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "nevasca_branda"
-   }
   }
  },
  {
@@ -7207,35 +5730,6 @@
    "N": "#ff8f00",
    "E": "#14101a",
    "K": "#0f1416"
-  },
-  "drops": {
-   "family": "polar",
-   "table": [
-    {
-     "material": "pele_isolante",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "marfim",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "grito_de_bando"
-   }
   }
  },
  {
@@ -7325,29 +5819,6 @@
    "N": "#212121",
    "E": "#14101a",
    "K": "#646464"
-  },
-  "drops": {
-   "family": "roedor",
-   "table": [
-    {
-     "material": "pelagem_macia",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "dente_afiado",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "frenesi_sangrento"
-   }
   }
  },
  {
@@ -7442,29 +5913,6 @@
    "N": "#d7ccc8",
    "E": "#14101a",
    "K": "#2c221a"
-  },
-  "drops": {
-   "family": "casco",
-   "table": [
-    {
-     "material": "couro_curtido",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "chifre",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "resistencia_ao_frio"
-   }
   }
  },
  {
@@ -7559,35 +6007,6 @@
    "N": "#efe6d0",
    "E": "#80cbc4",
    "K": "#51626e"
-  },
-  "drops": {
-   "family": "felino",
-   "table": [
-    {
-     "material": "pelagem_fina",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "garra_afiada",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "bote_das_alturas"
-   }
   }
  },
  {
@@ -7684,35 +6103,6 @@
    "N": "#b0bec5",
    "E": "#14101a",
    "K": "#382c28"
-  },
-  "drops": {
-   "family": "polar",
-   "table": [
-    {
-     "material": "pele_isolante",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "marfim",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "golpe_de_presa"
-   }
   }
  },
  {
@@ -7815,35 +6205,6 @@
    "E": "#14101a",
    "K": "#36434a",
    "R": "#b3261e"
-  },
-  "drops": {
-   "family": "canideo",
-   "table": [
-    {
-     "material": "couro_de_canideo",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "presa",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "perseguicao_implacavel"
-   }
   }
  },
  {
@@ -7938,35 +6299,6 @@
    "N": "#eceff1",
    "E": "#14101a",
    "K": "#2f3a40"
-  },
-  "drops": {
-   "family": "polar",
-   "table": [
-    {
-     "material": "pele_isolante",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "marfim",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "mordida_arrastante"
-   }
   }
  },
  {
@@ -8062,35 +6394,6 @@
    "E": "#00e5ff",
    "K": "#066692",
    "R": "#e1f5fe"
-  },
-  "drops": {
-   "family": "feerico",
-   "table": [
-    {
-     "material": "po_feerico",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "essencia_espiritual",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "passo_invernal"
-   }
   }
  },
  {
@@ -8170,35 +6473,6 @@
    "G": "#81d4fa",
    "E": "#0d47a1",
    "R": "#01579b"
-  },
-  "drops": {
-   "family": "feerico",
-   "table": [
-    {
-     "material": "po_feerico",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "essencia_espiritual",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "toque_arrepiante"
-   }
   }
  },
  {
@@ -8301,35 +6575,6 @@
    "P": "#4fc3f7",
    "G": "#00e5ff",
    "K": "#0774a6"
-  },
-  "drops": {
-   "family": "construto",
-   "table": [
-    {
-     "material": "fragmento_runico",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "nucleo_elemental",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "runas_de_protecao"
-   }
   }
  },
  {
@@ -8423,35 +6668,6 @@
    "G": "#80deea",
    "E": "#14101a",
    "H": "#0288d1"
-  },
-  "drops": {
-   "family": "feerico",
-   "table": [
-    {
-     "material": "po_feerico",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "essencia_espiritual",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "riso_agudo"
-   }
   }
  },
  {
@@ -8557,35 +6773,6 @@
    "N": "#efe6d0",
    "E": "#14101a",
    "R": "#e1f5fe"
-  },
-  "drops": {
-   "family": "serpente",
-   "table": [
-    {
-     "material": "escama_de_serpente",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "glandula_de_veneno",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "sopro_de_neve"
-   }
   }
  },
  {
@@ -8683,35 +6870,6 @@
    "N": "#efe6d0",
    "E": "#14101a",
    "K": "#626262"
-  },
-  "drops": {
-   "family": "ursideo",
-   "table": [
-    {
-     "material": "couro_grosso",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "garra_pesada",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "carapaca_runica"
-   }
   }
  },
  {
@@ -8809,35 +6967,6 @@
    "E": "#0091ea",
    "K": "#3f4e56",
    "R": "#b3e5fc"
-  },
-  "drops": {
-   "family": "canideo",
-   "table": [
-    {
-     "material": "couro_de_canideo",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "presa",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "halito_crio_genico"
-   }
   }
  },
  {
@@ -8934,35 +7063,6 @@
    "B": "#e1f5fe",
    "G": "#0288d1",
    "E": "#01579b"
-  },
-  "drops": {
-   "family": "feerico",
-   "table": [
-    {
-     "material": "po_feerico",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "essencia_espiritual",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "fogo_frio"
-   }
   }
  },
  {
@@ -9103,35 +7203,6 @@
    "E": "#1565c0",
    "K": "#51626e",
    "R": "#37474f"
-  },
-  "drops": {
-   "family": "ursideo",
-   "table": [
-    {
-     "material": "couro_grosso",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "garra_pesada",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "furia_branca"
-   }
   }
  },
  {
@@ -9268,35 +7339,6 @@
    "E": "#14101a",
    "K": "#085695",
    "R": "#e1f5fe"
-  },
-  "drops": {
-   "family": "draconico",
-   "table": [
-    {
-     "material": "escama_de_dragao",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "sangue_de_dragao",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "vento_artico"
-   }
   }
  },
  {
@@ -9436,35 +7478,6 @@
    "G": "#ff7043",
    "E": "#14101a",
    "R": "#ff5722"
-  },
-  "drops": {
-   "family": "mitico",
-   "table": [
-    {
-     "material": "reliquia_mitica",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "sangue_ancestral",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cinza_ardente",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "erupcao_de_vapor"
-   }
   }
  },
  {
@@ -9596,35 +7609,6 @@
    "E": "#4fc3f7",
    "K": "#2f3a40",
    "R": "#263238"
-  },
-  "drops": {
-   "family": "mitico",
-   "table": [
-    {
-     "material": "reliquia_mitica",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "sangue_ancestral",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "celula_de_congelamento"
-   }
   }
  },
  {
@@ -9749,35 +7733,6 @@
    "E": "#14101a",
    "K": "#2c1e1a",
    "M": "#80deea"
-  },
-  "drops": {
-   "family": "casco",
-   "table": [
-    {
-     "material": "couro_curtido",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "chifre",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "barreira_runica_de_gelo"
-   }
   }
  },
  {
@@ -9926,35 +7881,6 @@
    "B": "#ffffff",
    "G": "#00b8d4",
    "E": "#01579b"
-  },
-  "drops": {
-   "family": "feerico",
-   "table": [
-    {
-     "material": "po_feerico",
-     "chance": 1,
-     "min": 2,
-     "max": 4
-    },
-    {
-     "material": "essencia_espiritual",
-     "chance": 0.4,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.5,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.03,
-    "type": "habilidade",
-    "skill": "o_olho_da_tempestade"
-   }
   }
  },
  {
@@ -10116,35 +8042,6 @@
    "E": "#00e5ff",
    "K": "#51626e",
    "R": "#b3e5fc"
-  },
-  "drops": {
-   "family": "canideo",
-   "table": [
-    {
-     "material": "couro_de_canideo",
-     "chance": 1,
-     "min": 2,
-     "max": 4
-    },
-    {
-     "material": "presa",
-     "chance": 0.4,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cristal_de_gelo",
-     "chance": 0.5,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.03,
-    "type": "habilidade",
-    "skill": "sangue_congelado"
-   }
   }
  },
  {
@@ -10236,35 +8133,6 @@
    "N": "#3b2a1a",
    "E": "#14101a",
    "K": "#684b1f"
-  },
-  "drops": {
-   "family": "roedor",
-   "table": [
-    {
-     "material": "pelagem_macia",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "dente_afiado",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_terroso",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "salto_de_esquiva"
-   }
   }
  },
  {
@@ -10359,35 +8227,6 @@
    "N": "#efe6d0",
    "E": "#14101a",
    "R": "#6d4c41"
-  },
-  "drops": {
-   "family": "serpente",
-   "table": [
-    {
-     "material": "escama_de_serpente",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "glandula_de_veneno",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "resina_toxica",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "toxina_desidratante"
-   }
   }
  },
  {
@@ -10474,35 +8313,6 @@
    "N": "#efebe9",
    "E": "#14101a",
    "K": "#423531"
-  },
-  "drops": {
-   "family": "reptil",
-   "table": [
-    {
-     "material": "pele_escamosa",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "pele_viscosa",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_terroso",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "carapaca_espinhosa"
-   }
   }
  },
  {
@@ -10597,35 +8407,6 @@
    "N": "#ffca28",
    "E": "#14101a",
    "K": "#513618"
-  },
-  "drops": {
-   "family": "ave",
-   "table": [
-    {
-     "material": "pena",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "pena_de_rapina",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "pluma_do_vento",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "ataque_termico"
-   }
   }
  },
  {
@@ -10730,29 +8511,6 @@
    "N": "#efe6d0",
    "E": "#14101a",
    "K": "#594220"
-  },
-  "drops": {
-   "family": "casco",
-   "table": [
-    {
-     "material": "couro_curtido",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "chifre",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "corcova_de_reserva"
-   }
   }
  },
  {
@@ -10834,35 +8592,6 @@
    "T": "#a07c45",
    "N": "#5d4037",
    "E": "#14101a"
-  },
-  "drops": {
-   "family": "aracnideo",
-   "table": [
-    {
-     "material": "quitina",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "glandula_de_veneno",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "resina_toxica",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "injecao_de_toxina"
-   }
   }
  },
  {
@@ -10950,35 +8679,6 @@
    "N": "#3b2a1a",
    "E": "#14101a",
    "K": "#896214"
-  },
-  "drops": {
-   "family": "canideo",
-   "table": [
-    {
-     "material": "couro_de_canideo",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "presa",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cinza_ardente",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "mordida_de_distracao"
-   }
   }
  },
  {
@@ -11058,35 +8758,6 @@
    "N": "#ffab40",
    "E": "#14101a",
    "K": "#19100e"
-  },
-  "drops": {
-   "family": "ave",
-   "table": [
-    {
-     "material": "pena",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "pena_de_rapina",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cinza_ardente",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "foco_no_fraco"
-   }
   }
  },
  {
@@ -11185,35 +8856,6 @@
    "N": "#efe6d0",
    "K": "#646464",
    "R": "#424242"
-  },
-  "drops": {
-   "family": "canideo",
-   "table": [
-    {
-     "material": "couro_de_canideo",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "presa",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "fragmento_de_sombra",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "risada_histerica"
-   }
   }
  },
  {
@@ -11313,35 +8955,6 @@
    "P": "#e65100",
    "N": "#4e2a10",
    "E": "#ffeb3b"
-  },
-  "drops": {
-   "family": "aracnideo",
-   "table": [
-    {
-     "material": "quitina",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "glandula_de_veneno",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "resina_toxica",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "bote_do_alcapao"
-   }
   }
  },
  {
@@ -11441,35 +9054,6 @@
    "T": "#37474f",
    "N": "#b39ddb",
    "E": "#e040fb"
-  },
-  "drops": {
-   "family": "aracnideo",
-   "table": [
-    {
-     "material": "quitina",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "glandula_de_veneno",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_terroso",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "carapaca_espelhada"
-   }
   }
  },
  {
@@ -11560,35 +9144,6 @@
    "T": "#c8a87a",
    "E": "#fff59d",
    "K": "#694e24"
-  },
-  "drops": {
-   "family": "mitico",
-   "table": [
-    {
-     "material": "reliquia_mitica",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "sangue_ancestral",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "pluma_do_vento",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "forma_de_turbilhao"
-   }
   }
  },
  {
@@ -11698,35 +9253,6 @@
    "N": "#efe6d0",
    "E": "#bf360c",
    "R": "#ff3d00"
-  },
-  "drops": {
-   "family": "serpente",
-   "table": [
-    {
-     "material": "escama_de_serpente",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "glandula_de_veneno",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cinza_ardente",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "brilho_solar"
-   }
   }
  },
  {
@@ -11805,35 +9331,6 @@
    "E": "#ffd600",
    "K": "#0d0d0d",
    "R": "#ffd54f"
-  },
-  "drops": {
-   "family": "canideo",
-   "table": [
-    {
-     "material": "couro_de_canideo",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "presa",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "fragmento_de_sombra",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "mordida_espectral"
-   }
   }
  },
  {
@@ -11926,35 +9423,6 @@
    "N": "#efe6d0",
    "E": "#76ff03",
    "K": "#723d1e"
-  },
-  "drops": {
-   "family": "felino",
-   "table": [
-    {
-     "material": "pelagem_fina",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "garra_afiada",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "fragmento_de_sombra",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "leitura_de_mente"
-   }
   }
  },
  {
@@ -12028,35 +9496,6 @@
    "G": "#ff9800",
    "E": "#14101a",
    "H": "#e65100"
-  },
-  "drops": {
-   "family": "feerico",
-   "table": [
-    {
-     "material": "po_feerico",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "essencia_espiritual",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cinza_ardente",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "roubo_de_reflexos"
-   }
   }
  },
  {
@@ -12144,35 +9583,6 @@
    "B": "#ffffff",
    "G": "#4dd0e1",
    "E": "#006064"
-  },
-  "drops": {
-   "family": "construto",
-   "table": [
-    {
-     "material": "fragmento_runico",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "nucleo_elemental",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "lasca_de_luz",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "foco_de_luz"
-   }
   }
  },
  {
@@ -12273,35 +9683,6 @@
    "E": "#14101a",
    "K": "#5c1e0a",
    "R": "#ffeb3b"
-  },
-  "drops": {
-   "family": "reptil",
-   "table": [
-    {
-     "material": "pele_escamosa",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "pele_viscosa",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cinza_ardente",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "salto_explosivo"
-   }
   }
  },
  {
@@ -12448,35 +9829,6 @@
    "T": "#c0934f",
    "N": "#fff3e0",
    "R": "#8e2a1e"
-  },
-  "drops": {
-   "family": "draconico",
-   "table": [
-    {
-     "material": "escama_de_dragao",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "sangue_de_dragao",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_terroso",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "engolir_vivo"
-   }
   }
  },
  {
@@ -12601,35 +9953,6 @@
    "E": "#14101a",
    "K": "#664f11",
    "R": "#b3261e"
-  },
-  "drops": {
-   "family": "mitico",
-   "table": [
-    {
-     "material": "reliquia_mitica",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "sangue_ancestral",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "lasca_de_luz",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "sopro_de_areia_do_tempo"
-   }
   }
  },
  {
@@ -12766,35 +10089,6 @@
    "P": "#4a148c",
    "T": "#7b1fa2",
    "E": "#e040fb"
-  },
-  "drops": {
-   "family": "mitico",
-   "table": [
-    {
-     "material": "reliquia_mitica",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "sangue_ancestral",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "fragmento_de_sombra",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "drenagem_de_sangue_frio"
-   }
   }
  },
  {
@@ -12915,35 +10209,6 @@
    "P": "#a0703a",
    "G": "#ffd54f",
    "K": "#64411f"
-  },
-  "drops": {
-   "family": "construto",
-   "table": [
-    {
-     "material": "fragmento_runico",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "nucleo_elemental",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_terroso",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "arremesso_de_obelisco"
-   }
   }
  },
  {
@@ -13073,35 +10338,6 @@
    "N": "#ffeb3b",
    "E": "#14101a",
    "K": "#811f00"
-  },
-  "drops": {
-   "family": "ave",
-   "table": [
-    {
-     "material": "pena",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "pena_de_rapina",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cinza_ardente",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "cinzas_renascidas"
-   }
   }
  },
  {
@@ -13267,35 +10503,6 @@
    "T": "#543a31",
    "N": "#ffe0b2",
    "R": "#b71c1c"
-  },
-  "drops": {
-   "family": "draconico",
-   "table": [
-    {
-     "material": "escama_de_dragao",
-     "chance": 1,
-     "min": 2,
-     "max": 4
-    },
-    {
-     "material": "sangue_de_dragao",
-     "chance": 0.4,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "ambar_terroso",
-     "chance": 0.5,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.03,
-    "type": "habilidade",
-    "skill": "areia_movedica_global"
-   }
   }
  },
  {
@@ -13452,35 +10659,6 @@
    "E": "#fffde7",
    "K": "#741c00",
    "R": "#ffff8d"
-  },
-  "drops": {
-   "family": "mitico",
-   "table": [
-    {
-     "material": "reliquia_mitica",
-     "chance": 1,
-     "min": 2,
-     "max": 4
-    },
-    {
-     "material": "sangue_ancestral",
-     "chance": 0.4,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "cinza_ardente",
-     "chance": 0.5,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.03,
-    "type": "habilidade",
-    "skill": "calor_opressivo"
-   }
   }
  },
  {
@@ -13574,35 +10752,6 @@
    "N": "#ffb300",
    "E": "#14101a",
    "K": "#51626e"
-  },
-  "drops": {
-   "family": "ave",
-   "table": [
-    {
-     "material": "pena",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "pena_de_rapina",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "pluma_do_vento",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "grito_irritante"
-   }
   }
  },
  {
@@ -13691,35 +10840,6 @@
    "N": "#d84315",
    "E": "#14101a",
    "K": "#69280f"
-  },
-  "drops": {
-   "family": "crustaceo",
-   "table": [
-    {
-     "material": "carapaca",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "perola",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "retrair_na_concha"
-   }
   }
  },
  {
@@ -13818,35 +10938,6 @@
    "N": "#ffa000",
    "E": "#14101a",
    "K": "#c07500"
-  },
-  "drops": {
-   "family": "ave",
-   "table": [
-    {
-     "material": "pena",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "pena_de_rapina",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "bolsa_de_captura"
-   }
   }
  },
  {
@@ -13932,35 +11023,6 @@
    "N": "#b0bec5",
    "E": "#14101a",
    "K": "#1c2428"
-  },
-  "drops": {
-   "family": "reptil",
-   "table": [
-    {
-     "material": "pele_escamosa",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "pele_viscosa",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "mordida_de_algas"
-   }
   }
  },
  {
@@ -14044,35 +11106,6 @@
    "N": "#cfd8dc",
    "E": "#14101a",
    "K": "#263238"
-  },
-  "drops": {
-   "family": "crustaceo",
-   "table": [
-    {
-     "material": "carapaca",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "perola",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "defesa_de_carapaca"
-   }
   }
  },
  {
@@ -14160,35 +11193,6 @@
    "T": "#b89a62",
    "N": "#5d4037",
    "E": "#212121"
-  },
-  "drops": {
-   "family": "marinho",
-   "table": [
-    {
-     "material": "barbatana",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "tinta_abissal",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "resina_toxica",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "ferrao_de_cauda"
-   }
   }
  },
  {
@@ -14297,35 +11301,6 @@
    "N": "#efe6d0",
    "E": "#14101a",
    "R": "#c62828"
-  },
-  "drops": {
-   "family": "marinho",
-   "table": [
-    {
-     "material": "barbatana",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "tinta_abissal",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "choque_de_enguia"
-   }
   }
  },
  {
@@ -14400,35 +11375,6 @@
    "N": "#212121",
    "E": "#14101a",
    "K": "#2c1e1a"
-  },
-  "drops": {
-   "family": "canideo",
-   "table": [
-    {
-     "material": "couro_de_canideo",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "presa",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "nado_de_resgate"
-   }
   }
  },
  {
@@ -14524,35 +11470,6 @@
    "W": "#ef6c00",
    "P": "#6a1b9a",
    "E": "#212121"
-  },
-  "drops": {
-   "family": "crustaceo",
-   "table": [
-    {
-     "material": "carapaca",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "perola",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "resina_toxica",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "toxina_de_contato"
-   }
   }
  },
  {
@@ -14640,35 +11557,6 @@
    "P": "#ad1457",
    "T": "#f06292",
    "E": "#212121"
-  },
-  "drops": {
-   "family": "marinho",
-   "table": [
-    {
-     "material": "barbatana",
-     "chance": 0.75,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "tinta_abissal",
-     "chance": 0.1,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.005,
-    "type": "habilidade",
-    "skill": "nuvem_de_tinta"
-   }
   }
  },
  {
@@ -14774,35 +11662,6 @@
    "P": "#37474f",
    "T": "#80cbc4",
    "E": "#004d40"
-  },
-  "drops": {
-   "family": "mitico",
-   "table": [
-    {
-     "material": "reliquia_mitica",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "sangue_ancestral",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "canto_melancolico"
-   }
   }
  },
  {
@@ -14893,35 +11752,6 @@
    "N": "#bf360c",
    "E": "#14101a",
    "K": "#811f00"
-  },
-  "drops": {
-   "family": "crustaceo",
-   "table": [
-    {
-     "material": "carapaca",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "perola",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "recolher_se_em_coral"
-   }
   }
  },
  {
@@ -15017,35 +11847,6 @@
    "N": "#b2dfdb",
    "E": "#14101a",
    "R": "#e0f2f1"
-  },
-  "drops": {
-   "family": "draconico",
-   "table": [
-    {
-     "material": "escama_de_dragao",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "sangue_de_dragao",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "jato_de_alta_pressao"
-   }
   }
  },
  {
@@ -15144,35 +11945,6 @@
    "G": "#26c6da",
    "E": "#14101a",
    "H": "#00838f"
-  },
-  "drops": {
-   "family": "feerico",
-   "table": [
-    {
-     "material": "po_feerico",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "essencia_espiritual",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "bencao_de_oxigenio"
-   }
   }
  },
  {
@@ -15262,35 +12034,6 @@
    "T": "#f57c00",
    "N": "#ffcc80",
    "E": "#14101a"
-  },
-  "drops": {
-   "family": "marinho",
-   "table": [
-    {
-     "material": "barbatana",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "tinta_abissal",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "sopro_de_bolhas_acidas"
-   }
   }
  },
  {
@@ -15390,35 +12133,6 @@
    "B": "#ffffff",
    "G": "#4dd0e1",
    "E": "#006064"
-  },
-  "drops": {
-   "family": "feerico",
-   "table": [
-    {
-     "material": "po_feerico",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "essencia_espiritual",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "cura_salgada"
-   }
   }
  },
  {
@@ -15513,35 +12227,6 @@
    "N": "#efe6d0",
    "E": "#14101a",
    "R": "#ffffff"
-  },
-  "drops": {
-   "family": "marinho",
-   "table": [
-    {
-     "material": "barbatana",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "tinta_abissal",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "sentido_de_sangue"
-   }
   }
  },
  {
@@ -15634,35 +12319,6 @@
    "P": "#4527a0",
    "T": "#9575cd",
    "E": "#ffeb3b"
-  },
-  "drops": {
-   "family": "marinho",
-   "table": [
-    {
-     "material": "barbatana",
-     "chance": 0.8,
-     "min": 1,
-     "max": 2
-    },
-    {
-     "material": "tinta_abissal",
-     "chance": 0.15,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "fragmento_de_sombra",
-     "chance": 0.2,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": false,
-   "jewel": {
-    "chance": 0.01,
-    "type": "habilidade",
-    "skill": "tentaculos_magicos"
-   }
   }
  },
  {
@@ -15792,35 +12448,6 @@
    "N": "#ffffff",
    "E": "#14101a",
    "R": "#b71c1c"
-  },
-  "drops": {
-   "family": "marinho",
-   "table": [
-    {
-     "material": "barbatana",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "tinta_abissal",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "mordida_estracalhadora"
-   }
   }
  },
  {
@@ -15954,35 +12581,6 @@
    "E": "#14101a",
    "K": "#123214",
    "R": "#ffeb3b"
-  },
-  "drops": {
-   "family": "draconico",
-   "table": [
-    {
-     "material": "escama_de_dragao",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "sangue_de_dragao",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "resina_toxica",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "botes_multiplos"
-   }
   }
  },
  {
@@ -16116,35 +12714,6 @@
    "N": "#efe6d0",
    "E": "#ffeb3b",
    "K": "#00695c"
-  },
-  "drops": {
-   "family": "mitico",
-   "table": [
-    {
-     "material": "reliquia_mitica",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "sangue_ancestral",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "grito_de_comando"
-   }
   }
  },
  {
@@ -16279,35 +12848,6 @@
    "G": "#43a047",
    "E": "#14101a",
    "K": "#2c3824"
-  },
-  "drops": {
-   "family": "crustaceo",
-   "table": [
-    {
-     "material": "carapaca",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "perola",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "casco_ilha"
-   }
   }
  },
  {
@@ -16431,35 +12971,6 @@
    "B": "#e1f5fe",
    "G": "#0277bd",
    "E": "#ffffff"
-  },
-  "drops": {
-   "family": "mitico",
-   "table": [
-    {
-     "material": "reliquia_mitica",
-     "chance": 0.9,
-     "min": 2,
-     "max": 3
-    },
-    {
-     "material": "sangue_ancestral",
-     "chance": 0.25,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.3,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.02,
-    "type": "habilidade",
-    "skill": "prisao_de_bolha"
-   }
   }
  },
  {
@@ -16708,35 +13219,6 @@
    "G": "#ffeb3b",
    "E": "#ffeb3b",
    "R": "#1a0033"
-  },
-  "drops": {
-   "family": "marinho",
-   "table": [
-    {
-     "material": "barbatana",
-     "chance": 1,
-     "min": 2,
-     "max": 4
-    },
-    {
-     "material": "tinta_abissal",
-     "chance": 0.4,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.5,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.03,
-    "type": "habilidade",
-    "skill": "tinta_cegante_abissal"
-   }
   }
  },
  {
@@ -16905,35 +13387,6 @@
    "T": "#37474f",
    "N": "#cfd8dc",
    "E": "#ff1744"
-  },
-  "drops": {
-   "family": "marinho",
-   "table": [
-    {
-     "material": "barbatana",
-     "chance": 1,
-     "min": 2,
-     "max": 4
-    },
-    {
-     "material": "tinta_abissal",
-     "chance": 0.4,
-     "min": 1,
-     "max": 1
-    },
-    {
-     "material": "orvalho_do_mar",
-     "chance": 0.5,
-     "min": 1,
-     "max": 1
-    }
-   ],
-   "trophy": true,
-   "jewel": {
-    "chance": 0.03,
-    "type": "habilidade",
-    "skill": "nevoeiro_de_sangue"
-   }
   }
  },
  {

@@ -1,3 +1,4 @@
+import './fixtures/test_skills';
 import { describe, expect, it } from 'vitest';
 import { Rng } from '@core';
 import { DB } from '@game/data';
@@ -13,10 +14,10 @@ import { makeCharacter } from '@game/rules/recruit';
 const SK = () => DB.skills.selos_selo_de_confinamento! as SkillLike;
 
 function battle(): { s: BattleState; hero: BattleUnit; ally: BattleUnit; foe: BattleUnit } {
-  const c = makeCharacter(new Rng(1), { classId: 'ladrao', level: 40 });
+  const c = makeCharacter(new Rng(1), { classId: 'movimento', level: 40 });
   c.skills = ['selos_selo_de_confinamento'];
   const hero = unitFromCharacter(c, 'player');
-  const ally = unitFromCharacter(makeCharacter(new Rng(4), { classId: 'arqueiro', level: 10 }), 'player');
+  const ally = unitFromCharacter(makeCharacter(new Rng(4), { classId: 'movimento', level: 10 }), 'player');
   const foe = unitFromEnemy(DB.enemies.lobo_da_silvia!, 5, new Rng(2));
   const s = createBattle({ map: createEmptyMap(16, 16, 'planicie'), players: [hero, ally], enemies: [foe], victory: { type: 'eliminate' }, ambush: false, canFlee: true, seed: 3, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' } });
   const [h, a] = s.units.filter((u) => u.team === 'player') as [BattleUnit, BattleUnit];

@@ -14,7 +14,7 @@ function fight(weapon: string | null, skill: string) {
   c.skills = [...c.skills, skill];
   const a = unitFromCharacter(c, 'player');
   const ally = unitFromCharacter(makeMember(new Rng(2), { name: 'B', classId: 'suporte', level: 10, gift: null, potential: 3, weapon: 'pistola_9mm', armor: null, utility: [null, null, null] }), 'player');
-  const e = unitFromEnemy(DB.enemies.soldado_real!, 10, new Rng(3));
+  const e = unitFromEnemy(DB.enemies.miliciano!, 10, new Rng(3));
   const s = createBattle({ map: createEmptyMap(14, 14, 'planicie'), players: [a, ally], enemies: [e], victory: { type: 'eliminate' }, ambush: false, canFlee: false, seed: 5, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' } });
   const [pa, pb] = s.units.filter((u) => u.team === 'player');
   const pe = s.units.find((u) => u.team === 'enemy')!;

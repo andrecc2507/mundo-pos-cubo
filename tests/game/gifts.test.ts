@@ -34,12 +34,12 @@ describe('Dons em batalha: Strain, Overload, Despertar, Impulso', async () => {
   const { makeCharacter } = await import('@game/rules/recruit');
   const { STRAIN } = await import('@game/rules/gifts');
   const setup = (giftId: string, potential = 5) => {
-    const c = makeCharacter(new Rng(1), { classId: 'guerreiro', level: 10 });
+    const c = makeCharacter(new Rng(1), { classId: 'impacto', level: 10 });
     c.gift = { id: giftId, potential, power: 5, control: 5, versatility: 5 };
     c.skills = [...c.skills, `${giftId}_i1`, `${giftId}_i3`, `${giftId}_m1`, `${giftId}_s3`];
     const a = unitFromCharacter(c, 'player');
-    const b = unitFromCharacter(makeCharacter(new Rng(2), { classId: 'guerreiro', level: 10 }), 'player');
-    const e = unitFromEnemy(DB.enemies.soldado_real!, 10, new Rng(3));
+    const b = unitFromCharacter(makeCharacter(new Rng(2), { classId: 'impacto', level: 10 }), 'player');
+    const e = unitFromEnemy(DB.enemies.miliciano!, 10, new Rng(3));
     const s = createBattle({ map: createEmptyMap(14, 14, 'planicie'), players: [a, b], enemies: [e], victory: { type: 'eliminate' }, ambush: false, canFlee: false, seed: 5, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' } });
     const [pa, pb] = s.units.filter((u) => u.team === 'player');
     const pe = s.units.find((u) => u.team === 'enemy')!;

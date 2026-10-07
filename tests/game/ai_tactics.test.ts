@@ -1,3 +1,4 @@
+import './fixtures/test_skills';
 import { describe, expect, it } from 'vitest';
 import { Rng } from '@core';
 import { DB } from '@game/data';
@@ -10,8 +11,8 @@ import * as tactics from '@game/battle/tactics';
 import * as confine from '@game/battle/confine';
 import { makeCharacter } from '@game/rules/recruit';
 
-function battle(enemyId = 'soldado_real'): { s: BattleState; hero: BattleUnit; foe: BattleUnit } {
-  const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'mago', level: 5 }), 'player');
+function battle(enemyId = 'miliciano'): { s: BattleState; hero: BattleUnit; foe: BattleUnit } {
+  const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'controle', level: 5 }), 'player');
   const foe = unitFromEnemy(DB.enemies[enemyId]!, 8, new Rng(2));
   const s = createBattle({ map: createEmptyMap(16, 16, 'planicie'), players: [hero], enemies: [foe], victory: { type: 'eliminate' }, ambush: false, canFlee: true, seed: 3, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' } });
   const h = s.units.find((u) => u.team === 'player')!;
@@ -33,6 +34,8 @@ describe('IA tática', () => {
     [hero.x, hero.y] = [7, 6];
     [foe.x, foe.y] = [6, 6];
     foe.attrs.str = 60;
+    // Parado na beirada (a arma de fogo o faria recuar para atirar de longe).
+    foe.move = 0;
     // Sem MP e com um alvo duro de matar: a queda vale mais que o ataque básico.
     foe.mp = 0;
     hero.maxHp = hero.hp = 2000;
@@ -46,9 +49,9 @@ describe('IA tática', () => {
   });
 
   it('atira no barril de pólvora ao lado dos heróis', () => {
-    const { s, hero, foe } = battle('besteiro_real');
+    const { s, hero, foe } = battle('atirador');
     [hero.x, hero.y] = [8, 8];
-    const ally = unitFromCharacter(makeCharacter(new Rng(7), { classId: 'guerreiro', level: 5 }), 'player');
+    const ally = unitFromCharacter(makeCharacter(new Rng(7), { classId: 'impacto', level: 5 }), 'player');
     [ally.x, ally.y] = [9, 9];
     s.units.push(ally);
     tileAt(s.map, 8, 9)!.p = 'barril_polvora';
@@ -65,7 +68,7 @@ describe('IA tática', () => {
 
   it('aliado controlado pela IA estabiliza herói caído', () => {
     const { s, hero, foe } = battle();
-    const c = makeCharacter(new Rng(9), { classId: 'clerigo', level: 5 });
+    const c = makeCharacter(new Rng(9), { classId: 'suporte', level: 5 });
     const medic = unitFromCharacter(c, 'player');
     medic.ai = true;
     [medic.x, medic.y] = [3, 3];
@@ -104,8 +107,8 @@ describe('IA tática', () => {
 
   it('lança o Selo de Confinamento para separar parte dos inimigos', () => {
     const { s, hero, foe } = battle();
-    const c2 = unitFromCharacter(makeCharacter(new Rng(11), { classId: 'guerreiro', level: 5 }), 'player');
-    const c3 = unitFromCharacter(makeCharacter(new Rng(12), { classId: 'clerigo', level: 5 }), 'player');
+    const c2 = unitFromCharacter(makeCharacter(new Rng(11), { classId: 'impacto', level: 5 }), 'player');
+    const c3 = unitFromCharacter(makeCharacter(new Rng(12), { classId: 'suporte', level: 5 }), 'player');
     s.units.push(c2, c3);
     [hero.x, hero.y] = [11, 11];
     [c2.x, c2.y] = [12, 11];

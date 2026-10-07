@@ -20,7 +20,7 @@ function setup(map: BattleMap, players: BattleUnit[], enemies: BattleUnit[], see
 }
 
 function warrior(level = 10, seed = 1): BattleUnit {
-  const c = makeCharacter(new Rng(seed), { classId: 'guerreiro', level });
+  const c = makeCharacter(new Rng(seed), { classId: 'impacto', level });
   return unitFromCharacter(c, 'player');
 }
 

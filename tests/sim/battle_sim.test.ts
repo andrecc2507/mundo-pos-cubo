@@ -81,7 +81,7 @@ export function hero(rng: Rng, classId: ClassId, level: number, node: string): C
   return c;
 }
 
-const CLASSES: ClassId[] = ['guerreiro', 'arqueiro', 'mago', 'clerigo', 'ladrao'];
+const CLASSES: ClassId[] = ['impacto', 'movimento', 'controle', 'suporte', 'movimento'];
 function nodesOf(classId: ClassId): string[] {
   return DB.trees[classId]!.nodes.filter((n) => n.type === 'evolucao' || n.type === 'hibrida').map((n) => n.id);
 }

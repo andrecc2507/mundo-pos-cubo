@@ -48,12 +48,6 @@ export interface Equipment {
   utility: (string | null)[];
 }
 
-/** Orbe (joia) da alma: espécie de origem e nível (1–5). */
-export interface Jewel {
-  species: string;
-  rank: number;
-}
-
 export interface Character {
   id: string;
   name: string;
@@ -77,10 +71,6 @@ export interface Character {
   kills: number;
   /** Habilidades que liberam escudo / duas armas (futuro). */
   canDualWield?: boolean;
-  /** Orbes (joias) da alma equipados: até dois, num espaço próprio (o acessório é outro). */
-  jewels?: Jewel[];
-  /** Legado: saves antigos tinham um orbe só (migrado para `jewels`). */
-  jewel?: Jewel;
   /** Lealdade (0–100): uso, nível, equipamento e atenção (world/loyalty.ts). */
   loyalty?: number;
   /** Moral (0–100): cai ao ver aliados morrerem, volta com descanso e vitórias. */
@@ -89,8 +79,6 @@ export interface Character {
   fatigue?: number;
   /** Último dia em que o comandante conversou com o herói. */
   lastTalkDay?: number;
-  /** Personagem da história (Edran, Lirael, Orun…): não deserta. */
-  storyId?: string;
   /** Traço de personalidade (data/story/traits.json): falas em batalha e na ficha. */
   trait?: string;
   /** Habilidades de capitão aprendidas na Academia de Treino (world/captains.ts). */
@@ -126,8 +114,6 @@ export interface Character {
   vendetta?: { enemyId: string; name: string; for: string }[];
   /** Títulos conquistados (crônica). */
   titles?: string[];
-  /** Suprema do kit único liberada pela missão pessoal. */
-  kitUltimate?: boolean;
 }
 
 export const HAIR_COLORS = ['#2b1d14', '#6b3e1f', '#c98b3a', '#e8d27a', '#b33a2a', '#d9d9d9', '#3a4a8a', '#1a1a1a'];
@@ -136,11 +122,6 @@ export const HAIR_STYLES = 4;
 
 export const DEFAULT_WEAPON: Record<ClassId, string | null> = {
   aprendiz: 'faca_simples',
-  guerreiro: 'espada_curta',
-  arqueiro: 'arco_curto',
-  mago: 'varinha_aprendiz',
-  clerigo: 'bastao_de_carvalho',
-  ladrao: 'faca_simples',
   fera: null,
   impacto: 'soco_ingles',
   movimento: 'pistola_9mm',

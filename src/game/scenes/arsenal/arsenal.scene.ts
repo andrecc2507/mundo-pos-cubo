@@ -285,14 +285,14 @@ export class ArsenalScene extends Scene {
   private testBattle(): void {
     const it = this.current;
     if (!it || it.slot !== 'weapon' || (this.dirty && !this.save())) return;
-    const cls = (Object.keys(DB.classes) as ClassId[]).find((c) => c !== 'fera' && c !== 'aprendiz' && DB.classes[c].weapons.includes(it.weaponType ?? 'espada')) ?? 'guerreiro';
+    const cls = (Object.keys(DB.classes) as ClassId[]).find((c) => c !== 'fera' && c !== 'aprendiz' && DB.classes[c].weapons.includes(it.weaponType ?? 'espada')) ?? 'impacto';
     const level = 20;
     const rng = new Rng(Date.now() % 1e9);
     const c = makeCharacter(rng, { classId: cls, level });
     c.name = `Teste: ${it.name}`;
     c.equipment.weapon = it.id;
     const tester = unitFromCharacter(c, 'player');
-    const foes = ['rebelde_guerreiro', 'rebelde_guerreiro', 'rebelde_arqueiro', 'rebelde_mago'].map((id) => unitFromEnemy(DB.enemies[id]!, level, rng));
+    const foes = ['miliciano', 'miliciano', 'atirador', 'saqueador'].map((id) => unitFromEnemy(DB.enemies[id]!, level, rng));
     this.ctx.scenes.go('battle', {
       setup: {
         map: generateMap({ biome: 'planicie', seed: rng.int(1, 1e9) }),

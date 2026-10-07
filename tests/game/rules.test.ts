@@ -11,7 +11,7 @@ describe('progressão estilo Ragnarok', () => {
   });
 
   it('subir de nível dá 3 + ⌊(nível+2)/4⌋ pontos de atributo e 1 de habilidade', () => {
-    const c = makeCharacter(new Rng(1), { classId: 'guerreiro' });
+    const c = makeCharacter(new Rng(1), { classId: 'impacto' });
     const before = { s: c.statPoints, k: c.skillPoints };
     gainXp(c, xpToNext(1));
     expect(c.level).toBe(2);
@@ -20,7 +20,7 @@ describe('progressão estilo Ragnarok', () => {
   });
 
   it('distribuir atributo gasta o custo da curva', () => {
-    const c = makeCharacter(new Rng(2), { classId: 'mago' });
+    const c = makeCharacter(new Rng(2), { classId: 'controle' });
     c.statPoints = 10;
     const v = c.attrs.int;
     expect(allocate(c, 'int')).toBe(true);
@@ -32,14 +32,14 @@ describe('progressão estilo Ragnarok', () => {
     const c = makeCharacter(new Rng(3), { classId: 'aprendiz' });
     expect(canPromote(c)).toBe(false);
     gainXp(c, xpToNext(1));
-    expect(promote(c, 'arqueiro')).toBe(true);
-    expect(c.classId).toBe('arqueiro');
+    expect(promote(c, 'movimento')).toBe(true);
+    expect(c.classId).toBe('movimento');
   });
 
 
 
   it('atributos derivam HP (VIT), MP e resistência mágica (INT); armadura dá resistência física', () => {
-    const c = makeCharacter(new Rng(5), { classId: 'guerreiro' });
+    const c = makeCharacter(new Rng(5), { classId: 'impacto' });
     const d1 = derive(c);
     c.attrs.vit += 5;
     c.attrs.int += 5;

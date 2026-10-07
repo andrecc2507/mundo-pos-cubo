@@ -1,3 +1,4 @@
+import './fixtures/test_skills';
 import { describe, expect, it } from 'vitest';
 import { Rng } from '@core';
 import { DB } from '@game/data';
@@ -40,7 +41,7 @@ import { unitFromCharacter, unitFromEnemy } from '@game/battle/units';
 import { startPaths, makeCharacter } from '@game/rules/recruit';
 import { generateMap } from '@game/mapgen/generator';
 
-function unit(classId: 'guerreiro' | 'mago' | 'arqueiro' | 'clerigo' | 'ladrao', team: 'player' | 'enemy', seed: number, level = 3): BattleUnit {
+function unit(classId: 'impacto' | 'controle' | 'movimento' | 'suporte' | 'movimento', team: 'player' | 'enemy', seed: number, level = 3): BattleUnit {
   const c = makeCharacter(new Rng(seed), { classId, level });
   c.skills = [];
   return unitFromCharacter(c, team);
@@ -52,8 +53,8 @@ function setup(map: BattleMap, players: BattleUnit[], enemies: BattleUnit[]): Ba
 
 describe('barra de ação (ATB)', () => {
   it('unidade com o dobro da taxa age duas vezes antes da lenta', () => {
-    const fast = unit('ladrao', 'player', 1);
-    const slow = unit('guerreiro', 'enemy', 2);
+    const fast = unit('movimento', 'player', 1);
+    const slow = unit('impacto', 'enemy', 2);
     fast.attrs.spd = 30;
     slow.attrs.spd = 0;
     const s = createBattle(setup(createEmptyMap(8, 8, 'planicie'), [fast], [slow]));
@@ -64,8 +65,8 @@ describe('barra de ação (ATB)', () => {
   });
 
   it('só mover deixa a próxima barra em 50%', () => {
-    const a = unit('guerreiro', 'player', 3);
-    const s = createBattle(setup(createEmptyMap(8, 8, 'planicie'), [a], [unit('guerreiro', 'enemy', 4)]));
+    const a = unit('impacto', 'player', 3);
+    const s = createBattle(setup(createEmptyMap(8, 8, 'planicie'), [a], [unit('impacto', 'enemy', 4)]));
     a.gauge = 99.99;
     const u = advance(s)!;
     expect(u.uid).toBe(a.uid);
@@ -76,8 +77,8 @@ describe('barra de ação (ATB)', () => {
   });
 
   it('agir zera a barra', () => {
-    const a = unit('guerreiro', 'player', 5);
-    const s = createBattle(setup(createEmptyMap(8, 8, 'planicie'), [a], [unit('guerreiro', 'enemy', 6)]));
+    const a = unit('impacto', 'player', 5);
+    const s = createBattle(setup(createEmptyMap(8, 8, 'planicie'), [a], [unit('impacto', 'enemy', 6)]));
     a.gauge = 99.99;
     const u = advance(s)!;
     defend(s, u);
@@ -87,7 +88,7 @@ describe('barra de ação (ATB)', () => {
 });
 
 describe('elementos', () => {
-  const base = () => createBattle(setup(createEmptyMap(6, 6, 'planicie'), [unit('mago', 'player', 7)], [unit('guerreiro', 'enemy', 8)]));
+  const base = () => createBattle(setup(createEmptyMap(6, 6, 'planicie'), [unit('controle', 'player', 7)], [unit('impacto', 'enemy', 8)]));
 
   it('fogo + água = vapor', () => {
     const s = base();
@@ -157,11 +158,11 @@ describe('elementos', () => {
 
 describe('combos', () => {
   it('Bola de Fogo + Vendaval gera Onda Flamejante e zera a barra do parceiro', () => {
-    const a = unit('mago', 'player', 11);
-    const b = unit('mago', 'player', 12);
+    const a = unit('controle', 'player', 11);
+    const b = unit('controle', 'player', 12);
     a.skills = ['elementalista_raio_de_fogo'];
     b.skills = ['elementalista_raio_de_ar'];
-    const s = createBattle(setup(createEmptyMap(10, 10, 'planicie'), [a, b], [unit('guerreiro', 'enemy', 13)]));
+    const s = createBattle(setup(createEmptyMap(10, 10, 'planicie'), [a, b], [unit('impacto', 'enemy', 13)]));
     b.x = a.x;
     b.y = a.y + 1;
     b.gauge = 60;
@@ -187,8 +188,8 @@ describe('mapas gerados', () => {
 describe('batalha completa IA × IA', () => {
   it.each(['floresta', 'neve', 'costa', 'deserto', 'planicie'] as const)('termina sem erros em %s', (biome) => {
     const rng = new Rng(biome.length * 17);
-    const players = (['guerreiro', 'arqueiro', 'mago', 'clerigo', 'ladrao'] as const).map((c, i) => unit(c, 'player', 100 + i, 4));
-    const enemies = ['bandido', 'rebelde_guerreiro', 'rebelde_mago', 'lebre_artica'].map((id) => unitFromEnemy(DB.enemies[id]!, 4, rng));
+    const players = (['impacto', 'movimento', 'controle', 'suporte', 'movimento'] as const).map((c, i) => unit(c, 'player', 100 + i, 4));
+    const enemies = ['saqueador', 'miliciano', 'atirador', 'lebre_artica'].map((id) => unitFromEnemy(DB.enemies[id]!, 4, rng));
     const s = createBattle(setup(generateMap({ biome, seed: 5 }), players, enemies));
     let turns = 0;
     while (!s.outcome && turns < 600) {
@@ -213,18 +214,18 @@ describe('bestiário: Lebre-Ártica', () => {
 
   it('Mergulho na Neve só funciona na neve e esconde a lebre', () => {
     const map = createEmptyMap(6, 6, 'neve');
-    const s = createBattle(setup(map, [unit('guerreiro', 'player', 1)], [lebre()]));
+    const s = createBattle(setup(map, [unit('impacto', 'player', 1)], [lebre()]));
     const l = s.units[1]!;
     const dive = { ...DB.skills.mergulho_na_neve!, name: 'x' };
     expect(castSkill(s, l, dive, l.x, l.y)).toBe(true);
     expect(l.hidden).toBe(true);
     expect(l.statuses.submerso).toBe(2);
-    const grass = createBattle(setup(createEmptyMap(6, 6, 'planicie'), [unit('guerreiro', 'player', 1)], [lebre()]));
+    const grass = createBattle(setup(createEmptyMap(6, 6, 'planicie'), [unit('impacto', 'player', 1)], [lebre()]));
     expect(castSkill(grass, grass.units[1]!, dive, 0, 0)).toBe(false);
   });
 
   it('Chute de Gelo cega o alvo e reduz o acerto dele', () => {
-    const s = createBattle(setup(createEmptyMap(6, 6, 'neve'), [unit('guerreiro', 'player', 1)], [lebre()]));
+    const s = createBattle(setup(createEmptyMap(6, 6, 'neve'), [unit('impacto', 'player', 1)], [lebre()]));
     const [p, l] = [s.units[0]!, s.units[1]!];
     const before = previewHit(s, p, l, 'basic', 0).chance;
     p.statuses.cegado = 2;
@@ -232,15 +233,15 @@ describe('bestiário: Lebre-Ártica', () => {
   });
 
   it('Velocidade Branca aumenta a esquiva só na neve', () => {
-    const snow = createBattle(setup(createEmptyMap(6, 6, 'neve'), [unit('guerreiro', 'player', 1)], [lebre()]));
-    const grass = createBattle(setup(createEmptyMap(6, 6, 'planicie'), [unit('guerreiro', 'player', 1)], [lebre()]));
+    const snow = createBattle(setup(createEmptyMap(6, 6, 'neve'), [unit('impacto', 'player', 1)], [lebre()]));
+    const grass = createBattle(setup(createEmptyMap(6, 6, 'planicie'), [unit('impacto', 'player', 1)], [lebre()]));
     const onSnow = previewHit(snow, snow.units[0]!, snow.units[1]!, 'basic', 0).chance;
     const onGrass = previewHit(grass, grass.units[0]!, grass.units[1]!, 'basic', 0).chance;
     expect(onSnow).toBeLessThan(onGrass);
   });
 
   it('abater dá o XP da ficha', () => {
-    const s = createBattle(setup(createEmptyMap(6, 6, 'neve'), [unit('guerreiro', 'player', 1)], [lebre()]));
+    const s = createBattle(setup(createEmptyMap(6, 6, 'neve'), [unit('impacto', 'player', 1)], [lebre()]));
     const [p, l] = [s.units[0]!, s.units[1]!];
     l.hp = 1;
     damage(s, l, 5, p, undefined);
@@ -260,8 +261,8 @@ describe('turno: andar, agir e andar o resto', () => {
   }
 
   it('agir não encerra o turno: o deslocamento que sobrou continua disponível', () => {
-    const a = unit('guerreiro', 'player', 3);
-    const e = unit('guerreiro', 'enemy', 4);
+    const a = unit('impacto', 'player', 3);
+    const e = unit('impacto', 'enemy', 4);
     const s = flat([a], [e]);
     [a.x, a.y, e.x, e.y] = [2, 2, 6, 2];
     a.gauge = 99.99;
@@ -283,8 +284,8 @@ describe('turno: andar, agir e andar o resto', () => {
   });
 
   it('esperar sem agir (andando ou não) deixa a próxima barra em 50%; agir zera', () => {
-    const a = unit('guerreiro', 'player', 3);
-    const s = flat([a], [unit('guerreiro', 'enemy', 4)]);
+    const a = unit('impacto', 'player', 3);
+    const s = flat([a], [unit('impacto', 'enemy', 4)]);
     a.gauge = 99.99;
     advance(s);
     endTurn(s);
@@ -299,7 +300,7 @@ describe('turno: andar, agir e andar o resto', () => {
 
 describe('prontidão', () => {
   function duel(caster: BattleUnit) {
-    const e = unit('guerreiro', 'enemy', 4);
+    const e = unit('impacto', 'enemy', 4);
     const s = createBattle(setup(createEmptyMap(14, 14, 'planicie'), [caster], [e]));
     for (const t of s.map.tiles) {
       t.p = undefined;
@@ -312,7 +313,7 @@ describe('prontidão', () => {
   }
 
   it('com a arma: atira no primeiro inimigo que entra no alcance e o motor marca o passo', () => {
-    const a = unit('arqueiro', 'player', 3);
+    const a = unit('movimento', 'player', 3);
     const { s, e } = duel(a);
     expect(setOverwatch(s, a)).toBe(true);
     endTurn(s);
@@ -327,13 +328,9 @@ describe('prontidão', () => {
   });
 
   it('com magia: o MP é pago ao preparar; dispara a habilidade ou se desfaz no próximo turno', () => {
-    // Um caminho do mago com magia de alvo (à distância) para preparar.
-    const path = startPaths('mago').find((n) => {
-      const u = unitFromCharacter(makeCharacter(new Rng(8), { classId: 'mago', level: 10, path: n }), 'player');
-      return u.skills.some((id) => DB.skills[id] && readyable({ ...DB.skills[id]!, id, mp: DB.skills[id]!.mp ?? 0 } as SkillLike));
-    });
     const mk = () => {
-      const c = makeCharacter(new Rng(8), { classId: 'mago', level: 10, path });
+      const c = makeCharacter(new Rng(8), { classId: 'controle', level: 10 });
+      c.skills = ['elementalista_raio_de_fogo'];
       return unitFromCharacter(c, 'player');
     };
     const m = mk();
@@ -380,8 +377,8 @@ describe('ataque de oportunidade (corpo a corpo)', () => {
   }
 
   it('sair do alcance de um inimigo corpo a corpo provoca um golpe; o caminho avisa antes', () => {
-    const g = unit('guerreiro', 'enemy', 4);
-    const m = unit('mago', 'player', 5);
+    const g = unit('impacto', 'enemy', 4);
+    const m = unit('controle', 'player', 5);
     const s = arena(g, m);
     const path = moveTargets(s, m).map((i) => xy(s.map, i)).find(([x, y]) => x === 1 && y === 4)!;
     expect(path).toBeDefined();
@@ -397,8 +394,8 @@ describe('ataque de oportunidade (corpo a corpo)', () => {
   });
 
   it('caminho esperto: com deslocamento sobrando, contorna o alcance do inimigo em vez de passar colado', () => {
-    const g = unit('guerreiro', 'enemy', 4);
-    const m = unit('mago', 'player', 5);
+    const g = unit('impacto', 'enemy', 4);
+    const m = unit('controle', 'player', 5);
     const s = arena(g, m);
     [m.x, m.y, g.x, g.y] = [2, 5, 5, 4];
     m.move = 10;
@@ -414,13 +411,13 @@ describe('ataque de oportunidade (corpo a corpo)', () => {
   });
 
   it('um por turno de quem ataca; arqueiro (à distância) não dá', () => {
-    const g = unit('guerreiro', 'enemy', 4);
-    const m = unit('mago', 'player', 5);
+    const g = unit('impacto', 'enemy', 4);
+    const m = unit('controle', 'player', 5);
     const s = arena(g, m);
     g.oaUsed = true;
     expect(opportunityThreats(s, m, [[3, 4]])).toEqual([]);
-    const a = unit('arqueiro', 'enemy', 6);
-    const s2 = arena(a, unit('mago', 'player', 7));
+    const a = unit('movimento', 'enemy', 6);
+    const s2 = arena(a, unit('controle', 'player', 7));
     const mover = s2.units.find((u) => u.team === 'player')!;
     expect(a.weaponRange).toBeGreaterThan(1);
     expect(opportunityThreats(s2, mover, [[3, 4]])).toEqual([]);
@@ -429,8 +426,8 @@ describe('ataque de oportunidade (corpo a corpo)', () => {
 
 describe('captura (render)', () => {
   it('humano adjacente com até 25% da vida pode ser rendido; fera não; corda e rede aumentam a chance', () => {
-    const hero = unit('guerreiro', 'player', 3);
-    const foe = unitFromEnemy(DB.enemies.bandido!, 3, new Rng(1));
+    const hero = unit('impacto', 'player', 3);
+    const foe = unitFromEnemy(DB.enemies.saqueador!, 3, new Rng(1));
     const beast = unitFromEnemy(DB.enemies.lobo_da_silvia!, 3, new Rng(2));
     const s = createBattle(setup(createEmptyMap(8, 8, 'planicie'), [hero], [foe, beast]));
     [hero.x, hero.y, foe.x, foe.y, beast.x, beast.y] = [3, 3, 4, 3, 3, 4];
@@ -451,21 +448,21 @@ describe('captura (render)', () => {
     }
     expect(foe.captured).toBe(true);
     const r = buildResult(s, { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' });
-    expect(r.captured?.[0]?.enemyId).toBe('bandido');
-    expect(r.defeated).not.toContain('bandido');
+    expect(r.captured?.[0]?.enemyId).toBe('saqueador');
+    expect(r.defeated).not.toContain('saqueador');
   });
 });
 
 describe('peças de missão (Interagir, VIP, rodadas, início escondido)', () => {
   function mission(extra: Partial<BattleSetup>) {
-    const a = unit('guerreiro', 'player', 3);
-    const e = unit('guerreiro', 'enemy', 4);
+    const a = unit('impacto', 'player', 3);
+    const e = unit('impacto', 'enemy', 4);
     const s = createBattle({ ...setup(createEmptyMap(10, 10, 'planicie'), [a], [e]), ...extra });
     return { s, a, e };
   }
 
   it('resgate: VIP preso na cela não age; Interagir abre; se o VIP morre, a missão falha', () => {
-    const vip = unit('mago', 'player', 9);
+    const vip = unit('controle', 'player', 9);
     const { s, a } = mission({ victory: { type: 'escape' }, stealthStart: true, objectives: [{ kind: 'cela', label: 'Abrir a cela', turns: 1 }], vip: { unit: vip, captive: true } });
     const cell = s.objectives![0]!;
     expect(vip.bound).toBe(true);
