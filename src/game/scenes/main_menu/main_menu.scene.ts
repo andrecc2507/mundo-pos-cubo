@@ -1,3 +1,4 @@
+import { skirmishEnemies } from '../../demo/demo_squad';
 import { Scene } from '@core';
 import { t } from '../../i18n/i18n';
 import { btn, h, layer, modal } from '@ui/dom';
@@ -10,7 +11,6 @@ import { IsoCamera } from '../../render/iso';
 import { drawBattle } from '../../render/battle_renderer';
 import { GEO_AUTO, GEO_SLOTS, geoSlotInfo, latestGeoSlot, loadGeo } from '../../state/geo_store';
 import { openOptions } from '../shared/options_screen';
-import { planEncounter } from '../../world/encounters';
 import { unitFromEnemy } from '../../battle/units';
 import { DB } from '../../data';
 import { Rng } from '@core';
@@ -55,9 +55,7 @@ export class MainMenuScene extends Scene {
           item(t('Opções'), () => openOptions(() => this.ctx.scenes.go('main_menu'))),
           h('div', { class: 'title-sep' }),
           item(t('Bestiário'), () => this.ctx.scenes.go('bestiary'), { small: true }),
-          item(t('Árvores de habilidades'), () => this.ctx.scenes.go('skill_trees'), { small: true }),
           item(t('Arsenal'), () => this.ctx.scenes.go('arsenal'), { small: true }),
-          item(t('Materiais e drops'), () => this.ctx.scenes.go('materials'), { small: true }),
           item(t('Editor de mapas'), () => this.ctx.scenes.go('map_editor'), { small: true }),
           item(t('Batalha rápida (dev)'), () => this.quickBattleDialog(), { small: true }),
         ),
@@ -66,7 +64,7 @@ export class MainMenuScene extends Scene {
     );
     this.ui.append(screen);
     DevPanel.setGroups([
-      { title: 'Atalhos', actions: [{ label: 'Batalha rápida', run: () => this.quickBattleDialog() }, { label: 'Editor de mapas', run: () => this.ctx.scenes.go('map_editor') }, { label: 'Bestiário', run: () => this.ctx.scenes.go('bestiary') }, { label: 'Árvores de habilidades', run: () => this.ctx.scenes.go('skill_trees') }, { label: 'Arsenal', run: () => this.ctx.scenes.go('arsenal') }, { label: 'Materiais e drops', run: () => this.ctx.scenes.go('materials') }] },
+      { title: 'Atalhos', actions: [{ label: 'Batalha rápida', run: () => this.quickBattleDialog() }, { label: 'Editor de mapas', run: () => this.ctx.scenes.go('map_editor') }, { label: 'Bestiário', run: () => this.ctx.scenes.go('bestiary') }, { label: 'Arsenal', run: () => this.ctx.scenes.go('arsenal') }] },
     ]);
   }
 
@@ -126,7 +124,7 @@ export class MainMenuScene extends Scene {
       body.append(
         h('div', { class: 'col' },
           h('div', { class: 'row' }, h('span', { text: 'Bioma' }), biome),
-          h('div', { class: 'row' }, h('span', { text: 'Raridade do encontro' }), tier),
+          h('div', { class: 'row' }, h('span', { text: 'Tamanho do bando' }), tier),
           h('div', { class: 'row' }, h('span', { text: 'Nível do esquadrão' }), level),
           h('div', { class: 'row' }, h('span', { text: 'Objetivo' }), victory),
           h('div', { class: 'row' }, ambush, h('span', { text: 'Emboscada' })),
@@ -134,18 +132,18 @@ export class MainMenuScene extends Scene {
             m.close();
             const lv = Math.max(1, Number(level.value) || 5);
             const rng = new Rng(Date.now() % 1e9);
-            const plan = planEncounter(rng, biome.value as Biome, lv, tier.value as Rarity);
+            const size = { comum: 2, raro: 3, epico: 4, lendario: 5 }[tier.value as Rarity] ?? 2;
             const v = victory.value;
             this.ctx.scenes.go('battle', {
               setup: {
                 map: generateMap({ biome: biome.value as Biome, seed: rng.int(1, 1e9) }),
                 players: devPlayerUnits(lv),
-                enemies: plan.enemies.map((e) => unitFromEnemy(DB.enemies[e.id]!, e.level, rng)),
+                enemies: skirmishEnemies(rng, lv, biome.value, size),
                 victory: v === 'survive' ? { type: 'survive', rounds: 5 } : ({ type: v } as { type: 'eliminate' }),
                 ambush: ambush.checked,
                 canFlee: true,
                 seed: rng.int(1, 1e9),
-                context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: `Batalha rápida — ${plan.description}` },
+                context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: `Batalha rápida — ${BIOME_LABEL[biome.value as Biome]}` },
               },
               returnTo: 'main_menu',
             });

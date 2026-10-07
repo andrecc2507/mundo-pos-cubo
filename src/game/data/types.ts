@@ -838,20 +838,6 @@ export interface CreatureDrops {
   };
 }
 
-export interface CountryDef {
-  id: string;
-  /** Nome fantasia do país (sem a classe). */
-  name: string;
-  /** Epíteto mostrado junto do nome: "Lar dos Arqueiros". */
-  epithet: string;
-  classId: ClassId;
-  biome: Biome;
-  color: string;
-  capital: string;
-  /** Senhor(a) da capital (personagem da história; nome provisório). */
-  lord: string;
-  cities: string[];
-}
 
 declare module '@core/data/data_registry' {
   interface DataCatalog {
@@ -860,7 +846,6 @@ declare module '@core/data/data_registry' {
     combos: ComboDef;
     items: ItemDef;
     enemies: EnemyDef;
-    countries: CountryDef;
     creatures: CreatureDef;
     trees: SkillTree;
     materials: MaterialDef;

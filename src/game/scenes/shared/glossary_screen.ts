@@ -1,6 +1,6 @@
 import { clear, h, modal } from '@ui/dom';
 import { t } from '../../i18n/i18n';
-import GLOSSARY from '../../data/story/glossary.json';
+import GLOSSARY from '../../data/ui/glossary.json';
 
 export interface GlossaryEntry {
   id: string;

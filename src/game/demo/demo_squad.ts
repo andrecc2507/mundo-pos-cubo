@@ -256,6 +256,22 @@ export function makeGrunt(rng: Rng, level: number, kind: GruntKind = 'soldado'):
   return u;
 }
 
+/** Feras alteradas que fazem sentido no bioma e no nível (comuns e raras do bestiário). */
+export function beastPool(biome: string, level: number): string[] {
+  const all = Object.values(DB.creatures).filter((cr) => DB.enemies[cr.id] && (cr.rarity === 'comum' || cr.rarity === 'raro') && cr.levelMin <= level + 4);
+  const match = all.filter((cr) => (cr.biomes as readonly string[]).includes(biome)).map((cr) => cr.id);
+  return match.length ? match : all.map((cr) => cr.id);
+}
+
+/** Escaramuça genérica (batalha rápida, teste de mapa): vilões, uma fera do bioma e figurantes. */
+export function skirmishEnemies(rng: Rng, level: number, biome: string, size = 2): BattleUnit[] {
+  return [
+    ...Array.from({ length: size }, (_, i) => makeVillain(rng, level, { gift: i === 0 })),
+    makeBeast(rng, level, beastPool(biome, level)),
+    ...Array.from({ length: size + 1 }, () => makeGrunt(rng, level, rng.chance(0.5) ? 'saqueador' : 'soldado')),
+  ];
+}
+
 /** Figurante animal: besta alterada pequena, que cai com 1–2 golpes. */
 export function makeBeastGrunt(rng: Rng, level: number, pool: string[] = DEMO.beasts): BattleUnit {
   const u = makeBeast(rng, level, pool);

@@ -9,7 +9,6 @@ import * as scenery from '@game/battle/scenery';
 import * as stack from '@game/battle/stack';
 import { building } from '@game/mapgen/structures';
 import { makeCharacter } from '@game/rules/recruit';
-import { applyRivalResult, rivalUnit, type RivalHost } from '@game/world/rival';
 
 const CTX: BattleContext = { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' };
 
@@ -77,23 +76,6 @@ describe('cenário interativo', () => {
 });
 
 describe('rival recorrente e gravidade invertida', () => {
-  it('foge com 30% da vida e aprende a resistir ao que mais o feriu', () => {
-    const c: RivalHost = { act: 2, chronicle: [] } as unknown as RivalHost;
-    const { s, hero } = battle();
-    const r = rivalUnit(c, 8);
-    [r.x, r.y] = [10, 10];
-    s.units.push(r);
-    damage(s, r, Math.round(r.maxHp * 0.75), hero, 'fogo');
-    expect(r.alive).toBe(false);
-    expect(s.rivalFled).toBe(true);
-    s.outcome = 'victory';
-    const line = applyRivalResult(c, buildResult(s, CTX));
-    expect(line).toMatch(/fugiu/);
-    expect(c.rival!.resist.fogo).toBeCloseTo(0.2);
-    const again = rivalUnit(c, 8);
-    expect(again.rival!.resist.fogo).toBeCloseTo(0.2);
-  });
-
   it('no Vazio, pedras sem apoio sobem e ninguém é esmagado', () => {
     const { s, hero } = battle(true);
     const t = tileAt(s.map, 2, 2)!;

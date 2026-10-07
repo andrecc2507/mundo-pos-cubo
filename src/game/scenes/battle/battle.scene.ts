@@ -1,8 +1,7 @@
 import { Rng, Scene } from '@core';
 import { t } from '../../i18n/i18n';
-import { bark, type BarkKind } from '../../world/traits';
 import { battleTimeScale, markHint, settings } from '../../state/settings';
-import { HINTS, LESSONS, type LessonCard } from '../../world/tutorial';
+import { HINTS } from '../../battle/hints';
 import { battleHints } from '../../battle/hints';
 import { openOptions } from '../shared/options_screen';
 import { openGlossary } from '../shared/glossary_screen';
@@ -134,7 +133,6 @@ const ELEMENT_COLOR: Record<string, string> = {
 };
 
 /** Últimas falas ditas (entre batalhas), para não repetir a mesma frase toda luta. */
-const RECENT_BARKS: string[] = [];
 
 export class BattleScene extends Scene<{ setup: import('../../battle/types').BattleSetup; returnTo: BattleReturn }> {
   readonly id = 'battle';
@@ -213,7 +211,6 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
     // Antes da primeira ação: formação inicial (numa emboscada não dá tempo).
     if (params.setup.ambush) this.state.log.push('⚠ Emboscada! Sem tempo para formação.');
     else this.startDeploy();
-    this.startLesson(params.setup.context.lesson);
   }
 
   private startDeploy(): void {
@@ -241,9 +238,6 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
   private endDeploy(): void {
     const boss = this.villainLines && this.villainVoice();
     if (boss && this.villainLines!.start.length) this.sayLine(boss, this.barkRng.pick(this.villainLines!.start));
-    const talkers = this.state.units.filter((u) => u.team === 'player' && u.trait && u.alive);
-    // Semente da própria batalha: as falas variam de uma luta para outra.
-    if (talkers.length && this.barkRng.chance(0.4)) this.say(this.barkRng.pick(talkers), 'start', true);
     this.setMode({ kind: 'menu' });
     this.snap = snapshot(this.state);
     this.refresh();
@@ -1074,54 +1068,34 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
 
   // ───────────────────────────── tutorial e dicas ─────────────────────────────
 
-  private lessonCards: LessonCard[] = [];
-  private lessonIdx = 0;
-  private lessonTitle = '';
   private hintShown: string | null = null;
-
-  /** Lição do Prólogo: cartas no painel do coach, uma de cada vez. */
-  private startLesson(id: string | undefined): void {
-    const l = id ? LESSONS[id] : undefined;
-    if (!l) return;
-    this.lessonCards = l.cards;
-    this.lessonTitle = l.title;
-    this.lessonIdx = 0;
-    this.renderCoach();
-  }
 
   private renderCoach(): void {
     const el = this.hud.coach!;
     clear(el);
-    const card = this.lessonCards[this.lessonIdx];
-    const hint = !card && this.hintShown ? HINTS[this.hintShown] : undefined;
-    if (!card && !hint) {
+    const hint = this.hintShown ? HINTS[this.hintShown] : undefined;
+    if (!hint) {
       el.style.display = 'none';
       return;
     }
     el.style.display = '';
-    const c = (card ?? hint)!;
+    const c = hint;
     el.append(
-      h('div', { class: 'coach-title', text: card ? `🎓 Tutorial — ${this.lessonTitle} (${this.lessonIdx + 1}/${this.lessonCards.length})` : t('💡 Dica') }),
+      h('div', { class: 'coach-title', text: t('💡 Dica') }),
       h('div', { class: 'coach-text', text: c.t }),
       h('div', { class: 'row', style: 'justify-content:flex-end;gap:6px' },
         c.g ? btn(t('📖 Glossário'), () => openGlossary(c.g), { class: 'small ghost' }) : null,
-        card
-          ? btn(this.lessonIdx + 1 < this.lessonCards.length ? t('Próximo ▸') : t('Entendi'), () => {
-              this.lessonIdx += 1;
-              this.renderCoach();
-            }, { class: 'small primary' })
-          : btn('Ok', () => {
-              this.hintShown = null;
-              this.renderCoach();
-            }, { class: 'small' }),
-        card ? btn(t('Pular tutorial'), () => ((this.lessonIdx = this.lessonCards.length), this.renderCoach()), { class: 'small ghost' }) : null,
+        btn('Ok', () => {
+          this.hintShown = null;
+          this.renderCoach();
+        }, { class: 'small' }),
       ),
     );
   }
 
   /** Dicas no contexto: a primeira condição nova vira um cartão (não repete; dá para desligar nas opções). */
   private updateHints(): void {
-    if (!settings.hints || this.hintShown || this.lessonIdx < this.lessonCards.length || this.ended) return;
+    if (!settings.hints || this.hintShown || this.ended) return;
     const heroes = this.state.units.filter((u) => u.team === 'player' && u.alive && u.charId);
     const ids = battleHints(this.state, {
       intents: this.intents.length > 0,
@@ -1136,18 +1110,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
     this.renderCoach();
   }
 
-  /** Um herói fala (balão), respeitando um intervalo mínimo entre falas. */
-  private say(u: BattleUnit, kind: BarkKind, force = false): void {
-    if (!u.trait || !u.alive || (!force && this.time - this.lastBark < 2.2)) return;
-    // Evita repetir uma das últimas falas (entre batalhas também).
-    let text: string | null = null;
-    for (let i = 0; i < 4 && (!text || RECENT_BARKS.includes(text)); i++) text = bark(u.trait, kind, u.loyalty ?? 50, this.barkRng);
-    if (!text || RECENT_BARKS.includes(text)) return;
-    RECENT_BARKS.push(text);
-    if (RECENT_BARKS.length > 12) RECENT_BARKS.shift();
-    this.lastBark = this.time;
-    this.floaters.push({ x: u.x, y: u.y, h: 0, text, color: '#2a1a10', age: 0, life: 2.6, speech: true });
-  }
+
 
   /** Abates, ferimentos e quedas de aliados viram falas, conforme o traço e a lealdade. */
   private checkBarks(): void {
@@ -1167,16 +1130,12 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
     const heroes = this.state.units.filter((u) => u.team === 'player' && u.charId);
     for (const u of heroes) {
       const k = this.killsSeen.get(u.uid) ?? 0;
-      if (u.kills > k && this.barkRng.chance(0.5)) this.say(u, 'kill');
-      this.killsSeen.set(u.uid, u.kills);
+      if (u.kills > k) this.killsSeen.set(u.uid, u.kills);
       if (u.alive && u.hp < u.maxHp * 0.3 && !this.hurtSeen.has(u.uid)) {
         this.hurtSeen.add(u.uid);
-        if (this.barkRng.chance(0.6)) this.say(u, 'hurt');
       }
       if (!u.alive && !this.deadSeen.has(u.uid)) {
         this.deadSeen.add(u.uid);
-        const alive = heroes.filter((x) => x.alive);
-        if (alive.length) this.say(this.barkRng.pick(alive), 'allyDown', true);
       }
     }
   }
@@ -1830,12 +1789,6 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
       title,
       (body, self) => {
         body.append(h('p', { class: 'muted', text: this.setupCtx.title }));
-        const talkers = s.units.filter((x) => x.team === 'player' && x.alive && x.trait);
-        if (s.outcome === 'victory' && talkers.length) {
-          const who = this.barkRng.pick(talkers);
-          const line = bark(who.trait, 'victory', who.loyalty ?? 50, this.barkRng);
-          if (line) body.append(h('p', { style: 'font-style:italic;color:#e9dcc2', text: `“${line}” — ${who.name}` }));
-        }
         for (const u of s.units.filter((x) => x.team === 'player')) {
           body.append(h('div', { class: 'row' }, h('b', { text: u.name, style: 'min-width:140px' }), u.alive ? bar(u.hp, u.maxHp, '#66bb6a') : h('span', { class: 'danger', text: 'morto' }), h('span', { class: 'muted', text: `${u.kills} abates` })));
         }

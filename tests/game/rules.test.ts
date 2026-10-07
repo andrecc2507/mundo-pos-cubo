@@ -3,7 +3,7 @@ import { Rng } from '@core';
 import { DB } from '@game/data';
 import { allocate, canPromote, derive, gainXp, promote, statCost, xpToNext } from '@game/rules/character';
 import { attributePointsAt } from '@game/rules/stats';
-import { generateRecruitPool, makeCharacter } from '@game/rules/recruit';
+import { makeCharacter } from '@game/rules/recruit';
 
 describe('progressão estilo Ragnarok', () => {
   it('custo de atributo cresce a cada 10 pontos', () => {
@@ -36,13 +36,7 @@ describe('progressão estilo Ragnarok', () => {
     expect(c.classId).toBe('arqueiro');
   });
 
-  it('recrutas da capital vêm com build direcionada à classe', () => {
-    const pool = generateRecruitPool(new Rng(4), 'mago');
-    const mages = pool.filter((p) => p.character.classId === 'mago');
-    expect(pool.filter((p) => p.character.classId === 'aprendiz')).toHaveLength(4);
-    expect(mages).toHaveLength(3);
-    for (const m of mages) expect(m.character.attrs.int).toBeGreaterThanOrEqual(Math.max(m.character.attrs.str, m.character.attrs.vit));
-  });
+
 
   it('atributos derivam HP (VIT), MP e resistência mágica (INT); armadura dá resistência física', () => {
     const c = makeCharacter(new Rng(5), { classId: 'guerreiro' });

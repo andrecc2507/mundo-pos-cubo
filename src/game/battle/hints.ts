@@ -1,9 +1,18 @@
 import { bestShove } from './ai_tactics';
 import * as stack from './stack';
 import type { BattleState } from './types';
+import HINT_DATA from '../data/ui/hints.json';
+
+/** Cartão de dica: texto e verbete do glossário (opcional). */
+export interface HintCard {
+  t: string;
+  g?: string;
+}
+
+export const HINTS = HINT_DATA.hints as Record<string, HintCard>;
 
 /**
- * Dicas no contexto da batalha: devolve os ids (data/story/tutorial.json → hints) cujas condições
+ * Dicas no contexto da batalha: devolve os ids (data/ui/hints.json) cujas condições
  * valem agora. A cena mostra a primeira que o jogador ainda não viu.
  */
 export function battleHints(state: BattleState, o: { intents: boolean; moving: boolean; reactionReady: boolean; bonded: boolean }): string[] {

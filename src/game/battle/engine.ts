@@ -1,6 +1,5 @@
 import { Rng } from '@core';
-import BONDS from '../data/base/bonds.json';
-import { FRICTION } from '../rules/personality';
+import BONDS from '../data/battle/bonds.json';
 import { DB, ORB_COMBOS, item, skill, type ComboDef, type Element, type OrbComboRule, type SkillDef } from '../data';
 import { addStatus, applyElementToTile, applyElementToUnit, dissipateClouds, driftSmoke, environmentTick, removeStatus, tileEffectsOnUnit, unitAt } from './elements';
 import { COVER_PENALTY, coverAgainst, coverPropAgainst, coverSides, type CoverLevel } from './cover';
@@ -21,12 +20,8 @@ import * as fx from './creature_fx';
 import * as stats from '../rules/stats';
 import { SKILL_MAX_RANK, isNewClass, rankCooldown } from '../rules/skill_tree';
 import { variantDef } from '../rules/mastery';
-import BASE_DATA from '../data/base/base.json';
-import { RIVAL_DATA, rivalTaunt } from '../world/rival';
-import CAPITALS from '../data/world/capitals.json';
+import CAPTURE from '../data/battle/capture.json';
 
-const STUDY = BASE_DATA.research.studyBonus;
-const HUNT = CAPITALS.hunterMark;
 
 /** Tempo para uma unidade de Velocidade 10 encher a barra = 1 rodada de ambiente. */
 /** Segundos da linha do tempo entre viradas de rodada (ambiente, zonas, regeneração). */
@@ -1104,27 +1099,13 @@ export function previewHit(state: BattleState, a: BattleUnit, d: BattleUnit, kin
     dmg *= 1 + wm.dmg;
     accBonus += wm.acc;
   }
-  // Criatura estudada na Biblioteca: o jogador acerta e fere mais (data/base/base.json).
-  const studied = a.team === 'player' && !!d.enemyId && !!state.studied?.includes(d.enemyId);
-  if (studied) {
-    dmg *= 1 + STUDY.damage;
-    accBonus += STUDY.accuracy;
-  }
-  // Marca do Caçador (Verdelume): mais dano e crítico contra a espécie (data/world/capitals.json).
-  const hunted = a.team === 'player' && !!d.enemyId && !!state.hunted?.includes(d.enemyId);
-  if (hunted) dmg *= 1 + HUNT.damage;
-  // Vínculo: aliado com vínculo lado a lado dá acerto e dano (data/base/bonds.json).
+  // Vínculo: aliado com vínculo lado a lado dá acerto e dano (data/battle/bonds.json).
   const bond = bondLevelNear(state, a);
   if (bond) {
     dmg *= 1 + BONDS.damagePerLevel * bond;
     accBonus += BONDS.accuracyPerLevel * bond;
   }
   // Atrito: Rivais ao lado competem (mais dano, menos acerto); Desafetos atrapalham.
-  const rival = rivalLevelNear(state, a);
-  if (rival) {
-    dmg *= 1 + (rival >= 2 ? FRICTION.enemyDamage : FRICTION.rivalDamage);
-    accBonus += rival >= 2 ? FRICTION.enemyAccuracy : FRICTION.rivalAccuracy;
-  }
   // Juramento de vingança contra quem matou um irmão de armas.
   if (d.enemyId && a.vendetta?.includes(d.enemyId)) dmg *= 1 + BONDS.vendettaDamage;
   if (d.defending) dmg *= 0.5;
@@ -1132,7 +1113,7 @@ export function previewHit(state: BattleState, a: BattleUnit, d: BattleUnit, kin
   let chance: number;
   const cover = magic ? 'none' : coverAgainst(state.map, d.x, d.y, a.x, a.y);
   const h = stats.BALANCE.hit;
-  if (magic) chance = stats.magicHitChance(d.evasion - d.level, m.accuracy + (studied ? STUDY.accuracy : 0), m.evasion);
+  if (magic) chance = stats.magicHitChance(d.evasion - d.level, m.accuracy, m.evasion);
   else chance = stats.physicalHitChance(a.accuracy + accBonus + m.accuracy, d.evasion + m.evasion, heightDiff(state, a, d) * h.heightBonus - (d.defending ? h.defendingPenalty : 0) - COVER_PENALTY[cover]);
   // Sob supressão: mira tremida.
   if (a.statuses.suprimido) chance -= stats.TACTICS.suppressAccuracy;
@@ -1149,7 +1130,7 @@ export function previewHit(state: BattleState, a: BattleUnit, d: BattleUnit, kin
   if (m.immune) return { chance: 0, min: 0, max: 0, crit: 0, cover };
   // Flanco (XCOM): o alvo tem cobertura, mas não contra quem atira — crítico extra.
   const flanked = !magic && cover === 'none' && chebyshev(a.x, a.y, d.x, d.y) > 1 && coverSides(state.map, d.x, d.y).length > 0;
-  return { chance: Math.round(chance), min: Math.max(1, Math.floor(dmg * 0.9)), max: Math.max(1, Math.ceil(dmg * 1.1)), crit: Math.min(100, a.crit + m.crit + cloudCrit + (hunted ? HUNT.crit : 0) + (flanked ? stats.WEAPONS.flankCrit : 0)), cover, obscured, adv, flanked };
+  return { chance: Math.round(chance), min: Math.max(1, Math.floor(dmg * 0.9)), max: Math.max(1, Math.ceil(dmg * 1.1)), crit: Math.min(100, a.crit + m.crit + cloudCrit + (flanked ? stats.WEAPONS.flankCrit : 0)), cover, obscured, adv, flanked };
 }
 
 /** Soma de vantagens (+1) e desvantagens (−1) do ataque de `a` em `d`: −1, 0 ou +1. */
@@ -1177,17 +1158,6 @@ export function bondLevelNear(state: BattleState, a: BattleUnit): number {
   return best;
 }
 
-/** Maior nível de atrito entre a unidade e um aliado vivo ao lado dela (0 se nenhum). */
-export function rivalLevelNear(state: BattleState, a: BattleUnit): number {
-  if (!a.rivals) return 0;
-  let best = 0;
-  for (const o of state.units) {
-    if (o === a || !o.alive || o.team !== a.team || !o.charId) continue;
-    const lv = a.rivals[o.charId];
-    if (lv && chebyshev(o.x, o.y, a.x, a.y) <= 1) best = Math.max(best, lv);
-  }
-  return best;
-}
 
 export function damage(state: BattleState, target: BattleUnit, amount: number, attacker: BattleUnit | undefined, el: Element | undefined, crit = false, magic = false): void {
   if (!target.alive) return;
@@ -1196,12 +1166,6 @@ export function damage(state: BattleState, target: BattleUnit, amount: number, a
   if (state.enemyDmgMult && attacker?.team === 'enemy' && target.team === 'player') amount = Math.max(1, Math.round(amount * state.enemyDmgMult));
   amount = fx.beforeDamage(state, target, amount, attacker, el);
   if (!target.alive) return;
-  // Rival: resiste ao que aprendeu e o jogo anota o que mais o feriu.
-  if (target.rival) {
-    const kind = el ?? 'fisico';
-    amount = Math.max(1, Math.round(amount * (1 - (target.rival.resist[kind] ?? 0))));
-    (state.rivalDamage ??= {})[kind] = (state.rivalDamage[kind] ?? 0) + amount;
-  }
   const hpBefore = target.hp;
   target.hp = Math.max(0, target.hp - amount);
   // Telemetria: dano causado (o golpe ou, sem atacante, quem está agindo — explosões, quedas).
@@ -1212,15 +1176,6 @@ export function damage(state: BattleState, target: BattleUnit, amount: number, a
   target.lowHp = Math.min(target.lowHp ?? target.hp, target.hp);
   state.events.push({ type: 'damage', uid: target.uid, amount, crit, element: el });
   if (target.hp > 0 && target.phases) bossPhases(state, target);
-  // Rival foge com pouca vida (volta mais forte em outro encontro).
-  if (target.rival && target.hp > 0 && target.hp <= target.maxHp * RIVAL_DATA.fleePct) {
-    target.alive = false;
-    state.rivalFled = true;
-    state.events.push({ type: 'text', x: target.x, y: target.y, text: '🌑 Fugiu!', color: '#ce93d8' });
-    state.log.push(`🌑 ${target.name}: "${rivalTaunt(fx.num(target, 'rivalSeen'))}" — some num rasgo do Vazio.`);
-    checkVictory(state);
-    return;
-  }
   if (target.hp <= 0 && fx.onLethal(state, target, el)) return;
   fx.afterDamage(state, target, amount, attacker, el, magic);
   if (target.hp <= 0 && target.alive) {
@@ -2032,7 +1987,6 @@ export function useItem(state: BattleState, u: BattleUnit, slot: number, x: numb
 
 // ───────────────────────────── captura (D67) ─────────────────────────────
 
-const CAPTURE = BASE_DATA.capture;
 
 /** Humano inimigo adjacente com pouca vida pode ser rendido. */
 export function capturable(u: BattleUnit, t: BattleUnit): boolean {
@@ -2452,7 +2406,6 @@ export function buildResult(state: BattleState, context: BattleContext): BattleR
     rounds: state.round,
     defeated: state.units.filter((u) => u.team === 'enemy' && !u.alive && !u.captured && u.enemyId).map((u) => u.enemyId!),
     captured: state.units.filter((u) => u.team === 'enemy' && u.captured && u.enemyId).map((u) => ({ enemyId: u.enemyId!, name: u.name, level: u.level })),
-    rival: state.units.some((u) => u.rival) ? { fled: !!state.rivalFled, killed: state.units.some((u) => u.rival && !u.alive) && !state.rivalFled, damage: { ...(state.rivalDamage ?? {}) } } : undefined,
     units: state.units
       .filter((u) => u.charId)
       .map((u) => ({

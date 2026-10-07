@@ -11,7 +11,7 @@ import { clampLevel, unitFromEnemy } from '../../battle/units';
 import type { BattleUnit } from '../../battle/types';
 import { DevPanel } from '../../dev/dev_panel';
 import { devPlayerUnits } from '../../dev/dev_squad';
-import { habitatLabel } from '../../world/regions';
+import { habitatLabel } from '../../rules/rarity';
 import { BIOME_LABEL, generateMap } from '../../mapgen/generator';
 import { drawBattle, unitSpec } from '../../render/battle_renderer';
 import { IsoCamera } from '../../render/iso';
@@ -19,7 +19,7 @@ import { portraitCanvas } from '../../render/sprites';
 import { POSES, artFor, pickClip, type Pose, type UnitPose } from '../../render/sprite_anims';
 import { clearLocalSprites, localSprites } from '../../render/sprite_local';
 import { openSpriteImporter } from './sprite_importer';
-import { RARITY_COLOR, RARITY_LABEL } from '../../world/encounters';
+import { RARITY_COLOR, RARITY_LABEL } from '../../rules/rarity';
 
 /** Quantas cópias da criatura entram no teste de batalha. */
 const TEST_COUNT: Record<CreatureDef['rarity'], number> = { comum: 3, raro: 2, epico: 1, lendario: 1 };
@@ -445,7 +445,6 @@ export class BestiaryScene extends Scene {
           this.dirty = true;
           redraw();
         }, { class: 'small danger' }),
-        btn('💎 Ver todos os materiais', () => this.ctx.scenes.go('materials'), { class: 'small' }),
       ),
     );
     showValue();

@@ -459,8 +459,6 @@ export interface BattleContext {
   geo?: 'raid' | 'road';
   /** Missão da história (kind 'story'). */
   storyId?: string;
-  /** Lição do tutorial mostrada na batalha (data/story/tutorial.json). */
-  lesson?: string;
   /** Sem morte permanente (dificuldade História): heróis caídos voltam feridos. */
   noPermadeath?: boolean;
   squadId?: string;

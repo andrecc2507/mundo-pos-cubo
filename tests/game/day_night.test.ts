@@ -6,8 +6,6 @@ import { createEmptyMap } from '@game/battle/map';
 import type { BattleSetup, TimeOfDay } from '@game/battle/types';
 import { unitFromCharacter, unitFromEnemy } from '@game/battle/units';
 import { makeCharacter } from '@game/rules/recruit';
-import { newCampaign, timeOfDayOf } from '@game/world/campaign';
-import { encounterSetup, planEncounter } from '@game/world/encounters';
 
 function battle(timeOfDay?: TimeOfDay) {
   const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'guerreiro', level: 5 }), 'player');
@@ -20,13 +18,6 @@ function battle(timeOfDay?: TimeOfDay) {
 }
 
 describe('dia e noite', () => {
-  it('relógio: 6h–18h59 é dia, o resto é noite', () => {
-    expect(timeOfDayOf({ hours: 6 })).toBe('dia');
-    expect(timeOfDayOf({ hours: 18.9 })).toBe('dia');
-    expect(timeOfDayOf({ hours: 19 })).toBe('noite');
-    expect(timeOfDayOf({ hours: 24 * 3 + 2 })).toBe('noite');
-  });
-
   it('de dia não há névoa de guerra; de noite a visão encurta', () => {
     const day = battle('dia');
     expect(teamVision(day, 'player').size).toBe(30 * 30);
@@ -36,15 +27,4 @@ describe('dia e noite', () => {
     expect(night).toBeGreaterThan(NIGHT_VISION_RANGE * NIGHT_VISION_RANGE);
   });
 
-  it('o encontro aleatório leva a hora da campanha', () => {
-    const c = newCampaign(3);
-    const s = c.squads[0]!;
-    const plan = planEncounter(new Rng(4), 'planicie', 5);
-    c.hours = 10;
-    expect(encounterSetup(c, s, plan).timeOfDay).toBe('dia');
-    c.hours = 22;
-    const night = encounterSetup(c, s, plan);
-    expect(night.timeOfDay).toBe('noite');
-    expect(night.context.title).toMatch(/🌙/);
-  });
 });

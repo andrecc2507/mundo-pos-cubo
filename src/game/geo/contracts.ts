@@ -8,7 +8,7 @@ import { DB } from '../data';
 import type { BattleSetup, BattleUnit, ObjectiveDef, Victory, Wave } from '../battle/types';
 import { unitFromCharacter } from '../battle/units';
 import { battleMap, timeOfDayAt } from './maps';
-import { VILLAIN_LINES, makeBeast, makeBeastGrunt, makeGrunt, makeVillain, type GruntKind } from '../demo/demo_squad';
+import { VILLAIN_LINES, beastPool, makeBeast, makeBeastGrunt, makeGrunt, makeVillain, type GruntKind } from '../demo/demo_squad';
 import { makeCharacter } from '../rules/recruit';
 import type { Character } from '../rules/character';
 import type { Biome } from '../data';
@@ -210,11 +210,6 @@ export function expireContracts(g: GeoGame): Contract[] {
 const BIOMES: Biome[] = ['floresta', 'neve', 'costa', 'deserto', 'planicie'];
 
 /** Bestas alteradas que combinam com o terreno (bestiário), no nível do contrato. */
-function beastPool(biome: string, level: number): string[] {
-  const all = Object.values(DB.creatures).filter((cr) => DB.enemies[cr.id] && (cr.rarity === 'comum' || cr.rarity === 'raro') && cr.levelMin <= level + 4);
-  const match = all.filter((cr) => cr.biomes.includes(biome as Biome)).map((cr) => cr.id);
-  return match.length ? match : all.map((cr) => cr.id);
-}
 
 function civilian(rng: Rng, name: string, level: number): BattleUnit {
   const ch = makeCharacter(rng, { classId: 'suporte', level: Math.max(1, level - 3), build: false });

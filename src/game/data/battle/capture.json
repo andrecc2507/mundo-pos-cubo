@@ -1,0 +1,6 @@
+{
+ "_doc": "Render inimigos humanos com pouca vida (captura).",
+ "hpPct": 0.25,
+ "chance": 50,
+ "maxChance": 95
+}

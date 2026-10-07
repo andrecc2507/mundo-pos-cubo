@@ -1,3 +1,4 @@
+import { skirmishEnemies } from '../../demo/demo_squad';
 import { Rng, Scene } from '@core';
 import { btn, clear, h, layer, toast } from '@ui/dom';
 import { DB, type Biome } from '../../data';
@@ -16,7 +17,6 @@ import { drawBattle } from '../../render/battle_renderer';
 import { IsoCamera } from '../../render/iso';
 import { CanvasPointer } from '../../render/pointer';
 import { store } from '../../state/store';
-import { planEncounter } from '../../world/encounters';
 
 type Tool = 'terrain' | 'prop' | 'structure' | 'piece' | 'unpiece' | 'window' | 'ladder' | 'raise' | 'lower' | 'level' | 'surface' | 'cloud' | 'spawn' | 'door' | 'fill' | 'pick' | 'erase';
 
@@ -524,7 +524,6 @@ export class MapEditorScene extends Scene {
         btn('⬆ Importar JSON', () => this.importJson()),
         btn('⚔ Testar batalha neste mapa', () => this.testBattle(), { class: 'primary' }),
         btn('↩ Menu principal', () => this.ctx.scenes.go('main_menu')),
-        store.campaign ? btn('🗺 Voltar ao mapa-mundo', () => this.ctx.scenes.go('world_map')) : null,
       ),
     );
     const saved = Object.values(loadMaps());
@@ -604,12 +603,11 @@ export class MapEditorScene extends Scene {
   private testBattle(): void {
     const rng = new Rng(Date.now() % 1e9);
     const level = 5;
-    const plan = planEncounter(rng, this.map.biome, level, 'comum');
     this.ctx.scenes.go('battle', {
       setup: {
         map: cloneMap(this.map),
         players: devPlayerUnits(level),
-        enemies: plan.enemies.map((e) => unitFromEnemy(DB.enemies[e.id]!, e.level, rng)),
+        enemies: skirmishEnemies(rng, level, this.map.biome),
         victory: { type: 'eliminate' },
         ambush: false,
         canFlee: true,

@@ -12,7 +12,6 @@ import { describeSkill } from '@game/bestiary/describe';
 import { devPlayerUnits } from '@game/dev/dev_squad';
 import { generateMap } from '@game/mapgen/generator';
 import { makeCharacter } from '@game/rules/recruit';
-import { planEncounter } from '@game/world/encounters';
 
 const encounterable = REPO_CREATURES.filter((c) => !c.summonOnly);
 
@@ -235,21 +234,3 @@ describe('bestiário: edições locais', () => {
   });
 });
 
-describe('bestiário: encontros', () => {
-  it('feras só aparecem se o nível do encontro alcança a faixa delas', () => {
-    for (let seed = 1; seed <= 40; seed++) {
-      const plan = planEncounter(new Rng(seed), 'floresta', 3, 'lendario');
-      for (const e of plan.enemies) {
-        const def = DB.enemies[e.id]!;
-        if (def.kind === 'beast') expect(def.levelMin ?? 1, e.id).toBeLessThanOrEqual(plan.level + 3);
-      }
-      expect(plan.tier).not.toBe('lendario');
-    }
-  });
-
-  it('no nível certo, encontros lendários trazem uma lendária do bioma', () => {
-    const plan = planEncounter(new Rng(1), 'costa', 70, 'lendario');
-    expect(DB.enemies[plan.enemies[0]!.id]!.tier).toBe('lendario');
-    expect(plan.enemies.some((e) => e.id === 'tentaculo_kraken')).toBe(false);
-  });
-});

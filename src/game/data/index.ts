@@ -4,9 +4,7 @@ import combos from './skills/combos.json';
 import orbCombos from './skills/orb_combos.json';
 import skills from './skills/skills.json';
 import items from './items/items.json';
-import LEGENDS from './world/legends.json';
 import enemies from './enemies/enemies.json';
-import countries from './world/countries.json';
 import creatures from './bestiary/creatures.json';
 import distantCreatures from './bestiary/distant.json';
 import materials from './materials/materials.json';
@@ -20,7 +18,7 @@ import treeArmas from './skills/trees/armas.json';
 import { allGiftTrees } from '../rules/gifts';
 import storyKits from './skills/story_kits.json';
 import { fortify } from '../rules/empower';
-import type { ClassDef, ClassId, ComboDef, CountryDef, CreatureDef, CreatureSkill, EnemyDef, ItemDef, MaterialDef, MaterialFamily, Rarity, SkillDef, SkillFx, SkillTree, TreeNode, TreeSkill } from './types';
+import type { ClassDef, ClassId, ComboDef, CreatureDef, CreatureSkill, EnemyDef, ItemDef, MaterialDef, MaterialFamily, Rarity, SkillDef, SkillFx, SkillTree, TreeNode, TreeSkill } from './types';
 
 export * from './types';
 
@@ -41,9 +39,8 @@ export const DB = {
   classes: index(classes as ClassDef[]) as Record<ClassId, ClassDef>,
   skills: index(skills as SkillDef[]),
   combos: index(combos as ComboDef[]),
-  items: index([...(items as ItemDef[]), ...(LEGENDS.items as ItemDef[])]),
+  items: index(items as ItemDef[]),
   enemies: index(enemies as EnemyDef[]),
-  countries: countries as CountryDef[],
   /** Bestiário ativo (repositório + edições locais). */
   creatures: {} as Record<string, CreatureDef>,
   /** Rosas das classes (árvores de habilidades) por classe. */
@@ -155,7 +152,7 @@ export const REPO_ITEMS = items as ItemDef[];
 export function applyItems(list: ItemDef[]): void {
   DB.items = {};
   // Itens únicos das lendas e masmorras (D127) vêm sempre junto, como as criaturas distantes.
-  for (const it of [...(LEGENDS.items as ItemDef[]), ...list]) DB.items[it.id] = it;
+  for (const it of list) DB.items[it.id] = it;
 }
 
 /** Instala (ou reinstala) o bestiário no banco de dados do jogo. */
@@ -305,7 +302,6 @@ export function registerGameData(data: DataRegistry): void {
   data.register('combos', combos as ComboDef[]);
   data.register('items', items as ItemDef[]);
   data.register('enemies', enemies as EnemyDef[]);
-  data.register('countries', countries as CountryDef[]);
   data.register('creatures', Object.values(DB.creatures));
   // A teia única serve às quatro classes novas: registra cada árvore uma vez.
   data.register('trees', [...new Set(Object.values(DB.trees))] as SkillTree[]);

@@ -9,7 +9,7 @@ import { blankWeapon, hasItemEdits, loadItems, resetItems, saveItems } from '../
 import { generateMap } from '../../mapgen/generator';
 import { makeCharacter } from '../../rules/recruit';
 import { attrPower } from '../../rules/stats';
-import { RARITY_COLOR, RARITY_LABEL } from '../../world/encounters';
+import { RARITY_COLOR, RARITY_LABEL } from '../../rules/rarity';
 import { ELEMENT_LABEL, field } from '../shared/skill_form';
 
 const SLOT_LABEL: Record<ItemSlot, string> = { weapon: 'Arma', offhand: 'Mão secundária', armor: 'Armadura', accessory: 'Acessório', utility: 'Item de campo' };

@@ -1,5 +1,4 @@
 import { Rng } from '@core';
-import { eccentricityFor, rollQuirks } from './personality';
 import { ATTRS, DB, type Attr, type Attributes, type ClassId, type TreeNode } from '../data';
 import { chainOf, lockReason, treeOf } from './skill_tree';
 import {
@@ -183,22 +182,6 @@ export function recruitPrice(level: number, classId: ClassId): number {
   return 60 + level * 70 + (classId === 'aprendiz' ? 0 : 60);
 }
 
-/** Lista mensal de candidatos de uma capital: Aprendizes + recrutas da classe local. */
-export function generateRecruitPool(rng: Rng, localClass: ClassId): Candidate[] {
-  const out: Candidate[] = [];
-  for (let i = 0; i < 4; i++) {
-    const c = makeCharacter(rng, { classId: 'aprendiz' });
-    out.push({ character: c, price: recruitPrice(1, 'aprendiz') });
-  }
-  for (let i = 0; i < 3; i++) {
-    const level = rng.int(1, 2);
-    const c = makeCharacter(rng, { classId: localClass, level });
-    // Recrutas mais fortes têm personalidades mais marcantes (implícito, sem aviso).
-    c.quirks = rollQuirks(new Rng(seedOf(c.id)), eccentricityFor(level));
-    out.push({ character: c, price: recruitPrice(level, localClass) });
-  }
-  return out;
-}
 
 /** Lista da Citadela Real: só Aprendizes (escolhem a classe ao passar do 1º nível). */
 export function generateApprenticePool(rng: Rng, count = 6): Candidate[] {
