@@ -8,6 +8,7 @@ import { artFor } from '../render/sprite_anims';
 import BOND_DATA from '../data/base/bonds.json';
 import type { BattleUnit, Team } from './types';
 import { frictionLevel, quirkBattle } from '../rules/personality';
+import { giftDef } from '../rules/gifts';
 
 /** Pontos de vínculo → níveis (só os que já têm nível). */
 function bondLevels(points: Record<string, number> | undefined): Record<string, number> | undefined {
@@ -18,6 +19,12 @@ function bondLevels(points: Record<string, number> | undefined): Record<string, 
     if (lv) out[id] = lv;
   }
   return Object.keys(out).length ? out : undefined;
+}
+
+/** Passiva inata do Dom (descrição e fraqueza). */
+function giftInnate(c: Character): string[] {
+  const id = c.gift ? `${c.gift.id}_inato` : '';
+  return id && DB.skills[id] ? [id] : [];
 }
 
 /** Pente da arma de fogo equipada (cheio no começo da batalha). */
@@ -139,7 +146,8 @@ export function unitFromCharacter(c: Character, team: Team): BattleUnit {
     y: 0,
     facing: team === 'player' ? 0 : 2,
     gauge: 0,
-    skills: [...innateSkillIds(c.classId), ...c.skills.filter((id) => DB.skills[id]), ...grantedSkillIds(c.classId, c.skills), ...unlockedEvolutions(c.skills, c.skillRanks), ...jewelSkill(c), ...kitSkills(c)],
+    skills: [...innateSkillIds(c.classId), ...giftInnate(c), ...c.skills.filter((id) => DB.skills[id]), ...grantedSkillIds(c.classId, c.skills), ...unlockedEvolutions(c.skills, c.skillRanks), ...jewelSkill(c), ...kitSkills(c)],
+    ...(c.gift && giftDef(c.gift.id) ? { gift: c.gift.id, strain: 0, giftPotential: c.gift.potential } : {}),
     title: c.storyId ? STORY_KITS[c.storyId]?.title : undefined,
     skillRanks: { ...grantedRanks(c), ...jewelRank(c) },
     orbs: orbElements(c),

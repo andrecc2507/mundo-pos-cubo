@@ -13,6 +13,7 @@ import * as downed from './downed';
 import * as build from './build';
 import * as conc from './concentration';
 import * as patrol from './patrol';
+import * as gift from './gift_fx';
 import * as scenery from './scenery';
 import * as confine from './confine';
 import type { BattleContext, BattleResult, BattleSetup, BattleState, BattleUnit, Objective, StatusId, Team, TurnState, Wave } from './types';
@@ -1094,7 +1095,7 @@ export function previewHit(state: BattleState, a: BattleUnit, d: BattleUnit, kin
   // Fortificado, quebrado e penetração mexem na defesa efetiva do alvo (m.def).
   const res = magic ? stats.magicResistance(d.attrs.int * m.def) : stats.physicalResistance(d.def * m.def);
   // Multiplicador da teia (ajuste de balanceamento da subclasse; ver docs/design/simulacao.md).
-  let dmg = raw * stats.skillMultiplier(power) * (def?.powerMult ?? 1) * insp * (1 - res) * elementMult(d, el) * mult * m.dmg;
+  let dmg = raw * stats.skillMultiplier(power) * (def?.powerMult ?? 1) * insp * (1 - res) * elementMult(d, el) * mult * m.dmg * gift.giftDamageMult(a, def);
   // Arma de fogo pela distância (só o tiro básico).
   if (kind === 'basic') {
     const wm = stats.weaponRangeMods(a.weaponType, chebyshev(a.x, a.y, d.x, d.y));
@@ -1236,6 +1237,8 @@ export function damage(state: BattleState, target: BattleUnit, amount: number, a
       target.killedBy = { name: attacker.name, enemyId: attacker.enemyId };
     }
     fx.onDeath(state, target, attacker, lastStatuses);
+    // Aliado caiu: quem está perto e no limite pode despertar o Dom na hora.
+    gift.onAllyDown(state, target);
   }
   // Concentração: golpe no conjurador pode desfazer o efeito que ele mantém.
   conc.onDamaged(state, target, amount);
@@ -1721,7 +1724,24 @@ export function castSkill(state: BattleState, u: BattleUnit, s: SkillLike, x: nu
   if (keep && state.conc?.[u.uid] && canCast(u, s)) conc.end(state, u, 'troca de foco');
   const before = keep ? conc.snapshot(state) : undefined;
   const dealt0 = u.dealt ?? 0;
+  const apBefore = state.turn.ap ?? 0;
   const ok = castSkillInner(state, u, s, x, y, combo);
+  const def = DB.skills[s.id];
+  if (ok && def) {
+    // Dom: Strain (e talvez Overload).
+    gift.afterGiftCast(state, u, def);
+    // Impulso: o aliado alvo ganha ação.
+    if (def.fx?.grantAp) {
+      const t = unitAt(state, x, y);
+      if (t) gift.grantAp(state, t, def.fx.grantAp, u);
+    }
+    // Turnos por time: técnica de 1 ação não encerra o turno (se sobrava outra).
+    if (state.teamTurns && def.apCost === 1 && apBefore >= 2 && u.alive && state.activeUid === u.uid) {
+      state.turn.ap = apBefore - 1;
+      state.turn.acted = false;
+      state.turn.moveLeft = state.turn.ap * moveBudget(u);
+    }
+  }
   // Telemetria: parte do dano que veio de habilidades (simulação de balanceamento).
   if (ok) {
     u.skillDealt = (u.skillDealt ?? 0) + (u.dealt ?? 0) - dealt0;
@@ -2199,6 +2219,8 @@ function beginTurn(state: BattleState, u: BattleUnit): boolean {
       fx.onStatusExpired(state, u, k);
     } else u.statuses[k] = v;
   }
+  // Dom: o Strain cai; e talvez desperte.
+  if (u.alive) gift.giftTurnStart(state, u);
   // Armadilha armada embaixo de quem começa o turno (ex.: Armadilha Abrupta): dispara agora.
   if (u.alive) fx.stepOnTile(state, u);
   // Percepção: armadilhas inimigas e passagens secretas por perto.

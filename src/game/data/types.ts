@@ -56,6 +56,12 @@ export type SkillShape = 'single' | 'radius' | 'line' | 'cone';
 export interface SkillDef {
   id: string;
   name: string;
+  /** Técnica de Dom: Strain que gera ao usar. */
+  strain?: number;
+  /** Dom de onde vem a técnica. */
+  gift?: string;
+  /** Turnos por time: custa só 1 ação e não encerra o turno. */
+  apCost?: number;
   /** Id da forma fortificada (habilidades de teia no Nv 5). */
   fortified?: string;
   /** Bônus da forma fortificada (texto). */
@@ -380,6 +386,10 @@ export interface SkillFx {
   shieldFromLost?: number;
   /** Soma a defesa de quem ataca ao poder (× fator). */
   defScaling?: number;
+  /** Dá N ações a um aliado (turnos por time); se ele já tinha encerrado, volta a agir. */
+  grantAp?: number;
+  /** Passiva (Despertar): o Dom não sofre Overload. */
+  overloadImmune?: boolean;
   /** Empurra / puxa o alvo N metros. */
   push?: number;
   pull?: number;
@@ -653,6 +663,12 @@ export interface TreeEvolution extends Partial<Omit<TreeSkill, 'evolve' | 'id' |
 
 export interface TreeSkill extends CreatureSkill {
   mp: number;
+  /** Técnica de Dom: Strain que gera ao usar (0–100; em 100, Overload). */
+  strain?: number;
+  /** Dom de onde vem a técnica. */
+  gift?: string;
+  /** Turnos por time: custa só 1 ação e não encerra o turno (técnicas de movimento). */
+  apCost?: number;
   /** Evoluções liberadas no Nv 3/5 (aparecem ao lado da versão normal). */
   evolve?: TreeEvolution[];
   levelReq?: number;
@@ -713,8 +729,14 @@ export interface TreeNode {
 export interface SkillTree {
   id: string;
   classId: ClassId;
+  /** Classes que usam esta mesma teia (teia única do Mundo Pós-Cubo). */
+  classIds?: ClassId[];
   name: string;
   nodes: TreeNode[];
+  /** Nível máximo das habilidades (padrão 5; Mundo Pós-Cubo: 1 — a Maestria vem do uso). */
+  maxRank?: number;
+  /** 'class' (padrão), 'gift' (árvore de Dom) ou 'weapon' (árvore de armas). */
+  kind?: 'class' | 'gift' | 'weapon';
 }
 
 /** Ficha do bestiário — fonte única das criaturas do jogo. */

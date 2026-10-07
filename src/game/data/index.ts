@@ -15,6 +15,7 @@ import treeMago from './skills/trees/mago.json';
 import treeArqueiro from './skills/trees/arqueiro.json';
 import treeClerigo from './skills/trees/clerigo.json';
 import treeGuerreiro from './skills/trees/guerreiro.json';
+import { allGiftTrees } from '../rules/gifts';
 import storyKits from './skills/story_kits.json';
 import { fortify } from '../rules/empower';
 import type { ClassDef, ClassId, ComboDef, CountryDef, CreatureDef, CreatureSkill, EnemyDef, ItemDef, MaterialDef, MaterialFamily, Rarity, SkillDef, SkillFx, SkillTree, TreeNode, TreeSkill } from './types';
@@ -45,6 +46,8 @@ export const DB = {
   creatures: {} as Record<string, CreatureDef>,
   /** Rosas das classes (árvores de habilidades) por classe. */
   trees: {} as Partial<Record<ClassId, SkillTree>>,
+  /** Árvores de Dom e de armas (Mundo Pós-Cubo), por id. */
+  auxTrees: {} as Record<string, SkillTree>,
   /** Materiais de drop (repositório + edições locais). */
   materials: {} as Record<string, MaterialDef>,
 };
@@ -172,7 +175,17 @@ export function treeSkillToSkill(s: TreeSkill, tree: SkillTree, node: TreeNode):
   // Escala da subclasse (teia) pelo tipo, se a habilidade não tiver a própria.
   const byKind = s.kind === 'physical' || s.kind === 'ranged' ? node.scaling?.physical : s.kind === 'magic' ? node.scaling?.magic : s.kind === 'heal' ? node.scaling?.heal : undefined;
   // Ajuste da teia (balanceamento por simulação): multiplica o dano das habilidades no motor.
-  return { ...def, ...(node.powerMult ? { powerMult: node.powerMult } : {}), scaling: s.scaling ?? byKind, tree: node.id, ultimate: s.ultimate, levelReq: s.levelReq };
+  return {
+    ...def,
+    ...(node.powerMult ? { powerMult: node.powerMult } : {}),
+    scaling: s.scaling ?? byKind,
+    tree: node.id,
+    ultimate: s.ultimate,
+    levelReq: s.levelReq,
+    ...(s.strain ? { strain: s.strain } : {}),
+    ...(s.gift ? { gift: s.gift } : {}),
+    ...(s.apCost ? { apCost: s.apCost } : {}),
+  };
 }
 
 /** Ids antigos de árvores instaladas (para limpar ao reinstalar). */
@@ -184,7 +197,7 @@ export function applyTrees(list: SkillTree[]): void {
   installedTreeSkills.clear();
   DB.trees = {};
   for (const t of list) {
-    DB.trees[t.classId] = t;
+    for (const cid of t.classIds ?? [t.classId]) DB.trees[cid] = t;
     for (const n of t.nodes)
       for (const s of n.skills) {
         if (DB.skills[s.id] && !installedTreeSkills.has(s.id)) throw new Error(`Id de habilidade repetido: ${s.id}`);
@@ -201,7 +214,7 @@ export function applyTrees(list: SkillTree[]): void {
           DB.skills[s.id] = { ...DB.skills[s.id]!, evolutions: [...(DB.skills[s.id]!.evolutions ?? []), e.id] };
         }
         // Forma fortificada (Nv 5): habilidade gêmea, mais cara e com um bônus (segredo do treino).
-        const f = fortify(s);
+        const f = (t.maxRank ?? 5) >= 5 ? fortify(s) : null;
         if (f) {
           DB.skills[f.skill.id] = { ...treeSkillToSkill(f.skill, t, n), fortifiedOf: s.id };
           DB.skills[s.id] = { ...DB.skills[s.id]!, fortified: f.skill.id, fortifiedBonus: f.bonus };
@@ -211,9 +224,27 @@ export function applyTrees(list: SkillTree[]): void {
   }
 }
 
+const installedAuxSkills = new Set<string>();
+
+/** Instala as árvores de Dom e de armas (Mundo Pós-Cubo): técnicas no banco, árvore por id. */
+export function applyAuxTrees(list: SkillTree[]): void {
+  for (const id of installedAuxSkills) delete DB.skills[id];
+  installedAuxSkills.clear();
+  DB.auxTrees = {};
+  for (const t of list) {
+    DB.auxTrees[t.id] = t;
+    for (const n of t.nodes)
+      for (const s of n.skills) {
+        if (DB.skills[s.id] && !installedAuxSkills.has(s.id)) throw new Error(`Id de habilidade repetido: ${s.id}`);
+        DB.skills[s.id] = treeSkillToSkill(s, t, n);
+        installedAuxSkills.add(s.id);
+      }
+  }
+}
+
 /** Nó da árvore ao qual uma habilidade pertence. */
 export function nodeOfSkill(skillId: string): TreeNode | undefined {
-  for (const t of Object.values(DB.trees))
+  for (const t of [...Object.values(DB.trees), ...Object.values(DB.auxTrees)])
     for (const n of t!.nodes) if (n.skills.some((s) => s.id === skillId)) return n;
   return undefined;
 }
@@ -224,6 +255,7 @@ export const REPO_CREATURES = creatures as unknown as CreatureDef[];
 export const DISTANT_CREATURES = distantCreatures as unknown as CreatureDef[];
 applyCreatures(REPO_CREATURES);
 applyTrees(REPO_TREES);
+applyAuxTrees(allGiftTrees());
 
 /** Kits únicos dos personagens da história (data/skills/story_kits.json). */
 export interface StoryKit {
