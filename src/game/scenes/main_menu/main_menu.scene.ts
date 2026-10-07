@@ -47,6 +47,7 @@ export class MainMenuScene extends Scene {
         h(
           'div',
           { class: 'title-menu' },
+          item(t('⚔ Demo de batalha'), () => this.ctx.scenes.go('demo')),
           item(t('Continuar'), () => {
             if (loadGame(this.ctx.save)) this.ctx.scenes.go('world_map');
           }, { disabled: !hasSave }),

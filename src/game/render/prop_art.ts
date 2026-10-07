@@ -618,6 +618,30 @@ export function drawPropArt(ctx: Ctx, t: Tile, sx: number, sy: number, z: number
       }
       break;
     }
+    // ── cidade moderna (Mundo Pós-Cubo) ──
+    case 'carro': {
+      shadow(ctx, sx, sy, z, 16);
+      const hue = ['#8d3b2f', '#2f5d8d', '#5d5d5d', '#c9b037', '#2f7d4a'][Math.floor(tileHash(x, y, 3) * 5)]!;
+      for (const [u, v] of [[-0.3, -0.3], [0.3, -0.3], [-0.3, 0.3], [0.3, 0.3]] as [number, number][]) {
+        const p = at(u, v);
+        disc(ctx, p[0], p[1] - 2 * z, 3.2 * z, 3.2 * z, '#1c1c1c');
+      }
+      isoBox(ctx, sx, sy, z, 0.46, 0.3, 7 * z, hue, 2 * z);
+      isoBox(ctx, sx, sy, z, 0.24, 0.26, 6 * z, '#9fb4c2', 9 * z);
+      break;
+    }
+    case 'barreira_concreto':
+      shadow(ctx, sx, sy, z, 12);
+      isoBox(ctx, sx, sy, z, 0.46, 0.16, 9 * z, '#a9a9a9');
+      break;
+    case 'lixeira': {
+      shadow(ctx, sx, sy, z, 12);
+      const top = isoBox(ctx, sx, sy, z, 0.36, 0.28, 10 * z, '#3f6b46');
+      ctx.fillStyle = '#2b4a30';
+      polygon(ctx, top);
+      ctx.fill();
+      break;
+    }
     default:
       ctx.fillStyle = def.color;
       ctx.fillRect(sx - 6 * z, sy - 12 * z, 12 * z, 12 * z);

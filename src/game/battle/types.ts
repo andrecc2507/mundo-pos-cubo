@@ -263,6 +263,8 @@ export interface BattleUnit {
   /** Dom (Mundo Pós-Cubo): id, Strain 0–100, potencial (★) e se já despertou nesta batalha. */
   gift?: string;
   strain?: number;
+  /** Usou técnica do Dom desde o último turno (o Strain quase não cai em sequência). */
+  strainHot?: boolean;
   giftPotential?: number;
   awakened?: boolean;
   /** Atrito com outros heróis (charId → 1 Rivais, 2 Desafetos): efeito lado a lado. */

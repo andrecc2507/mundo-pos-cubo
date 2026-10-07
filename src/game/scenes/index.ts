@@ -10,6 +10,7 @@ import { SkillTreesScene } from './skill_trees/skill_trees.scene';
 import { MapEditorScene } from './map_editor/map_editor.scene';
 import { WorldMapScene } from './world_map/world_map.scene';
 import { CreationScene } from './creation/creation.scene';
+import { DemoScene } from './demo/demo.scene';
 
 export function registerScenes(scenes: SceneManager): void {
   scenes
@@ -22,5 +23,6 @@ export function registerScenes(scenes: SceneManager): void {
     .register('bestiary', () => new BestiaryScene())
     .register('arsenal', () => new ArsenalScene())
     .register('materials', () => new MaterialsScene())
-    .register('skill_trees', () => new SkillTreesScene());
+    .register('skill_trees', () => new SkillTreesScene())
+    .register('demo', () => new DemoScene());
 }

@@ -15,7 +15,9 @@ export type Prop =
   | 'banca' | 'tenda' | 'estatua' | 'fonte' | 'lampiao' | 'fogueira' | 'banco' | 'mesa' | 'estante'
   | 'bau' | 'altar' | 'trono' | 'estandarte' | 'portao'
   | 'lapide' | 'sarcofago' | 'obelisco' | 'portal_vazio'
-  | 'barril_oleo' | 'barril_polvora' | 'lustre' | 'alavanca' | 'sino' | 'selo_confinamento';
+  | 'barril_oleo' | 'barril_polvora' | 'lustre' | 'alavanca' | 'sino' | 'selo_confinamento'
+  // Mundo Pós-Cubo (cidade moderna).
+  | 'carro' | 'barreira_concreto' | 'lixeira';
 export type Surface = 'fogo' | 'agua' | 'agua_eletrica' | 'gelo' | 'lama' | 'oleo';
 export type Cloud = 'vapor' | 'vapor_eletrico' | 'fumaca' | 'veneno' | 'gas_fetido' | 'esporos' | 'nevasca' | 'vapor_fervente' | 'nevoa_lunar' | 'chama_fria' | 'tinta' | 'nevoa_de_sangue';
 export type Spawn = 'player' | 'enemy' | 'extract';
@@ -272,6 +274,9 @@ export const PROPS: Record<Prop, PropDef> = {
   alavanca: P('Alavanca', 'cidade', 1, '#6a6a72', 80, { interact: 'lever' }),
   sino: P('Sino', 'templo', 2, '#c9a14a', 150, { interact: 'bell' }),
   selo_confinamento: P('Selo de Confinamento', 'templo', 1, '#e04040', 40, { move: false, onBreak: 'seal', light: '#ff6a6a' }),
+  carro: P('Carro abandonado', 'cidade', 1, '#8d3b2f', 70, { onBreak: 'explode' }),
+  barreira_concreto: P('Barreira de concreto', 'cidade', 1, '#9e9e9e', 160, {}),
+  lixeira: P('Caçamba de lixo', 'cidade', 1, '#3f6b46', 60, {}),
 };
 
 export const SURFACES: Record<Surface, { name: string; color: string }> = {

@@ -43,6 +43,7 @@ export function afterGiftCast(state: BattleState, u: BattleUnit, def: SkillDef |
   if (!def?.strain || !u.alive) return;
   const before = u.strain ?? 0;
   u.strain = Math.min(100, before + Math.round(def.strain * (u.awakened ? AWAKENING.strainMult : 1)));
+  u.strainHot = true;
   if (before < STRAIN.plusUltraAt && u.strain >= STRAIN.plusUltraAt && u.strain < 100) {
     state.log.push(`🔥 ${u.name} força o Dom além do limite! (Strain ${u.strain})`);
     state.events.push({ type: 'gift', uid: u.uid, moment: 'plusUltra', text: 'ALÉM DO LIMITE!' });
@@ -80,11 +81,16 @@ export function overload(state: BattleState, u: BattleUnit): void {
     for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) if (dx || dy) applyElementToTile(state, u.x + dx, u.y + dy, 'fogo');
 }
 
-/** Começo do turno: o Strain cai; e talvez o Dom desperte. */
+/**
+ * Começo do turno: o Strain cai (bem pouco se usou o Dom no turno anterior — usar em sequência
+ * acumula, descansar esfria); e talvez o Dom desperte.
+ */
 export function giftTurnStart(state: BattleState, u: BattleUnit): void {
   if (!u.gift) return;
+  const hot = u.strainHot;
+  u.strainHot = false;
   if (checkAwakening(state, u)) return;
-  u.strain = Math.max(0, (u.strain ?? 0) - STRAIN.decayPerTurn);
+  u.strain = Math.max(0, (u.strain ?? 0) - (hot ? STRAIN.decayActive : STRAIN.decayPerTurn));
 }
 
 /** Pode despertar agora? (potencial, Strain e um aliado caído ou a própria vida baixa). */

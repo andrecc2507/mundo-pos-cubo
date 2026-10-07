@@ -307,6 +307,7 @@ export function registerGameData(data: DataRegistry): void {
   data.register('enemies', enemies as EnemyDef[]);
   data.register('countries', countries as CountryDef[]);
   data.register('creatures', Object.values(DB.creatures));
-  data.register('trees', Object.values(DB.trees) as SkillTree[]);
+  // A teia única serve às quatro classes novas: registra cada árvore uma vez.
+  data.register('trees', [...new Set(Object.values(DB.trees))] as SkillTree[]);
   data.register('materials', Object.values(DB.materials));
 }

@@ -1,5 +1,5 @@
 {
- "_doc": "Regras dos Dons (Mundo Pós-Cubo). Strain 0–100 sobe com as técnicas do Dom e cai a cada turno; a partir de plusUltraAt as técnicas batem mais forte (ir além do limite); em 100 vem o Overload próprio do Dom. Despertar: com potencial ≥ awakening.minPotential, Strain ≥ awakening.strainAt e (aliado caído ou vida < awakening.hpBelow), o Dom desperta no meio da batalha — muda uma regra (passiva própria), zera o Strain e as técnicas ficam mais fortes e baratas. Os arquétipos dão os números das técnicas montadas por rules/gifts.ts.",
+ "_doc": "Regras dos Dons (Mundo Pós-Cubo). Strain 0–100 sobe com as técnicas do Dom e cai a cada turno (decayPerTurn descansando, só decayActive se usou o Dom no turno anterior — usar em sequência acumula); a partir de plusUltraAt as técnicas batem mais forte (ir além do limite); em 100 vem o Overload próprio do Dom. Despertar: com potencial ≥ awakening.minPotential, Strain ≥ awakening.strainAt e (aliado caído ou vida < awakening.hpBelow), o Dom desperta no meio da batalha — muda uma regra (passiva própria), zera o Strain e as técnicas ficam mais fortes e baratas. Os arquétipos dão os números das técnicas montadas por rules/gifts.ts.",
  "rarityWeight": { "comum": 60, "incomum": 25, "raro": 10, "excepcional": 4, "lendario": 1 },
  "rarityLabel": { "comum": "Comum", "incomum": "Incomum", "raro": "Raro", "excepcional": "Excepcional", "lendario": "Lendário" },
  "families": {
@@ -10,7 +10,7 @@
   "sensorial": { "label": "Sensorial", "desc": "Atua sobre informação e percepção.", "kind": "physical", "finisher": "certeiro" },
   "anomalo": { "label": "Anômalo", "desc": "Altera regras fundamentais do combate.", "kind": "magic", "finisher": "ruptura" }
  },
- "strain": { "decayPerTurn": 15, "plusUltraAt": 75, "plusUltraDamage": 0.25, "afterOverload": 35 },
+ "strain": { "decayPerTurn": 15, "decayActive": 5, "plusUltraAt": 75, "plusUltraDamage": 0.25, "afterOverload": 35 },
  "awakening": { "minPotential": 4, "strainAt": 60, "hpBelow": 0.4, "damage": 0.2, "strainMult": 0.5 },
  "potentialSlots": { "1": 2, "2": 3, "3": 3, "4": 4, "5": 5 },
  "archetypes": {

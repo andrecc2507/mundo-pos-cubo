@@ -1,5 +1,6 @@
 import { DB, NEW_CLASSES, type ClassId, type FxStatus, type NodeBonus, type SkillDef, type SkillTree, type TreeNode, type TreeSkill } from '../data';
 import { CROSS_CLASS_LEVEL, chainRankReq } from './stats';
+import { giftSlots, giftTreeId } from './gifts';
 
 /**
  * Regras da rosa das classes (puro). Cada subclasse é uma teia: uma fila de habilidades que sai do
@@ -85,8 +86,8 @@ export interface Learner {
   skills: string[];
   /** Nível de cada habilidade aprendida (ausente = 1). */
   skillRanks?: Record<string, number>;
-  /** Dom (Mundo Pós-Cubo): abre a árvore do Dom. */
-  gift?: { id: string };
+  /** Dom (Mundo Pós-Cubo): abre a árvore do Dom; o potencial (★) limita quantas técnicas cabem. */
+  gift?: { id: string; potential?: number };
 }
 
 export function treeOf(classId: ClassId): SkillTree | undefined {
@@ -203,6 +204,12 @@ export function lockReason(c: Learner, skillId: string): string | null {
   const maxRank = treeMaxRank(tree);
   if (rank >= maxRank) return maxRank === 1 ? 'já aprendida' : 'nível máximo';
   if (rank > 0) return null;
+  // Dom: o potencial (★) limita quantas técnicas ativas cabem (as passivas não contam).
+  if (c.gift?.potential && tree.id === giftTreeId(c.gift.id) && f.skill.kind !== 'passive') {
+    const slots = giftSlots(c.gift.potential);
+    const used = tree.nodes.filter((n) => n.type !== 'base').flatMap((n) => n.skills).filter((s) => s.kind !== 'passive' && c.skills.includes(s.id)).length;
+    if (used >= slots) return `potencial ★${c.gift.potential}: só ${slots} técnicas do Dom`;
+  }
   // Teia única: subclasses de outra classe pedem treino cruzado (nível mínimo).
   if (f.node.group && f.node.group !== c.classId && c.level < CROSS_CLASS_LEVEL) return `treino cruzado: requer NV ${CROSS_CLASS_LEVEL}`;
   if (!nodeUnlocked(c, tree, f.node)) {

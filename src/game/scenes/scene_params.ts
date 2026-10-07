@@ -1,7 +1,7 @@
 import type { BattleSetup } from '../battle/types';
 import type { CreationParams } from './creation/creation.scene';
 
-export type BattleReturn = 'world_map' | 'map_editor' | 'main_menu' | 'bestiary' | 'skill_trees' | 'arsenal';
+export type BattleReturn = 'world_map' | 'map_editor' | 'main_menu' | 'bestiary' | 'skill_trees' | 'arsenal' | 'demo';
 
 /** Ids das cenas e seus parâmetros. Toda cena nova precisa de uma entrada aqui. */
 declare module '@core/scenes/scene_manager' {
@@ -16,6 +16,7 @@ declare module '@core/scenes/scene_manager' {
     skill_trees: void;
     arsenal: void;
     materials: void;
+    demo: void;
   }
 }
 
