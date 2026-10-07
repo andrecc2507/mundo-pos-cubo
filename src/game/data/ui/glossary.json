@@ -195,7 +195,7 @@
   "id": "ferimentos",
   "cat": "Personagens",
   "term": "Ferimentos",
-  "text": "Quem chega abaixo de 50% da vida numa luta fica ferido por alguns dias e não luta. Ferimentos saram viajando, mais rápido na estalagem e na enfermaria de Solenne."
+  "text": "Quem chega abaixo de 50% da vida numa luta fica ferido por alguns dias e não luta. Ferimentos saram com o tempo, mais rápido com a enfermaria da vila."
  },
  {
   "id": "vinculo",

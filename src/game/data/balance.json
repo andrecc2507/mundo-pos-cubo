@@ -114,29 +114,7 @@
   "metralhadoraAcc": -8
  },
  "encounters": {
-  "noviceLevel": 4,
-  "levelBands": [
-   {
-    "chance": 0.6,
-    "min": -3,
-    "max": -2
-   },
-   {
-    "chance": 0.2,
-    "min": -1,
-    "max": -1
-   },
-   {
-    "chance": 0.15,
-    "min": 0,
-    "max": 0
-   },
-   {
-    "chance": 0.05,
-    "min": 1,
-    "max": 2
-   }
-  ]
+  "noviceLevel": 4
  },
  "rules": {
   "friendlyFire": true,
@@ -154,11 +132,6 @@
   "roundSeconds": 12,
   "minInterval": 1.5,
   "battleSecondsPerRealSecond": 4
- },
- "refine": {
-  "weaponAtk": 0.1,
-  "armorDef": 0.12,
-  "attrPerLevel": 1
  },
  "tactics": {
   "confineWorth": 0.25,
@@ -215,13 +188,6 @@
   "crushPct": 0.25,
   "crushPerLevel": 4,
   "blastStructureMult": 1.5
- },
- "travel": {
-  "checkBase": 10,
-  "checkPerLevel": 0.6,
-  "checkPerPoint": 4,
-  "checkMin": 10,
-  "checkMax": 95
  },
  "utilities": {
   "_doc": "Utilitários (granadas, kits, estimulantes) no jogo base. Sem Dom é a vantagem de quem luta com equipamento: mais espaços e cada item rende mais usos.",

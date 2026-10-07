@@ -169,8 +169,6 @@ export interface EnemyDef {
   palette?: Record<string, string>;
   family?: string;
   summonOnly?: boolean;
-  /** Facção da história (soldados reais, culto do Véu): não aparece em encontros aleatórios. */
-  story?: boolean;
   fly?: boolean;
 }
 
@@ -769,8 +767,6 @@ export interface CreatureDef {
   family?: string;
   /** Só aparece invocada por outra criatura (fora dos encontros). */
   summonOnly?: boolean;
-  /** Facção da história (soldados reais, culto do Véu): não aparece em encontros aleatórios. */
-  story?: boolean;
   /** Voa ou flutua: ignora altura e lama. */
   fly?: boolean;
   skills: CreatureSkill[];

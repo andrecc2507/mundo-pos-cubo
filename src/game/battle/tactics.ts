@@ -266,7 +266,7 @@ export function propBroke(state: BattleState, x: number, y: number, p: Prop): vo
   explode(state, x, y);
 }
 
-/** Explosão de pólvora alquímica (Vel'Qadar): fogo em volta, dano, paredes rachadas e outros barris em cadeia. */
+/** Explosão de pólvora: fogo em volta, dano, paredes rachadas e outros barris em cadeia. */
 export function explode(state: BattleState, x: number, y: number): void {
   const map = state.map;
   const r = T.explodeRadius;

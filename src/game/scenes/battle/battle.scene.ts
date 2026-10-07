@@ -1790,7 +1790,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
 
   private finish(): void {
     const ctxKind = this.setupCtx.kind;
-    store.battleResult = ctxKind === 'encounter' || ctxKind === 'contract' || ctxKind === 'story' ? buildResult(this.state, this.setupCtx) : null;
+    store.battleResult = ctxKind === 'encounter' || ctxKind === 'contract' ? buildResult(this.state, this.setupCtx) : null;
     this.ctx.scenes.go(this.returnTo);
   }
 

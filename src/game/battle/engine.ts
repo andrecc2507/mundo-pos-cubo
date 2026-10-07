@@ -123,8 +123,6 @@ export function createBattle(setup: BattleSetup): BattleState {
     ambush: setup.ambush,
     canFlee: setup.canFlee,
     revealAll: false,
-    studied: setup.studied,
-    hunted: setup.hunted,
     roundLimit: setup.roundLimit,
     waves: setup.waves?.length ? setup.waves.map((w) => ({ ...w, done: false })) : undefined,
     timeOfDay: setup.timeOfDay,

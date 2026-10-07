@@ -274,7 +274,7 @@ export function drawPropArt(ctx: Ctx, t: Tile, sx: number, sy: number, z: number
       shadow(ctx, sx, sy, z, 8);
       isoCylinder(ctx, sx, sy, z, 0.2, 16 * z, '#3a2a22');
       for (const k of [3, 13]) stroke(ctx, [[sx - 6.8 * z, sy - k * z], [sx + 6.8 * z, sy - k * z]], '#8a7a40', 1.4 * z);
-      // Caveira-alerta da guilda de Vel'Qadar e o pavio.
+      // Caveira de alerta e o pavio.
       disc(ctx, sx, sy - 8 * z, 2.6 * z, 2.6 * z, '#e8d8a0');
       stroke(ctx, [[sx, sy - 17 * z], [sx + 3 * z, sy - 21 * z]], '#c8b080', 1 * z);
       disc(ctx, sx + 3 * z, sy - 21 * z, 1.2 * z, 1.2 * z, `rgba(255,${160 + Math.round(Math.sin(time * 14) * 60)},60,0.9)`);

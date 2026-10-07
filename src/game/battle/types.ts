@@ -386,10 +386,6 @@ export interface BattleState {
   ambush: boolean;
   canFlee: boolean;
   revealAll: boolean;
-  /** Espécies estudadas (bônus de dano e acerto do jogador contra elas). */
-  studied?: string[];
-  /** Espécies com a Marca do Caçador (Verdelume): bônus de dano e crítico. */
-  hunted?: string[];
   /** Unidade do jogador que acabou de lançar fumaça andante e ainda escolhe a direção. */
   smokeToSteer?: string;
   objectives?: Objective[];
@@ -450,11 +446,9 @@ export interface UnitSeed {
 }
 
 export interface BattleContext {
-  kind: 'encounter' | 'contract' | 'dev' | 'editor' | 'story';
+  kind: 'encounter' | 'contract' | 'dev' | 'editor';
   /** Mundo Pós-Cubo: batalha fora de contrato (ataque à vila, encontro na estrada). */
   geo?: 'raid' | 'road';
-  /** Missão da história (kind 'story'). */
-  storyId?: string;
   /** Sem morte permanente (dificuldade História): heróis caídos voltam feridos. */
   noPermadeath?: boolean;
   squadId?: string;
@@ -482,10 +476,6 @@ export interface BattleSetup {
   canFlee: boolean;
   seed: number;
   context: BattleContext;
-  /** Espécies estudadas na Biblioteca: o jogador tem bônus contra elas. */
-  studied?: string[];
-  /** Espécies com a Marca do Caçador (Verdelume). */
-  hunted?: string[];
   /** Esquadrão começa escondido (infiltração). */
   stealthStart?: boolean;
   /** Inimigos em patrulhas desavisadas (despertam ao ver alguém). */

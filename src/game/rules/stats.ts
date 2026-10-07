@@ -369,55 +369,6 @@ export const FRIENDLY_FIRE = balance.rules.friendlyFire;
 /** Até este nível o esquadrão é novato: encontros menores, sem emboscada e humanos sem habilidades de teia. */
 export const NOVICE_LEVEL = balance.encounters.noviceLevel;
 
-/**
- * Nível do encontro relativo à média do grupo: a maioria mais fraca (−3 a −2), uma parte um pouco
- * mais fraca (−1), outra parte no mesmo nível e uma chance pequena de ser mais forte (+1 a +2).
- * `roll` é um número em [0, 1); `pick` sorteia o deslocamento dentro da faixa.
- */
-export function encounterLevelOffset(roll: number, pick: (min: number, max: number) => number): number {
-  let r = roll;
-  for (const b of balance.encounters.levelBands) {
-    if (r < b.chance) return pick(b.min, b.max);
-    r -= b.chance;
-  }
-  return 0;
-}
-
-// ───────────────────────────── refino ─────────────────────────────
-
-/**
- * Atributos de um item refinado de +0 para `level` (Bastiamar: armas e armaduras; Cristália:
- * itens mágicos). Arma: ataque × (1 + 10% por nível); armadura/escudo: defesa × (1 + 12% por
- * nível), no mínimo +1 por nível; mágico: +1 em cada bônus de atributo por nível.
- */
-export function refinedStats(
-  base: { atk?: number; def?: number; bonus?: Record<string, number | undefined> },
-  level: number,
-  magic: boolean,
-): { atk?: number; def?: number; bonus?: Record<string, number> } {
-  const r = balance.refine;
-  const n = clamp(Math.floor(safe(level)), 0, 99);
-  const out: { atk?: number; def?: number; bonus?: Record<string, number> } = {};
-  if (base.atk !== undefined) out.atk = magic ? base.atk : Math.round(base.atk * (1 + r.weaponAtk * n));
-  if (base.def !== undefined) out.def = magic ? base.def : Math.max(base.def + n, Math.round(base.def * (1 + r.armorDef * n)));
-  if (base.bonus) {
-    out.bonus = {};
-    for (const [k, v] of Object.entries(base.bonus)) if (v !== undefined) out.bonus[k] = magic && v > 0 ? v + r.attrPerLevel * n : v;
-  }
-  return out;
-}
-
-/**
- * Teste de atributo fora da batalha (eventos de viagem, C17): 50% quando o melhor atributo do
- * esquadrão empata com a meta (10 + 0,6 por nível + dificuldade do evento); ±4 por ponto de
- * diferença; entre 10% e 95%.
- */
-export function travelCheckChance(best: number, level: number, difficulty = 0): number {
-  const t = balance.travel;
-  const target = t.checkBase + t.checkPerLevel * safe(level) + difficulty;
-  return clamp(50 + t.checkPerPoint * (safe(best) - target), t.checkMin, t.checkMax);
-}
-
 // ───────────────────────────── Dom: Potência / Controle / Versatilidade ─────────────────────────────
 
 const GS = BALANCE.giftStats;
