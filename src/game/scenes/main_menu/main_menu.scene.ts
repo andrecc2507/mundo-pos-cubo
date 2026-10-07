@@ -42,8 +42,8 @@ export class MainMenuScene extends Scene {
       h(
         'div',
         { class: 'title-block' },
-        h('h1', { class: 'menu-title', text: 'JOGO' }),
-        h('div', { class: 'title-sub', text: t('UMA GUERRA CIVIL QUE VIRA GUERRA INTERDIMENSIONAL') }),
+        h('h1', { class: 'menu-title', text: 'MUNDO PÓS-CUBO' }),
+        h('div', { class: 'title-sub', text: t('DEPOIS DO CUBO, TODO MUNDO TEM UM DOM') }),
         h(
           'div',
           { class: 'title-menu' },
@@ -63,7 +63,7 @@ export class MainMenuScene extends Scene {
           item(t('Batalha rápida (dev)'), () => this.quickBattleDialog(), { small: true }),
         ),
       ),
-      h('div', { class: 'title-foot', text: t('O VÉU ESTÁ SE ROMPENDO') }),
+      h('div', { class: 'title-foot', text: t('DEMO DE BATALHA · TURNOS POR TIME') }),
     );
     this.ui.append(screen);
     DevPanel.setGroups([
