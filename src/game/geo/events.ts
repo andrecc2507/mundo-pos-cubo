@@ -10,8 +10,7 @@
  */
 import type { Rng } from '@core';
 import type { BattleResult, BattleSetup, BattleUnit, Wave } from '../battle/types';
-import { generateMap } from '../mapgen/generator';
-import { generateUrbanMap } from '../mapgen/urban';
+import { battleMap } from './maps';
 import { generateVillageMap } from '../mapgen/village_map';
 import { VILLAIN_LINES, makeBeast, makeVillain } from '../demo/demo_squad';
 import type { Biome } from '../data';
@@ -207,7 +206,7 @@ export function encounterBattle(g: GeoGame, units: BattleUnit[], rng: Rng): Batt
   const region = regionById(e.regionId)!;
   const biome = rng.pick(region.biomes);
   const seed = rng.int(1, 1e9);
-  const map = biome === 'cidade' ? generateUrbanMap({ seed }) : generateMap({ biome: (BIOMES.includes(biome as Biome) ? biome : 'planicie') as Biome, seed, w: rng.int(13, 15), h: rng.int(12, 14) });
+  const map = battleMap(region.id, biome, rng);
   const enemies: BattleUnit[] = [];
   for (const [k, n] of Object.entries(t.enemies ?? {})) for (let i = 0; i < n!; i++) enemies.push(k === 'besta' ? makeBeast(rng, e.level) : makeVillain(rng, e.level, { gift: k === 'vilao' }));
   const info = encounterInfo(g, e);

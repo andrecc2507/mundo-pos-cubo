@@ -7,8 +7,7 @@ import type { Rng } from '@core';
 import { DB } from '../data';
 import type { BattleSetup, BattleUnit, ObjectiveDef, Victory, Wave } from '../battle/types';
 import { unitFromCharacter } from '../battle/units';
-import { generateMap } from '../mapgen/generator';
-import { generateUrbanMap } from '../mapgen/urban';
+import { battleMap } from './maps';
 import { VILLAIN_LINES, makeBeast, makeVillain } from '../demo/demo_squad';
 import { makeCharacter } from '../rules/recruit';
 import type { Character } from '../rules/character';
@@ -232,7 +231,7 @@ export function contractBattle(g: GeoGame, c: Contract, squad: BattleUnit[], rng
   const region = regionById(locationRegion(c))!;
   const biome = rng.pick(region.biomes);
   const seed = rng.int(1, 1e9);
-  const map = biome === 'cidade' ? generateUrbanMap({ seed }) : generateMap({ biome: (BIOMES.includes(biome as Biome) ? biome : 'planicie') as Biome, seed, w: rng.int(14, 17), h: rng.int(13, 16) });
+  const map = battleMap(region.id, biome, rng);
   const lv = c.level;
   const pool = beastPool(biome, lv);
   const count = Math.max(2, Math.min(9, squad.length + C.enemyCountBonus + Math.floor(region.tier * C.enemyCountPerTier) + (difficulty(g).enemyCount ?? 0)));

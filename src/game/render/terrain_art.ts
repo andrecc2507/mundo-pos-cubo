@@ -164,6 +164,23 @@ export function drawTexture(ctx: CanvasRenderingContext2D, t: Tile, sx: number, 
       line(ctx, at(...spot(x, y, 1)), at(...spot(x, y, 2)), 'rgba(150,140,130,0.35)');
       line(ctx, at(...spot(x, y, 2)), at(...spot(x, y, 3)), 'rgba(150,140,130,0.25)');
       break;
+    case 'asfalto': {
+      // Rachaduras e, às vezes, a faixa pintada que sobrou.
+      if (tileHash(x, y, 7) < 0.35) {
+        const a = at(...spot(x, y, 1, 0.1));
+        const b = at(...spot(x, y, 2, 0.1));
+        const c = at(...spot(x, y, 3, 0.1));
+        ctx.strokeStyle = 'rgba(0,0,0,0.45)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(a[0], a[1]);
+        ctx.lineTo(b[0], b[1]);
+        ctx.lineTo(c[0], c[1]);
+        ctx.stroke();
+      }
+      if ((x + y) % 4 === 0 && tileHash(x, y, 8) < 0.5) line(ctx, at(-0.18, 0), at(0.18, 0), 'rgba(230,210,120,0.45)', 2 * s);
+      break;
+    }
     case 'tapete':
       line(ctx, at(-0.42, -0.5), at(-0.42, 0.5), '#d8b04a', 2 * s);
       line(ctx, at(0.42, -0.5), at(0.42, 0.5), '#d8b04a', 2 * s);
@@ -257,6 +274,38 @@ export function drawWall(ctx: CanvasRenderingContext2D, pattern: WallPattern, a:
           ctx.lineTo(q[0], q[1]);
           ctx.stroke();
         }
+      break;
+    }
+    case 'concreto': {
+      // Painéis de concreto: junta a cada andar, faixa escura de janelas e manchas de infiltração.
+      ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+      ctx.lineWidth = 1;
+      for (let r = 1; r < levels; r++) {
+        const p = lerp(0, r / levels);
+        const q = lerp(1, r / levels);
+        ctx.beginPath();
+        ctx.moveTo(p[0], p[1]);
+        ctx.lineTo(q[0], q[1]);
+        ctx.stroke();
+      }
+      for (let r = 0; r < levels; r++) {
+        if (tileHash(x + face, y, r) < 0.35) continue;
+        const p = lerp(0.2, (r + 0.25) / levels);
+        const q = lerp(0.8, (r + 0.25) / levels);
+        const p2 = lerp(0.8, (r + 0.6) / levels);
+        const q2 = lerp(0.2, (r + 0.6) / levels);
+        ctx.fillStyle = tileHash(x, y + face, r + 9) < 0.2 ? 'rgba(255,220,140,0.35)' : 'rgba(25,30,38,0.55)';
+        polygon(ctx, [p, q, p2, q2]);
+        ctx.fill();
+      }
+      const st = lerp(tileHash(x, y, face), 0);
+      const sb = lerp(tileHash(x, y, face), 0.7);
+      ctx.strokeStyle = 'rgba(60,50,40,0.25)';
+      ctx.lineWidth = 3 * z;
+      ctx.beginPath();
+      ctx.moveTo(st[0], st[1]);
+      ctx.lineTo(sb[0], sb[1]);
+      ctx.stroke();
       break;
     }
     case 'enxaimel': {

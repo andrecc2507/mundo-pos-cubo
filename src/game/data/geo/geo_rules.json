@@ -305,5 +305,26 @@
    "start": 0.8,
    "enemyCount": 1
   }
+ },
+ "maps": {
+  "_doc": "Mapas de batalha do jogo base (geo/maps.ts). ruinsChance: chance de ruínas urbanas do tema da região (o padrão); o resto é o terreno aberto da região com wildRuins prédios arruinados espalhados. Tamanhos em casas: grandes, porque os Dons dão muita mobilidade.",
+  "ruinsChance": 0.8,
+  "ruinsW": [
+   30,
+   34
+  ],
+  "ruinsH": [
+   24,
+   28
+  ],
+  "wildW": [
+   24,
+   28
+  ],
+  "wildH": [
+   20,
+   24
+  ],
+  "wildRuins": 3
  }
 }

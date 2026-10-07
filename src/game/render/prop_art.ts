@@ -642,6 +642,154 @@ export function drawPropArt(ctx: Ctx, t: Tile, sx: number, sy: number, z: number
       ctx.fill();
       break;
     }
+    // ── ruínas pós-Cubo ──
+    case 'carro_queimado': {
+      shadow(ctx, sx, sy, z, 16);
+      for (const [u, v] of [[-0.3, -0.3], [0.3, -0.3], [-0.3, 0.3], [0.3, 0.3]] as [number, number][]) {
+        const p = at(u, v);
+        disc(ctx, p[0], p[1] - 1 * z, 2.6 * z, 2.2 * z, '#151515');
+      }
+      isoBox(ctx, sx, sy, z, 0.46, 0.3, 6 * z, '#3a3330', 1 * z);
+      isoBox(ctx, sx, sy, z, 0.24, 0.26, 5 * z, '#241f1d', 7 * z);
+      for (let k = 0; k < 3; k++) disc(ctx, sx + (k - 1) * 4 * z, sy - (14 + k * 4 + Math.sin(time * 2 + k + x) * 2) * z, (3 + k) * z, (2.5 + k) * z, `rgba(70,70,70,${0.25 - k * 0.06})`);
+      break;
+    }
+    case 'onibus': {
+      shadow(ctx, sx, sy, z, 20);
+      // Tombado de lado: o teto vira parede, janelas para cima.
+      isoBox(ctx, sx, sy, z, 0.5, 0.36, 15 * z, '#c9a227');
+      const top = isoBox(ctx, sx, sy, z, 0.42, 0.12, 2 * z, '#8a9aa8', 15 * z);
+      ctx.fillStyle = 'rgba(20,30,40,0.5)';
+      polygon(ctx, top);
+      ctx.fill();
+      break;
+    }
+    case 'container': {
+      shadow(ctx, sx, sy, z, 16);
+      const hue = ['#b5482f', '#2f6d8d', '#3f7d4a', '#c98f2a'][Math.floor(tileHash(x, y, 5) * 4)]!;
+      isoBox(ctx, sx, sy, z, 0.5, 0.42, 22 * z, hue);
+      for (let k = 1; k < 5; k++) stroke(ctx, [[sx - 15 * z + k * 6 * z, sy - 2 * z], [sx - 15 * z + k * 6 * z, sy - 20 * z]], 'rgba(0,0,0,0.18)', 1);
+      break;
+    }
+    case 'entulho':
+      shadow(ctx, sx, sy, z, 13);
+      for (let k = 0; k < 6; k++) {
+        const u = (tileHash(x, y, k) - 0.5) * 0.6;
+        const v = (tileHash(x, y, k + 9) - 0.5) * 0.6;
+        const p = at(u, v);
+        isoBox(ctx, p[0], p[1], z, 0.12 + tileHash(x, y, k + 3) * 0.1, 0.1, (3 + k) * z * 0.8, k % 2 ? '#8a8378' : '#6e675e');
+      }
+      stroke(ctx, [[sx - 8 * z, sy - 9 * z], [sx + 6 * z, sy - 13 * z]], '#5a3a2a', 1.4 * z);
+      break;
+    case 'sacos_areia':
+      shadow(ctx, sx, sy, z, 13);
+      for (let r = 0; r < 3; r++)
+        for (let k = 0; k < 3 - r; k++) disc(ctx, sx + (k - (2 - r) / 2) * 8 * z, sy - (3 + r * 4.5) * z, 4.6 * z, 3 * z, r % 2 ? '#a8946a' : '#c2ae80');
+      break;
+    case 'barricada':
+      shadow(ctx, sx, sy, z, 14);
+      for (let k = 0; k < 3; k++) stroke(ctx, [[sx - 13 * z, sy - (3 + k * 4) * z], [sx + 13 * z, sy - (5 + k * 3.5) * z]], k === 1 ? '#5d4630' : '#7a5c3c', 3 * z);
+      stroke(ctx, [[sx - 10 * z, sy], [sx + 6 * z, sy - 16 * z]], '#4a3826', 2.4 * z);
+      stroke(ctx, [[sx + 10 * z, sy], [sx - 6 * z, sy - 16 * z]], '#4a3826', 2.4 * z);
+      disc(ctx, sx - 6 * z, sy - 2 * z, 5 * z, 2.5 * z, '#1d1d1d');
+      break;
+    case 'poste_caido':
+      shadow(ctx, sx, sy, z, 14);
+      stroke(ctx, [[sx - 16 * z, sy - 2 * z], [sx + 14 * z, sy - 6 * z]], '#4a4a50', 3 * z);
+      stroke(ctx, [[sx + 14 * z, sy - 6 * z], [sx + 18 * z, sy - 2 * z]], '#4a4a50', 2 * z);
+      stroke(ctx, [[sx - 16 * z, sy - 2 * z], [sx - 4 * z, sy + 4 * z], [sx + 6 * z, sy + 1 * z]], 'rgba(20,20,20,0.7)', 1);
+      break;
+    case 'semaforo': {
+      shadow(ctx, sx, sy, z, 4);
+      ctx.fillStyle = '#2b2b2e';
+      ctx.fillRect(sx - 1.3 * z, sy - 38 * z, 2.6 * z, 38 * z);
+      ctx.fillRect(sx - 3 * z, sy - 46 * z, 6 * z, 14 * z);
+      const on = Math.floor(time * 0.8 + x) % 3;
+      ['#e53935', '#fdd835', '#43a047'].forEach((c, k) => disc(ctx, sx, sy - (43 - k * 4) * z, 1.5 * z, 1.5 * z, k === on && tileHash(x, y, 2) < 0.5 ? c : '#1a1a1a'));
+      break;
+    }
+    case 'hidrante':
+      shadow(ctx, sx, sy, z, 5);
+      isoCylinder(ctx, sx, sy, z, 0.11, 10 * z, '#c0392b');
+      disc(ctx, sx, sy - 11 * z, 3.2 * z, 1.8 * z, '#e05040');
+      break;
+    case 'outdoor': {
+      shadow(ctx, sx, sy, z, 10);
+      ctx.fillStyle = '#3a3a40';
+      ctx.fillRect(sx - 9 * z, sy - 30 * z, 2 * z, 30 * z);
+      ctx.fillRect(sx + 7 * z, sy - 30 * z, 2 * z, 30 * z);
+      const hue = ['#2d6a8a', '#8a2d5a', '#c97a1a', '#3a7a3a'][Math.floor(tileHash(x, y, 6) * 4)]!;
+      ctx.fillStyle = hue;
+      ctx.fillRect(sx - 16 * z, sy - 50 * z, 32 * z, 20 * z);
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.fillRect(sx - 12 * z, sy - 46 * z, 14 * z, 4 * z);
+      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.fillRect(sx + 2 * z, sy - 40 * z, 12 * z, 9 * z);
+      break;
+    }
+    case 'tanque_destruido': {
+      shadow(ctx, sx, sy, z, 20);
+      isoBox(ctx, sx, sy, z, 0.5, 0.42, 8 * z, '#3a4230');
+      isoBox(ctx, sx, sy, z, 0.3, 0.26, 7 * z, '#4f5a3a', 8 * z);
+      stroke(ctx, [[sx, sy - 18 * z], [sx + 18 * z, sy - 24 * z]], '#3a4230', 3.4 * z);
+      disc(ctx, sx - 6 * z, sy - 18 * z, 4 * z, 2 * z, '#1d1d1d');
+      break;
+    }
+    case 'palmeira': {
+      shadow(ctx, sx, sy, z, 9);
+      const sway = Math.sin(time * 1.3 + x) * 1.2 * z;
+      stroke(ctx, [[sx, sy], [sx + 3 * z, sy - 22 * z], [sx + 2 * z + sway, sy - 40 * z]], '#7a5a34', 3 * z);
+      for (let k = 0; k < 6; k++) {
+        const a = (k / 6) * Math.PI * 2;
+        stroke(ctx, [[sx + 2 * z + sway, sy - 40 * z], [sx + 2 * z + sway + Math.cos(a) * 14 * z, sy - 40 * z + Math.sin(a) * 5 * z + 5 * z]], k % 2 ? '#3d7d32' : '#4f9a3c', 3 * z);
+      }
+      break;
+    }
+    case 'acacia':
+      shadow(ctx, sx, sy, z, 14);
+      stroke(ctx, [[sx, sy], [sx - 2 * z, sy - 20 * z], [sx - 8 * z, sy - 28 * z]], '#5a3e24', 2.6 * z);
+      stroke(ctx, [[sx - 2 * z, sy - 20 * z], [sx + 7 * z, sy - 29 * z]], '#5a3e24', 2.2 * z);
+      disc(ctx, sx, sy - 33 * z, 18 * z, 5 * z, '#6b8a2e');
+      disc(ctx, sx - 2 * z, sy - 35 * z, 13 * z, 3.5 * z, '#7fa03a');
+      break;
+    case 'poste_neon': {
+      shadow(ctx, sx, sy, z, 4);
+      ctx.fillStyle = '#2a2a30';
+      ctx.fillRect(sx - 1.3 * z, sy - 30 * z, 2.6 * z, 30 * z);
+      const neon = ['#ff4fd8', '#4fe3ff', '#b6ff4f', '#ffb04f'][Math.floor(tileHash(x, y, 4) * 4)]!;
+      const flick = Math.sin(time * 13 + x * 3) > -0.85 ? 1 : 0.3;
+      ctx.globalAlpha = flick;
+      ctx.fillStyle = '#16141c';
+      ctx.fillRect(sx - 2 * z, sy - 52 * z, 9 * z, 24 * z);
+      ctx.strokeStyle = neon;
+      ctx.lineWidth = 1.6 * z;
+      ctx.strokeRect(sx - 0.5 * z, sy - 50 * z, 6 * z, 20 * z);
+      ctx.fillStyle = neon;
+      for (let k = 0; k < 3; k++) ctx.fillRect(sx + 1 * z, sy - (47 - k * 6) * z, 3 * z, 2.5 * z);
+      ctx.globalAlpha = 1;
+      break;
+    }
+    case 'cristal_cubo': {
+      shadow(ctx, sx, sy, z, 10);
+      const glow = 0.75 + Math.sin(time * 2 + x + y) * 0.2;
+      for (const [dx, hgt, w] of [[-5, 26, 5], [4, 34, 6], [0, 18, 4]] as const) {
+        ctx.fillStyle = `rgba(160,236,255,${glow})`;
+        ctx.beginPath();
+        ctx.moveTo(sx + (dx - w) * z, sy - 2 * z);
+        ctx.lineTo(sx + dx * z, sy - hgt * z);
+        ctx.lineTo(sx + (dx + w) * z, sy - 2 * z);
+        ctx.closePath();
+        ctx.fill();
+        stroke(ctx, [[sx + dx * z, sy - hgt * z], [sx + dx * z, sy - 2 * z]], 'rgba(255,255,255,0.6)', 1);
+      }
+      break;
+    }
+    case 'bomba_combustivel':
+      shadow(ctx, sx, sy, z, 7);
+      isoBox(ctx, sx, sy, z, 0.16, 0.12, 16 * z, '#d0d0d0');
+      isoBox(ctx, sx, sy, z, 0.17, 0.13, 4 * z, '#c0392b', 12 * z);
+      stroke(ctx, [[sx + 5 * z, sy - 10 * z], [sx + 9 * z, sy - 4 * z]], '#222', 1.4 * z);
+      break;
     default:
       ctx.fillStyle = def.color;
       ctx.fillRect(sx - 6 * z, sy - 12 * z, 12 * z, 12 * z);

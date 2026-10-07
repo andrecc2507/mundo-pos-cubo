@@ -10,7 +10,7 @@ import { derive } from '@game/rules/character';
 const BRANCHES: Record<string, string> = { artes_marciais: 'luvas_hidraulicas', armas_brancas: 'katana' };
 
 function fight(weapon: string | null, skill: string) {
-  const c = makeMember(new Rng(1), { name: 'A', classId: 'impacto', level: 10, gift: null, potential: 3, weapon, armor: null, utility: [null, null, null] });
+  const c = makeMember(new Rng(1), { name: 'A', classId: 'impacto', level: 10, gift: null, potential: 3, weapon: weapon as string, armor: null, utility: [null, null, null] });
   c.skills = [...c.skills, skill];
   const a = unitFromCharacter(c, 'player');
   const ally = unitFromCharacter(makeMember(new Rng(2), { name: 'B', classId: 'suporte', level: 10, gift: null, potential: 3, weapon: 'pistola_9mm', armor: null, utility: [null, null, null] }), 'player');
@@ -37,7 +37,7 @@ describe('árvore de armas: Artes Marciais e Armas Brancas', () => {
   });
 
   it('de mãos vazias o herói luta com os punhos (Artes Marciais valem desarmado)', () => {
-    const c = makeMember(new Rng(1), { name: 'A', classId: 'movimento', level: 3, gift: null, potential: 3, weapon: null, armor: null, utility: [null, null, null] });
+    const c = makeMember(new Rng(1), { name: 'A', classId: 'movimento', level: 3, gift: null, potential: 3, weapon: null as unknown as string, armor: null, utility: [null, null, null] });
     expect(derive(c).weaponType).toBe('punhos');
   });
 

@@ -6,7 +6,9 @@ export type Terrain =
   | 'caverna' | 'rocha_viva' | 'cristal' | 'abismo'
   | 'paralelepipedo' | 'lajota' | 'marmore' | 'tapete' | 'arenito'
   | 'telhado' | 'ardosia' | 'palha' | 'adobe' | 'muralha'
-  | 'vazio' | 'carne' | 'escombros' | 'enxaimel' | 'tijolo';
+  | 'vazio' | 'carne' | 'escombros' | 'enxaimel' | 'tijolo'
+  // Cidade moderna arruinada.
+  | 'asfalto' | 'concreto';
 export type Prop =
   | 'arvore' | 'pinheiro' | 'rocha' | 'arbusto' | 'muro' | 'caixa' | 'cacto'
   | 'arvore_morta' | 'tronco' | 'cogumelo' | 'flores'
@@ -17,7 +19,10 @@ export type Prop =
   | 'lapide' | 'sarcofago' | 'obelisco' | 'portal_vazio'
   | 'barril_oleo' | 'barril_polvora' | 'lustre' | 'alavanca' | 'sino' | 'selo_confinamento'
   // Mundo Pós-Cubo (cidade moderna).
-  | 'carro' | 'barreira_concreto' | 'lixeira';
+  | 'carro' | 'barreira_concreto' | 'lixeira'
+  // Ruínas pós-Cubo (mapgen/ruins.ts).
+  | 'carro_queimado' | 'onibus' | 'container' | 'entulho' | 'sacos_areia' | 'barricada' | 'poste_caido' | 'semaforo'
+  | 'hidrante' | 'outdoor' | 'tanque_destruido' | 'palmeira' | 'acacia' | 'poste_neon' | 'cristal_cubo' | 'bomba_combustivel';
 export type Surface = 'fogo' | 'agua' | 'agua_eletrica' | 'gelo' | 'lama' | 'oleo';
 export type Cloud = 'vapor' | 'vapor_eletrico' | 'fumaca' | 'veneno' | 'gas_fetido' | 'esporos' | 'nevasca' | 'vapor_fervente' | 'nevoa_lunar' | 'chama_fria' | 'tinta' | 'nevoa_de_sangue';
 export type Spawn = 'player' | 'enemy' | 'extract';
@@ -118,12 +123,12 @@ export const GROUP_LABEL: Record<MapGroup, string> = {
 };
 
 /** Desenho das paredes laterais de um bloco (casas, muralhas, paredes de caverna). */
-export type WallPattern = 'pedra' | 'enxaimel' | 'adobe' | 'rocha' | 'tijolo';
+export type WallPattern = 'pedra' | 'enxaimel' | 'adobe' | 'rocha' | 'tijolo' | 'concreto';
 
 /** Textura desenhada sobre a cor do topo (ver render/terrain_art.ts). */
 export type TerrainTexture =
   | 'terra' | 'madeira' | 'musgo' | 'cascalho' | 'pantano' | 'gelo' | 'lava' | 'caverna' | 'cristal' | 'abismo'
-  | 'paralelepipedo' | 'lajota' | 'marmore' | 'tapete' | 'telhas' | 'palha' | 'vazio' | 'carne' | 'neve' | 'areia' | 'grama';
+  | 'paralelepipedo' | 'lajota' | 'marmore' | 'tapete' | 'telhas' | 'palha' | 'vazio' | 'carne' | 'neve' | 'areia' | 'grama' | 'asfalto';
 
 export interface TerrainDef {
   name: string;
@@ -175,6 +180,8 @@ export const TERRAIN: Record<Terrain, TerrainDef> = {
   enxaimel: { name: 'Parede de enxaimel', color: '#d8c7a0', walkable: true, flammable: true, group: 'construcao', side: '#d8c7a0', wall: 'enxaimel', tex: 'madeira', hp: 45 },
   tijolo: { name: 'Parede de tijolo', color: '#9a5a44', walkable: true, flammable: false, group: 'construcao', side: '#9a5a44', wall: 'tijolo', hp: 90 },
   escombros: { name: 'Escombros', color: '#7d766c', walkable: true, flammable: false, group: 'construcao', side: '#5e584f', tex: 'cascalho', hp: 30 },
+  asfalto: { name: 'Asfalto rachado', color: '#4a4b4f', walkable: true, flammable: false, group: 'cidade', side: '#36373a', tex: 'asfalto', hp: 80 },
+  concreto: { name: 'Concreto (prédio moderno)', color: '#9a9690', walkable: true, flammable: false, group: 'construcao', side: '#8c8882', wall: 'concreto', tex: 'lajota', hp: 110 },
   carne: { name: 'Carne do Vazio', color: '#6e2a3a', walkable: true, flammable: false, group: 'vazio', side: '#4a1726', tex: 'carne' },
 };
 
@@ -277,6 +284,22 @@ export const PROPS: Record<Prop, PropDef> = {
   carro: P('Carro abandonado', 'cidade', 1, '#8d3b2f', 70, { onBreak: 'explode' }),
   barreira_concreto: P('Barreira de concreto', 'cidade', 1, '#9e9e9e', 160, {}),
   lixeira: P('Caçamba de lixo', 'cidade', 1, '#3f6b46', 60, {}),
+  carro_queimado: P('Carro queimado', 'cidade', 1, '#3a3330', 90, {}),
+  onibus: P('Ônibus tombado', 'cidade', 2, '#c9a227', 160, { los: true }),
+  container: P('Contêiner', 'cidade', 2, '#b5482f', 200, { los: true }),
+  entulho: P('Entulho', 'construcao', 1, '#7d766c', 50, {}),
+  sacos_areia: P('Sacos de areia', 'cidade', 1, '#b8a476', 120, {}),
+  barricada: P('Barricada', 'cidade', 1, '#6e5436', 70, { fire: true }),
+  poste_caido: P('Poste caído', 'cidade', 1, '#4a4a50', 40, {}),
+  semaforo: P('Semáforo', 'cidade', 3, '#2b2b2e', 40, { move: true }),
+  hidrante: P('Hidrante', 'cidade', 1, '#c0392b', 60, {}),
+  outdoor: P('Outdoor', 'cidade', 3, '#2d6a8a', 60, { los: true }),
+  tanque_destruido: P('Tanque destruído', 'cidade', 2, '#4f5a3a', 300, { los: true }),
+  palmeira: P('Palmeira', 'natureza', 3, '#3d7d32', 50, { fire: true }),
+  acacia: P('Acácia', 'natureza', 3, '#6b8a2e', 60, { los: true, fire: true }),
+  poste_neon: P('Letreiro de neon', 'cidade', 3, '#2a2a30', 30, { light: '#ff4fd8' }),
+  cristal_cubo: P('Fragmento do Cubo', 'caverna', 2, '#a8f0ff', 140, { los: true, light: '#9fefff' }),
+  bomba_combustivel: P('Bomba de combustível', 'cidade', 1, '#d0d0d0', 30, { onBreak: 'explode' }),
 };
 
 export const SURFACES: Record<Surface, { name: string; color: string }> = {

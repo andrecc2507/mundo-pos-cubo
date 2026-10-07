@@ -1,0 +1,790 @@
+{
+ "_doc": "Temas dos mapas de ruínas (mapgen/ruins.ts) por região do globo. ground/street/walk: terrenos do chão, rua e calçada; wall/roof/floor: materiais dos prédios; floors: andares [min,max]; density: chance de prédio por lote; ruin: quanto os prédios estão destruídos (0–1); cover: objetos de rua e pesos; vegetation: mato que tomou a cidade; overlay: neve/areia por cima; baseH: altura do chão; setpiece: a peça de cenário que dá a cara da região (ver ruins.ts); lights: poste das ruas.",
+ "sa_brasil": {
+  "name": "Metrópole tomada pela mata",
+  "ground": "grama",
+  "street": "asfalto",
+  "walk": "lajota",
+  "wall": "tijolo",
+  "roof": "concreto",
+  "floor": "lajota",
+  "floors": [
+   1,
+   4
+  ],
+  "density": 0.75,
+  "ruin": 0.45,
+  "windows": 0.45,
+  "cover": {
+   "carro": 4,
+   "carro_queimado": 3,
+   "entulho": 4,
+   "barreira_concreto": 2,
+   "lixeira": 1,
+   "poste_caido": 1,
+   "onibus": 2,
+   "barricada": 1
+  },
+  "vegetation": {
+   "props": [
+    "arvore",
+    "arbusto",
+    "palmeira"
+   ],
+   "chance": 0.16
+  },
+  "lights": "lampiao",
+  "setpiece": "favela"
+ },
+ "sa_cone": {
+  "name": "Porto frio do sul",
+  "ground": "cascalho",
+  "street": "asfalto",
+  "walk": "lajota",
+  "wall": "concreto",
+  "roof": "concreto",
+  "floor": "lajota",
+  "floors": [
+   1,
+   3
+  ],
+  "density": 0.6,
+  "ruin": 0.4,
+  "windows": 0.35,
+  "cover": {
+   "carro": 4,
+   "carro_queimado": 3,
+   "entulho": 4,
+   "barreira_concreto": 2,
+   "lixeira": 1,
+   "poste_caido": 1,
+   "container": 4,
+   "sacos_areia": 1
+  },
+  "vegetation": {
+   "props": [
+    "arbusto",
+    "arvore_morta"
+   ],
+   "chance": 0.05
+  },
+  "lights": "lampiao",
+  "setpiece": "conteineres"
+ },
+ "sa_andes": {
+  "name": "Cidade em terraços nas montanhas",
+  "ground": "pedra",
+  "street": "paralelepipedo",
+  "walk": "lajota",
+  "wall": "muralha",
+  "roof": "telhado",
+  "floor": "madeira",
+  "floors": [
+   1,
+   3
+  ],
+  "density": 0.6,
+  "ruin": 0.35,
+  "windows": 0.3,
+  "cover": {
+   "carro": 2,
+   "carro_queimado": 3,
+   "entulho": 4,
+   "barreira_concreto": 2,
+   "lixeira": 1,
+   "poste_caido": 1,
+   "rocha": 2
+  },
+  "vegetation": {
+   "props": [
+    "arbusto",
+    "pinheiro"
+   ],
+   "chance": 0.07
+  },
+  "overlay": {
+   "terrain": "neve",
+   "chance": 0.25
+  },
+  "lights": "lampiao",
+  "setpiece": "terracos",
+  "baseH": 1
+ },
+ "na_istmo": {
+  "name": "Cidade do canal",
+  "ground": "areia",
+  "street": "asfalto",
+  "walk": "lajota",
+  "wall": "concreto",
+  "roof": "concreto",
+  "floor": "lajota",
+  "floors": [
+   1,
+   4
+  ],
+  "density": 0.65,
+  "ruin": 0.45,
+  "windows": 0.4,
+  "cover": {
+   "carro": 4,
+   "carro_queimado": 3,
+   "entulho": 4,
+   "barreira_concreto": 2,
+   "lixeira": 1,
+   "poste_caido": 1,
+   "container": 2,
+   "barricada": 1
+  },
+  "vegetation": {
+   "props": [
+    "palmeira",
+    "arbusto"
+   ],
+   "chance": 0.12
+  },
+  "lights": "lampiao",
+  "setpiece": "canal"
+ },
+ "na_eua": {
+  "name": "Centro e rodovias abandonadas",
+  "ground": "grama",
+  "street": "asfalto",
+  "walk": "lajota",
+  "wall": "concreto",
+  "roof": "concreto",
+  "floor": "tapete",
+  "floors": [
+   2,
+   7
+  ],
+  "density": 0.8,
+  "ruin": 0.5,
+  "windows": 0.55,
+  "cover": {
+   "carro": 4,
+   "carro_queimado": 3,
+   "entulho": 4,
+   "barreira_concreto": 2,
+   "lixeira": 1,
+   "poste_caido": 1,
+   "onibus": 2,
+   "outdoor": 1,
+   "semaforo": 1,
+   "hidrante": 1,
+   "tanque_destruido": 1
+  },
+  "vegetation": {
+   "props": [
+    "arbusto",
+    "arvore_morta"
+   ],
+   "chance": 0.06
+  },
+  "lights": "lampiao",
+  "setpiece": "viaduto"
+ },
+ "na_norte": {
+  "name": "Vila madeireira na neve",
+  "ground": "neve",
+  "street": "cascalho",
+  "walk": "madeira",
+  "wall": "enxaimel",
+  "roof": "neve",
+  "floor": "madeira",
+  "floors": [
+   1,
+   2
+  ],
+  "density": 0.45,
+  "ruin": 0.3,
+  "windows": 0.3,
+  "cover": {
+   "tronco": 4,
+   "carro": 2,
+   "carro_queimado": 1,
+   "barril": 2,
+   "caixa": 2
+  },
+  "vegetation": {
+   "props": [
+    "pinheiro",
+    "pinheiro",
+    "arbusto"
+   ],
+   "chance": 0.2
+  },
+  "lights": "lampiao",
+  "setpiece": "serraria"
+ },
+ "eu_oeste": {
+  "name": "Centro histórico em ruínas",
+  "ground": "grama",
+  "street": "paralelepipedo",
+  "walk": "lajota",
+  "wall": "muralha",
+  "roof": "ardosia",
+  "floor": "madeira",
+  "floors": [
+   2,
+   5
+  ],
+  "density": 0.8,
+  "ruin": 0.45,
+  "windows": 0.45,
+  "cover": {
+   "carro": 4,
+   "carro_queimado": 3,
+   "entulho": 4,
+   "barreira_concreto": 2,
+   "lixeira": 1,
+   "poste_caido": 1,
+   "barricada": 2,
+   "sacos_areia": 1
+  },
+  "vegetation": {
+   "props": [
+    "arbusto",
+    "arvore"
+   ],
+   "chance": 0.07
+  },
+  "lights": "lampiao",
+  "setpiece": "catedral"
+ },
+ "eu_leste": {
+  "name": "Linha de frente",
+  "ground": "terra",
+  "street": "asfalto",
+  "walk": "lajota",
+  "wall": "concreto",
+  "roof": "concreto",
+  "floor": "lajota",
+  "floors": [
+   2,
+   5
+  ],
+  "density": 0.6,
+  "ruin": 0.65,
+  "windows": 0.4,
+  "cover": {
+   "carro": 4,
+   "carro_queimado": 3,
+   "entulho": 4,
+   "barreira_concreto": 2,
+   "lixeira": 1,
+   "poste_caido": 1,
+   "tanque_destruido": 2,
+   "sacos_areia": 3,
+   "barricada": 2
+  },
+  "vegetation": {
+   "props": [
+    "arvore_morta",
+    "arbusto"
+   ],
+   "chance": 0.06
+  },
+  "lights": "lampiao",
+  "setpiece": "trincheiras"
+ },
+ "eu_norte": {
+  "name": "Porto do fiorde",
+  "ground": "neve",
+  "street": "paralelepipedo",
+  "walk": "madeira",
+  "wall": "enxaimel",
+  "roof": "ardosia",
+  "floor": "madeira",
+  "floors": [
+   1,
+   3
+  ],
+  "density": 0.55,
+  "ruin": 0.3,
+  "windows": 0.4,
+  "cover": {
+   "barril": 3,
+   "caixa": 3,
+   "carro": 2,
+   "carro_queimado": 1,
+   "container": 2
+  },
+  "vegetation": {
+   "props": [
+    "pinheiro",
+    "arbusto"
+   ],
+   "chance": 0.1
+  },
+  "lights": "lampiao",
+  "setpiece": "cais"
+ },
+ "ru": {
+  "name": "Blocos soviéticos congelados",
+  "ground": "neve",
+  "street": "asfalto",
+  "walk": "lajota",
+  "wall": "concreto",
+  "roof": "neve",
+  "floor": "lajota",
+  "floors": [
+   3,
+   7
+  ],
+  "density": 0.7,
+  "ruin": 0.55,
+  "windows": 0.5,
+  "cover": {
+   "carro": 4,
+   "carro_queimado": 3,
+   "entulho": 4,
+   "barreira_concreto": 2,
+   "lixeira": 1,
+   "poste_caido": 1,
+   "tanque_destruido": 2,
+   "onibus": 1
+  },
+  "vegetation": {
+   "props": [
+    "pinheiro",
+    "arvore_morta"
+   ],
+   "chance": 0.06
+  },
+  "overlay": {
+   "terrain": "neve",
+   "chance": 0.35
+  },
+  "lights": "lampiao",
+  "setpiece": "rio_congelado"
+ },
+ "af_norte": {
+  "name": "Medina de adobe",
+  "ground": "areia",
+  "street": "arenito",
+  "walk": "arenito",
+  "wall": "adobe",
+  "roof": "adobe",
+  "floor": "arenito",
+  "floors": [
+   1,
+   3
+  ],
+  "density": 0.85,
+  "ruin": 0.35,
+  "windows": 0.25,
+  "cover": {
+   "barril": 2,
+   "caixa": 3,
+   "carro_queimado": 2,
+   "entulho": 3,
+   "tenda": 1
+  },
+  "vegetation": {
+   "props": [
+    "palmeira",
+    "cacto"
+   ],
+   "chance": 0.05
+  },
+  "overlay": {
+   "terrain": "areia",
+   "chance": 0.3
+  },
+  "lights": "lampiao",
+  "setpiece": "medina"
+ },
+ "af_oeste": {
+  "name": "Cidade costeira do mercado",
+  "ground": "terra",
+  "street": "asfalto",
+  "walk": "terra",
+  "wall": "tijolo",
+  "roof": "telhado",
+  "floor": "lajota",
+  "floors": [
+   1,
+   3
+  ],
+  "density": 0.65,
+  "ruin": 0.4,
+  "windows": 0.35,
+  "cover": {
+   "carro": 4,
+   "carro_queimado": 3,
+   "entulho": 4,
+   "barreira_concreto": 2,
+   "lixeira": 1,
+   "poste_caido": 1,
+   "banca": 2,
+   "tenda": 2,
+   "onibus": 1
+  },
+  "vegetation": {
+   "props": [
+    "palmeira",
+    "arbusto",
+    "arvore"
+   ],
+   "chance": 0.12
+  },
+  "lights": "lampiao",
+  "setpiece": "feira"
+ },
+ "af_centro": {
+  "name": "Cidade engolida pela savana",
+  "ground": "terra",
+  "street": "terra",
+  "walk": "grama",
+  "wall": "tijolo",
+  "roof": "palha",
+  "floor": "terra",
+  "floors": [
+   1,
+   2
+  ],
+  "density": 0.4,
+  "ruin": 0.55,
+  "windows": 0.3,
+  "cover": {
+   "carro_queimado": 3,
+   "entulho": 3,
+   "rocha": 2,
+   "barril": 1
+  },
+  "vegetation": {
+   "props": [
+    "acacia",
+    "arbusto",
+    "arbusto"
+   ],
+   "chance": 0.14
+  },
+  "lights": "lampiao",
+  "setpiece": "lago"
+ },
+ "af_sul": {
+  "name": "Cidade mineira",
+  "ground": "terra",
+  "street": "asfalto",
+  "walk": "cascalho",
+  "wall": "tijolo",
+  "roof": "concreto",
+  "floor": "lajota",
+  "floors": [
+   1,
+   3
+  ],
+  "density": 0.55,
+  "ruin": 0.45,
+  "windows": 0.35,
+  "cover": {
+   "carro": 4,
+   "carro_queimado": 3,
+   "entulho": 4,
+   "barreira_concreto": 2,
+   "lixeira": 1,
+   "poste_caido": 1,
+   "container": 2,
+   "minerio": 2
+  },
+  "vegetation": {
+   "props": [
+    "arbusto",
+    "acacia"
+   ],
+   "chance": 0.06
+  },
+  "lights": "lampiao",
+  "setpiece": "mina",
+  "baseH": 3
+ },
+ "as_crescente": {
+  "name": "Megacidade sob as dunas",
+  "ground": "areia",
+  "street": "asfalto",
+  "walk": "arenito",
+  "wall": "concreto",
+  "roof": "concreto",
+  "floor": "marmore",
+  "floors": [
+   3,
+   8
+  ],
+  "density": 0.6,
+  "ruin": 0.5,
+  "windows": 0.6,
+  "cover": {
+   "carro": 4,
+   "carro_queimado": 3,
+   "entulho": 4,
+   "barreira_concreto": 2,
+   "lixeira": 1,
+   "poste_caido": 1,
+   "tanque_destruido": 1,
+   "sacos_areia": 2
+  },
+  "vegetation": {
+   "props": [
+    "palmeira",
+    "cacto"
+   ],
+   "chance": 0.04
+  },
+  "overlay": {
+   "terrain": "areia",
+   "chance": 0.4
+  },
+  "lights": "lampiao",
+  "setpiece": "torres_enterradas"
+ },
+ "as_estepe": {
+  "name": "Posto da estepe",
+  "ground": "grama",
+  "street": "terra",
+  "walk": "terra",
+  "wall": "concreto",
+  "roof": "concreto",
+  "floor": "lajota",
+  "floors": [
+   1,
+   2
+  ],
+  "density": 0.3,
+  "ruin": 0.55,
+  "windows": 0.3,
+  "cover": {
+   "carro_queimado": 2,
+   "tenda": 3,
+   "cerca": 3,
+   "rocha": 2,
+   "tanque_destruido": 1,
+   "barril": 2
+  },
+  "vegetation": {
+   "props": [
+    "arbusto"
+   ],
+   "chance": 0.06
+  },
+  "lights": "lampiao",
+  "setpiece": "acampamento"
+ },
+ "as_sul": {
+  "name": "Bazar e escadarias do rio",
+  "ground": "terra",
+  "street": "asfalto",
+  "walk": "lajota",
+  "wall": "tijolo",
+  "roof": "telhado",
+  "floor": "lajota",
+  "floors": [
+   2,
+   4
+  ],
+  "density": 0.85,
+  "ruin": 0.4,
+  "windows": 0.4,
+  "cover": {
+   "carro": 4,
+   "carro_queimado": 3,
+   "entulho": 4,
+   "barreira_concreto": 2,
+   "lixeira": 1,
+   "poste_caido": 1,
+   "banca": 3,
+   "tenda": 2,
+   "onibus": 1
+  },
+  "vegetation": {
+   "props": [
+    "arvore",
+    "arbusto",
+    "palmeira"
+   ],
+   "chance": 0.08
+  },
+  "lights": "lampiao",
+  "setpiece": "escadaria_rio"
+ },
+ "as_china": {
+  "name": "Megacidade dos trilhos",
+  "ground": "grama",
+  "street": "asfalto",
+  "walk": "lajota",
+  "wall": "concreto",
+  "roof": "concreto",
+  "floor": "lajota",
+  "floors": [
+   3,
+   8
+  ],
+  "density": 0.8,
+  "ruin": 0.5,
+  "windows": 0.55,
+  "cover": {
+   "carro": 4,
+   "carro_queimado": 3,
+   "entulho": 4,
+   "barreira_concreto": 2,
+   "lixeira": 1,
+   "poste_caido": 1,
+   "onibus": 2,
+   "outdoor": 1,
+   "semaforo": 1,
+   "poste_neon": 1
+  },
+  "vegetation": {
+   "props": [
+    "arvore",
+    "arbusto"
+   ],
+   "chance": 0.06
+  },
+  "lights": "lampiao",
+  "setpiece": "trilho_elevado"
+ },
+ "as_leste": {
+  "name": "Becos de neon",
+  "ground": "lajota",
+  "street": "asfalto",
+  "walk": "lajota",
+  "wall": "concreto",
+  "roof": "concreto",
+  "floor": "tapete",
+  "floors": [
+   2,
+   6
+  ],
+  "density": 0.9,
+  "ruin": 0.35,
+  "windows": 0.6,
+  "cover": {
+   "carro": 4,
+   "carro_queimado": 3,
+   "entulho": 4,
+   "barreira_concreto": 2,
+   "lixeira": 1,
+   "poste_caido": 1,
+   "semaforo": 2,
+   "poste_neon": 3,
+   "outdoor": 1,
+   "hidrante": 1
+  },
+  "vegetation": {
+   "props": [
+    "arvore",
+    "arbusto"
+   ],
+   "chance": 0.04
+  },
+  "lights": "poste_neon",
+  "setpiece": "neon"
+ },
+ "as_sudeste": {
+  "name": "Cidade alagada",
+  "ground": "grama",
+  "street": "asfalto",
+  "walk": "madeira",
+  "wall": "tijolo",
+  "roof": "telhado",
+  "floor": "madeira",
+  "floors": [
+   1,
+   3
+  ],
+  "density": 0.55,
+  "ruin": 0.45,
+  "windows": 0.4,
+  "cover": {
+   "carro": 4,
+   "carro_queimado": 3,
+   "entulho": 4,
+   "barreira_concreto": 2,
+   "lixeira": 1,
+   "poste_caido": 1,
+   "barricada": 1,
+   "onibus": 1
+  },
+  "vegetation": {
+   "props": [
+    "palmeira",
+    "arvore",
+    "arbusto"
+   ],
+   "chance": 0.18
+  },
+  "lights": "lampiao",
+  "setpiece": "palafitas"
+ },
+ "oc": {
+  "name": "Cidade do interior vermelho",
+  "ground": "areia",
+  "street": "asfalto",
+  "walk": "terra",
+  "wall": "tijolo",
+  "roof": "concreto",
+  "floor": "lajota",
+  "floors": [
+   1,
+   2
+  ],
+  "density": 0.45,
+  "ruin": 0.4,
+  "windows": 0.35,
+  "cover": {
+   "carro": 4,
+   "carro_queimado": 3,
+   "entulho": 4,
+   "barreira_concreto": 2,
+   "lixeira": 1,
+   "poste_caido": 1,
+   "outdoor": 1,
+   "rocha": 1
+  },
+  "vegetation": {
+   "props": [
+    "cacto",
+    "arbusto",
+    "acacia"
+   ],
+   "chance": 0.07
+  },
+  "lights": "lampiao",
+  "setpiece": "posto"
+ },
+ "cubo": {
+  "name": "Zona do Cubo",
+  "ground": "gelo_eterno",
+  "street": "cristal",
+  "walk": "neve",
+  "wall": "concreto",
+  "roof": "neve",
+  "floor": "lajota",
+  "floors": [
+   1,
+   4
+  ],
+  "density": 0.35,
+  "ruin": 0.8,
+  "windows": 0.3,
+  "cover": {
+   "cristal_cubo": 4,
+   "entulho": 3,
+   "tanque_destruido": 1,
+   "carro_queimado": 1
+  },
+  "vegetation": {
+   "props": [
+    "cristal_cubo"
+   ],
+   "chance": 0.05
+  },
+  "overlay": {
+   "terrain": "neve",
+   "chance": 0.3
+  },
+  "lights": "lampiao",
+  "setpiece": "cristais"
+ }
+}

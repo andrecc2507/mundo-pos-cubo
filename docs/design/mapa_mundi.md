@@ -89,7 +89,18 @@ pede o que está faltando: comida, combustível, remédios ou peças.
 **Inimigos:** vilões com Dom (mesmas árvores dos heróis), milicianos armados sem Dom e Bestas
 alteradas do bestiário que combinam com o terreno.
 
-**Mapas:** "cidade" usa o gerador urbano; os outros terrenos usam os biomas do molde.
+**Mapas:** o padrão é **ruínas pós-Cubo** (`mapgen/ruins.ts`, 30–34 × 24–28 casas — grandes porque os
+Dons dão muita mobilidade): ruas em grade, prédios ocos de 1–8 andares (muitos com rombos, andares
+arrancados ou um canto desabado), crateras, entulho, carros, barricadas e mato. Cada região tem tema
+próprio em `data/geo/map_themes.json` (materiais, alturas, cobertura, vegetação, neve/areia) e uma
+**peça de cenário**: favela no morro (Brasil), pátio de contêineres (Cone Sul), terraços (Andes),
+canal com pontes (Istmo), viaduto caído (EUA), serraria (Norte Gelado), catedral sem teto (Europa
+Ocidental), trincheiras (Europa Oriental), cais do fiorde (Escandinávia), rio congelado (Rússia),
+medina (Norte da África), feira (Costa Ocidental), lago da savana (Grandes Lagos), mina a céu aberto
+(África Austral), torres engolidas pelas dunas (Oriente Médio), acampamento (Estepe), escadaria do rio
+(Subcontinente), trilho elevado (China), becos de neon (Pacífico Norte), palafitas (Sudeste Asiático),
+posto de estrada (Oceania) e cristais com fendas (Zona do Cubo). 20% das lutas são no terreno aberto
+da região, com alguns prédios arruinados espalhados (`geo_rules.json` → `maps`).
 
 ## Vila (cenário §32)
 
