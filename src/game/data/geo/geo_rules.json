@@ -261,5 +261,38 @@
     "text": "Um esconderijo do mundo antigo, intacto."
    }
   }
+ },
+ "difficulties": {
+  "_doc": "Dificuldade do jogo base (a morte é permanente em todas). food: consumo de comida; pay: paga dos contratos; enemyLevel: nível a mais nos inimigos; raidEvery: intervalo dos ataques (maior = mais raro); encounters: chance de encontros; start: recursos iniciais.",
+  "historia": {
+   "name": "História",
+   "desc": "Para conhecer o mundo: comida rende, contratos pagam mais, inimigos mais fracos, ataques raros.",
+   "food": 0.7,
+   "pay": 1.3,
+   "enemyLevel": -2,
+   "raidEvery": 1.6,
+   "encounters": 0.6,
+   "start": 1.5
+  },
+  "normal": {
+   "name": "Normal",
+   "desc": "Como o cenário pede: sobreviver dá trabalho.",
+   "food": 1,
+   "pay": 1,
+   "enemyLevel": 0,
+   "raidEvery": 1,
+   "encounters": 1,
+   "start": 1
+  },
+  "dificil": {
+   "name": "Difícil",
+   "desc": "Fome rápida, pouco dinheiro, inimigos mais fortes, ataques frequentes.",
+   "food": 1.25,
+   "pay": 0.8,
+   "enemyLevel": 2,
+   "raidEvery": 0.7,
+   "encounters": 1.4,
+   "start": 0.8
+  }
  }
 }

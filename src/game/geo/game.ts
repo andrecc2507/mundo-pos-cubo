@@ -131,6 +131,8 @@ export interface GeoGame {
   stock: Record<string, number>;
   /** Já viu a explicação inicial. */
   introSeen?: boolean;
+  /** Dificuldade (data/geo/geo_rules.json → difficulties). Morte permanente em todas. */
+  difficulty: DifficultyId;
   /** Legados dos mortos e os ativos (geo/legacy.ts). */
   legacies: Legacy[];
   activeLegacies: string[];
@@ -170,6 +172,23 @@ export interface RoadEncounter {
   regionId: string;
   /** Oferta do encontro (mercador: item e preço; desertor: o recruta). */
   offer?: { item?: string; price?: number; recruit?: Character; food?: number; pop?: number; supply?: Supply; amount?: number; specialist?: Specialist };
+}
+
+export type DifficultyId = 'historia' | 'normal' | 'dificil';
+export interface DifficultyDef {
+  name: string;
+  desc: string;
+  food: number;
+  pay: number;
+  enemyLevel: number;
+  raidEvery: number;
+  encounters: number;
+  start: number;
+}
+export const DIFFICULTIES = (({ _doc, ...rest }) => rest)(RULES.difficulties) as Record<DifficultyId, DifficultyDef>;
+
+export function difficulty(g: GeoGame): DifficultyDef {
+  return DIFFICULTIES[g.difficulty] ?? DIFFICULTIES.normal;
 }
 
 /** RNG do jogo: lê o estado salvo e grava de volta ao terminar. */

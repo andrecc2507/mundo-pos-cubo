@@ -15,7 +15,7 @@ import { generateUrbanMap } from '../mapgen/urban';
 import { generateVillageMap } from '../mapgen/village_map';
 import { VILLAIN_LINES, makeBeast, makeVillain } from '../demo/demo_squad';
 import type { Biome } from '../data';
-import { GEO_RULES, SUPPLIES, addLog, awayIds, newId, type GeoAlert, type GeoGame, type Raid, type RoadEncounter, type Squad } from './game';
+import { GEO_RULES, SUPPLIES, addLog, awayIds, difficulty, newId, type GeoAlert, type GeoGame, type Raid, type RoadEncounter, type Squad } from './game';
 import { contractLevel } from './contracts';
 import { applyUnitOutcomes, checkGameOver, emptySummary, makeRecruit, makeSpecialist, type GeoResultSummary } from './people';
 import { PEOPLE_RULES, PROFESSIONS } from '../rules/perks';
@@ -35,7 +35,7 @@ export function scheduleRaid(g: GeoGame, rng: Rng): void {
   const tier = regionById(g.village.regionId)?.tier ?? 1;
   const [a, b] = RA.everyDays;
   const haste = 1 - (RA.tierHaste * (tier - 1)) / 4;
-  g.nextRaidAt = g.hours + rng.int(a!, b!) * 24 * haste;
+  g.nextRaidAt = g.hours + rng.int(a!, b!) * 24 * haste * difficulty(g).raidEvery;
 }
 
 /** Defesa da vila: muros (nível) — usada na resolução automática e nos guardas. */
@@ -160,7 +160,7 @@ export function rollEncounter(g: GeoGame, s: Squad, stepHours: number, rng: Rng)
   const region = regionId && regionId !== 'cubo' ? regionById(regionId) : undefined;
   if (!region) return null;
   const hostile = isHostile(g, region.id);
-  const chance = EN.chancePerHour * stepHours * (region.tier / 3) * (hostile ? POLITICS.hunterEncounterMult : 1);
+  const chance = EN.chancePerHour * stepHours * (region.tier / 3) * (hostile ? POLITICS.hunterEncounterMult : 1) * difficulty(g).encounters;
   if (!rng.chance(chance)) return null;
   const weights = Object.entries(EN.types).map(([id, t]) => [id, id === 'cacadores' ? (hostile ? 6 : 0) : t.weight] as [string, number]);
   const total = weights.reduce((a, [, w]) => a + w, 0);

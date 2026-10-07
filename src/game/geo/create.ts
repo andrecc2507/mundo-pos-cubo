@@ -6,7 +6,7 @@
 import { Rng } from '@core';
 import { makeMember, type DemoClass } from '../demo/demo_squad';
 import type { Character } from '../rules/character';
-import { GEO_RULES, addLog, type GeoGame } from './game';
+import { DIFFICULTIES, GEO_RULES, addLog, type DifficultyId, type GeoGame } from './game';
 import { spawnContract } from './contracts';
 import { makeSpecialist, refreshRecruits } from './people';
 import { rollAffinity, rollPerks, rollProfession } from '../rules/perks';
@@ -24,6 +24,7 @@ export interface PersonSpec {
 
 export interface NewGameSpec {
   seed: number;
+  difficulty?: DifficultyId;
   villageName: string;
   villageAt: LonLat;
   protagonist: PersonSpec;
@@ -68,6 +69,7 @@ export function newGeoGame(spec: NewGameSpec): GeoGame {
   if (!regionId || regionId === 'cubo') throw new Error(villageSpotBlock(spec.villageAt) ?? 'lugar inválido');
   const home = regionById(regionId)!;
   const S = GEO_RULES.start;
+  const diff = DIFFICULTIES[spec.difficulty ?? 'normal'];
   const reputation: Record<string, number> = {};
   for (const r of REGIONS) reputation[r.id] = r.id === home.id ? S.reputationHome : r.continent === home.continent ? S.reputationContinent : 0;
   const facilities: Record<string, number> = {};
@@ -79,8 +81,8 @@ export function newGeoGame(spec: NewGameSpec): GeoGame {
     hours: 8,
     speed: 0,
     village: { name: spec.villageName.trim() || 'Vila', at: spec.villageAt, regionId, stage: 0, facilities, construction: [] },
-    money: S.money,
-    food: S.food,
+    money: Math.round(S.money * diff.start),
+    food: Math.round(S.food * diff.start),
     population: S.population,
     supplies: { ...S.supplies },
     reputation,
@@ -103,10 +105,11 @@ export function newGeoGame(spec: NewGameSpec): GeoGame {
     stock: {},
     hostile: {},
     specialists: [],
+    difficulty: spec.difficulty ?? 'normal',
     legacies: [],
     activeLegacies: [],
     specialistPool: [],
-    nextRaidAt: 8 + GEO_RULES.raids.everyDays[1]! * 24,
+    nextRaidAt: 8 + GEO_RULES.raids.everyDays[1]! * 24 * diff.raidEvery,
   };
   const P = GEO_RULES.protagonist;
   const hero = person(rng, spec.protagonist, P.realPotential, g.protagonistId);

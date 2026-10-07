@@ -14,7 +14,7 @@ import { makeCharacter } from '../rules/recruit';
 import type { Character } from '../rules/character';
 import type { Biome } from '../data';
 import CONTRACTS from '../data/geo/contracts.json';
-import { GEO_RULES, addLog, dayOf, newId, type Contract, type GeoGame, type Supply } from './game';
+import { GEO_RULES, addLog, dayOf, difficulty, newId, type Contract, type GeoGame, type Supply } from './game';
 import { effect } from './village';
 import { REGIONS, distanceKm, randomPointInRegion, regionById, type LonLat } from './world';
 import { POLITICS, changeRep, isHostile } from './politics';
@@ -70,7 +70,7 @@ export function maxOpenContracts(g: GeoGame): number {
 
 /** Nível dos inimigos do contrato: perigo da região + o tempo de jogo. */
 export function contractLevel(g: GeoGame, regionTier: number, rng: Rng): number {
-  return Math.max(1, Math.round(C.levelBase + regionTier * C.levelPerTier + dayOf(g) * C.levelPerDays + rng.int(-1, 1)));
+  return Math.max(1, Math.round(C.levelBase + regionTier * C.levelPerTier + dayOf(g) * C.levelPerDays + difficulty(g).enemyLevel + rng.int(-1, 1)));
 }
 
 /**
@@ -152,7 +152,7 @@ export function spawnContract(g: GeoGame, rng: Rng, opts: { internal?: boolean; 
     against,
     civil,
     level,
-    money: Math.round(def.money * src.payMult * lvMult * interMult),
+    money: Math.round(def.money * src.payMult * lvMult * interMult * difficulty(g).pay),
     food: Math.round((def.food ?? 0) * (src.foodMult ?? 1) * lvMult),
     supply,
     rep: Math.round(C.successRep * src.repMult * (inter ? 1.5 : 1)),

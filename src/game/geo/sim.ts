@@ -3,7 +3,7 @@
  * máximo 1 hora e para quando algo pede a decisão do jogador (esquadrão chegou, obra pronta, fome,
  * game over). Contrato novo só avisa. Uma vez por dia roda a economia da vila (comida e dinheiro).
  */
-import { GEO_RULES, addLog, awayIds, withRng, type GeoAlert, type GeoGame } from './game';
+import { GEO_RULES, addLog, awayIds, difficulty, withRng, type GeoAlert, type GeoGame } from './game';
 import { expireContracts, maxOpenContracts, spawnContract } from './contracts';
 import { dailyPeople, healTick, refreshRecruits } from './people';
 import { arrivalTime, squadPosition } from './squads';
@@ -96,7 +96,7 @@ function stepWorld(g: GeoGame, step: number): GeoAlert[] {
 
 /** Comida consumida por dia (moradores + o grupo). */
 export function foodUse(g: GeoGame): number {
-  return g.population * E.foodPerPersonPerDay + Object.keys(g.roster).length * E.foodPerFighterPerDay;
+  return (g.population * E.foodPerPersonPerDay + Object.keys(g.roster).length * E.foodPerFighterPerDay) * difficulty(g).food;
 }
 
 /** Comida produzida por dia (os moradores plantam um pouco; hortas plantam mais). */

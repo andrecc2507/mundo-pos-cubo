@@ -164,3 +164,18 @@ describe('relógio, contratos e economia', () => {
     expect(dispatchBlock(g, c, [g.protagonistId])).toContain('hangar');
   });
 });
+
+describe('dificuldade', () => {
+  it('História alivia e Difícil aperta: recursos, comida e paga', async () => {
+    const { foodUse } = await import('@game/geo/sim');
+    const easy = newGeoGame({ ...spec(20), difficulty: 'historia' });
+    const hard = newGeoGame({ ...spec(20), difficulty: 'dificil' });
+    expect(easy.money).toBeGreaterThan(hard.money);
+    expect(foodUse(easy)).toBeLessThan(foodUse(hard));
+    const ce = withRng(easy, (rng) => spawnContract(easy, rng, { type: 'eliminacao' }))!;
+    const ch = withRng(hard, (rng) => spawnContract(hard, rng, { type: 'eliminacao' }))!;
+    expect(ce.money / Math.max(1, ce.level)).toBeGreaterThan(0);
+    expect(hard.difficulty).toBe('dificil');
+    expect(ch.level).toBeGreaterThanOrEqual(1);
+  });
+});

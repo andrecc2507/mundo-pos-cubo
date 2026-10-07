@@ -3,7 +3,7 @@ import { btn, clear, h, layer, toast } from '@ui/dom';
 import { DB } from '../../data';
 import { Audio } from '../../audio/audio';
 import { DEMO_CLASSES, type DemoClass } from '../../demo/demo_squad';
-import { GEO_RULES } from '../../geo/game';
+import { DIFFICULTIES, GEO_RULES, type DifficultyId } from '../../geo/game';
 import { newGeoGame, partyBlock, villageSpotBlock, type PersonSpec } from '../../geo/create';
 import { CONTINENT_LABEL, regionAt, regionById, type LonLat } from '../../geo/world';
 import { CanvasPointer } from '../../render/pointer';
@@ -25,6 +25,7 @@ export class GeoCreationScene extends Scene {
   private hero: PersonSpec = { name: '', classId: 'impacto', gift: 'densidade' };
   private friends: PersonSpec[] = FRIEND_NAMES.map((name, i) => ({ name, classId: DEMO_CLASSES[i % 4]!, gift: i < 3 ? GEO_RULES.starterGifts[(i * 3 + 2) % 10]! : null }));
   private villageName = 'Nova Esperança';
+  private difficulty: DifficultyId = 'normal';
   private spot: LonLat | null = null;
   private ui!: HTMLDivElement;
   private panel!: HTMLDivElement;
@@ -184,6 +185,12 @@ export class GeoCreationScene extends Scene {
     el.append(
       h('p', { class: 'muted', text: 'Clique no globo onde a vila vai nascer (arraste para girar, roda para zoom). A região decide os primeiros contratos e o governo vizinho.' }),
       h('div', { class: 'demo-section', text: 'Nome da vila' }), name,
+      h('div', { class: 'demo-section', text: 'Dificuldade (a morte é permanente em todas)' }),
+      h('div', { class: 'demo-classes', style: 'grid-template-columns:repeat(3,1fr)' },
+        ...(Object.keys(DIFFICULTIES) as DifficultyId[]).map((id) =>
+          h('div', { class: `demo-class${this.difficulty === id ? ' selected' : ''}`, style: '--cls:#c9a35b', onClick: () => ((this.difficulty = id), this.redraw()) }, h('b', { text: DIFFICULTIES[id].name }), h('div', { class: 'muted', text: DIFFICULTIES[id].desc })),
+        ),
+      ),
       h('div', { class: 'demo-section', text: 'Lugar' }),
       r
         ? h('div', { class: 'demo-gift' },
@@ -203,7 +210,7 @@ export class GeoCreationScene extends Scene {
 
   private start(): void {
     if (!this.spot) return;
-    const g = newGeoGame({ seed: new Rng(Date.now() % 1e9).int(1, 1e9), villageName: this.villageName, villageAt: this.spot, protagonist: this.hero, friends: this.friends });
+    const g = newGeoGame({ seed: new Rng(Date.now() % 1e9).int(1, 1e9), villageName: this.villageName, villageAt: this.spot, difficulty: this.difficulty, protagonist: this.hero, friends: this.friends });
     geoStore.game = g;
     geoStore.slot = GEO_SLOTS.find((s) => !this.ctx.save.has(s)) ?? GEO_SLOTS[0]!;
     saveGeo(this.ctx.save);

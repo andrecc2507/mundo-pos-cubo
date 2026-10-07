@@ -1,5 +1,5 @@
 import type { SaveService } from '@core';
-import { clockLabel, type GeoGame } from '../geo/game';
+import { DIFFICULTIES, clockLabel, type GeoGame } from '../geo/game';
 import { regionById } from '../geo/world';
 import { stageDef } from '../geo/village';
 
@@ -30,6 +30,7 @@ export function loadGeo(save: SaveService, slot: string): boolean {
   g.hostile ??= {};
   g.specialists ??= [];
   g.legacies ??= [];
+  g.difficulty ??= 'normal';
   g.activeLegacies ??= [];
   g.specialistPool ??= [];
   g.nextRaidAt ??= g.hours + 24 * 10;
@@ -59,7 +60,7 @@ export function geoSlotInfo(save: SaveService, slot: string): string | null {
     const g = save.load<GeoGame>(slot);
     if (!g) return null;
     const hero = g.roster[g.protagonistId]?.name ?? 'Protagonista';
-    return `${g.village.name} (${regionById(g.village.regionId)?.name}) · ${stageDef(g).name} · ${hero} · ${clockLabel(g.hours)}${g.gameOver ? ' · FIM' : ''}`;
+    return `${g.village.name} (${regionById(g.village.regionId)?.name}) · ${stageDef(g).name} · ${hero} · ${clockLabel(g.hours)} · ${DIFFICULTIES[g.difficulty ?? 'normal']?.name ?? ''}${g.gameOver ? ' · FIM' : ''}`;
   } catch {
     return 'Save ilegível';
   }
