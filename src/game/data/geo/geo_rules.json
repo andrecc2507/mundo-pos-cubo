@@ -158,5 +158,108 @@
    "Jovem Tito",
    "Agricultora Rosa"
   ]
+ },
+ "politics": {
+  "_doc": "Reputação 0–100 por governo. Abaixo de hostileBelow depois de agir contra ele, o governo fica hostil: não oferece contratos, cobra pedágio no aeródromo (ou recusa o pouso em 0), manda caçadores na estrada e pode mandar uma expedição contra a vila.",
+  "hostileBelow": 10,
+  "friendlyAt": 30,
+  "allyAt": 60,
+  "againstChance": 0.3,
+  "againstRepLoss": 12,
+  "tollMoney": 150,
+  "hunterEncounterMult": 3,
+  "recoverPerDay": 0.3,
+  "labels": {
+   "hostil": "Hostil",
+   "desconfiado": "Desconfiado",
+   "neutro": "Neutro",
+   "amigavel": "Amigável",
+   "aliado": "Aliado"
+  }
+ },
+ "raids": {
+  "_doc": "Ataques à vila: um a cada everyDays (sorteio), mais cedo em região perigosa. Quem está em casa pode defender (batalha no mapa da vila; muros dão guardas e barreiras); sem defesa, a vila resolve sozinha pela força dos muros.",
+  "everyDays": [
+   7,
+   13
+  ],
+  "tierHaste": 0.6,
+  "maxDefenders": 6,
+  "survivalRounds": 7,
+  "guardsPerWall": 1,
+  "lossFoodPct": 0.25,
+  "lossMoneyPct": 0.15,
+  "lossPopPct": 0.1,
+  "winRep": 3,
+  "autoBaseChance": 0.2,
+  "autoPerDefense": 0.22,
+  "autoPerPopulation": 0.002
+ },
+ "encounters": {
+  "_doc": "Encontros na estrada (só por terra). chancePerHour × perigo da região (tier/3). Batalha: emboscada, bestas, caçadores (governo hostil). Sem batalha: escolha.",
+  "chancePerHour": 0.014,
+  "fleeWoundChance": 0.35,
+  "types": {
+   "emboscada": {
+    "name": "Emboscada",
+    "icon": "⚔",
+    "battle": true,
+    "weight": 4,
+    "enemies": {
+     "vilao": 2,
+     "miliciano": 3
+    },
+    "text": "Um bando fecha a estrada."
+   },
+   "bestas": {
+    "name": "Bestas na estrada",
+    "icon": "🐺",
+    "battle": true,
+    "weight": 3,
+    "enemies": {
+     "besta": 4
+    },
+    "text": "Bestas alteradas cercam o grupo."
+   },
+   "cacadores": {
+    "name": "Caçadores do governo",
+    "icon": "🎯",
+    "battle": true,
+    "weight": 0,
+    "enemies": {
+     "vilao": 2,
+     "miliciano": 3
+    },
+    "text": "Um esquadrão de {gov} veio atrás de vocês."
+   },
+   "refugiados": {
+    "name": "Refugiados",
+    "icon": "🧳",
+    "battle": false,
+    "weight": 3,
+    "text": "Uma família fugindo da fome pede abrigo na vila."
+   },
+   "mercador": {
+    "name": "Mercador",
+    "icon": "🛒",
+    "battle": false,
+    "weight": 2,
+    "text": "Um mercador de estrada oferece mercadoria."
+   },
+   "desertor": {
+    "name": "Desertor com Dom",
+    "icon": "🙋",
+    "battle": false,
+    "weight": 1,
+    "text": "Alguém com Dom quer largar a vida que leva e se juntar ao grupo."
+   },
+   "esconderijo": {
+    "name": "Esconderijo antigo",
+    "icon": "📦",
+    "battle": false,
+    "weight": 2,
+    "text": "Um esconderijo do mundo antigo, intacto."
+   }
+  }
  }
 }

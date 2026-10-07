@@ -1,5 +1,5 @@
 {
- "_doc": "Globo do Mundo Pós-Cubo (geo/world.ts): regiões = grupos de países reais (nomes do world-atlas 110m), cada uma com o governo pós-Cubo, perigo (tier 1–5), terrenos de batalha e o aeródromo do continente/região. A Antártida é a Zona do Cubo (sem contratos).",
+ "_doc": "Globo do Mundo Pós-Cubo (geo/world.ts): regiões = grupos de países reais (nomes do world-atlas 110m), cada uma com o governo pós-Cubo, perigo (tier 1–5), terrenos de batalha e o aeródromo do continente/região. A Antártida é a Zona do Cubo (sem contratos). rivals: governos com quem a região disputa (contratos contra eles e hostilidade).",
  "continents": {
   "america_sul": "América do Sul",
   "america_norte": "América do Norte",
@@ -42,7 +42,11 @@
     "lon": -47.9,
     "lat": -15.8
    },
-   "description": "O antigo Estado sobrevive nas capitais; o interior é de comunidades agrícolas e milícias."
+   "description": "O antigo Estado sobrevive nas capitais; o interior é de comunidades agrícolas e milícias.",
+   "rivals": [
+    "sa_andes",
+    "sa_cone"
+   ]
   },
   {
    "id": "sa_cone",
@@ -70,7 +74,10 @@
     "lon": -58.4,
     "lat": -34.6
    },
-   "description": "Pampas férteis e cordilheira; governos regionais costurados num pacto frágil."
+   "description": "Pampas férteis e cordilheira; governos regionais costurados num pacto frágil.",
+   "rivals": [
+    "sa_brasil"
+   ]
   },
   {
    "id": "sa_andes",
@@ -100,7 +107,11 @@
     "lon": -74.1,
     "lat": 4.7
    },
-   "description": "Cidades altas isoladas e selva onde as Bestas alteradas dominam."
+   "description": "Cidades altas isoladas e selva onde as Bestas alteradas dominam.",
+   "rivals": [
+    "sa_brasil",
+    "na_istmo"
+   ]
   },
   {
    "id": "na_istmo",
@@ -139,7 +150,11 @@
     "lon": -99.1,
     "lat": 19.4
    },
-   "description": "Rotas de contrabando, cartéis com Dons e ilhas que viraram fortalezas."
+   "description": "Rotas de contrabando, cartéis com Dons e ilhas que viraram fortalezas.",
+   "rivals": [
+    "na_eua",
+    "sa_andes"
+   ]
   },
   {
    "id": "na_eua",
@@ -164,7 +179,11 @@
     "lon": -104.9,
     "lat": 39.7
    },
-   "description": "Bases militares ainda funcionam; entre elas, metrópoles partidas em dezenas de territórios."
+   "description": "Bases militares ainda funcionam; entre elas, metrópoles partidas em dezenas de territórios.",
+   "rivals": [
+    "na_istmo",
+    "na_norte"
+   ]
   },
   {
    "id": "na_norte",
@@ -188,7 +207,10 @@
     "lon": -79.4,
     "lat": 43.7
    },
-   "description": "Cidades no sul e um norte imenso, frio e cheio de Bestas."
+   "description": "Cidades no sul e um norte imenso, frio e cheio de Bestas.",
+   "rivals": [
+    "na_eua"
+   ]
   },
   {
    "id": "eu_oeste",
@@ -226,7 +248,11 @@
     "lon": 2.35,
     "lat": 48.85
    },
-   "description": "A estrutura mais próxima do mundo antigo — e a mais burocrática."
+   "description": "A estrutura mais próxima do mundo antigo — e a mais burocrática.",
+   "rivals": [
+    "eu_leste",
+    "ru"
+   ]
   },
   {
    "id": "eu_leste",
@@ -272,7 +298,11 @@
     "lon": 21.0,
     "lat": 52.2
    },
-   "description": "Fronteira armada entre o Ocidente e o caos do Leste."
+   "description": "Fronteira armada entre o Ocidente e o caos do Leste.",
+   "rivals": [
+    "ru",
+    "eu_oeste"
+   ]
   },
   {
    "id": "eu_norte",
@@ -298,7 +328,10 @@
     "lon": 18.07,
     "lat": 59.33
    },
-   "description": "Comunidades organizadas e muito desconfiadas de estrangeiros."
+   "description": "Comunidades organizadas e muito desconfiadas de estrangeiros.",
+   "rivals": [
+    "ru"
+   ]
   },
   {
    "id": "ru",
@@ -323,7 +356,12 @@
     "lon": 37.6,
     "lat": 55.75
    },
-   "description": "Dezenas de autoridades disputando um território imenso."
+   "description": "Dezenas de autoridades disputando um território imenso.",
+   "rivals": [
+    "eu_leste",
+    "eu_norte",
+    "as_china"
+   ]
   },
   {
    "id": "af_norte",
@@ -357,7 +395,11 @@
     "lon": 31.2,
     "lat": 30.05
    },
-   "description": "Rotas de caravana voltaram a valer ouro; água é poder."
+   "description": "Rotas de caravana voltaram a valer ouro; água é poder.",
+   "rivals": [
+    "af_oeste",
+    "as_crescente"
+   ]
   },
   {
    "id": "af_oeste",
@@ -393,7 +435,11 @@
     "lon": 3.4,
     "lat": 6.45
    },
-   "description": "Metrópoles enormes e portos que comerciam com meio mundo."
+   "description": "Metrópoles enormes e portos que comerciam com meio mundo.",
+   "rivals": [
+    "af_norte",
+    "af_centro"
+   ]
   },
   {
    "id": "af_centro",
@@ -432,7 +478,11 @@
     "lon": 36.8,
     "lat": -1.3
    },
-   "description": "Savana e floresta onde as Bestas mais fortes do mundo foram vistas."
+   "description": "Savana e floresta onde as Bestas mais fortes do mundo foram vistas.",
+   "rivals": [
+    "af_oeste",
+    "af_sul"
+   ]
   },
   {
    "id": "af_sul",
@@ -467,7 +517,10 @@
     "lon": 28.05,
     "lat": -26.2
    },
-   "description": "Minas, fazendas e cidades muradas que negociam com todos."
+   "description": "Minas, fazendas e cidades muradas que negociam com todos.",
+   "rivals": [
+    "af_centro"
+   ]
   },
   {
    "id": "as_crescente",
@@ -506,7 +559,11 @@
     "lon": 55.3,
     "lat": 25.2
    },
-   "description": "Combustível ainda jorra aqui — e todo mundo quer."
+   "description": "Combustível ainda jorra aqui — e todo mundo quer.",
+   "rivals": [
+    "af_norte",
+    "as_estepe"
+   ]
   },
   {
    "id": "as_estepe",
@@ -536,7 +593,11 @@
     "lon": 76.9,
     "lat": 43.25
    },
-   "description": "Nômades, velhas bases e rotas que ninguém controla."
+   "description": "Nômades, velhas bases e rotas que ninguém controla.",
+   "rivals": [
+    "as_crescente",
+    "as_china"
+   ]
   },
   {
    "id": "as_sul",
@@ -566,7 +627,11 @@
     "lon": 77.2,
     "lat": 28.6
    },
-   "description": "A maior população do mundo e a maior fome também."
+   "description": "A maior população do mundo e a maior fome também.",
+   "rivals": [
+    "as_china",
+    "as_estepe"
+   ]
   },
   {
    "id": "as_china",
@@ -592,7 +657,12 @@
     "lon": 116.4,
     "lat": 39.9
    },
-   "description": "Um Estado forte no litoral e territórios que ele não admite ter perdido."
+   "description": "Um Estado forte no litoral e territórios que ele não admite ter perdido.",
+   "rivals": [
+    "as_leste",
+    "as_sul",
+    "ru"
+   ]
   },
   {
    "id": "as_leste",
@@ -618,7 +688,10 @@
     "lon": 139.7,
     "lat": 35.7
    },
-   "description": "Tecnologia de ponta guardada a sete chaves."
+   "description": "Tecnologia de ponta guardada a sete chaves.",
+   "rivals": [
+    "as_china"
+   ]
   },
   {
    "id": "as_sudeste",
@@ -652,7 +725,11 @@
     "lon": 106.8,
     "lat": -6.2
    },
-   "description": "Cidades-Estado portuárias e selvas que engoliram as estradas."
+   "description": "Cidades-Estado portuárias e selvas que engoliram as estradas.",
+   "rivals": [
+    "as_china",
+    "oc"
+   ]
   },
   {
    "id": "oc",
@@ -682,7 +759,10 @@
     "lon": 151.2,
     "lat": -33.87
    },
-   "description": "Isolada e autossuficiente; o interior é território das Bestas."
+   "description": "Isolada e autossuficiente; o interior é território das Bestas.",
+   "rivals": [
+    "as_sudeste"
+   ]
   }
  ]
 }

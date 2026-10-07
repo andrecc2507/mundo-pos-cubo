@@ -95,6 +95,8 @@ export function newGeoGame(spec: NewGameSpec): GeoGame {
     stats: { done: 0, failed: 0, kills: 0 },
     resets: 0,
     stock: {},
+    hostile: {},
+    nextRaidAt: 8 + GEO_RULES.raids.everyDays[1]! * 24,
   };
   const P = GEO_RULES.protagonist;
   const hero = person(rng, spec.protagonist, P.realPotential, g.protagonistId);

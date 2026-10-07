@@ -444,6 +444,8 @@ export interface UnitSeed {
 
 export interface BattleContext {
   kind: 'encounter' | 'contract' | 'dev' | 'editor' | 'story';
+  /** Mundo Pós-Cubo: batalha fora de contrato (ataque à vila, encontro na estrada). */
+  geo?: 'raid' | 'road';
   /** Missão da história (kind 'story'). */
   storyId?: string;
   /** Lição do tutorial mostrada na batalha (data/story/tutorial.json). */

@@ -31,6 +31,8 @@ export interface Contract {
   createdAt: number;
   expiresAt: number;
   intercontinental: boolean;
+  /** Contrato contra um governo rival: a luta é no território dele (e ele não gosta). */
+  against?: string;
   status: ContractStatus;
   squadId?: string;
 }
@@ -87,6 +89,8 @@ export interface LogEntry {
 /** Algo que para o relógio e pede a decisão do jogador. */
 export type GeoAlert =
   | { kind: 'arrived'; squadId: string; contractId: string }
+  | { kind: 'raid' }
+  | { kind: 'encounter'; squadId: string }
   | { kind: 'info'; title: string; text: string; /** Para o relógio (padrão: sim). */ pause?: boolean };
 
 export interface GeoGame {
@@ -126,6 +130,31 @@ export interface GeoGame {
   stock: Record<string, number>;
   /** Já viu a explicação inicial. */
   introSeen?: boolean;
+  /** Governos hostis (agiu contra eles e a reputação caiu demais). */
+  hostile: Record<string, boolean>;
+  /** Próximo ataque à vila (hora). */
+  nextRaidAt: number;
+  /** Ataque em andamento esperando a defesa. */
+  raid?: Raid;
+  /** Encontro na estrada esperando decisão. */
+  encounter?: RoadEncounter;
+}
+
+export interface Raid {
+  level: number;
+  kind: 'bando' | 'bestas' | 'expedicao';
+  /** Expedição punitiva: governo hostil que mandou. */
+  gov?: string;
+  size: number;
+}
+
+export interface RoadEncounter {
+  squadId: string;
+  type: string;
+  level: number;
+  regionId: string;
+  /** Oferta do encontro (mercador: item e preço; desertor: o recruta). */
+  offer?: { item?: string; price?: number; recruit?: Character; food?: number; pop?: number; supply?: Supply; amount?: number };
 }
 
 /** RNG do jogo: lê o estado salvo e grava de volta ao terminar. */

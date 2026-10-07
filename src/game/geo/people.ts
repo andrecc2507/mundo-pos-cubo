@@ -11,6 +11,8 @@ import { giftDef, rollGift } from '../rules/gifts';
 import * as stats from '../rules/stats';
 import { gainMastery, masteryOf, masteryRank } from '../rules/mastery';
 import { DB } from '../data';
+import { POLITICS, changeRep } from './politics';
+import { regionById } from './world';
 import { GEO_RULES, SUPPLY_LABEL, addLog, awayIds, newId, type GeoGame, type Supply } from './game';
 import { sendHome } from './squads';
 import { effect, foodStorage, rosterCap } from './village';
@@ -132,11 +134,11 @@ export interface GeoResultSummary {
   gameOver?: string;
 }
 
-/** Aplica o resultado de uma batalha de contrato ao jogo (e manda o esquadrão para casa). */
-export function applyContractResult(g: GeoGame, result: BattleResult): GeoResultSummary {
-  const squad = g.squads.find((s) => s.id === result.context.squadId);
-  const c = g.contracts.find((x) => x.id === result.context.contractId);
-  const sum: GeoResultSummary = { title: c?.title ?? result.context.title, outcome: result.outcome, lines: [], dead: [], levelUps: [], mastery: [] };
+/**
+ * Aplica o que aconteceu com cada herói numa batalha: abates, itens gastos, mortes (o protagonista só
+ * desmaia se alguém sobreviver), ferimentos, XP e Maestria. Tira os mortos do esquadrão.
+ */
+export function applyUnitOutcomes(g: GeoGame, result: BattleResult, sum: GeoResultSummary, cause: string, squad?: { members: string[] }): void {
   const outcomes = result.units.filter((u) => g.roster[u.charId]);
   const anySurvivor = outcomes.some((u) => u.alive);
   for (const u of outcomes) {
@@ -153,12 +155,12 @@ export function applyContractResult(g: GeoGame, result: BattleResult): GeoResult
         sum.lines.push(`${ch.name} caiu desacordado — os amigos o tiraram de lá.`);
         continue;
       }
-      g.memorial.push({ name: ch.name, classId: ch.classId, gift: ch.gift?.id, at: g.hours, cause: c?.title ?? 'em combate' });
+      g.memorial.push({ name: ch.name, classId: ch.classId, gift: ch.gift?.id, at: g.hours, cause });
       delete g.roster[u.charId];
       g.salaried = g.salaried.filter((x) => x !== u.charId);
       if (squad) squad.members = squad.members.filter((x) => x !== u.charId);
       sum.dead.push(ch.name);
-      addLog(g, `☠ ${ch.name} morreu (${c?.title ?? 'combate'}).`, 'bad');
+      addLog(g, `☠ ${ch.name} morreu (${cause}).`, 'bad');
       continue;
     }
     const frac = u.maxHp ? (u.lowHp ?? u.hp) / u.maxHp : 1;
@@ -178,6 +180,26 @@ export function applyContractResult(g: GeoGame, result: BattleResult): GeoResult
       sum.mastery.push(`${ch.name}: ${DB.skills[id]?.name ?? id} ${m >= 100 ? '— Maestria 100! Escolha a variante na ficha' : `→ Nv ${masteryRank(m)}`}`);
     }
   }
+}
+
+/** Fim de jogo: protagonista morto ou grupo vazio. */
+export function checkGameOver(g: GeoGame, sum?: GeoResultSummary): void {
+  const reason = !g.roster[g.protagonistId] ? 'O esquadrão do protagonista caiu inteiro. A vila não tem mais quem a defenda.' : !Object.keys(g.roster).length ? 'Não sobrou ninguém do grupo.' : null;
+  if (!reason) return;
+  if (sum) sum.gameOver = g.gameOver?.reason ?? reason;
+  if (!g.gameOver) g.gameOver = { reason, at: g.hours };
+}
+
+export function emptySummary(title: string, outcome: BattleResult['outcome']): GeoResultSummary {
+  return { title, outcome, lines: [], dead: [], levelUps: [], mastery: [] };
+}
+
+/** Aplica o resultado de uma batalha de contrato ao jogo (e manda o esquadrão para casa). */
+export function applyContractResult(g: GeoGame, result: BattleResult): GeoResultSummary {
+  const squad = g.squads.find((s) => s.id === result.context.squadId);
+  const c = g.contracts.find((x) => x.id === result.context.contractId);
+  const sum = emptySummary(c?.title ?? result.context.title, result.outcome);
+  applyUnitOutcomes(g, result, sum, c?.title ?? 'em combate', squad);
   if (c) {
     if (result.outcome === 'victory') {
       c.status = 'done';
@@ -185,13 +207,17 @@ export function applyContractResult(g: GeoGame, result: BattleResult): GeoResult
       g.money += c.money;
       g.food = Math.min(foodStorage(g), g.food + c.food);
       for (const [k, v] of Object.entries(c.supply)) g.supplies[k as keyof typeof g.supplies] += v!;
-      if (c.source !== 'vila') g.reputation[c.regionId] = Math.min(100, (g.reputation[c.regionId] ?? 0) + c.rep);
+      if (c.source !== 'vila') changeRep(g, c.regionId, c.rep);
+      if (c.against) {
+        changeRep(g, c.against, -POLITICS.againstRepLoss, true);
+        sum.lines.push(`${regionById(c.against)?.government.name} não vai esquecer (reputação −${POLITICS.againstRepLoss}).`);
+      }
       sum.lines.push(`Contrato cumprido: ${[c.money ? `$${c.money}` : '', c.food ? `🍞 ${c.food}` : '', ...Object.entries(c.supply).map(([k, v]) => `${SUPPLY_LABEL[k as Supply]} +${v}`), c.rep ? `reputação +${c.rep}` : ''].filter(Boolean).join(', ')}.`);
       addLog(g, `✔ ${c.title} cumprido.`, 'good');
     } else {
       c.status = 'failed';
       g.stats.failed += 1;
-      if (c.source !== 'vila') g.reputation[c.regionId] = Math.max(0, (g.reputation[c.regionId] ?? 0) - GEO_RULES.contracts.failRepLoss);
+      if (c.source !== 'vila') changeRep(g, c.regionId, -GEO_RULES.contracts.failRepLoss);
       sum.lines.push(result.outcome === 'fled' ? 'O esquadrão recuou. Contrato perdido.' : 'Derrota. Contrato perdido.');
       addLog(g, `✖ ${c.title} fracassou.`, 'bad');
     }
@@ -202,10 +228,7 @@ export function applyContractResult(g: GeoGame, result: BattleResult): GeoResult
       addLog(g, `☠ ${squad.name} não voltou.`, 'bad');
     } else sendHome(g, squad);
   }
-  const protagonistDead = !g.roster[g.protagonistId];
-  if (protagonistDead) sum.gameOver = g.gameOver?.reason ?? 'O esquadrão do protagonista caiu inteiro. A vila não tem mais quem a defenda.';
-  else if (!Object.keys(g.roster).length) sum.gameOver = 'Não sobrou ninguém do grupo.';
-  if (sum.gameOver && !g.gameOver) g.gameOver = { reason: sum.gameOver, at: g.hours };
+  checkGameOver(g, sum);
   return sum;
 }
 

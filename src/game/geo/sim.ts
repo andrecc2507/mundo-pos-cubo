@@ -7,6 +7,8 @@ import { GEO_RULES, addLog, awayIds, withRng, type GeoAlert, type GeoGame } from
 import { expireContracts, maxOpenContracts, spawnContract } from './contracts';
 import { dailyPeople, healTick, refreshRecruits } from './people';
 import { arrivalTime, squadPosition } from './squads';
+import { encounterTick, startRaid } from './events';
+import { dailyPolitics } from './politics';
 import { effect, finishConstruction, foodStorage, stageDef } from './village';
 
 const E = GEO_RULES.economy;
@@ -24,7 +26,7 @@ export function tick(g: GeoGame, dtHours: number): GeoAlert[] {
   if (g.gameOver || dtHours <= 0) return [];
   const out: GeoAlert[] = [];
   let left = dtHours;
-  const stops = () => out.some((a) => a.kind === 'arrived' || a.pause !== false);
+  const stops = () => out.some((a) => a.kind !== 'info' || a.pause !== false);
   while (left > 1e-9 && !stops() && !g.gameOver) {
     const step = Math.min(1, left, nextEventIn(g));
     g.hours += Math.max(step, 1e-6);
@@ -38,7 +40,7 @@ export function tick(g: GeoGame, dtHours: number): GeoAlert[] {
 
 /** Quanto falta para o próximo acontecimento marcado (para não passar dele num passo). */
 function nextEventIn(g: GeoGame): number {
-  const times = [g.nextContractAt, g.nextRecruitAt, g.nextDayAt, ...g.village.construction.map((c) => c.doneAt), ...g.squads.filter((s) => s.state !== 'onsite').map(arrivalTime)];
+  const times = [g.nextContractAt, g.nextRecruitAt, g.nextDayAt, g.nextRaidAt, ...g.village.construction.map((c) => c.doneAt), ...g.squads.filter((s) => s.state !== 'onsite').map(arrivalTime)];
   const future = times.filter((t) => t > g.hours).map((t) => t - g.hours);
   return future.length ? Math.max(1e-6, Math.min(...future)) : 1;
 }
@@ -77,6 +79,13 @@ function stepWorld(g: GeoGame, step: number): GeoAlert[] {
     });
   }
   if (g.hours >= g.nextRecruitAt) withRng(g, (rng) => refreshRecruits(g, rng));
+  // Ataque à vila.
+  if (g.hours >= g.nextRaidAt && !g.raid) {
+    withRng(g, (rng) => startRaid(g, rng));
+    out.push({ kind: 'raid' });
+  }
+  // Encontros na estrada (só um pendente por vez).
+  if (!g.encounter && !out.length) out.push(...withRng(g, (rng) => encounterTick(g, step, rng)));
   if (g.hours >= g.nextDayAt) {
     g.nextDayAt += 24;
     out.push(...dailyEconomy(g));
@@ -130,6 +139,7 @@ export function dailyEconomy(g: GeoGame): GeoAlert[] {
     g.money = Math.max(g.money, -200);
   }
   dailyPeople(g);
+  dailyPolitics(g);
   return out;
 }
 

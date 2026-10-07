@@ -7,6 +7,7 @@ import { DB } from '../data';
 import { GEO_RULES, addLog, isAvailable, newId, type Contract, type GeoGame, type Leg, type Squad } from './game';
 import { flights } from './village';
 import { distanceKm, lerpGeo, regionById, sameContinent, type LonLat } from './world';
+import { changeRep, landing } from './politics';
 
 const T = GEO_RULES.travel;
 
@@ -16,21 +17,25 @@ export interface RoutePlan {
   totalHours: number;
   km: number;
   plane: boolean;
-  /** Combustível usado (unidades) e o que falta pagar em dinheiro. */
+  /** Combustível usado (unidades) e o que falta pagar em dinheiro (com pedágio de governo hostil). */
   fuel: number;
   money: number;
+  /** Governo hostil recusa o pouso. */
+  refused?: boolean;
 }
 
 /** Caminho da vila até o contrato (e o custo do avião, se precisar). */
 export function planRoute(g: GeoGame, c: Contract): RoutePlan {
   const home = g.village.at;
-  if (sameContinent(g.village.regionId, c.regionId)) {
+  const where = c.against ?? c.regionId;
+  if (sameContinent(g.village.regionId, where)) {
     const km = distanceKm(home, c.at);
     const h = km / T.landKmh;
     return { legs: [{ from: home, to: c.at, mode: 'land' }], hours: [h], totalHours: h, km, plane: false, fuel: 0, money: 0 };
   }
-  const r = regionById(c.regionId)!;
+  const r = regionById(where)!;
   const aero: LonLat = [r.aerodrome.lon, r.aerodrome.lat];
+  const toll = landing(g, where);
   const airKm = distanceKm(home, aero);
   const landKm = distanceKm(aero, c.at);
   const hAir = airKm / T.planeKmh;
@@ -49,7 +54,8 @@ export function planRoute(g: GeoGame, c: Contract): RoutePlan {
     km: airKm + landKm,
     plane: true,
     fuel,
-    money,
+    money: money + (typeof toll === 'number' ? toll : 0),
+    refused: toll === 'recusado',
   };
 }
 
@@ -66,6 +72,7 @@ export function dispatchBlock(g: GeoGame, c: Contract, members: string[]): strin
   const plan = planRoute(g, c);
   if (g.hours + plan.totalHours > c.expiresAt) return 'não chega antes do prazo';
   if (plan.plane) {
+    if (plan.refused) return 'governo hostil recusa o pouso no aeródromo';
     if (planesInUse(g) >= flights(g)) return flights(g) ? 'o avião está fora' : 'a vila não tem hangar';
     if (g.money < plan.money) return `combustível: faltam $${plan.money - g.money}`;
   }
@@ -129,7 +136,7 @@ export function abortMission(g: GeoGame, s: Squad): void {
   const c = g.contracts.find((x) => x.id === s.contractId);
   if (c) {
     c.status = 'failed';
-    if (c.source !== 'vila') g.reputation[c.regionId] = Math.max(0, (g.reputation[c.regionId] ?? 0) - GEO_RULES.contracts.failRepLoss);
+    if (c.source !== 'vila') changeRep(g, c.regionId, -GEO_RULES.contracts.failRepLoss);
     g.stats.failed += 1;
     addLog(g, `↩ ${s.name} recuou de ${c.title}.`, 'bad');
   }

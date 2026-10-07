@@ -24,6 +24,8 @@ export interface RegionDef {
   biomes: string[];
   aerodrome: { name: string; lon: number; lat: number };
   description: string;
+  /** Governos com quem disputa (contratos contra eles; hostilidade). */
+  rivals: string[];
 }
 
 export const REGIONS = WORLD.regions as RegionDef[];

@@ -15,10 +15,12 @@ import { GlobeView, drawGlobe, drawRoute } from '../../render/globe';
 import { canEquip, derive, type Character } from '../../rules/character';
 import { giftDef } from '../../rules/gifts';
 import { store } from '../../state/store';
+import { applyEncounterResult, applyRaidResult, defendersAvailable, encounterBattle, encounterInfo, fleeEncounter, raidBattle, raidLabel, resolveEncounterChoice, resolveRaidAuto, type EncounterChoice } from '../../geo/events';
+import { POLITICS, STANCE_COLOR, STANCE_LABEL, rep, stance } from '../../geo/politics';
 import { GEO_SLOTS, autosaveGeo, geoSlotInfo, geoStore, saveGeo } from '../../state/geo_store';
 import { HeroSheet, RARITY_COLOR, stars } from '../shared/hero_sheet';
 
-type Tab = 'contratos' | 'esquadroes' | 'vila' | 'grupo' | 'recrutas' | 'loja' | 'registro';
+type Tab = 'contratos' | 'esquadroes' | 'vila' | 'grupo' | 'recrutas' | 'loja' | 'governos' | 'registro';
 const TABS: [Tab, string][] = [
   ['contratos', '📜 Contratos'],
   ['esquadroes', '🚩 Esquadrões'],
@@ -26,6 +28,7 @@ const TABS: [Tab, string][] = [
   ['grupo', '👥 Grupo'],
   ['recrutas', '📣 Recrutas'],
   ['loja', '🛒 Loja'],
+  ['governos', '🌐 Governos'],
   ['registro', '📖 Registro'],
 ];
 
@@ -69,14 +72,25 @@ export class GeoscapeScene extends Scene {
     this.renderAll();
     // Voltou de uma batalha de contrato: aplica o resultado.
     const res = store.battleResult;
-    if (res && res.context.kind === 'contract' && g.squads.some((s) => s.id === res.context.squadId)) {
+    let handled = false;
+    if (res && res.context.geo === 'raid' && g.raid) {
       store.battleResult = null;
-      const sum = applyContractResult(g, res);
-      saveGeo(this.ctx.save);
-      this.showResult(sum);
+      this.showResult(applyRaidResult(g, res));
+      handled = true;
+    } else if (res && res.context.geo === 'road' && g.encounter) {
+      store.battleResult = null;
+      this.showResult(applyEncounterResult(g, res));
+      handled = true;
+    } else if (res && res.context.kind === 'contract' && g.squads.some((s) => s.id === res.context.squadId)) {
+      store.battleResult = null;
+      this.showResult(applyContractResult(g, res));
+      handled = true;
     }
+    if (handled) saveGeo(this.ctx.save);
     if (g.gameOver) this.showGameOver();
     else if (!g.introSeen) this.showIntro();
+    else if (!handled && g.raid) this.raidModal();
+    else if (!handled && g.encounter) this.encounterModal();
   }
 
   /** Como jogar (primeira vez no globo). */
@@ -277,6 +291,8 @@ export class GeoscapeScene extends Scene {
     this.g.alerts = [];
     this.renderAll();
     if (this.g.gameOver) return this.showGameOver();
+    if (alerts.some((a) => a.kind === 'raid') && this.g.raid) return this.raidModal();
+    if (alerts.some((a) => a.kind === 'encounter') && this.g.encounter) return this.encounterModal();
     const arrived = alerts.find((a) => a.kind === 'arrived');
     const infos = alerts.filter((a): a is Extract<GeoAlert, { kind: 'info' }> => a.kind === 'info');
     for (const i of infos) toast(`${i.title}: ${i.text}`, 3500);
@@ -401,6 +417,8 @@ export class GeoscapeScene extends Scene {
         return this.tabRecruits(body);
       case 'loja':
         return this.tabShop(body);
+      case 'governos':
+        return this.tabGovernments(body);
       case 'registro':
         return this.tabLog(body);
     }
@@ -572,6 +590,119 @@ export class GeoscapeScene extends Scene {
         ),
       );
     }
+  }
+
+  private tabGovernments(el: HTMLElement): void {
+    const g = this.g;
+    el.append(h('div', { class: 'muted', style: 'font-size:11px;margin-bottom:4px', text: `Reputação com cada governo. Contratos contra um rival rendem com quem paga e custam com o alvo; abaixo de ${POLITICS.hostileBelow} ele fica hostil (sem contratos, pedágio no aeródromo, caçadores na estrada, expedições contra a vila).` }));
+    const home = regionById(g.village.regionId)!;
+    const list = [...REGIONS].sort((a, b) => Number(b.continent === home.continent) - Number(a.continent === home.continent) || rep(g, b.id) - rep(g, a.id));
+    for (const r of list) {
+      const st = stance(g, r.id);
+      el.append(
+        h('div', { class: 'item', style: 'padding:4px 6px', onClick: () => (this.globe.center = [r.aerodrome.lon, r.aerodrome.lat]) },
+          h('div', { class: 'row', style: 'justify-content:space-between;gap:4px' }, h('b', { text: r.government.name }), h('span', { style: `color:${STANCE_COLOR[st]};font-size:12px`, text: STANCE_LABEL[st] })),
+          h('div', { class: 'muted', style: 'font-size:11px', text: `${r.name} · ${CONTINENT_LABEL[r.continent]} · ${r.government.type} · ☠${r.tier} · rivais: ${r.rivals.map((id) => regionById(id)?.name).join(', ')}` }),
+          bar(rep(g, r.id), 100, STANCE_COLOR[st], `${Math.floor(rep(g, r.id))}`),
+        ),
+      );
+    }
+  }
+
+  // ───────────────────────────── ataques e encontros ─────────────────────────────
+
+  private raidModal(): void {
+    const g = this.g;
+    const r = g.raid;
+    if (!r) return;
+    this.globe.center = [g.village.at[0], g.village.at[1]];
+    const avail = defendersAvailable(g);
+    const picked = new Set(avail.slice(0, GEO_RULES.raids.maxDefenders));
+    modal('🚨 Ataque à vila!', (body, m) => {
+      const draw = () => {
+        clear(body);
+        body.append(
+          h('p', { text: `${raidLabel(g, r)} — cerca de ${r.size} atacantes chegando a ${g.village.name}.` }),
+          h('p', { class: 'muted', text: `Muros nível ${facilityLevel(g, 'muros')}: ${facilityLevel(g, 'muros') ? `${Math.min(4, facilityLevel(g, 'muros') * GEO_RULES.raids.guardsPerWall)} vigia(s) ajudam e as perdas caem pela metade` : 'sem muros, a vila fica exposta'}. Aguentem ${GEO_RULES.raids.survivalRounds} rodadas.` }),
+          h('div', { class: 'demo-section', text: `Defensores na vila (até ${GEO_RULES.raids.maxDefenders})` }),
+        );
+        if (!avail.length) body.append(h('div', { class: 'muted', text: 'Ninguém em casa para defender.' }));
+        for (const id of avail) {
+          const c = g.roster[id]!;
+          const cb = h('input', { type: 'checkbox' }) as HTMLInputElement;
+          cb.checked = picked.has(id);
+          cb.addEventListener('change', () => {
+            if (cb.checked && picked.size < GEO_RULES.raids.maxDefenders) picked.add(id);
+            else picked.delete(id);
+            draw();
+          });
+          body.append(h('label', { class: 'geo-pick' }, cb, h('span', { text: ` ${c.name} · ${DB.classes[c.classId].name} NV ${c.level}` })));
+        }
+        body.append(
+          h('div', { class: 'row', style: 'justify-content:flex-end;gap:8px;margin-top:8px' },
+            btn('Deixar a vila se virar', () => {
+              const res = withRng(g, (rng) => resolveRaidAuto(g, rng));
+              m.close();
+              saveGeo(this.ctx.save);
+              this.renderAll();
+              modal(res.won ? '🛡 A vila resistiu' : '🔥 A vila foi saqueada', (b2, m2) => b2.append(h('p', { text: res.text }), btn('Continuar', () => m2.close(), { class: 'primary' })));
+            }),
+            btn('⚔ Defender', () => {
+              const units = [...picked].map((id) => unitFromCharacter(g.roster[id]!, 'player'));
+              const setup = withRng(g, (rng) => raidBattle(g, units, rng));
+              m.close();
+              saveGeo(this.ctx.save);
+              this.ctx.scenes.go('battle', { setup, returnTo: 'geoscape' });
+            }, { class: 'primary', disabled: !picked.size }),
+          ),
+        );
+      };
+      draw();
+    }, { closable: false });
+  }
+
+  private encounterModal(): void {
+    const g = this.g;
+    const e = g.encounter;
+    if (!e) return;
+    const s = g.squads.find((x) => x.id === e.squadId);
+    if (!s) {
+      g.encounter = undefined;
+      return;
+    }
+    this.globe.center = squadPosition(g, s);
+    const info = encounterInfo(g, e);
+    const done = (text: string) => {
+      saveGeo(this.ctx.save);
+      this.renderAll();
+      if (text) toast(text, 3500);
+    };
+    modal(`${info.icon} ${info.name}`, (body, m) => {
+      body.append(h('p', { text: `${s.name}: ${info.text}` }), h('div', { class: 'muted', text: `${regionById(e.regionId)?.name} · NV ${e.level}` }));
+      const row = h('div', { class: 'row', style: 'justify-content:flex-end;gap:8px;margin-top:8px;flex-wrap:wrap' });
+      if (info.battle) {
+        row.append(
+          btn('🏃 Fugir', () => (m.close(), done(withRng(g, (rng) => fleeEncounter(g, rng)))), { title: 'Alguns podem se ferir; a viagem continua' }),
+          btn('⚔ Lutar', () => {
+            const units = s.members.map((id) => g.roster[id]).filter((x): x is Character => !!x).map((c) => unitFromCharacter(c, 'player'));
+            const setup = withRng(g, (rng) => encounterBattle(g, units, rng));
+            m.close();
+            saveGeo(this.ctx.save);
+            this.ctx.scenes.go('battle', { setup, returnTo: 'geoscape' });
+          }, { class: 'primary' }),
+        );
+      } else {
+        const o = e.offer ?? {};
+        const opts: [string, EncounterChoice][] =
+          e.type === 'refugiados' ? [[`Acolher na vila (+${o.pop} moradores)`, 'aceitar'], [`Dividir comida (🍞 ${o.food}, +reputação)`, 'ajudar']]
+          : e.type === 'mercador' ? [[`Comprar ${DB.items[o.item ?? '']?.name ?? 'item'} por $${o.price}`, 'aceitar']]
+          : e.type === 'desertor' ? [[`Aceitar ${o.recruit?.name} (${giftDef(o.recruit?.gift?.id)?.name ?? 'sem Dom'}, ${DB.classes[o.recruit?.classId ?? 'impacto'].name} NV ${o.recruit?.level})`, 'aceitar']]
+          : [[`Levar (${o.amount} de ${o.supply})`, 'aceitar']];
+        for (const [label, choice] of opts) row.append(btn(label, () => (m.close(), done(resolveEncounterChoice(g, choice))), { class: 'primary' }));
+        row.append(btn('Seguir viagem', () => (m.close(), done(resolveEncounterChoice(g, 'ignorar')))));
+      }
+      body.append(row);
+    }, { closable: false });
   }
 
   private tabLog(el: HTMLElement): void {

@@ -27,6 +27,8 @@ export function loadGeo(save: SaveService, slot: string): boolean {
   const g = save.load<GeoGame>(slot);
   if (!g || g.version !== 1) return false;
   g.stock ??= {};
+  g.hostile ??= {};
+  g.nextRaidAt ??= g.hours + 24 * 10;
   g.speed = 0;
   geoStore.game = g;
   geoStore.slot = slot === GEO_AUTO ? GEO_SLOTS[0]! : slot;

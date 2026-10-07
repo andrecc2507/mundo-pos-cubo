@@ -17,6 +17,10 @@ import CONTRACTS from '../data/geo/contracts.json';
 import { GEO_RULES, addLog, dayOf, newId, type Contract, type GeoGame, type Supply } from './game';
 import { effect } from './village';
 import { REGIONS, distanceKm, randomPointInRegion, regionById, type LonLat } from './world';
+import { POLITICS, changeRep, isHostile } from './politics';
+
+/** Tipos que um governo pode pedir contra um rival. */
+const AGAINST_TYPES = ['sabotagem', 'tecnologia', 'eliminacao', 'investigacao', 'reconhecimento'];
 
 export interface ObjectiveSpec extends ObjectiveDef {
   count?: number;
@@ -108,16 +112,29 @@ export function spawnContract(g: GeoGame, rng: Rng, opts: { internal?: boolean; 
     regionId = rng.pick(far).id;
     at = randomPointInRegion(rng, regionId);
   } else {
-    const near = REGIONS.filter((r) => r.continent === homeRegion.continent && distanceKm(home, [r.aerodrome.lon, r.aerodrome.lat]) < radius + 2500);
-    regionId = rng.chance(0.45) ? homeRegion.id : rng.pick(near.length ? near : [homeRegion]).id;
+    const near = REGIONS.filter((r) => r.continent === homeRegion.continent && !isHostile(g, r.id) && distanceKm(home, [r.aerodrome.lon, r.aerodrome.lat]) < radius + 2500);
+    regionId = rng.chance(0.45) && !isHostile(g, homeRegion.id) ? homeRegion.id : rng.pick(near.length ? near : [homeRegion]).id;
     at = randomPointInRegion(rng, regionId, { at: home, maxKm: radius });
   }
+  // Governo hostil não oferece trabalho.
+  if (!internal && isHostile(g, regionId)) return null;
   if (!at) return null;
   const region = regionById(regionId)!;
   const type = opts.type ?? pickType(g, rng, internal);
   const def = CONTRACT_TYPES[type]!;
+  // Política: alguns contratos de governo são contra um rival (a luta acontece no território dele).
+  let against: string | undefined;
+  if (!internal && AGAINST_TYPES.includes(type) && rng.chance(POLITICS.againstChance)) {
+    const rivals = (regionById(regionId)?.rivals ?? []).filter((id) => regionById(id));
+    const target = rivals.length ? rng.pick(rivals) : undefined;
+    const spot = target ? randomPointInRegion(rng, target) : null;
+    if (target && spot) {
+      against = target;
+      at = spot;
+    }
+  }
   const sources = def.sources.filter((s) => (internal ? SOURCES[s]?.internal : !SOURCES[s]?.internal));
-  const source = internal ? 'vila' : rng.pick(sources.length ? sources : ['comunidade']);
+  const source = internal ? 'vila' : against ? 'governo' : rng.pick(sources.length ? sources : ['comunidade']);
   const src = SOURCES[source]!;
   const level = contractLevel(g, region.tier, rng);
   const lvMult = 1 + (level - 1) * 0.08;
@@ -131,7 +148,8 @@ export function spawnContract(g: GeoGame, rng: Rng, opts: { internal?: boolean; 
     source,
     regionId,
     at,
-    title: `${def.icon} ${def.name} — ${region.name}`,
+    title: `${def.icon} ${def.name} — ${region.name}${against ? ` (contra ${regionById(against)!.government.name})` : ''}`,
+    against,
     civil,
     level,
     money: Math.round(def.money * src.payMult * lvMult * interMult),
@@ -145,6 +163,11 @@ export function spawnContract(g: GeoGame, rng: Rng, opts: { internal?: boolean; 
   };
   g.contracts.push(c);
   return c;
+}
+
+/** Região onde o contrato acontece (contra um rival: no território dele). */
+export function locationRegion(c: Contract): string {
+  return c.against ?? c.regionId;
 }
 
 export function contractText(c: Contract): string {
@@ -164,7 +187,7 @@ export function expireContracts(g: GeoGame): Contract[] {
     if (c.status !== 'open' || c.expiresAt > g.hours) continue;
     c.status = 'expired';
     gone.push(c);
-    if (c.source !== 'vila') g.reputation[c.regionId] = Math.max(0, (g.reputation[c.regionId] ?? 0) - C.expireRepLoss);
+    if (c.source !== 'vila') changeRep(g, c.regionId, -C.expireRepLoss);
     addLog(g, `⌛ Contrato perdido: ${c.title}.`, 'bad');
   }
   // Guarda só os recentes encerrados (o histórico fica no registro).
@@ -195,7 +218,7 @@ function civilian(rng: Rng, name: string, level: number): BattleUnit {
 /** Monta a batalha do contrato para o esquadrão (personagens já prontos). */
 export function contractBattle(g: GeoGame, c: Contract, squad: BattleUnit[], rng: Rng, squadId: string): BattleSetup {
   const def = CONTRACT_TYPES[c.type]!;
-  const region = regionById(c.regionId)!;
+  const region = regionById(locationRegion(c))!;
   const biome = rng.pick(region.biomes);
   const seed = rng.int(1, 1e9);
   const map = biome === 'cidade' ? generateUrbanMap({ seed }) : generateMap({ biome: (BIOMES.includes(biome as Biome) ? biome : 'planicie') as Biome, seed, w: rng.int(14, 17), h: rng.int(13, 16) });
