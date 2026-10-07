@@ -86,6 +86,10 @@ carrega) e pode pegar nós soltos de outro.
 
 Sem arma equipada, o combatente luta com os punhos (as Artes Marciais valem desarmado). Armas de fogo usam **munição** (recarregar gasta a ação). Granadas e armadilhas têm usos por missão.
 
+**Utilitários (granadas, kits, estimulantes):** quem **não tem Dom** carrega **3** e usa cada um
+**2 vezes** por batalha; quem tem Dom carrega **2** e usa **1 vez** cada (`balance.json` →
+`utilities`). Os usos voltam depois da luta.
+
 Sem Dom não é ser menos: a árvore de armas tem o mesmo número de nós e de "momentos decisivos"
 que a do Dom (tiro mirado, chuva de balas, drone, armadilha).
 

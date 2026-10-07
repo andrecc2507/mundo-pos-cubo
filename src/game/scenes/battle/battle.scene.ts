@@ -1598,13 +1598,13 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
   private openItems(u: BattleUnit): void {
     modal(`Itens de campo — ${u.name}`, (body, self) => {
       u.items.forEach((id, slot) => {
-        if (!id) return;
+        if (!id || slot >= (u.itemSlots ?? u.items.length)) return;
         const it = item(id);
         body.append(
           h(
             'div',
             { class: 'item row', style: 'justify-content:space-between' },
-            h('div', {}, h('b', { text: it.name }), h('span', { class: 'muted', text: it.captureBonus ? ` · passivo: +${it.captureBonus}% para render` : ` · usos ${itemUsesLeft(u, slot)}/${it.uses ?? 1} nesta batalha` }), h('div', { class: 'muted', text: it.description })),
+            h('div', {}, h('b', { text: it.name }), h('span', { class: 'muted', text: it.captureBonus ? ` · passivo: +${it.captureBonus}% para render` : ` · usos ${itemUsesLeft(u, slot)}/${u.itemUsesMax?.[slot] ?? it.uses ?? 1} nesta batalha` }), h('div', { class: 'muted', text: it.description })),
             btn('Usar', () => {
               self.close();
               const tiles = new Set(itemTargets(this.state, u, id));

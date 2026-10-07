@@ -1,6 +1,6 @@
 import type { Rng } from '@core';
 import { DB, STORY_KITS, type EnemyDef, type Rarity } from '../data';
-import { derive, type Character } from '../rules/character';
+import { derive, utilitySlots, utilityUses, type Character } from '../rules/character';
 import { makeCharacter } from '../rules/recruit';
 import { grantedSkillIds, innateSkillIds, outfitKey, unlockedEvolutions } from '../rules/skill_tree';
 import * as stats from '../rules/stats';
@@ -159,7 +159,9 @@ export function unitFromCharacter(c: Character, team: Team): BattleUnit {
     ...(c.variants && Object.keys(c.variants).length ? { variants: { ...c.variants } } : {}),
     orbs: orbElements(c),
     items: [...c.equipment.utility],
-    itemUses: c.equipment.utility.map((id) => (id ? DB.items[id]?.uses ?? 1 : 0)),
+    itemUses: c.equipment.utility.map((id, i) => utilityUses(c, id, i)),
+    itemUsesMax: c.equipment.utility.map((id, i) => utilityUses(c, id, i)),
+    itemSlots: utilitySlots(c),
     statuses: {},
     hidden: false,
     overwatch: false,

@@ -189,6 +189,10 @@ export interface BattleUnit {
   items: (string | null)[];
   /** Usos restantes de cada item de campo nesta batalha (recarregam depois). */
   itemUses?: number[];
+  /** Usos de cada utilitário no começo da batalha (regra Dom × sem Dom). */
+  itemUsesMax?: number[];
+  /** Espaços de utilitário que valem (sem Dom 3, com Dom 2). */
+  itemSlots?: number;
   statuses: Partial<Record<StatusId, number>>;
   hidden: boolean;
   overwatch: boolean;

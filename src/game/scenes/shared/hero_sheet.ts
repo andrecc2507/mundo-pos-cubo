@@ -3,7 +3,7 @@ import { bar, btn, clear, h, modal, toast } from '@ui/dom';
 import { MASTERY_RULES, VARIANTS, canChooseVariant, chooseVariant, masteryOf, masteryRank, variantDef, type VariantId } from '../../rules/mastery';
 import { ATTRS, ATTR_LABEL, DB, FIREARMS, type Attr, type ClassId, type SkillTree, type TreeNode } from '../../data';
 import { describeSkill } from '../../bestiary/describe';
-import { derive, learnSkill, statCost, xpToNext, type Character } from '../../rules/character';
+import { derive, learnSkill, statCost, utilitySlots, utilityUses, xpToNext, type Character } from '../../rules/character';
 import { AWAKENINGS, FAMILIES, GIFTS, OVERLOADS, PHILOSOPHY_LABEL, SIGNATURES_BY_GIFT, SIGNATURE_LEVEL, RARITY_LABEL, giftDef, giftSlots, giftTreeId, rollGift, type GiftFamily, type GiftRarity, type Philosophy } from '../../rules/gifts';
 import { CROSS_CLASS_LEVEL } from '../../rules/stats';
 import { chainOf, learnerTrees, lockReason } from '../../rules/skill_tree';
@@ -223,7 +223,7 @@ export class HeroSheet {
       h('div', { class: 'demo-equip' },
         h('span', { text: 'Arma' }), sel(c.equipment.weapon, weapons.map((w) => w.id), (v) => (c.equipment.weapon = v), 'desarmado'),
         h('span', { text: 'Proteção' }), sel(c.equipment.armor, MODERN_ARMOR, (v) => (c.equipment.armor = v)),
-        ...[0, 1, 2].flatMap((i) => [h('span', { text: `Item ${i + 1}` }), sel(c.equipment.utility[i] ?? null, MODERN_UTILITY, (v) => (c.equipment.utility[i] = v))]),
+        ...[0, 1, 2].flatMap((i) => [h('span', { text: itemLabel(c, i) }), sel(c.equipment.utility[i] ?? null, MODERN_UTILITY, (v) => (c.equipment.utility[i] = v))]),
       ),
     );
 
@@ -304,7 +304,7 @@ export class HeroSheet {
       h('div', { class: 'demo-equip' },
         h('span', { text: 'Arma' }), sel('weapon', 0, c.equipment.weapon, 'desarmado'),
         h('span', { text: 'Proteção' }), sel('armor', 0, c.equipment.armor, '— nada —'),
-        ...[0, 1, 2].flatMap((i) => [h('span', { text: `Item ${i + 1}` }), sel('utility', i, c.equipment.utility[i] ?? null, '— nada —')]),
+        ...[0, 1, 2].flatMap((i) => [h('span', { text: itemLabel(c, i) }), sel('utility', i, c.equipment.utility[i] ?? null, '— nada —')]),
       ),
     );
     this.renderAttrs(el, c);
@@ -508,4 +508,11 @@ function giftUniqueLines(giftId: string): HTMLElement[] {
     h('div', { text: `🧬 Inato: ${sig.innate.desc}` }),
     h('div', { text: `⭐ Assinatura (NV ${SIGNATURE_LEVEL}) — ${sig.signature.name}: ${sig.signature.description}` }),
   ];
+}
+
+/** Rótulo do espaço de utilitário: sem Dom usa 3 (2 usos cada); com Dom, 2 (1 uso). */
+function itemLabel(c: Character, i: number): string {
+  if (i >= utilitySlots(c)) return `Item ${i + 1} (só sem Dom)`;
+  const uses = utilityUses(c, 'x', i);
+  return `Item ${i + 1} · ${uses} uso${uses > 1 ? 's' : ''}`;
 }

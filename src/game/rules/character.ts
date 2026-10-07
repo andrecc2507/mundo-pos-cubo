@@ -15,6 +15,25 @@ export const STARTING_SKILL_POINTS = stats.BALANCE.progression.startingSkillPoin
 export const APPRENTICE_PROMOTION_LEVEL = 2;
 export const UTILITY_SLOTS = 3;
 
+/** Regra de utilitários do Mundo Pós-Cubo: sem Dom carrega 3 e usa 2 vezes cada; com Dom, 2 e 1 vez. */
+function utilityRule(c: Pick<Character, 'gift' | 'classId'>): { slots: number; uses: number } | null {
+  if (!(NEW_CLASSES as readonly string[]).includes(c.classId)) return null;
+  return c.gift ? stats.BALANCE.utilities.withGift : stats.BALANCE.utilities.noGift;
+}
+
+/** Quantos espaços de utilitário o personagem pode usar. */
+export function utilitySlots(c: Pick<Character, 'gift' | 'classId'>): number {
+  return utilityRule(c)?.slots ?? UTILITY_SLOTS;
+}
+
+/** Usos por batalha de um utilitário no espaço `slot` (0 se o espaço não vale para ele). */
+export function utilityUses(c: Pick<Character, 'gift' | 'classId'>, id: string | null, slot: number): number {
+  if (!id) return 0;
+  const rule = utilityRule(c);
+  if (!rule) return DB.items[id]?.uses ?? 1;
+  return slot < rule.slots ? rule.uses : 0;
+}
+
 export interface Appearance {
   hairStyle: number;
   hairColor: string;
