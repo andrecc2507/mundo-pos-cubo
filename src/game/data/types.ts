@@ -15,7 +15,13 @@ export const ATTR_LABEL: Record<Attr, string> = {
 export const ATTR_SHORT: Record<Attr, string> = { str: 'FOR', dex: 'DES', spd: 'VEL', int: 'INT', vit: 'VIT' };
 
 export type ClassId = 'aprendiz' | 'guerreiro' | 'arqueiro' | 'mago' | 'clerigo' | 'ladrao' | 'fera';
-export type WeaponType = 'espada' | 'arco' | 'varinha' | 'bastao' | 'faca' | 'natural' | 'besta_mao';
+export type WeaponType =
+  | 'espada' | 'arco' | 'varinha' | 'bastao' | 'faca' | 'natural' | 'besta_mao'
+  // Mundo Pós-Cubo: armas de fogo e corpo a corpo moderno.
+  | 'pistola' | 'fuzil' | 'escopeta' | 'precisao' | 'metralhadora' | 'lanca_granadas' | 'punhos' | 'lamina';
+
+/** Armas que usam munição (pente) e recarregam. */
+export const FIREARMS: readonly WeaponType[] = ['pistola', 'fuzil', 'escopeta', 'precisao', 'metralhadora', 'lanca_granadas'];
 export type Biome = 'floresta' | 'neve' | 'costa' | 'deserto' | 'planicie';
 export type Element = 'fogo' | 'agua' | 'gelo' | 'eletricidade' | 'vento' | 'terra' | 'veneno' | 'luz' | 'sombra';
 export type Rarity = 'comum' | 'raro' | 'epico' | 'lendario';
@@ -124,6 +130,8 @@ export interface ItemDef {
   use?: { heal?: number; mp?: number; throwElement?: Element; radius?: number; smoke?: boolean; flash?: boolean; cure?: string[]; torch?: boolean; flare?: boolean; placeProp?: string };
   /** Usos por batalha (utilitários não somem: recarregam depois). Padrão 1. */
   uses?: number;
+  /** Armas de fogo: tiros por pente (recarregar gasta uma ação). */
+  ammo?: number;
   /** Só de levar: +% de chance de render inimigos (corda, rede). Não é usado como ação. */
   captureBonus?: number;
   description: string;

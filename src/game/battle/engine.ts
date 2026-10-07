@@ -3,7 +3,7 @@ import BONDS from '../data/base/bonds.json';
 import { FRICTION } from '../rules/personality';
 import { DB, ORB_COMBOS, item, skill, type ComboDef, type Element, type OrbComboRule, type SkillDef } from '../data';
 import { addStatus, applyElementToTile, applyElementToUnit, dissipateClouds, driftSmoke, environmentTick, removeStatus, tileEffectsOnUnit, unitAt } from './elements';
-import { COVER_PENALTY, coverAgainst, coverPropAgainst, type CoverLevel } from './cover';
+import { COVER_PENALTY, coverAgainst, coverPropAgainst, coverSides, type CoverLevel } from './cover';
 import { damageProp, propHp } from './props';
 import { hasLos, lineTiles, losBlocker, obscuredBy } from './los';
 import { CLOUDS, DIRS, PROPS, TERRAIN, cloneMap, idx, inArea, inBounds, isWalkable, chebyshev, manhattan, tileAt, xy, type BattleMap } from './map';
@@ -15,7 +15,7 @@ import * as conc from './concentration';
 import * as patrol from './patrol';
 import * as scenery from './scenery';
 import * as confine from './confine';
-import type { BattleContext, BattleResult, BattleSetup, BattleState, BattleUnit, Objective, StatusId, Team, Wave } from './types';
+import type { BattleContext, BattleResult, BattleSetup, BattleState, BattleUnit, Objective, StatusId, Team, TurnState, Wave } from './types';
 import * as fx from './creature_fx';
 import * as stats from '../rules/stats';
 import { SKILL_MAX_RANK, rankCooldown } from '../rules/skill_tree';
@@ -112,6 +112,7 @@ export function createBattle(setup: BattleSetup): BattleState {
   const state: BattleState = {
     map,
     units: [],
+    teamTurns: setup.teamTurns || undefined,
     time: 0,
     round: 1,
     nextRoundAt: ROUND_TIME,
@@ -491,7 +492,8 @@ export function reachable(state: BattleState, u: BattleUnit): Reach {
   const start = stack.unitCell(map, u);
   const cost = new Map<number, number>([[start, 0]]);
   const prev = new Map<number, number>();
-  const budget = state.activeUid === u.uid ? Math.min(moveBudget(u), state.turn.moveLeft ?? Infinity) : moveBudget(u);
+  // Turnos por time: com as 2 ações, alcança até o dobro (correr).
+  const budget = state.activeUid === u.uid ? (state.teamTurns ? Math.min(TEAM_AP * moveBudget(u), state.turn.moveLeft ?? Infinity) : Math.min(moveBudget(u), state.turn.moveLeft ?? Infinity)) : moveBudget(u);
   const steps = stepper(state, u);
   const queue: number[] = [start];
   while (queue.length) {
@@ -781,7 +783,8 @@ export function moveUnit(state: BattleState, u: BattleUnit, tx: number, ty: numb
   // Gasta só o caminho feito: o resto do deslocamento fica para depois (andar, agir, andar).
   const smart = reach.smart?.(target);
   const spent = smart ? smart.costs[done.length - 1] ?? 0 : reach.cost.get(stack.unitCell(state.map, u)) ?? 0;
-  if (state.activeUid === u.uid) state.turn.moveLeft = Math.max(0, (state.turn.moveLeft ?? moveBudget(u)) - spent);
+  if (state.activeUid === u.uid && state.teamTurns) spendMoveAp(state, u, spent);
+  else if (state.activeUid === u.uid) state.turn.moveLeft = Math.max(0, (state.turn.moveLeft ?? moveBudget(u)) - spent);
   if (done.length) fx.bag(u).still = 0;
   for (const o of chasers) {
     const gain = Math.floor(done.length / 2);
@@ -1051,6 +1054,8 @@ export interface HitPreview {
   obscured?: boolean;
   /** Vantagem (+1) ou desvantagem (−1). */
   adv?: number;
+  /** Flanqueado (XCOM): tem cobertura, mas não contra este atirador. */
+  flanked?: boolean;
 }
 
 type HitKind = 'basic' | SkillDef['kind'];
@@ -1090,6 +1095,12 @@ export function previewHit(state: BattleState, a: BattleUnit, d: BattleUnit, kin
   const res = magic ? stats.magicResistance(d.attrs.int * m.def) : stats.physicalResistance(d.def * m.def);
   // Multiplicador da teia (ajuste de balanceamento da subclasse; ver docs/design/simulacao.md).
   let dmg = raw * stats.skillMultiplier(power) * (def?.powerMult ?? 1) * insp * (1 - res) * elementMult(d, el) * mult * m.dmg;
+  // Arma de fogo pela distância (só o tiro básico).
+  if (kind === 'basic') {
+    const wm = stats.weaponRangeMods(a.weaponType, chebyshev(a.x, a.y, d.x, d.y));
+    dmg *= 1 + wm.dmg;
+    accBonus += wm.acc;
+  }
   // Criatura estudada na Biblioteca: o jogador acerta e fere mais (data/base/base.json).
   const studied = a.team === 'player' && !!d.enemyId && !!state.studied?.includes(d.enemyId);
   if (studied) {
@@ -1133,7 +1144,9 @@ export function previewHit(state: BattleState, a: BattleUnit, d: BattleUnit, kin
   if (adv) chance = stats.advantageChance(chance, adv);
   if (d.statuses.congelado) chance = 100;
   if (m.immune) return { chance: 0, min: 0, max: 0, crit: 0, cover };
-  return { chance: Math.round(chance), min: Math.max(1, Math.floor(dmg * 0.9)), max: Math.max(1, Math.ceil(dmg * 1.1)), crit: Math.min(100, a.crit + m.crit + cloudCrit + (hunted ? HUNT.crit : 0)), cover, obscured, adv };
+  // Flanco (XCOM): o alvo tem cobertura, mas não contra quem atira — crítico extra.
+  const flanked = !magic && cover === 'none' && chebyshev(a.x, a.y, d.x, d.y) > 1 && coverSides(state.map, d.x, d.y).length > 0;
+  return { chance: Math.round(chance), min: Math.max(1, Math.floor(dmg * 0.9)), max: Math.max(1, Math.ceil(dmg * 1.1)), crit: Math.min(100, a.crit + m.crit + cloudCrit + (hunted ? HUNT.crit : 0) + (flanked ? stats.WEAPONS.flankCrit : 0)), cover, obscured, adv, flanked };
 }
 
 /** Soma de vantagens (+1) e desvantagens (−1) do ataque de `a` em `d`: −1, 0 ou +1. */
@@ -1310,6 +1323,11 @@ export function resolveAttack(state: BattleState, a: BattleUnit, d: BattleUnit, 
 
 export function finishAction(state: BattleState, u: BattleUnit, keepHidden = false): void {
   state.turn.acted = true;
+  // Turnos por time: agir encerra o turno (como atirar no XCOM).
+  if (state.teamTurns) {
+    state.turn.ap = 0;
+    state.turn.moveLeft = 0;
+  }
   if (!keepHidden && u.hidden) {
     u.hidden = false;
     state.log.push(`👁 ${u.name} saiu do esconderijo.`);
@@ -1547,6 +1565,12 @@ export function attack(state: BattleState, u: BattleUnit, x: number, y: number):
   }
   const target = unitAt(state, x, y);
   if (!target || target.team === u.team || !inRange(state, u, skillRange(u, BASIC_ATTACK), x, y) || !fx.canStrike(u)) return false;
+  // Arma de fogo sem munição: precisa recarregar.
+  if (u.maxAmmo && (u.ammo ?? 0) <= 0) {
+    state.log.push(`🔫 ${u.name} está sem munição — recarregue.`);
+    return false;
+  }
+  if (u.maxAmmo) u.ammo = (u.ammo ?? u.maxAmmo) - 1;
   faceTowards(u, x, y);
   const imbue = fx.imbueOf(u);
   const el = imbue?.element ?? (u.weaponType === 'natural' ? fx.currentStance(state, u)?.element ?? u.element : undefined);
@@ -2034,6 +2058,22 @@ export function capture(state: BattleState, u: BattleUnit, x: number, y: number)
  * Desengajar: gasta a ação do turno para recuar com cuidado — o resto do movimento deste turno não
  * provoca ataques de oportunidade.
  */
+/**
+ * Recarregar a arma de fogo. Turnos por time: gasta 1 ação e não encerra o turno (se sobrar ação);
+ * na linha do tempo, gasta a ação.
+ */
+export function reload(state: BattleState, u: BattleUnit): boolean {
+  if (!u.maxAmmo || (u.ammo ?? 0) >= u.maxAmmo) return false;
+  u.ammo = u.maxAmmo;
+  state.log.push(`🔫 ${u.name} recarrega (${u.ammo}/${u.maxAmmo}).`);
+  state.events.push({ type: 'text', x: u.x, y: u.y, text: '🔫 Recarregou', color: '#e0e0e0' });
+  if (state.teamTurns && (state.turn.ap ?? 0) >= 2) {
+    state.turn.ap = 1;
+    state.turn.moveLeft = moveBudget(u);
+  } else finishAction(state, u, true);
+  return true;
+}
+
 export function disengage(state: BattleState, u: BattleUnit): boolean {
   if (state.turn.acted) return false;
   fx.bag(u).disengaged = 1;
@@ -2118,7 +2158,8 @@ export function flee(state: BattleState, u: BattleUnit): boolean {
 
 // ───────────────────────────── turnos ─────────────────────────────
 
-function beginTurn(state: BattleState, u: BattleUnit): void {
+/** Começo do turno da unidade (estados, recargas, efeitos). Devolve se ela pode agir. */
+function beginTurn(state: BattleState, u: BattleUnit): boolean {
   fx.bag(u).actedOnce = 1;
   delete fx.bag(u).shoved;
   delete fx.bag(u).disengaged;
@@ -2127,7 +2168,7 @@ function beginTurn(state: BattleState, u: BattleUnit): void {
   if (u.bound) {
     u.gauge = 0;
     state.activeUid = null;
-    return;
+    return false;
   }
   u.defending = false;
   driftSmoke(state, u);
@@ -2140,7 +2181,7 @@ function beginTurn(state: BattleState, u: BattleUnit): void {
     removeStatus(u, 'congelado');
     u.gauge = 0;
     state.activeUid = null;
-    return;
+    return false;
   }
   if (u.statuses.queimando && !u.statuses.molhado) damage(state, u, Math.round(u.maxHp * 0.07) + 2, undefined, 'fogo');
   if (u.statuses.envenenado) damage(state, u, Math.round(u.maxHp * 0.05) + 2, undefined, 'veneno');
@@ -2166,7 +2207,7 @@ function beginTurn(state: BattleState, u: BattleUnit): void {
     u.gauge = 0;
     state.activeUid = null;
     checkVictory(state);
-    return;
+    return false;
   }
   if (wasSubmerged && !u.statuses.submerso && u.hidden) {
     u.hidden = false;
@@ -2175,7 +2216,117 @@ function beginTurn(state: BattleState, u: BattleUnit): void {
   if (!u.alive) {
     state.activeUid = null;
     checkVictory(state);
+    return false;
   }
+  return true;
+}
+
+/** Virada de rodada: ambiente, zonas, sangramento, construções, reforços. */
+function roundTick(state: BattleState): void {
+  const alive = () => state.units.filter((u) => u.alive);
+  // Fogo nos andares pode ter consumido peças: o que ficou sem apoio cai.
+  if (environmentTick(state)) settleStructures(state);
+  fx.roundTick(state);
+  downed.bleedTick(state);
+  build.buildTick(state);
+  confine.confineTick(state);
+  state.round += 1;
+  state.nextRoundAt += ROUND_TIME;
+  for (const w of state.waves ?? []) if (!w.done && w.round <= state.round) spawnWave(state, w);
+  for (const u of alive()) if (u.betrayAt && !u.betrayed && state.round >= u.betrayAt) betray(state, u);
+  if (state.collapsed !== undefined && state.round >= 2) collapseColumn(state);
+  checkVictory(state);
+}
+
+// ───────────────────────────── turnos por time (XCOM) ─────────────────────────────
+
+/** Ações por turno no modo por time. */
+export const TEAM_AP = 2;
+
+function freshTurn(u: BattleUnit): TurnState {
+  return { moved: false, acted: false, startX: u.x, startY: u.y, startZ: u.z, moveLeft: TEAM_AP * moveBudget(u), ap: TEAM_AP };
+}
+
+/** Começa a fase de um time: o começo de turno de cada unidade dele (estados, recargas). */
+function startPhase(state: BattleState, team: Team): void {
+  state.phase = team;
+  state.phaseDone = [];
+  state.turns = {};
+  for (const u of state.units.filter((x) => x.alive && x.team === team)) {
+    state.activeUid = u.uid;
+    state.turn = freshTurn(u);
+    const ok = beginTurn(state, u);
+    state.turns[u.uid] = { ...state.turn, moveLeft: TEAM_AP * moveBudget(u) };
+    if (!ok || !u.alive) state.phaseDone.push(u.uid);
+  }
+  state.activeUid = null;
+  state.log.push(team === 'player' ? `— Rodada ${state.round}: turno do esquadrão —` : '— Turno inimigo —');
+  state.events.push({ type: 'phase', team });
+}
+
+/** Unidades da fase que ainda podem agir (jogador primeiro os que ele controla). */
+export function phaseReady(state: BattleState): BattleUnit[] {
+  const done = new Set(state.phaseDone ?? []);
+  return state.units.filter((u) => u.alive && u.team === state.phase && !done.has(u.uid) && !u.bound).sort((a, b) => Number(!!a.ai) - Number(!!b.ai));
+}
+
+function activate(state: BattleState, u: BattleUnit): void {
+  state.activeUid = u.uid;
+  state.turn = state.turns?.[u.uid] ?? freshTurn(u);
+}
+
+function stepPhase(state: BattleState): BattleUnit | null {
+  const current = activeUnit(state);
+  if (current) return current;
+  if (!state.phase) startPhase(state, 'player');
+  for (let guard = 0; guard < 4 && !state.outcome; guard++) {
+    const next = phaseReady(state)[0];
+    if (next) {
+      activate(state, next);
+      return next;
+    }
+    // Fase acabou: passa a vez. Depois do inimigo, vira a rodada.
+    const other: Team = state.phase === 'player' ? 'enemy' : 'player';
+    if (other === 'player') roundTick(state);
+    if (state.outcome) return null;
+    startPhase(state, other);
+  }
+  return null;
+}
+
+/** Troca a unidade ativa do jogador (turnos por time): o turno da anterior fica guardado. */
+export function selectUnit(state: BattleState, uid: string): boolean {
+  if (!state.teamTurns || state.phase !== 'player') return false;
+  const u = unitById(state, uid);
+  if (!u || !phaseReady(state).includes(u) || u.ai) return false;
+  const cur = activeUnit(state);
+  if (cur === u) return true;
+  if (cur) (state.turns ??= {})[cur.uid] = state.turn;
+  activate(state, u);
+  return true;
+}
+
+/** Encerra o turno de todo o esquadrão (o que sobrou de ação se perde). */
+export function endPhase(state: BattleState): void {
+  if (!state.teamTurns) return endTurn(state);
+  const cur = activeUnit(state);
+  if (cur) fx.turnEnd(state, cur);
+  state.phaseDone = state.units.filter((u) => u.team === state.phase).map((u) => u.uid);
+  state.activeUid = null;
+  patrol.checkAlerts(state);
+  checkVictory(state);
+}
+
+/** Gasta ações depois de andar `spent` (turnos por time): até o deslocamento 1, além disso (correr) 2. */
+function spendMoveAp(state: BattleState, u: BattleUnit, spent: number): void {
+  if (spent <= 0) return;
+  const mb = moveBudget(u);
+  const ap = state.turn.ap ?? TEAM_AP;
+  const used = spent > mb ? 2 : 1;
+  state.turn.ap = Math.max(0, ap - used);
+  state.turn.moveLeft = state.turn.ap * mb;
+  // Correu (ou andou duas vezes): o turno acabou.
+  if (state.turn.ap === 0) state.turn.acted = true;
 }
 
 /**
@@ -2185,6 +2336,7 @@ function beginTurn(state: BattleState, u: BattleUnit): void {
  */
 export function stepTime(state: BattleState, maxDt: number): BattleUnit | null {
   if (state.outcome) return null;
+  if (state.teamTurns) return stepPhase(state);
   const current = activeUnit(state);
   if (current) return current;
   const alive = () => state.units.filter((u) => u.alive);
@@ -2198,18 +2350,7 @@ export function stepTime(state: BattleState, maxDt: number): BattleUnit | null {
       const step = state.nextRoundAt - state.time;
       for (const u of alive()) u.gauge += rate(u) * step;
       state.time = state.nextRoundAt;
-      // Fogo nos andares pode ter consumido peças: o que ficou sem apoio cai.
-      if (environmentTick(state)) settleStructures(state);
-      fx.roundTick(state);
-      downed.bleedTick(state);
-      build.buildTick(state);
-      confine.confineTick(state);
-      state.round += 1;
-      state.nextRoundAt += ROUND_TIME;
-      for (const w of state.waves ?? []) if (!w.done && w.round <= state.round) spawnWave(state, w);
-      for (const u of alive()) if (u.betrayAt && !u.betrayed && state.round >= u.betrayAt) betray(state, u);
-      if (state.collapsed !== undefined && state.round >= 2) collapseColumn(state);
-      checkVictory(state);
+      roundTick(state);
     }
     if (state.outcome) return null;
     const rest = end - state.time;
@@ -2236,6 +2377,17 @@ export function advance(state: BattleState): BattleUnit | null {
 /** Encerra o turno. Sem agir (só andar ou esperar) a próxima barra começa em 50%. */
 export function endTurn(state: BattleState): void {
   const u = activeUnit(state);
+  if (state.teamTurns) {
+    if (u) {
+      fx.turnEnd(state, u);
+      (state.phaseDone ??= []).push(u.uid);
+      if (state.turns) delete state.turns[u.uid];
+    }
+    state.activeUid = null;
+    patrol.checkAlerts(state);
+    checkVictory(state);
+    return;
+  }
   // Habilidades lentas (custo de tempo > 1) começam a próxima espera abaixo de zero; rápidas, acima.
   if (u) u.gauge = (!state.turn.acted ? MOVE_ONLY_GAUGE : 0) - 100 * ((state.turn.timeMult ?? 1) - 1);
   if (u) fx.turnEnd(state, u);

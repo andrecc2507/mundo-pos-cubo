@@ -290,6 +290,19 @@ export const LIGHT = balance.light;
 
 /** Números das mecânicas táticas (empurrar, arremessar, supressão, furtividade, concentração…). */
 export const TACTICS = balance.tactics;
+export const WEAPONS = balance.weapons;
+
+/**
+ * Armas de fogo pela distância (casas): fuzil de precisão erra de perto, escopeta arrasa de perto e
+ * erra de longe, metralhadora treme. Números em balance.json (`weapons`).
+ */
+export function weaponRangeMods(type: string | undefined, dist: number): { acc: number; dmg: number } {
+  const w = balance.weapons;
+  if (type === 'precisao' && dist <= w.precisaoClose.within) return { acc: w.precisaoClose.acc, dmg: 0 };
+  if (type === 'escopeta') return { acc: dist >= w.escopeta.farFrom ? w.escopeta.farAcc : 0, dmg: dist <= w.escopeta.within ? w.escopeta.dmg : 0 };
+  if (type === 'metralhadora') return { acc: w.metralhadoraAcc, dmg: 0 };
+  return { acc: 0, dmg: 0 };
+}
 
 /**
  * Empurrar (Força × Força): 50% + 4 por ponto de FOR a mais que o alvo + 20 por tamanho a mais;

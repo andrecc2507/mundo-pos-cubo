@@ -10,8 +10,10 @@ import {
   endTurn,
   inRange,
   isFree,
+  moveBudget,
   moveUnit,
   opponents,
+  reload,
   previewHit,
   reachable,
   skillRange,
@@ -37,7 +39,7 @@ export interface AiPlan {
   moveTo: [number, number] | null;
   /** Andar de destino (prédios); ausente = o mais barato na coluna. */
   moveLevel?: number;
-  action: { kind: 'attack' | 'skill'; skill: SkillLike; x: number; y: number } | { kind: 'defend' } | TacticAction | null;
+  action: { kind: 'attack' | 'skill'; skill: SkillLike; x: number; y: number } | { kind: 'defend' } | { kind: 'reload' } | TacticAction | null;
   /** Empurrão (ação livre) feito depois de andar e antes da ação. */
   shove?: [number, number];
 }
@@ -293,7 +295,7 @@ export function planTurn(state: BattleState, u: BattleUnit): AiPlan {
   if (self) return self;
 
   const options: SkillLike[] = [
-    ...(canStrike(u) ? [BASIC_ATTACK] : []),
+    ...(canStrike(u) && (!u.maxAmmo || (u.ammo ?? 0) > 0) ? [BASIC_ATTACK] : []),
     ...all.filter((s) => OFFENSIVE.has(s.kind) || (s.kind === 'heal' && !isFera(s))),
   ];
   const reach = reachable(state, u);
@@ -319,7 +321,10 @@ export function planTurn(state: BattleState, u: BattleUnit): AiPlan {
     const moveCost = reach.cost.get(ti) ?? 0;
     const posMelee = positionValue(state, u, targets, false);
     const posRanged = positionValue(state, u, targets, true);
+    // Turnos por time: correr (além do deslocamento) gasta as 2 ações — dali não dá para agir.
+    const dashed = !!state.teamTurns && moveCost > moveBudget(u);
     const consider = (score: number, action: AiPlan['action']) => {
+      if (dashed && action) return;
       if (score > best.score) best = { score, plan: { moveTo: ti === ocell ? null : [tx, ty], moveLevel: tl, action } };
     };
     // Táticas do mapa: estabilizar, barris, lustres, arremessos, sino.
@@ -335,6 +340,7 @@ export function planTurn(state: BattleState, u: BattleUnit): AiPlan {
       if (b) consider(b.value - s.mp * 0.1 - moveCost * 0.2, { kind: 'skill', skill: s, x: b.x, y: b.y });
     }
     for (const s of options) {
+      if (dashed) break;
       if (DB.skills[s.id]?.fx?.randomTargets && (tx !== ox || ty !== oy)) continue;
       for (const [cx, cy] of aimPoints(state, u, s, targets)) {
         const ranged = s.id === 'ataque' ? u.weaponRange > 1 : skillRange(u, s) > 1;
@@ -383,6 +389,8 @@ export function planTurn(state: BattleState, u: BattleUnit): AiPlan {
   u.z = oz;
   if (oz === undefined) delete u.z;
   if (best.plan.action && best.score > 0) return best.plan;
+  // Sem munição e sem nada melhor: recarrega (de onde está).
+  if (u.maxAmmo && !u.ammo) return { moveTo: null, action: { kind: 'reload' } };
   const goal = [...targets].sort((a, b) => manhattan(u.x, u.y, a.x, a.y) - manhattan(u.x, u.y, b.x, b.y))[0];
   if (!goal) return { moveTo: null, action: { kind: 'defend' } };
   // Teleporte como deslocamento: salta para perto do alvo.
@@ -486,6 +494,7 @@ export function runAiTurn(state: BattleState, u: BattleUnit): AiPlan {
   // Preso numa armadilha no caminho: o turno acabou ali.
   if (a && u.alive && !state.outcome && !state.turn.acted) {
     if (a.kind === 'defend') defend(state, u);
+    else if (a.kind === 'reload') reload(state, u);
     else if (a.kind === 'attack') {
       aimAt(state, u, a.x, a.y);
       attack(state, u, a.x, a.y);

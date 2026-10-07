@@ -1,5 +1,5 @@
 import type { Rng } from '@core';
-import { ATTRS, DB, item, type Attr, type Attributes, type ClassId, type WeaponType } from '../data';
+import { ATTRS, DB, FIREARMS, item, type Attr, type Attributes, type ClassId, type WeaponType } from '../data';
 import { classSkillIds, lockReason, rankOf, treeBonus, treeMpBonus } from './skill_tree';
 import * as stats from './stats';
 
@@ -178,7 +178,8 @@ export function derive(c: Character): Derived {
   // Ataque físico como no Ragnarok: arcos e facas com DES; espadas, bastões e o resto com FOR.
   // A varinha dispara magia no ataque básico (INT); o bastão é arma de golpe (FOR) e a INT fica
   // para as magias e as curas.
-  const attackAttr: Attr = weaponType === 'arco' || weaponType === 'faca' || weaponType === 'besta_mao' ? 'dex' : weaponType === 'varinha' ? 'int' : 'str';
+  // Armas de fogo: pontaria (DES); punhos e lâminas pesadas: FOR.
+  const attackAttr: Attr = weaponType === 'arco' || weaponType === 'faca' || weaponType === 'besta_mao' || FIREARMS.includes(weaponType) ? 'dex' : weaponType === 'varinha' ? 'int' : 'str';
   const tb = treeBonus(c);
   attrs.spd = Math.round(attrs.spd * (1 + tb.speed));
   attrs.str = Math.round(attrs.str * (1 + tb.str));

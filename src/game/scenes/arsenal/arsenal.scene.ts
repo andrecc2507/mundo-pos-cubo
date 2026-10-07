@@ -13,9 +13,9 @@ import { RARITY_COLOR, RARITY_LABEL } from '../../world/encounters';
 import { ELEMENT_LABEL, field } from '../shared/skill_form';
 
 const SLOT_LABEL: Record<ItemSlot, string> = { weapon: 'Arma', offhand: 'Mão secundária', armor: 'Armadura', accessory: 'Acessório', utility: 'Item de campo' };
-const WEAPON_LABEL: Record<WeaponType, string> = { espada: 'Espada', arco: 'Arco', varinha: 'Varinha', bastao: 'Bastão', faca: 'Faca', natural: 'Natural', besta_mao: 'Bestas de mão' };
+const WEAPON_LABEL: Record<WeaponType, string> = { espada: 'Espada', arco: 'Arco', varinha: 'Varinha', bastao: 'Bastão', faca: 'Faca', natural: 'Natural', besta_mao: 'Bestas de mão', pistola: 'Pistola', fuzil: 'Fuzil', escopeta: 'Escopeta', precisao: 'Fuzil de precisão', metralhadora: 'Metralhadora', lanca_granadas: 'Lança-granadas', punhos: 'Punhos', lamina: 'Lâmina' };
 /** Atributo que escala cada tipo de arma (mesma regra de rules/character). */
-const WEAPON_ATTR: Record<WeaponType, Attr> = { espada: 'str', arco: 'dex', faca: 'dex', varinha: 'int', bastao: 'int', natural: 'str', besta_mao: 'dex' };
+const WEAPON_ATTR: Record<WeaponType, Attr> = { espada: 'str', arco: 'dex', faca: 'dex', varinha: 'int', bastao: 'int', natural: 'str', besta_mao: 'dex', pistola: 'dex', fuzil: 'dex', escopeta: 'dex', precisao: 'dex', metralhadora: 'dex', lanca_granadas: 'dex', punhos: 'str', lamina: 'str' };
 const BONUS_FIELDS: [string, string][] = [['str', 'FOR'], ['dex', 'DES'], ['spd', 'VEL'], ['int', 'INT'], ['vit', 'VIT'], ['crit', 'Crítico %'], ['accuracy', 'Precisão'], ['evasion', 'Esquiva'], ['heal', 'Cura']];
 /** Atributo principal típico de um personagem focado, por nível (ver docs/design/matematica.md). */
 const REF_ATTR: [number, number][] = [[1, 11], [20, 35], [40, 55], [60, 70]];

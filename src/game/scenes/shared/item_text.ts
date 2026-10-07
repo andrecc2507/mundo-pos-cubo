@@ -1,7 +1,7 @@
 import { ATTR_SHORT, type ItemDef } from '../../data';
 
 const BONUS_LABEL: Record<string, string> = { crit: 'crítico', evasion: 'esquiva', accuracy: 'precisão', heal: 'cura' };
-const WEAPON_LABEL: Record<string, string> = { espada: 'Espada', arco: 'Arco', varinha: 'Varinha', bastao: 'Bastão', faca: 'Faca', natural: 'Natural', besta_mao: 'Bestas de mão' };
+const WEAPON_LABEL: Record<string, string> = { espada: 'Espada', arco: 'Arco', varinha: 'Varinha', bastao: 'Bastão', faca: 'Faca', natural: 'Natural', besta_mao: 'Bestas de mão', pistola: 'Pistola', fuzil: 'Fuzil', escopeta: 'Escopeta', precisao: 'Fuzil de precisão', metralhadora: 'Metralhadora', lanca_granadas: 'Lança-granadas', punhos: 'Punhos', lamina: 'Lâmina' };
 
 /** Números de um item numa linha: "Espada · ATQ 13 · alcance 1 · +5 crítico · +3 FOR". */
 export function itemStatLine(it: ItemDef): string {

@@ -20,6 +20,12 @@ function bondLevels(points: Record<string, number> | undefined): Record<string, 
   return Object.keys(out).length ? out : undefined;
 }
 
+/** Pente da arma de fogo equipada (cheio no começo da batalha). */
+function ammoOf(c: Character): { ammo?: number; maxAmmo?: number } {
+  const w = c.equipment.weapon ? DB.items[c.equipment.weapon] : undefined;
+  return w?.ammo ? { ammo: w.ammo, maxAmmo: w.ammo } : {};
+}
+
 /** Pontos de atrito → níveis (1 Rivais, 2 Desafetos). */
 function rivalLevels(points: Record<string, number> | undefined): Record<string, number> | undefined {
   if (!points) return undefined;
@@ -121,6 +127,7 @@ export function unitFromCharacter(c: Character, team: Team): BattleUnit {
     weaponAtk: d.weaponAtk,
     weaponRange: d.weaponRange,
     weaponType: d.weaponType,
+    ...ammoOf(c),
     attackAttr: d.attackAttr,
     accuracy: d.accuracy + q.accuracy,
     evasion: d.evasion + q.evasion,
