@@ -6,6 +6,7 @@ import { Rng } from '@core';
 import type { Character } from '../rules/character';
 import RULES from '../data/geo/geo_rules.json';
 import type { LonLat } from './world';
+import type { Legacy } from './legacy';
 
 export const GEO_RULES = RULES;
 export type Supply = 'combustivel' | 'remedios' | 'pecas';
@@ -130,6 +131,9 @@ export interface GeoGame {
   stock: Record<string, number>;
   /** Já viu a explicação inicial. */
   introSeen?: boolean;
+  /** Legados dos mortos e os ativos (geo/legacy.ts). */
+  legacies: Legacy[];
+  activeLegacies: string[];
   /** Especialistas da vila (não lutam; designados às instalações) e os candidatos da leva. */
   specialists: Specialist[];
   specialistPool: Specialist[];

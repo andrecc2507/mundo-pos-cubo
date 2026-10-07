@@ -29,6 +29,8 @@ export function loadGeo(save: SaveService, slot: string): boolean {
   g.stock ??= {};
   g.hostile ??= {};
   g.specialists ??= [];
+  g.legacies ??= [];
+  g.activeLegacies ??= [];
   g.specialistPool ??= [];
   g.nextRaidAt ??= g.hours + 24 * 10;
   g.speed = 0;

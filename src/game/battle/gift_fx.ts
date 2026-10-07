@@ -48,7 +48,7 @@ export function afterGiftCast(state: BattleState, u: BattleUnit, def: SkillDef |
   if (!def?.strain || !u.alive) return;
   const before = u.strain ?? 0;
   const variant = variantDef(u.variants?.[def.id]);
-  u.strain = Math.min(100, before + Math.round(def.strain * (u.awakened ? AWAKENING.strainMult : 1) * (1 + (variant?.strain ?? 0))));
+  u.strain = Math.min(100, before + Math.round(def.strain * (u.awakened ? AWAKENING.strainMult : 1) * (1 + (variant?.strain ?? 0)) * (u.strainMult ?? 1)));
   u.strainHot = true;
   if (before < STRAIN.plusUltraAt && u.strain >= STRAIN.plusUltraAt && u.strain < 100) {
     state.log.push(`🔥 ${u.name} força o Dom além do limite! (Strain ${u.strain})`);

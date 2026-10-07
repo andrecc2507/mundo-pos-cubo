@@ -2,7 +2,6 @@ import { Rng, Scene } from '@core';
 import { bar, btn, clear, h, layer, modal, modalOpen, toast } from '@ui/dom';
 import { DB } from '../../data';
 import { Audio } from '../../audio/audio';
-import { unitFromCharacter } from '../../battle/units';
 import { CONTRACT_TYPES, SOURCES, contractBattle, contractText, rewardText } from '../../geo/contracts';
 import { GEO_RULES, SUPPLIES, SUPPLY_LABEL, awayIds, clockLabel, isAvailable, overallReputation, withRng, type Contract, type GeoAlert, type GeoGame, type Squad } from '../../geo/game';
 import { applyContractResult, assignSpecialist, dismiss, hire, hireBlock, hireCost, hireSpecialist, resetBuild, resetCost } from '../../geo/people';
@@ -16,6 +15,7 @@ import { GlobeView, drawGlobe, drawRoute } from '../../render/globe';
 import { canEquip, derive, type Character } from '../../rules/character';
 import { giftDef } from '../../rules/gifts';
 import { store } from '../../state/store';
+import { LEGACY_RULES, squadUnits, toggleLegacy } from '../../geo/legacy';
 import { applyEncounterResult, applyRaidResult, defendersAvailable, encounterBattle, encounterInfo, fleeEncounter, raidBattle, raidLabel, resolveEncounterChoice, resolveRaidAuto, type EncounterChoice } from '../../geo/events';
 import { POLITICS, STANCE_COLOR, STANCE_LABEL, rep, stance } from '../../geo/politics';
 import { GEO_SLOTS, autosaveGeo, geoSlotInfo, geoStore, saveGeo } from '../../state/geo_store';
@@ -330,7 +330,8 @@ export class GeoscapeScene extends Scene {
   }
 
   private fight(s: Squad, c: Contract): void {
-    const units = s.members.map((id) => this.g.roster[id]).filter((x): x is Character => !!x).map((ch) => unitFromCharacter(ch, 'player'));
+    const { units, duos } = squadUnits(this.g, s.members);
+    if (duos.length) toast(`Técnicas de dupla prontas: ${duos.join(', ')}`, 4000);
     const setup = withRng(this.g, (rng) => contractBattle(this.g, c, units, rng, s.id));
     saveGeo(this.ctx.save);
     this.ctx.scenes.go('battle', { setup, returnTo: 'geoscape' });
@@ -510,6 +511,21 @@ export class GeoscapeScene extends Scene {
       sel.addEventListener('change', () => (assignSpecialist(this.g, sp.id, sel.value || null) ? this.renderAll() : toast('Essa instalação já tem especialistas demais.')));
       el.append(h('div', { class: 'row', style: 'gap:6px;align-items:center;font-size:12px;margin:2px 0' }, h('span', { style: 'flex:1', text: `${sp.name} · ${PROFESSIONS[sp.profession]?.name}` }), sel));
     }
+    if (g.legacies.length) {
+      el.append(h('div', { class: 'demo-section', text: `🕯 Legados (${g.activeLegacies.length}/${LEGACY_RULES.capacity} ativos)` }));
+      for (const lg of g.legacies) {
+        const on = g.activeLegacies.includes(lg.id);
+        el.append(h('label', { class: `geo-pick${on ? ' on' : ''}` },
+          (() => {
+            const cb = h('input', { type: 'checkbox' }) as HTMLInputElement;
+            cb.checked = on;
+            cb.addEventListener('change', () => (toggleLegacy(this.g, lg.id) ? this.renderAll() : (toast(`No máximo ${LEGACY_RULES.capacity} legados ativos.`), this.renderLeft())));
+            return cb;
+          })(),
+          h('span', { text: ` ${lg.title} de ${lg.name} (NV ${lg.level}): ${lg.text}` }),
+        ));
+      }
+    }
     if (g.memorial.length) {
       el.append(h('div', { class: 'demo-section', text: '🕯 Memorial' }));
       for (const m of g.memorial) el.append(h('div', { class: 'muted', style: 'font-size:12px', text: `${m.name} (${(DB.classes as Record<string, { name: string } | undefined>)[m.classId]?.name ?? m.classId}${m.gift ? ` · ${giftDef(m.gift)?.name}` : ''}) — ${m.cause}, ${clockLabel(m.at)}` }));
@@ -680,7 +696,7 @@ export class GeoscapeScene extends Scene {
               modal(res.won ? '🛡 A vila resistiu' : '🔥 A vila foi saqueada', (b2, m2) => b2.append(h('p', { text: res.text }), btn('Continuar', () => m2.close(), { class: 'primary' })));
             }),
             btn('⚔ Defender', () => {
-              const units = [...picked].map((id) => unitFromCharacter(g.roster[id]!, 'player'));
+              const { units } = squadUnits(g, [...picked]);
               const setup = withRng(g, (rng) => raidBattle(g, units, rng));
               m.close();
               saveGeo(this.ctx.save);
@@ -716,7 +732,7 @@ export class GeoscapeScene extends Scene {
         row.append(
           btn('🏃 Fugir', () => (m.close(), done(withRng(g, (rng) => fleeEncounter(g, rng)))), { title: 'Alguns podem se ferir; a viagem continua' }),
           btn('⚔ Lutar', () => {
-            const units = s.members.map((id) => g.roster[id]).filter((x): x is Character => !!x).map((c) => unitFromCharacter(c, 'player'));
+            const { units } = squadUnits(g, s.members);
             const setup = withRng(g, (rng) => encounterBattle(g, units, rng));
             m.close();
             saveGeo(this.ctx.save);

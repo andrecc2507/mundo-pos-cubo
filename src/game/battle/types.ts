@@ -245,6 +245,8 @@ export interface BattleUnit {
   casts?: number;
   /** Lançamentos por habilidade (telemetria). */
   castLog?: Record<string, number>;
+  /** Multiplicador do Strain gerado (legado "Eco do Dom"). */
+  strainMult?: number;
   /** Variante de cada técnica dominada (rules/mastery.ts). */
   variants?: Record<string, string>;
   /** Caído sangrando: rodadas até morrer (ver battle/downed.ts). */

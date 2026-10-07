@@ -348,5 +348,191 @@
   "boostPerSpecialist": 0.5,
   "maxPerFacility": 2,
   "refugeeChance": 0.3
+ },
+ "synergy": {
+  "_doc": "Sinergia (spec §42) usa os pontos de vínculo do par (0–100): +perBattle por luta juntos, +victory na vitória. Em duoAt, os dois ganham uma técnica de dupla (combo do motor) quando estão a até partnerRange casas.",
+  "perBattle": 5,
+  "victory": 3,
+  "duoAt": 75,
+  "partnerRange": 3,
+  "mpCost": 6
+ },
+ "duos": {
+  "impacto+impacto": {
+   "name": "Impacto Duplo",
+   "desc": "Os dois golpeiam juntos: onda de choque em volta do alvo.",
+   "result": {
+    "range": 1,
+    "target": "enemy",
+    "shape": "radius",
+    "radius": 1,
+    "kind": "physical",
+    "power": 19
+   }
+  },
+  "impacto+movimento": {
+   "name": "Arremesso Cruzado",
+   "desc": "Um lança, o outro acerta no ar: golpe em linha que atravessa.",
+   "result": {
+    "range": 5,
+    "target": "tile",
+    "shape": "line",
+    "kind": "physical",
+    "power": 17
+   }
+  },
+  "impacto+suporte": {
+   "name": "Golpe Escudado",
+   "desc": "Um protege, o outro bate sem medo: dano alto e o alvo fica enfraquecido.",
+   "result": {
+    "range": 1,
+    "target": "enemy",
+    "shape": "single",
+    "kind": "physical",
+    "power": 20,
+    "status": {
+     "id": "enfraquecido",
+     "turns": 2
+    }
+   }
+  },
+  "impacto+controle": {
+   "name": "Prende e Esmaga",
+   "desc": "Um segura, o outro esmaga: dano alto e atordoa.",
+   "result": {
+    "range": 2,
+    "target": "enemy",
+    "shape": "single",
+    "kind": "physical",
+    "power": 19,
+    "status": {
+     "id": "atordoado",
+     "turns": 1
+    }
+   }
+  },
+  "movimento+movimento": {
+   "name": "Pinça",
+   "desc": "Os dois cruzam o campo por lados opostos.",
+   "result": {
+    "range": 5,
+    "target": "tile",
+    "shape": "line",
+    "kind": "physical",
+    "power": 15
+   }
+  },
+  "movimento+suporte": {
+   "name": "Resgate Relâmpago",
+   "desc": "Um corre, o outro cura no caminho: cura em área.",
+   "result": {
+    "range": 4,
+    "target": "tile",
+    "shape": "radius",
+    "radius": 1,
+    "kind": "heal",
+    "power": 14
+   }
+  },
+  "movimento+controle": {
+   "name": "Armadilha em Movimento",
+   "desc": "Um atrai, o outro fecha a área: lentidão em área.",
+   "result": {
+    "range": 5,
+    "target": "tile",
+    "shape": "radius",
+    "radius": 1,
+    "kind": "magic",
+    "power": 10,
+    "status": {
+     "id": "lento",
+     "turns": 2
+    }
+   }
+  },
+  "suporte+suporte": {
+   "name": "Muralha de Dois",
+   "desc": "Juntos, protegem todo mundo por perto.",
+   "result": {
+    "range": 3,
+    "target": "tile",
+    "shape": "radius",
+    "radius": 2,
+    "kind": "heal",
+    "power": 12
+   }
+  },
+  "suporte+controle": {
+   "name": "Zona Segura",
+   "desc": "Uma área onde os inimigos ficam lentos e os aliados se recuperam.",
+   "result": {
+    "range": 4,
+    "target": "tile",
+    "shape": "radius",
+    "radius": 2,
+    "kind": "magic",
+    "power": 8,
+    "status": {
+     "id": "lento",
+     "turns": 2
+    }
+   }
+  },
+  "controle+controle": {
+   "name": "Cárcere",
+   "desc": "Os dois travam o mesmo alvo: imobilizado.",
+   "result": {
+    "range": 5,
+    "target": "enemy",
+    "shape": "single",
+    "kind": "magic",
+    "power": 12,
+    "status": {
+     "id": "imobilizado",
+     "turns": 2
+    }
+   }
+  }
+ },
+ "legacy": {
+  "_doc": "Legado (spec §33–35): quem morre a partir de minLevel deixa um bônus pela classe (e pelo Dom). A força cresce com o nível em que morreu. Só `capacity` legados ficam ativos (escolhidos no memorial).",
+  "minLevel": 2,
+  "capacity": 3,
+  "scaleLevels": [
+   10,
+   20
+  ],
+  "byClass": {
+   "suporte": {
+    "name": "Instrutor",
+    "desc": "+{v}% de XP para todos.",
+    "stat": "xp",
+    "value": 8
+   },
+   "movimento": {
+    "name": "Veterano de Resgate",
+    "desc": "+{v} de deslocamento para todos.",
+    "stat": "move",
+    "value": 1
+   },
+   "controle": {
+    "name": "Estrategista",
+    "desc": "+{v}% de Maestria por batalha.",
+    "stat": "mastery",
+    "value": 12
+   },
+   "impacto": {
+    "name": "Mártir",
+    "desc": "+{v}% de crítico para todos.",
+    "stat": "crit",
+    "value": 4
+   }
+  },
+  "gift": {
+   "name": "Eco do Dom",
+   "desc": "Técnicas de Dom geram {v}% menos Strain.",
+   "stat": "strain",
+   "value": 8
+  }
  }
 }

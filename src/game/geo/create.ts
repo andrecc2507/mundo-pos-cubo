@@ -103,6 +103,8 @@ export function newGeoGame(spec: NewGameSpec): GeoGame {
     stock: {},
     hostile: {},
     specialists: [],
+    legacies: [],
+    activeLegacies: [],
     specialistPool: [],
     nextRaidAt: 8 + GEO_RULES.raids.everyDays[1]! * 24,
   };

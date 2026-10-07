@@ -16,6 +16,8 @@ import { POLITICS, changeRep } from './politics';
 import { regionById } from './world';
 import { GEO_RULES, SUPPLY_LABEL, addLog, awayIds, newId, type GeoGame, type Specialist, type Supply } from './game';
 import { sendHome } from './squads';
+import { createLegacy, legacyBonus } from './legacy';
+import { gainSynergy } from '../rules/duo';
 import { effect, foodStorage, rosterCap } from './village';
 
 const R = GEO_RULES.recruits;
@@ -206,6 +208,8 @@ export interface GeoResultSummary {
  */
 export function applyUnitOutcomes(g: GeoGame, result: BattleResult, sum: GeoResultSummary, cause: string, squad?: { members: string[] }): void {
   const outcomes = result.units.filter((u) => g.roster[u.charId]);
+  // Sinergia: quem lutou junto (e sobreviveu) se aproxima.
+  gainSynergy(outcomes.filter((u) => u.alive).map((u) => g.roster[u.charId]!), result.outcome === 'victory');
   const anySurvivor = outcomes.some((u) => u.alive);
   for (const u of outcomes) {
     const ch = g.roster[u.charId]!;
@@ -222,6 +226,8 @@ export function applyUnitOutcomes(g: GeoGame, result: BattleResult, sum: GeoResu
         continue;
       }
       g.memorial.push({ name: ch.name, classId: ch.classId, gift: ch.gift?.id, at: g.hours, cause });
+      const lg = createLegacy(g, ch);
+      if (lg) sum.lines.push(`🕯 ${ch.name} deixou um legado: ${lg.title} — ${lg.text}`);
       delete g.roster[u.charId];
       g.salaried = g.salaried.filter((x) => x !== u.charId);
       if (squad) squad.members = squad.members.filter((x) => x !== u.charId);
@@ -246,11 +252,11 @@ export function applyUnitOutcomes(g: GeoGame, result: BattleResult, sum: GeoResu
       ch.severeWound = stats.severeWound(u.hp / Math.max(1, u.maxHp));
     }
     const before = ch.level;
-    gainXp(ch, result.context.baseXp + (u.killXp ?? 0));
+    gainXp(ch, Math.round((result.context.baseXp + (u.killXp ?? 0)) * (1 + legacyBonus(g, 'xp') / 100)));
     // Os pontos novos ficam para gastar na vila (ficha do herói).
     if (ch.level > before) sum.levelUps.push(`${ch.name} → NV ${ch.level}`);
     // Maestria por uso: o que foi usado na luta melhora.
-    for (const id of gainMastery(ch, u.castLog, (sid) => !!DB.skills[sid]?.gift, (sid) => affinityMasteryMult(ch, sid))) {
+    for (const id of gainMastery(ch, u.castLog, (sid) => !!DB.skills[sid]?.gift, (sid) => affinityMasteryMult(ch, sid) * (1 + legacyBonus(g, 'mastery') / 100))) {
       const m = masteryOf(ch, id);
       sum.mastery.push(`${ch.name}: ${DB.skills[id]?.name ?? id} ${m >= 100 ? '— Maestria 100! Escolha a variante na ficha' : `→ Nv ${masteryRank(m)}`}`);
     }

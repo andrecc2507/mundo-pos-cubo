@@ -170,3 +170,44 @@ describe('recrutamento completo e especialistas', () => {
     expect(effect(g, 'foodPerDay')).toBe(before * 1.5);
   });
 });
+
+describe('técnicas de dupla e legado', () => {
+  it('par com sinergia ≥ 75 ganha a técnica de dupla (combo do motor) quando estão perto', async () => {
+    const { comboOptions } = await import('@game/battle/engine');
+    const { createEmptyMap } = await import('@game/battle/map');
+    const { squadUnits } = await import('@game/geo/legacy');
+    const g = newGeoGame(spec(12));
+    const [a, b] = Object.keys(g.roster);
+    g.roster[a!]!.bonds![b!] = 80;
+    const { units, duos } = squadUnits(g, [a!, b!]);
+    expect(duos).toHaveLength(1);
+    const s = createBattle({ map: createEmptyMap(8, 8, 'planicie'), players: units, enemies: [unitFromCharacter(g.roster[Object.keys(g.roster)[2]!]!, 'enemy')], victory: { type: 'eliminate' }, ambush: false, canFlee: false, seed: 1, context: { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' } });
+    const [pa, pb] = s.units.filter((u) => u.team === 'player');
+    [pa!.x, pa!.y, pb!.x, pb!.y] = [2, 2, 3, 2];
+    pa!.mp = pb!.mp = 50;
+    expect(comboOptions(s, pa!).some((o) => o.combo.id.startsWith('duo_'))).toBe(true);
+    [pb!.x, pb!.y] = [7, 7];
+    expect(comboOptions(s, pa!).some((o) => o.combo.id.startsWith('duo_'))).toBe(false);
+  });
+
+  it('quem morre deixa legado; até 3 ativos; o bônus vale na próxima luta', async () => {
+    const { createLegacy, legacyBonus, squadUnits, toggleLegacy } = await import('@game/geo/legacy');
+    const g = newGeoGame(spec(13));
+    const ids = Object.keys(g.roster);
+    const mk = (i: number, cls: string, level: number) => ({ ...g.roster[ids[i]!]!, classId: cls as never, level, gift: undefined });
+    expect(createLegacy(g, mk(1, 'impacto', 1))).toBeNull();
+    const l1 = createLegacy(g, mk(1, 'impacto', 12))!;
+    createLegacy(g, mk(2, 'movimento', 5));
+    createLegacy(g, mk(3, 'suporte', 5));
+    const l4 = createLegacy(g, mk(4, 'controle', 5))!;
+    expect(g.activeLegacies).toHaveLength(3);
+    expect(g.activeLegacies).not.toContain(l4.id);
+    expect(toggleLegacy(g, l4.id)).toBe(false);
+    expect(l1.value).toBe(6);
+    expect(legacyBonus(g, 'crit')).toBe(6);
+    const base = unitFromCharacter(g.roster[ids[0]!]!, 'player');
+    const { units } = squadUnits(g, [ids[0]!]);
+    expect(units[0]!.crit).toBe(base.crit + 6);
+    expect(units[0]!.move).toBe(base.move + 1);
+  });
+});
