@@ -1,0 +1,44 @@
+{
+ "_doc": "Regras do mapa-múndi (geo/*.ts). Tempo em horas de jogo. speeds = horas de jogo por segundo real em cada velocidade (0 = pausa). Viagem por terra no mesmo continente; entre continentes, avião até o aeródromo e terra dali.",
+ "speeds": [0, 0.5, 3, 12],
+ "speedLabels": ["⏸", "1×", "2×", "3×"],
+ "travel": { "landKmh": 45, "planeKmh": 650, "planeFuelPer1000Km": 1, "planeMoneyPer1000KmWithoutFuel": 120, "missionHours": 4 },
+ "start": { "money": 700, "food": 160, "population": 24, "supplies": { "combustivel": 4, "remedios": 3, "pecas": 4 }, "reputationHome": 30, "reputationContinent": 10 },
+ "economy": {
+  "foodPerPersonPerDay": 0.5,
+  "foodPerFighterPerDay": 1,
+  "basePopulationFood": 6,
+  "salaryPerRecruitPerDay": 6,
+  "populationGrowthPerDay": 0.6,
+  "starvationLeavePct": 0.06,
+  "starvationGameOverDays": 10,
+  "minPopulation": 6
+ },
+ "contracts": {
+  "maxOpen": 7,
+  "spawnEveryHours": [10, 22],
+  "expiresHours": [60, 140],
+  "radiusKmBase": 2600,
+  "radiusKmPerReputation": 80,
+  "intercontinentalChance": 0.18,
+  "intercontinentalMinRep": 15,
+  "levelBase": 2,
+  "levelPerTier": 2,
+  "levelPerDays": 0.12,
+  "failRepLoss": 6,
+  "expireRepLoss": 2,
+  "successRep": 5,
+  "intercontinentalPayMult": 1.6
+ },
+ "recruits": { "everyHours": 120, "pool": 4, "giftChance": 0.65, "hireCostBase": 120, "hireCostPerLevel": 30, "levelSpread": 2 },
+ "wounds": { "hoursPerDay": 24 },
+ "squad": { "max": 6 },
+ "reset": { "costPerLevel": 60 },
+ "protagonist": { "shownPotential": 3, "realPotential": 5, "revealLevel": 12 },
+ "friends": { "count": 5, "minWithoutGift": 2, "bond": 60 },
+ "starterGifts": ["densidade", "regeneracao", "eletricidade", "calor", "vetor", "gravidade", "barreira", "forja", "eco", "rastro"],
+ "names": {
+  "recruits": ["Rafa", "Nina", "Davi", "Iara", "Caio", "Luna", "Theo", "Bia", "Enzo", "Maya", "Joca", "Duda", "Akira", "Sora", "Yuki", "Ren", "Tomás", "Cecília", "Otávio", "Lara", "Igor", "Zuri", "Amara", "Kofi", "Ana", "Mateus", "Helena", "Pedro", "Sofia", "Lucas", "Noah", "Elin", "Dmitri", "Ayesha", "Ravi", "Mei", "Kenji", "Inti", "Pablo", "Valentina"],
+  "civilians": ["Dona Marta", "Seu Joaquim", "Dr. Aurélio", "Irmã Clara", "Professor Ilan", "Mestre Kofi", "Engenheira Hana", "Pastor Elias", "Jovem Tito", "Agricultora Rosa"]
+ }
+}

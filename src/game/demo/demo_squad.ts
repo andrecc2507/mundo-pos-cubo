@@ -204,29 +204,45 @@ function villainGift(rng: Rng, minRarity = false): GiftDef {
   return rng.pick(pool);
 }
 
+export interface VillainOptions {
+  /** Potencial do Dom (★); sem Dom = miliciano armado. */
+  potential?: number;
+  gift?: boolean;
+  boss?: boolean;
+  name?: string;
+}
+
+/** Um vilão (ou miliciano sem Dom) com as mesmas regras e árvores dos heróis. */
+export function makeVillain(rng: Rng, level: number, opts: VillainOptions = {}): BattleUnit {
+  const classId = rng.pick(DEMO_CLASSES);
+  const g = opts.gift === false ? undefined : villainGift(rng, !!opts.boss);
+  const name = opts.name ?? rng.pick(DEMO.villainNames);
+  const c = makeMember(rng, { name, classId, level, gift: g?.id ?? null, potential: opts.potential ?? rng.int(2, 4), weapon: rng.pick(g ? DEMO.villainWeapons[classId] : DEMO.militiaWeapons), armor: opts.boss ? 'traje_de_heroi' : rng.chance(0.5) ? 'colete_tatico' : null, utility: [rng.chance(0.4) ? 'granada_fragmentacao' : null, null, null] });
+  const u = unitFromCharacter(c, 'enemy');
+  if (opts.boss) {
+    u.name = `${name}, o ${DEMO.bossTitles[rng.int(0, DEMO.bossTitles.length - 1)]}`;
+    u.title = `Chefe · Dom: ${g?.name ?? 'nenhum'}`;
+  } else if (!g) u.name = `${name} (miliciano)`;
+  return u;
+}
+
+/** Besta alterada pelo Cubo (bestiário), de preferência das listadas. */
+export function makeBeast(rng: Rng, level: number, pool: string[] = DEMO.beasts): BattleUnit {
+  const list = pool.filter((id) => DB.enemies[id]);
+  const u = unitFromEnemy(DB.enemies[rng.pick(list.length ? list : DEMO.beasts)]!, level, rng);
+  u.name = `${u.name} alterado`;
+  return u;
+}
+
 /** O bando: vilões com Dons (mesmas regras dos heróis), chefe e feras alteradas. */
 export function villainSquad(rng: Rng, squad: Character[], opts: DemoOptions): BattleUnit[] {
   const level = Math.max(1, Math.round(squad.reduce((a, c) => a + c.level, 0) / Math.max(1, squad.length)));
   const count = Math.max(1, squad.length + opts.extraEnemies - (opts.boss ? 1 : 0) - opts.beasts);
   const names = shuffle(rng, [...DEMO.villainNames]);
   const out: BattleUnit[] = [];
-  const villain = (name: string, lv: number, potential: number, boss: boolean) => {
-    const classId = rng.pick(DEMO_CLASSES);
-    const g = villainGift(rng, boss);
-    const c = makeMember(rng, { name, classId, level: lv, gift: g.id, potential, weapon: rng.pick(DEMO.villainWeapons[classId]), armor: boss ? 'traje_de_heroi' : rng.chance(0.5) ? 'colete_tatico' : null, utility: [rng.chance(0.4) ? 'granada_fragmentacao' : null, null, null] });
-    const u = unitFromCharacter(c, 'enemy');
-    u.name = boss ? `${name}, o ${DEMO.bossTitles[rng.int(0, DEMO.bossTitles.length - 1)]}` : name;
-    if (boss) u.title = `Chefe · Dom: ${g.name}`;
-    out.push(u);
-  };
-  if (opts.boss) villain(names.pop() ?? 'Chefe', level + DEMO.bossLevelBonus, 5, true);
-  for (let i = 0; i < count; i++) villain(names.pop() ?? `Capanga ${i + 1}`, level, rng.int(2, 4), false);
-  const beasts = DEMO.beasts.filter((id) => DB.enemies[id]);
-  for (let i = 0; i < opts.beasts && beasts.length; i++) {
-    const u = unitFromEnemy(DB.enemies[rng.pick(beasts)]!, level, rng);
-    u.name = `${u.name} alterado`;
-    out.push(u);
-  }
+  if (opts.boss) out.push(makeVillain(rng, level + DEMO.bossLevelBonus, { potential: 5, boss: true, name: names.pop() }));
+  for (let i = 0; i < count; i++) out.push(makeVillain(rng, level, { name: names.pop() ?? `Capanga ${i + 1}` }));
+  for (let i = 0; i < opts.beasts; i++) out.push(makeBeast(rng, level));
   return out;
 }
 

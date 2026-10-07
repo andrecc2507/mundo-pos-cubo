@@ -1,0 +1,688 @@
+{
+ "_doc": "Globo do Mundo Pós-Cubo (geo/world.ts): regiões = grupos de países reais (nomes do world-atlas 110m), cada uma com o governo pós-Cubo, perigo (tier 1–5), terrenos de batalha e o aeródromo do continente/região. A Antártida é a Zona do Cubo (sem contratos).",
+ "continents": {
+  "america_sul": "América do Sul",
+  "america_norte": "América do Norte",
+  "europa": "Europa",
+  "africa": "África",
+  "asia": "Ásia",
+  "oceania": "Oceania"
+ },
+ "cube": {
+  "name": "Zona do Cubo",
+  "lon": 0,
+  "lat": -82,
+  "countries": [
+   "Antarctica",
+   "Fr. S. Antarctic Lands"
+  ],
+  "description": "Onde o Cubo foi encontrado. Acesso proibido; ninguém que entrou voltou igual."
+ },
+ "regions": [
+  {
+   "id": "sa_brasil",
+   "name": "Brasil",
+   "continent": "america_sul",
+   "government": {
+    "name": "União de Reconstrução",
+    "type": "Remanescente nacional"
+   },
+   "countries": [
+    "Brazil"
+   ],
+   "tier": 1,
+   "biomes": [
+    "cidade",
+    "floresta",
+    "planicie",
+    "costa"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Brasília",
+    "lon": -47.9,
+    "lat": -15.8
+   },
+   "description": "O antigo Estado sobrevive nas capitais; o interior é de comunidades agrícolas e milícias."
+  },
+  {
+   "id": "sa_cone",
+   "name": "Cone Sul",
+   "continent": "america_sul",
+   "government": {
+    "name": "Pacto do Cone Sul",
+    "type": "Federação"
+   },
+   "countries": [
+    "Argentina",
+    "Chile",
+    "Uruguay",
+    "Paraguay",
+    "Falkland Is."
+   ],
+   "tier": 2,
+   "biomes": [
+    "planicie",
+    "neve",
+    "cidade"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Buenos Aires",
+    "lon": -58.4,
+    "lat": -34.6
+   },
+   "description": "Pampas férteis e cordilheira; governos regionais costurados num pacto frágil."
+  },
+  {
+   "id": "sa_andes",
+   "name": "Andes e Caribe Sul",
+   "continent": "america_sul",
+   "government": {
+    "name": "Liga Andina",
+    "type": "Conselho comunitário"
+   },
+   "countries": [
+    "Peru",
+    "Bolivia",
+    "Ecuador",
+    "Colombia",
+    "Venezuela",
+    "Guyana",
+    "Suriname"
+   ],
+   "tier": 2,
+   "biomes": [
+    "neve",
+    "floresta",
+    "cidade"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Bogotá",
+    "lon": -74.1,
+    "lat": 4.7
+   },
+   "description": "Cidades altas isoladas e selva onde as Bestas alteradas dominam."
+  },
+  {
+   "id": "na_istmo",
+   "name": "Istmo e Caribe",
+   "continent": "america_norte",
+   "government": {
+    "name": "Coalizão do Istmo",
+    "type": "Senhores da guerra"
+   },
+   "countries": [
+    "Mexico",
+    "Guatemala",
+    "Belize",
+    "Honduras",
+    "El Salvador",
+    "Nicaragua",
+    "Costa Rica",
+    "Panama",
+    "Cuba",
+    "Haiti",
+    "Dominican Rep.",
+    "Jamaica",
+    "Bahamas",
+    "Puerto Rico",
+    "Trinidad and Tobago"
+   ],
+   "tier": 3,
+   "biomes": [
+    "deserto",
+    "floresta",
+    "costa",
+    "cidade"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo da Cidade do México",
+    "lon": -99.1,
+    "lat": 19.4
+   },
+   "description": "Rotas de contrabando, cartéis com Dons e ilhas que viraram fortalezas."
+  },
+  {
+   "id": "na_eua",
+   "name": "Estados Remanescentes",
+   "continent": "america_norte",
+   "government": {
+    "name": "Administração Federal Provisória",
+    "type": "Junta militar"
+   },
+   "countries": [
+    "United States of America"
+   ],
+   "tier": 3,
+   "biomes": [
+    "cidade",
+    "planicie",
+    "deserto",
+    "floresta"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Denver",
+    "lon": -104.9,
+    "lat": 39.7
+   },
+   "description": "Bases militares ainda funcionam; entre elas, metrópoles partidas em dezenas de territórios."
+  },
+  {
+   "id": "na_norte",
+   "name": "Norte Gelado",
+   "continent": "america_norte",
+   "government": {
+    "name": "Domínio do Norte",
+    "type": "Governo regional"
+   },
+   "countries": [
+    "Canada",
+    "Greenland"
+   ],
+   "tier": 2,
+   "biomes": [
+    "neve",
+    "floresta"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Toronto",
+    "lon": -79.4,
+    "lat": 43.7
+   },
+   "description": "Cidades no sul e um norte imenso, frio e cheio de Bestas."
+  },
+  {
+   "id": "eu_oeste",
+   "name": "Europa Ocidental",
+   "continent": "europa",
+   "government": {
+    "name": "Concórdia Europeia",
+    "type": "Federação"
+   },
+   "countries": [
+    "France",
+    "Spain",
+    "Portugal",
+    "United Kingdom",
+    "Ireland",
+    "Belgium",
+    "Netherlands",
+    "Luxembourg",
+    "Switzerland",
+    "Italy",
+    "Germany",
+    "Austria",
+    "Denmark",
+    "Iceland"
+   ],
+   "tier": 2,
+   "biomes": [
+    "cidade",
+    "planicie",
+    "floresta",
+    "costa"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Paris",
+    "lon": 2.35,
+    "lat": 48.85
+   },
+   "description": "A estrutura mais próxima do mundo antigo — e a mais burocrática."
+  },
+  {
+   "id": "eu_leste",
+   "name": "Europa Oriental",
+   "continent": "europa",
+   "government": {
+    "name": "Marcha do Leste",
+    "type": "Junta militar"
+   },
+   "countries": [
+    "Poland",
+    "Czechia",
+    "Slovakia",
+    "Hungary",
+    "Romania",
+    "Bulgaria",
+    "Greece",
+    "Albania",
+    "Croatia",
+    "Slovenia",
+    "Bosnia and Herz.",
+    "Serbia",
+    "Montenegro",
+    "Macedonia",
+    "Kosovo",
+    "Moldova",
+    "Ukraine",
+    "Belarus",
+    "Lithuania",
+    "Latvia",
+    "Estonia",
+    "Cyprus",
+    "N. Cyprus"
+   ],
+   "tier": 3,
+   "biomes": [
+    "planicie",
+    "floresta",
+    "cidade"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Varsóvia",
+    "lon": 21.0,
+    "lat": 52.2
+   },
+   "description": "Fronteira armada entre o Ocidente e o caos do Leste."
+  },
+  {
+   "id": "eu_norte",
+   "name": "Escandinávia",
+   "continent": "europa",
+   "government": {
+    "name": "Liga Nórdica",
+    "type": "Governo regional"
+   },
+   "countries": [
+    "Norway",
+    "Sweden",
+    "Finland"
+   ],
+   "tier": 2,
+   "biomes": [
+    "neve",
+    "floresta",
+    "costa"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Estocolmo",
+    "lon": 18.07,
+    "lat": 59.33
+   },
+   "description": "Comunidades organizadas e muito desconfiadas de estrangeiros."
+  },
+  {
+   "id": "ru",
+   "name": "Rússia Fragmentada",
+   "continent": "europa",
+   "government": {
+    "name": "Federação Fragmentada",
+    "type": "Senhores da guerra"
+   },
+   "countries": [
+    "Russia"
+   ],
+   "tier": 4,
+   "biomes": [
+    "neve",
+    "floresta",
+    "planicie",
+    "cidade"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Moscou",
+    "lon": 37.6,
+    "lat": 55.75
+   },
+   "description": "Dezenas de autoridades disputando um território imenso."
+  },
+  {
+   "id": "af_norte",
+   "name": "Norte da África e Sahel",
+   "continent": "africa",
+   "government": {
+    "name": "Concílio do Deserto",
+    "type": "Conselho comunitário"
+   },
+   "countries": [
+    "Morocco",
+    "W. Sahara",
+    "Algeria",
+    "Tunisia",
+    "Libya",
+    "Egypt",
+    "Mauritania",
+    "Mali",
+    "Niger",
+    "Chad",
+    "Sudan"
+   ],
+   "tier": 3,
+   "biomes": [
+    "deserto",
+    "cidade",
+    "costa"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo do Cairo",
+    "lon": 31.2,
+    "lat": 30.05
+   },
+   "description": "Rotas de caravana voltaram a valer ouro; água é poder."
+  },
+  {
+   "id": "af_oeste",
+   "name": "Costa Ocidental",
+   "continent": "africa",
+   "government": {
+    "name": "União da Costa Ocidental",
+    "type": "Federação"
+   },
+   "countries": [
+    "Senegal",
+    "Gambia",
+    "Guinea",
+    "Guinea-Bissau",
+    "Sierra Leone",
+    "Liberia",
+    "Côte d'Ivoire",
+    "Ghana",
+    "Togo",
+    "Benin",
+    "Nigeria",
+    "Burkina Faso",
+    "Cameroon"
+   ],
+   "tier": 3,
+   "biomes": [
+    "floresta",
+    "cidade",
+    "costa"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Lagos",
+    "lon": 3.4,
+    "lat": 6.45
+   },
+   "description": "Metrópoles enormes e portos que comerciam com meio mundo."
+  },
+  {
+   "id": "af_centro",
+   "name": "Grandes Lagos e Chifre",
+   "continent": "africa",
+   "government": {
+    "name": "Federação dos Grandes Lagos",
+    "type": "Senhores da guerra"
+   },
+   "countries": [
+    "Ethiopia",
+    "Eritrea",
+    "Djibouti",
+    "Somalia",
+    "Somaliland",
+    "Kenya",
+    "Uganda",
+    "Rwanda",
+    "Burundi",
+    "Tanzania",
+    "S. Sudan",
+    "Dem. Rep. Congo",
+    "Congo",
+    "Gabon",
+    "Eq. Guinea",
+    "Central African Rep."
+   ],
+   "tier": 4,
+   "biomes": [
+    "floresta",
+    "planicie",
+    "deserto"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Nairóbi",
+    "lon": 36.8,
+    "lat": -1.3
+   },
+   "description": "Savana e floresta onde as Bestas mais fortes do mundo foram vistas."
+  },
+  {
+   "id": "af_sul",
+   "name": "África Austral",
+   "continent": "africa",
+   "government": {
+    "name": "Comunidade Austral",
+    "type": "Governo regional"
+   },
+   "countries": [
+    "South Africa",
+    "Namibia",
+    "Botswana",
+    "Zimbabwe",
+    "Zambia",
+    "Malawi",
+    "Mozambique",
+    "Angola",
+    "Lesotho",
+    "eSwatini",
+    "Madagascar"
+   ],
+   "tier": 2,
+   "biomes": [
+    "planicie",
+    "deserto",
+    "cidade",
+    "costa"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Joanesburgo",
+    "lon": 28.05,
+    "lat": -26.2
+   },
+   "description": "Minas, fazendas e cidades muradas que negociam com todos."
+  },
+  {
+   "id": "as_crescente",
+   "name": "Oriente Médio",
+   "continent": "asia",
+   "government": {
+    "name": "Conselho do Crescente",
+    "type": "Junta militar"
+   },
+   "countries": [
+    "Turkey",
+    "Syria",
+    "Lebanon",
+    "Israel",
+    "Palestine",
+    "Jordan",
+    "Iraq",
+    "Iran",
+    "Saudi Arabia",
+    "Yemen",
+    "Oman",
+    "United Arab Emirates",
+    "Qatar",
+    "Kuwait",
+    "Armenia",
+    "Azerbaijan",
+    "Georgia"
+   ],
+   "tier": 4,
+   "biomes": [
+    "deserto",
+    "cidade"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Dubai",
+    "lon": 55.3,
+    "lat": 25.2
+   },
+   "description": "Combustível ainda jorra aqui — e todo mundo quer."
+  },
+  {
+   "id": "as_estepe",
+   "name": "Ásia Central",
+   "continent": "asia",
+   "government": {
+    "name": "Estepe Livre",
+    "type": "Conselho comunitário"
+   },
+   "countries": [
+    "Kazakhstan",
+    "Uzbekistan",
+    "Turkmenistan",
+    "Tajikistan",
+    "Kyrgyzstan",
+    "Afghanistan",
+    "Mongolia"
+   ],
+   "tier": 4,
+   "biomes": [
+    "planicie",
+    "deserto",
+    "neve"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Almaty",
+    "lon": 76.9,
+    "lat": 43.25
+   },
+   "description": "Nômades, velhas bases e rotas que ninguém controla."
+  },
+  {
+   "id": "as_sul",
+   "name": "Subcontinente",
+   "continent": "asia",
+   "government": {
+    "name": "União do Subcontinente",
+    "type": "Remanescente nacional"
+   },
+   "countries": [
+    "India",
+    "Pakistan",
+    "Bangladesh",
+    "Nepal",
+    "Bhutan",
+    "Sri Lanka"
+   ],
+   "tier": 3,
+   "biomes": [
+    "cidade",
+    "floresta",
+    "neve",
+    "planicie"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Délhi",
+    "lon": 77.2,
+    "lat": 28.6
+   },
+   "description": "A maior população do mundo e a maior fome também."
+  },
+  {
+   "id": "as_china",
+   "name": "China",
+   "continent": "asia",
+   "government": {
+    "name": "Estado Central",
+    "type": "Remanescente nacional"
+   },
+   "countries": [
+    "China",
+    "Taiwan"
+   ],
+   "tier": 4,
+   "biomes": [
+    "cidade",
+    "planicie",
+    "neve",
+    "floresta"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Pequim",
+    "lon": 116.4,
+    "lat": 39.9
+   },
+   "description": "Um Estado forte no litoral e territórios que ele não admite ter perdido."
+  },
+  {
+   "id": "as_leste",
+   "name": "Pacífico Norte",
+   "continent": "asia",
+   "government": {
+    "name": "Aliança do Pacífico Norte",
+    "type": "Federação"
+   },
+   "countries": [
+    "Japan",
+    "South Korea",
+    "North Korea"
+   ],
+   "tier": 3,
+   "biomes": [
+    "cidade",
+    "costa",
+    "floresta"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Tóquio",
+    "lon": 139.7,
+    "lat": 35.7
+   },
+   "description": "Tecnologia de ponta guardada a sete chaves."
+  },
+  {
+   "id": "as_sudeste",
+   "name": "Sudeste Asiático",
+   "continent": "asia",
+   "government": {
+    "name": "Arquipélago Unido",
+    "type": "Cidade-Estado"
+   },
+   "countries": [
+    "Myanmar",
+    "Thailand",
+    "Laos",
+    "Cambodia",
+    "Vietnam",
+    "Malaysia",
+    "Brunei",
+    "Indonesia",
+    "Philippines",
+    "Timor-Leste",
+    "Papua New Guinea"
+   ],
+   "tier": 3,
+   "biomes": [
+    "floresta",
+    "costa",
+    "cidade"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Jacarta",
+    "lon": 106.8,
+    "lat": -6.2
+   },
+   "description": "Cidades-Estado portuárias e selvas que engoliram as estradas."
+  },
+  {
+   "id": "oc",
+   "name": "Oceania",
+   "continent": "oceania",
+   "government": {
+    "name": "Commonwealth Austral",
+    "type": "Governo regional"
+   },
+   "countries": [
+    "Australia",
+    "New Zealand",
+    "Fiji",
+    "Vanuatu",
+    "Solomon Is.",
+    "New Caledonia"
+   ],
+   "tier": 2,
+   "biomes": [
+    "deserto",
+    "costa",
+    "floresta",
+    "cidade"
+   ],
+   "aerodrome": {
+    "name": "Aeródromo de Sydney",
+    "lon": 151.2,
+    "lat": -33.87
+   },
+   "description": "Isolada e autossuficiente; o interior é território das Bestas."
+  }
+ ]
+}

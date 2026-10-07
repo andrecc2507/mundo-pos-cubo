@@ -207,5 +207,12 @@
    "Isso foi tudo? Eu mal comecei!",
    "Vou tirar o limite. Vejam o que é um Dom de verdade!"
   ]
- }
+ },
+ "militiaWeapons": [
+  "pistola_9mm",
+  "fuzil_assalto",
+  "escopeta_calibre12",
+  "metralhadora_leve",
+  "fuzil_assalto"
+ ]
 }
