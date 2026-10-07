@@ -88,6 +88,10 @@ export interface Character {
    * estar escondido) e Maestria 0–100. Sem Dom = combatente só de armas e classe.
    */
   gift?: { id: string; potential: number; shownPotential?: number; mastery?: number };
+  /** Maestria por técnica (0–100, sobe com o uso — rules/mastery.ts). */
+  mastery?: Record<string, number>;
+  /** Variante escolhida de cada técnica dominada (Poder, Controle, Eficiência). */
+  variants?: Record<string, string>;
   /** Personalidade além do traço: virtudes, manias e pequenos transtornos (world/personality.ts). */
   quirks?: string[];
   /** Atrito com outros heróis (id → pontos): Rivais e Desafetos (world/personality.ts). */

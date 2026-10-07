@@ -9,6 +9,7 @@ import BOND_DATA from '../data/base/bonds.json';
 import type { BattleUnit, Team } from './types';
 import { frictionLevel, quirkBattle } from '../rules/personality';
 import { giftDef } from '../rules/gifts';
+import { masteryRank } from '../rules/mastery';
 
 /** Pontos de vínculo → níveis (só os que já têm nível). */
 function bondLevels(points: Record<string, number> | undefined): Record<string, number> | undefined {
@@ -60,6 +61,8 @@ function uid(prefix: string): string {
 /** Níveis das habilidades; as concedidas (ex.: raios do Iniciado) acompanham o nível de quem as concede. */
 function grantedRanks(c: Character): Record<string, number> {
   const ranks = { ...(c.skillRanks ?? {}) };
+  // Maestria por uso (classes novas): o nível da técnica sai da Maestria.
+  for (const [id, pts] of Object.entries(c.mastery ?? {})) ranks[id] = Math.max(ranks[id] ?? 1, masteryRank(pts));
   for (const id of grantedSkillIds(c.classId, c.skills)) {
     const by = DB.skills[id]?.tree ? Object.values(DB.trees).flatMap((t) => t!.nodes.flatMap((n) => n.skills)).find((s) => s.id === id)?.grantedBy : undefined;
     if (by) ranks[id] = c.skillRanks?.[by] ?? 1;
@@ -150,6 +153,7 @@ export function unitFromCharacter(c: Character, team: Team): BattleUnit {
     ...(c.gift && giftDef(c.gift.id) ? { gift: c.gift.id, strain: 0, giftPotential: c.gift.potential } : {}),
     title: c.storyId ? STORY_KITS[c.storyId]?.title : undefined,
     skillRanks: { ...grantedRanks(c), ...jewelRank(c) },
+    ...(c.variants && Object.keys(c.variants).length ? { variants: { ...c.variants } } : {}),
     orbs: orbElements(c),
     items: [...c.equipment.utility],
     itemUses: c.equipment.utility.map((id) => (id ? DB.items[id]?.uses ?? 1 : 0)),

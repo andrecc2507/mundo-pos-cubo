@@ -1,5 +1,6 @@
 import type { Rng } from '@core';
-import { btn, clear, h, modal, toast } from '@ui/dom';
+import { bar, btn, clear, h, modal, toast } from '@ui/dom';
+import { MASTERY_RULES, VARIANTS, canChooseVariant, chooseVariant, masteryOf, masteryRank, variantDef, type VariantId } from '../../rules/mastery';
 import { ATTRS, ATTR_LABEL, DB, FIREARMS, type Attr, type ClassId, type SkillTree, type TreeNode } from '../../data';
 import { describeSkill } from '../../bestiary/describe';
 import { derive, learnSkill, statCost, xpToNext, type Character } from '../../rules/character';
@@ -431,7 +432,7 @@ export class HeroSheet {
         const why = learned ? null : lockReason(c, s.id);
         const def = DB.skills[s.id];
         const wrongWeapon = def?.needsWeapon && !def.needsWeapon.includes(weaponType as never);
-        const meta = [def?.passive ? 'passiva' : '', def?.mp ? `${def.mp} STA` : '', def?.strain ? `+${def.strain} Strain` : '', def?.apCost === 1 ? 'rápida' : '', def?.ultimate ? 'FINALIZADOR' : ''].filter(Boolean).join(' · ');
+        const meta = [def?.passive ? 'passiva' : '', def?.mp ? `${def.mp} STA` : '', def?.strain ? `+${def.strain} Strain` : '', def?.apCost === 1 ? 'rápida' : '', def?.ultimate ? 'FINALIZADOR' : '', learned && masteryOf(c, s.id) > 0 ? `M${Math.floor(masteryOf(c, s.id))}${c.variants?.[s.id] ? ` ${variantDef(c.variants[s.id])?.name}` : ''}` : ''].filter(Boolean).join(' · ');
         col.append(
           h('div', {
             class: `demo-skill ${learned ? 'learned' : why ? 'locked' : 'avail'}${this.skillSel === s.id ? ' selected' : ''}`,
@@ -477,5 +478,22 @@ export class HeroSheet {
           ? h('div', { style: 'color:#e57373', text: `🔒 ${why}` })
           : btn('Aprender (1 ponto)', () => (learnSkill(c, id), this.hooks.onChange()), { class: 'primary', disabled: c.skillPoints < 1 }),
     );
+    if (learned && !def.passive) el.append(this.masteryBox(c, id));
+  }
+
+  /** Maestria da técnica (sobe com o uso) e a variante em 100. */
+  protected masteryBox(c: Character, id: string): HTMLElement {
+    const pts = masteryOf(c, id);
+    const box = h('div', { class: 'demo-gift', style: 'margin-top:6px' },
+      h('b', { text: `Maestria ${Math.floor(pts)}/100 · Nv ${masteryRank(pts)}` }),
+      bar(pts, 100, '#c9a35b'),
+      h('div', { class: 'muted', style: 'font-size:11px', text: `Sobe usando a técnica em batalha. A cada ${MASTERY_RULES.rankEvery} pontos ela sobe de nível (mais forte; recarga menor no Nv 4). Em 100, escolha uma variante permanente.` }),
+    );
+    const chosen = variantDef(c.variants?.[id]);
+    if (chosen) box.append(h('div', { class: 'gold', text: `Variante: ${chosen.name} — ${chosen.desc}` }));
+    else if (canChooseVariant(c, id))
+      box.append(h('div', { class: 'col', style: 'gap:3px' }, ...(Object.keys(VARIANTS) as VariantId[]).map((v) => btn(`${VARIANTS[v].name}: ${VARIANTS[v].desc}`, () => (chooseVariant(c, id, v), this.hooks.onChange()), { class: 'small' }))));
+    if (!this.campaign && pts < 100) box.append(btn('+25 Maestria (só na demo)', () => (((c.mastery ??= {})[id] = Math.min(100, pts + 25)), this.hooks.onChange()), { class: 'small' }));
+    return box;
   }
 }

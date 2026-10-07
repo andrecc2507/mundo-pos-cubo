@@ -245,6 +245,8 @@ export interface BattleUnit {
   casts?: number;
   /** Lançamentos por habilidade (telemetria). */
   castLog?: Record<string, number>;
+  /** Variante de cada técnica dominada (rules/mastery.ts). */
+  variants?: Record<string, string>;
   /** Caído sangrando: rodadas até morrer (ver battle/downed.ts). */
   downed?: number;
   /** Corpo carregado por esta unidade (uid de quem carrega). */
@@ -536,6 +538,8 @@ export interface UnitOutcome {
   killXp: number;
   items: (string | null)[];
   feats?: string[];
+  /** Técnicas usadas na luta (Maestria por uso). */
+  castLog?: Record<string, number>;
   killedBy?: { name: string; enemyId?: string };
   /** Traiu o esquadrão no meio da luta. */
   betrayed?: boolean;

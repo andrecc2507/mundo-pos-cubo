@@ -1,0 +1,14 @@
+{
+ "_doc": "Maestria por uso (spec §20–22): cada técnica ganha Maestria 0–100 ao ser usada em batalha. A cada `rankEvery` pontos a técnica sobe um nível (o motor já escala poder e recarga pelo nível). Em 100, o jogador escolhe uma variante permanente. O Dom tem Maestria própria (soma dos usos das técnicas dele).",
+ "perUse": 7,
+ "perBattleCap": 28,
+ "giftPerUse": 2,
+ "rankEvery": 25,
+ "maxRank": 5,
+ "variantAt": 100,
+ "variants": {
+  "poder": { "name": "Poder", "desc": "+30% de dano, +25% de Strain.", "dmg": 0.3, "strain": 0.25 },
+  "controle": { "name": "Controle", "desc": "−15% de dano, +20 de precisão e 1 turno a menos de recarga.", "dmg": -0.15, "acc": 20, "cooldown": -1 },
+  "eficiencia": { "name": "Eficiência", "desc": "−15% de dano, −35% de Stamina e −35% de Strain.", "dmg": -0.15, "mp": -0.35, "strain": -0.35 }
+ }
+}

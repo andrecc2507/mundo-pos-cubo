@@ -1,4 +1,5 @@
 import PASSIVE_RANKS from '../data/skills/passive_ranks.json';
+import { variantDef } from '../rules/mastery';
 import { DB, type Element, type FxCondition, type FxReaction, type FxStance, type FxStatus, type SkillDef, type SkillFx } from '../data';
 import { addStatus, applyElementToTile, castSmoke, raiseIceBridge, removeStatus, smokeDirection, surfaceUnder, tileEffectsOnUnit, unitAt } from './elements';
 import {
@@ -144,6 +145,8 @@ export function mpCost(u: BattleUnit, s: SkillLike): number {
   let pct = 0;
   for (const f of passiveFx(u)) if (f.mpDiscount && (!f.mpDiscount.node || f.mpDiscount.node === node)) pct += f.mpDiscount.pct;
   if (u.statuses.eficiente) pct += 0.3;
+  // Variante Eficiência (Maestria): custa menos Stamina.
+  pct -= variantDef(u.variants?.[s.id])?.mp ?? 0;
   return Math.max(0, Math.round(s.mp * (1 - Math.min(0.8, pct))));
 }
 

@@ -325,6 +325,7 @@ export class GeoscapeScene extends Scene {
         h('h3', { text: sum.title }),
         ...sum.lines.map((l) => h('p', { text: l })),
         sum.levelUps.length ? h('p', { class: 'gold', text: `Subiram de nível: ${sum.levelUps.join(', ')} (gaste os pontos em 👥 Grupo).` }) : '',
+        sum.mastery.length ? h('p', { class: 'muted', text: `Maestria: ${sum.mastery.join(' · ')}` }) : '',
         sum.dead.length ? h('p', { style: 'color:#e57373', text: `☠ Mortos: ${sum.dead.join(', ')}. Os nomes vão para o memorial da vila.` }) : '',
         h('div', { class: 'row', style: 'justify-content:flex-end' }, btn('Continuar', () => (m.close(), this.g.gameOver && this.showGameOver()), { class: 'primary' })),
       );

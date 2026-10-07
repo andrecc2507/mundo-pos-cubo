@@ -20,6 +20,7 @@ import type { BattleContext, BattleResult, BattleSetup, BattleState, BattleUnit,
 import * as fx from './creature_fx';
 import * as stats from '../rules/stats';
 import { SKILL_MAX_RANK, isNewClass, rankCooldown } from '../rules/skill_tree';
+import { variantDef } from '../rules/mastery';
 import BASE_DATA from '../data/base/base.json';
 import { RIVAL_DATA, rivalTaunt } from '../world/rival';
 import CAPITALS from '../data/world/capitals.json';
@@ -1092,7 +1093,9 @@ export function previewHit(state: BattleState, a: BattleUnit, d: BattleUnit, kin
   // Fortificado, quebrado e penetração mexem na defesa efetiva do alvo (m.def).
   const res = magic ? stats.magicResistance(d.attrs.int * m.def) : stats.physicalResistance(d.def * m.def);
   // Multiplicador da teia (ajuste de balanceamento da subclasse; ver docs/design/simulacao.md).
-  let dmg = raw * stats.skillMultiplier(power) * (def?.powerMult ?? 1) * insp * (1 - res) * elementMult(d, el) * mult * m.dmg * gift.giftDamageMult(a, def);
+  const variant = def ? variantDef(a.variants?.[def.id]) : undefined;
+  if (variant?.acc) accBonus += variant.acc;
+  let dmg = raw * stats.skillMultiplier(power) * (def?.powerMult ?? 1) * insp * (1 - res) * elementMult(d, el) * mult * m.dmg * gift.giftDamageMult(a, def) * (1 + (variant?.dmg ?? 0));
   // Arma de fogo pela distância (só o tiro básico).
   if (kind === 'basic') {
     const wm = stats.weaponRangeMods(a.weaponType, chebyshev(a.x, a.y, d.x, d.y));
@@ -1750,7 +1753,7 @@ function castSkillInner(state: BattleState, u: BattleUnit, s: SkillLike, x: numb
   if (fx.isFera(s) && !fx.creatureUsable(state, u, DB.skills[s.id]!)) return false;
   u.mp -= fx.mpCost(u, s);
   // Nv 4+: recarga um turno menor.
-  const cd = rankCooldown(DB.skills[s.id]?.cooldown ?? 0, u.skillRanks?.[s.id] ?? 1);
+  const cd = Math.max(0, rankCooldown(DB.skills[s.id]?.cooldown ?? 0, u.skillRanks?.[s.id] ?? 1) + (variantDef(u.variants?.[s.id])?.cooldown ?? 0));
   if (cd > 0) u.cooldowns[DB.skills[s.id]?.fortifiedOf ?? DB.skills[s.id]?.evolvedOf ?? s.id] = cd;
   if (combo) {
     if (combo.partner !== u) {
@@ -2463,6 +2466,7 @@ export function buildResult(state: BattleState, context: BattleContext): BattleR
         killXp: u.killXp,
         items: [...u.items],
         feats: u.feats,
+        castLog: u.castLog ? { ...u.castLog } : undefined,
         betrayed: u.betrayed,
         killedBy: u.killedBy,
         x: u.x,

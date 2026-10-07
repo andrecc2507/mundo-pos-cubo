@@ -9,6 +9,8 @@ import { DEMO_CLASSES, makeMember, resetSkills, type DemoClass } from '../demo/d
 import { fullHeal, gainXp, type Character } from '../rules/character';
 import { giftDef, rollGift } from '../rules/gifts';
 import * as stats from '../rules/stats';
+import { gainMastery, masteryOf, masteryRank } from '../rules/mastery';
+import { DB } from '../data';
 import { GEO_RULES, SUPPLY_LABEL, addLog, awayIds, newId, type GeoGame, type Supply } from './game';
 import { sendHome } from './squads';
 import { effect, foodStorage, rosterCap } from './village';
@@ -125,6 +127,8 @@ export interface GeoResultSummary {
   lines: string[];
   dead: string[];
   levelUps: string[];
+  /** Técnicas que subiram de nível pela Maestria. */
+  mastery: string[];
   gameOver?: string;
 }
 
@@ -132,7 +136,7 @@ export interface GeoResultSummary {
 export function applyContractResult(g: GeoGame, result: BattleResult): GeoResultSummary {
   const squad = g.squads.find((s) => s.id === result.context.squadId);
   const c = g.contracts.find((x) => x.id === result.context.contractId);
-  const sum: GeoResultSummary = { title: c?.title ?? result.context.title, outcome: result.outcome, lines: [], dead: [], levelUps: [] };
+  const sum: GeoResultSummary = { title: c?.title ?? result.context.title, outcome: result.outcome, lines: [], dead: [], levelUps: [], mastery: [] };
   const outcomes = result.units.filter((u) => g.roster[u.charId]);
   const anySurvivor = outcomes.some((u) => u.alive);
   for (const u of outcomes) {
@@ -168,6 +172,11 @@ export function applyContractResult(g: GeoGame, result: BattleResult): GeoResult
     gainXp(ch, result.context.baseXp + (u.killXp ?? 0));
     // Os pontos novos ficam para gastar na vila (ficha do herói).
     if (ch.level > before) sum.levelUps.push(`${ch.name} → NV ${ch.level}`);
+    // Maestria por uso: o que foi usado na luta melhora.
+    for (const id of gainMastery(ch, u.castLog, (sid) => !!DB.skills[sid]?.gift)) {
+      const m = masteryOf(ch, id);
+      sum.mastery.push(`${ch.name}: ${DB.skills[id]?.name ?? id} ${m >= 100 ? '— Maestria 100! Escolha a variante na ficha' : `→ Nv ${masteryRank(m)}`}`);
+    }
   }
   if (c) {
     if (result.outcome === 'victory') {

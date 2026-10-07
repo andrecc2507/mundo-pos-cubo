@@ -12,6 +12,7 @@
  */
 import { DB, type SkillDef } from '../data';
 import { AWAKENING, AWAKENINGS, OVERLOADS, STRAIN, giftDef } from '../rules/gifts';
+import { variantDef } from '../rules/mastery';
 import { applyElementToTile } from './elements';
 import { applyStatus, passiveFx } from './creature_fx';
 import { chebyshev } from './map';
@@ -46,7 +47,8 @@ export function giftDamageMult(u: BattleUnit, def: SkillDef | undefined): number
 export function afterGiftCast(state: BattleState, u: BattleUnit, def: SkillDef | undefined): void {
   if (!def?.strain || !u.alive) return;
   const before = u.strain ?? 0;
-  u.strain = Math.min(100, before + Math.round(def.strain * (u.awakened ? AWAKENING.strainMult : 1)));
+  const variant = variantDef(u.variants?.[def.id]);
+  u.strain = Math.min(100, before + Math.round(def.strain * (u.awakened ? AWAKENING.strainMult : 1) * (1 + (variant?.strain ?? 0))));
   u.strainHot = true;
   if (before < STRAIN.plusUltraAt && u.strain >= STRAIN.plusUltraAt && u.strain < 100) {
     state.log.push(`🔥 ${u.name} força o Dom além do limite! (Strain ${u.strain})`);
