@@ -360,7 +360,7 @@ describe('árvores: Arqueiro e Clérigo', () => {
     e.skills = [];
     const plan = planTurn(s, e);
     const a = plan.action;
-    expect(a && a.kind !== 'defend' ? [a.x, a.y] : null).toEqual([pal.x, pal.y]);
+    expect(a && 'x' in a ? [a.x, a.y] : null).toEqual([pal.x, pal.y]);
   });
 
   it('Disparo Perfurante atravessa a fila de inimigos', () => {
