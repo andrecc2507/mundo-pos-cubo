@@ -7,7 +7,7 @@ import { DevPanel } from '../../dev/dev_panel';
 import type { BattleMap } from '../../battle/map';
 import { drawBattle } from '../../render/battle_renderer';
 import { IsoCamera } from '../../render/iso';
-import { generateUrbanMap } from '../../mapgen/urban';
+import { generateRuinsMap } from '../../mapgen/ruins';
 import { statCost, type Character } from '../../rules/character';
 import { giftDef } from '../../rules/gifts';
 import { DEFAULT_OPTIONS, DEMO_CLASSES, MAX_SQUAD, blankMember, defaultSquad, demoSetup, type DemoOptions } from '../../demo/demo_squad';
@@ -63,7 +63,7 @@ export class DemoScene extends Scene {
     this.squad = saved?.squad ?? defaultSquad();
     this.opts = saved?.opts ?? { ...DEFAULT_OPTIONS };
     this.sel = Math.min(this.sel, this.squad.length - 1);
-    this.preview = generateUrbanMap({ seed: 7 });
+    this.preview = generateRuinsMap({ region: 'sa_brasil', seed: 7 });
     this.cam.zoom = 1;
     this.cam.panY = 30;
     this.ui = layer('demo-ui');
@@ -155,7 +155,7 @@ export class DemoScene extends Scene {
       h('div', { class: 'demo-opt' }, h('span', { text: 'Vilões' }), extra),
       h('div', { class: 'demo-opt' }, h('span', { text: 'Feras alteradas' }), beasts),
       h('label', { class: 'demo-opt', style: 'cursor:pointer' }, h('span', { text: 'Vilão chefe (Dom ★5)' }), boss),
-      h('div', { class: 'muted', style: 'font-size:11px;margin:4px 0 8px', text: 'Cruzamento da avenida, linha do tempo (velocidade), cobertura, flanco, Dons com Strain, Overload e Despertar.' }),
+      h('div', { class: 'muted', style: 'font-size:11px;margin:4px 0 8px', text: 'Ruínas de uma cidade depois do Cubo (tema de uma região do globo), linha do tempo (velocidade), cobertura, flanco, Dons com Strain, Overload e Despertar.' }),
       btn('⚔ LUTAR', () => this.fight(), { class: 'primary demo-fight' }),
       btn('← Menu', () => this.ctx.scenes.go('main_menu'), { class: 'small', title: 'Volta ao menu (o esquadrão fica guardado)' }),
     );

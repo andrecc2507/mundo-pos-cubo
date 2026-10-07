@@ -8,7 +8,7 @@ import { DB, NEW_CLASSES, type ClassId } from '../data';
 import type { BattleSetup, BattleUnit } from '../battle/types';
 import { unitFromCharacter, unitFromEnemy } from '../battle/units';
 import { killXp } from '../battle/engine';
-import { generateUrbanMap } from '../mapgen/urban';
+import { RUINS_THEMES, generateRuinsMap } from '../mapgen/ruins';
 import { ATTRS, type Attr } from '../data';
 import { BASE_ATTR, MAX_LEVEL, allocate, emptyAttrs, fullHeal, learnSkill, statCost, type Character } from '../rules/character';
 import { totalAttributePoints, totalSkillPoints } from '../rules/stats';
@@ -300,7 +300,8 @@ export function demoSetup(squad: Character[], opts: DemoOptions = DEFAULT_OPTION
     c.severeWound = false;
   }
   return {
-    map: generateUrbanMap({ seed: rng.int(1, 1e9) }),
+    // Ruínas pós-Cubo de uma região sorteada (mapa grande: os Dons dão muita mobilidade).
+    map: generateRuinsMap({ region: rng.pick(Object.keys(RUINS_THEMES)), seed: rng.int(1, 1e9) }),
     players: squad.map((c) => unitFromCharacter(c, 'player')),
     enemies: villainSquad(rng, squad, opts),
     victory: { type: 'eliminate' },
