@@ -113,11 +113,32 @@ Segue a ordem da spec, com o filtro do §0:
    dinheiro, as 5 fases da história.
 7. **Despertar** e polimento.
 
-## 5. Ainda em aberto
+## 5. Decisões complementares
 
-- Nomes e papéis das 16 subclasses e das 4 fusões entre classes (e se cada diagonal tem uma ou
-  mais fusões).
-- Lista de Dons iniciais — proposta em [dons.md](dons.md), para revisar.
-- Quantas fusões e legados ativos ao mesmo tempo.
-- Como o avião funciona (velocidade, custo em comida/dinheiro, alcance, pousos).
-- Proporção de recrutas sem Dom (proposta: 35%).
+- **Classes, fusões, armas e o Dom do protagonista:** [classes_armas.md](classes_armas.md).
+- **Dons iniciais:** os 12 de [dons.md](dons.md) ficam como ponto de partida.
+- **Recrutas sem Dom:** 35% (configurável).
+- **Fusões:** uma por personagem. **Legados ativos:** 3 de cada vez (os outros ficam no
+  memorial e podem ser trocados na vila).
+
+## 6. O avião
+
+O avião serve para as **missões distantes, intercontinentais**. No próprio continente, o squad
+viaja por terra como no molde (estradas, pontos de passagem, encontros, comida).
+
+- **Onde fica:** no hangar da vila (existe desde o início).
+- **Para onde vai:** um **aeródromo** por continente (o mapa global tem um em cada); dali o squad
+  segue por terra até o contrato.
+- **Viagem:** cerca de 1 dia de voo, sem encontros aleatórios no ar.
+- **Custo:** dinheiro (combustível) por voo, ida e volta; cada squad no avião consome comida no
+  caminho como numa viagem normal.
+- **Capacidade:** 1 squad por vez; nos estágios III e IV da vila, uma segunda viagem simultânea.
+- **Volta:** o avião espera no aeródromo enquanto o squad cumpre o contrato; se o squad cair, o
+  avião volta sozinho para a vila.
+- **Contratos intercontinentais** aparecem marcados com ✈, pagam mais e trazem reputação com
+  governos de outros continentes.
+
+## 7. Ainda em aberto
+
+- Lista e nomes dos governos, facções e regiões do globo.
+- As 5 fases da história em missões (o cenário dá as fases, não as missões).

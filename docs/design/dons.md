@@ -1,6 +1,6 @@
 # Dons — proposta inicial (para revisão)
 
-> **Status:** rascunho para o diretor revisar. Nada implementado.
+> **Status:** aprovado como ponto de partida (2026-10-07). Nada implementado.
 > Regras gerais em [pos_cubo.md](pos_cubo.md); especificação original em
 > [fontes/sistema_recrutamento_dons.md](fontes/sistema_recrutamento_dons.md).
 
@@ -158,8 +158,8 @@ filosofias; a classe do personagem deixa as técnicas da sua filosofia mais bara
 - Controle: atrasa a barra de ação de um inimigo.
 - Despertar: **bolha de pausa** em área por 1 rodada.
 
-## Perguntas para o diretor
+## Decidido
 
-1. Os 12 servem como ponto de partida? Quais cortar, trocar ou acrescentar?
-2. O protagonista escolhe entre estes 12 no início, ou entre um subconjunto?
-3. Algum Dom deve ser exclusivo do protagonista ou da história?
+- Os 12 ficam como ponto de partida.
+- O protagonista escolhe entre os 10 não anômalos (ver [classes_armas.md](classes_armas.md)).
+- Nenhum Dom é exclusivo.
