@@ -76,11 +76,11 @@ export class GeoscapeScene extends Scene {
     let handled = false;
     if (res && res.context.geo === 'raid' && g.raid) {
       store.battleResult = null;
-      this.showResult(applyRaidResult(g, res));
+      this.showResult(applyRaidResult(g, res), 'raid');
       handled = true;
     } else if (res && res.context.geo === 'road' && g.encounter) {
       store.battleResult = null;
-      this.showResult(applyEncounterResult(g, res));
+      this.showResult(applyEncounterResult(g, res), 'road');
       handled = true;
     } else if (res && res.context.kind === 'contract' && g.squads.some((s) => s.id === res.context.squadId)) {
       store.battleResult = null;
@@ -337,8 +337,10 @@ export class GeoscapeScene extends Scene {
     this.ctx.scenes.go('battle', { setup, returnTo: 'geoscape' });
   }
 
-  private showResult(sum: ReturnType<typeof applyContractResult>): void {
-    modal(sum.outcome === 'victory' ? '✔ Contrato cumprido' : '✖ Contrato perdido', (body, m) => {
+  private showResult(sum: ReturnType<typeof applyContractResult>, kind: 'contract' | 'raid' | 'road' = 'contract'): void {
+    const win = sum.outcome === 'victory';
+    const title = kind === 'raid' ? (win ? '🛡 A vila resistiu' : '🔥 A vila caiu') : kind === 'road' ? (win ? '✔ Estrada livre' : '↩ O esquadrão recuou') : win ? '✔ Contrato cumprido' : '✖ Contrato perdido';
+    modal(title, (body, m) => {
       body.append(
         h('h3', { text: sum.title }),
         ...sum.lines.map((l) => h('p', { text: l })),

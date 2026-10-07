@@ -157,6 +157,115 @@ alteradas do bestiário que combinam com o terreno.
   - O protagonista só desmaia se alguém do esquadrão sobreviver.
   - Se o esquadrão dele cair inteiro, é **fim de jogo**.
 
+## Sistemas adicionados (lote de fechamento)
+
+### Maestria por uso (spec §20–22)
+
+- **Como sobe:**
+  - Cada técnica usada em batalha ganha Maestria: +7 por uso, até +28 por luta.
+  - A afinidade com a classe da técnica acelera; o legado "Estrategista" também.
+  - O Dom tem Maestria própria, que sobe com o uso das técnicas dele.
+- **O que muda:**
+  - A cada 25 pontos a técnica sobe um nível. O motor escala o poder, e no Nv 4 a recarga cai.
+  - Em 100, o jogador escolhe uma **variante permanente**: **Poder** (+30% de dano, +25% de
+    Strain), **Controle** (−15% de dano, +20 de precisão, −1 de recarga) ou **Eficiência** (−15% de
+    dano, −35% de Stamina e −35% de Strain).
+- Números em `data/mastery.json`; regras em `rules/mastery.ts`.
+
+### Ataques à vila
+
+- **Quando:**
+  - Um ataque a cada 7–13 dias; acontece mais cedo em região perigosa e varia com a dificuldade.
+  - Quem ataca: um bando armado, Bestas alteradas ou, havendo governo hostil no continente, uma
+    expedição dele.
+- **Defesa:**
+  - Até 6 heróis em casa defendem no **mapa da vila**: as casas crescem com o estágio e o muro com
+    portões aparece se a vila construiu muros.
+  - É preciso aguentar 7 rodadas; os atacantes chegam em ondas.
+  - Cada nível de muro dá um vigia aliado.
+- **Sem defensores:** a vila resolve sozinha, com a chance vinda dos muros e da população.
+- **Perder:** custa 25% da comida, 15% do dinheiro e 10% dos moradores; os muros cortam as perdas
+  pela metade.
+- **Vencer:** dá reputação em casa.
+
+### Encontros na estrada
+
+- Acontecem só em viagem por terra. A chance cresce com o perigo da região, com governo hostil
+  (caçadores) e com a dificuldade.
+- **Com batalha:** emboscada, Bestas, caçadores do governo.
+  - Lutar: vencer rende dinheiro; perder faz o esquadrão recuar.
+  - Fugir: alguns se ferem.
+- **Com escolha:**
+  - refugiados: acolher (mais moradores, às vezes com um especialista) ou dividir comida;
+  - mercador: item com desconto;
+  - desertor com Dom: entra no grupo;
+  - esconderijo: suprimentos.
+
+### Política entre governos
+
+- Cada governo tem **rivais**.
+- **Contratos "contra" um rival:** 30% dos de sabotagem, tecnologia, eliminação, investigação e
+  reconhecimento. A luta é no território do rival; quem paga sobe a reputação, o alvo perde 12.
+- **Postura:** hostil, desconfiado, neutro, amigável ou aliado, pela reputação.
+- **Hostil** (reputação abaixo de 10 depois de agir contra ele):
+  - não oferece contratos;
+  - cobra $150 de pedágio no aeródromo, ou recusa o pouso com reputação 0;
+  - manda caçadores na estrada;
+  - pode mandar uma expedição contra a vila.
+- **Saída:** a hostilidade acaba ao voltar a 30 de reputação; a desconfiança se desfaz sozinha,
+  devagar. Tudo aparece na aba 🌐 Governos.
+
+### Recrutamento completo (spec §10–15, §27–29, §37–40)
+
+- Todo recruta tem:
+  - **origem** (academia, voluntário, organização, sobrevivente, veterano, especialista, regional),
+    que mexe em atributos, nível, preço, número de traços e Maestria inicial;
+  - **profissão do mundo antigo**;
+  - **afinidade 0–100** com as quatro classes, que acelera a Maestria da classe;
+  - **1 a 4 traços** com efeito de batalha. Exemplos: Protetor intercepta golpes em aliados;
+    Observador vê quem está escondido.
+- **Traços que evoluem:** Inseguro vira Resiliente depois de 3 lutas sobrevividas no limite;
+  Impulsivo vira Cauteloso depois de uma derrota.
+- **Pool dinâmico:** classes que faltam no grupo pesam mais, e Dons repetidos aparecem menos (mas
+  ainda podem aparecer).
+- **Especialistas:** não lutam e ganham $3 por dia. São médico, mecânico, agricultor, engenheiro,
+  professor, ex-soldado, cientista, comerciante, assistente social, cozinheiro e piloto.
+  - Chegam em cada leva ou junto com refugiados; a vila começa com dois.
+  - Designados à instalação da profissão: **+50% no efeito** cada, até 2 por instalação.
+
+### Legado e técnicas de dupla (spec §33–35, §42)
+
+- **Legado:** quem morre a partir do NV 2 deixa um legado, mais forte nos NV 10 e 20.
+
+  | Origem do legado | Legado | Bônus |
+  |---|---|---|
+  | Suporte | Instrutor | +XP |
+  | Movimento | Veterano de Resgate | +1 de deslocamento |
+  | Controle | Estrategista | +Maestria |
+  | Impacto | Mártir | +crítico |
+  | Dom | Eco do Dom | −Strain |
+
+  No máximo **3 ativos**, escolhidos no memorial (aba 🏘 Vila).
+- **Sinergia do par:** são os pontos de vínculo. Lutar junto dá +5, e +3 na vitória; os amigos
+  começam com 60.
+- **Técnica de dupla:** a partir de 75 de sinergia, o par ganha um golpe combinado do par de
+  classes (10 golpes, como Arremesso Cruzado e Prende e Esmaga).
+  - Aparece nas habilidades quando os dois estão a até 3 casas.
+  - Usa os combos do motor.
+
+### Dificuldade
+
+| | História | Normal | Difícil |
+|---|---|---|---|
+| Consumo de comida | 0,7× | 1× | 1,25× |
+| Paga dos contratos | 1,3× | 1× | 0,8× |
+| Nível dos inimigos | −2 | 0 | +2 |
+| Ataques à vila | mais raros | normais | mais frequentes |
+| Encontros na estrada | 0,6× | 1× | 1,4× |
+| Recursos iniciais | 1,5× | 1× | 0,8× |
+
+A **morte é permanente em todas**. A dificuldade é escolhida na criação, no passo da vila.
+
 ## Código
 
 | Módulo | O que tem |
@@ -169,12 +278,20 @@ alteradas do bestiário que combinam com o terreno.
 | `geo/village.ts` | Vila |
 | `geo/people.ts` | Recrutas, feridos, resultado da batalha e reset |
 | `geo/create.ts` | Novo jogo |
+| `geo/events.ts` | Ataques à vila e encontros na estrada |
+| `geo/politics.ts` | Posturas, hostilidade e pedágios |
+| `geo/legacy.ts` | Legado e montagem das unidades do esquadrão |
+| `rules/mastery.ts` | Maestria e variantes |
+| `rules/perks.ts` | Origem, profissão, afinidade e traços |
+| `rules/duo.ts` | Sinergia e técnicas de dupla |
+| `mapgen/village_map.ts` | Mapa da defesa da vila |
 
-- **Dados:** `data/geo/world.json`, `geo_rules.json`, `contracts.json` e `village.json`.
+- **Dados:** `data/geo/world.json`, `geo_rules.json`, `contracts.json`, `village.json` e
+  `people.json`, mais `data/mastery.json`.
 - **Cenas:** `scenes/geo_creation` e `scenes/geoscape`.
 - **Saves:** `state/geo_store.ts`, com os espaços `mundo_1`–`3` e `mundo_auto`; o automático salva
   a cada dia.
-- **Testes:** `tests/game/geo.test.ts`.
+- **Testes:** `tests/game/geo.test.ts`, `geo_events.test.ts` e `mastery.test.ts`.
   - O globo e as regiões.
   - O novo jogo.
   - O relógio.
