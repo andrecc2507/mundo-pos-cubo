@@ -222,5 +222,47 @@
   "fuzil_assalto",
   "machado_de_incendio",
   "taco_de_beisebol"
- ]
+ ],
+ "grunts": {
+  "_doc": "Figurantes: soldados comuns (como os ADVENT básicos do XCOM 2) que caem com 1–2 golpes. Vida = hpBase + hpPerLevel × nível; mira pior; dão pouco XP. Vêm em número junto dos inimigos de verdade.",
+  "hpBase": 30,
+  "hpPerLevel": 5,
+  "accuracy": -10,
+  "xpMult": 0.35,
+  "grenadeChance": 0.2,
+  "kinds": {
+   "soldado": {
+    "label": "Soldado",
+    "weapons": [
+     "fuzil_assalto",
+     "pistola_9mm"
+    ]
+   },
+   "saqueador": {
+    "label": "Saqueador",
+    "weapons": [
+     "taco_de_beisebol",
+     "cano_de_ferro",
+     "facao",
+     "pistola_9mm",
+     "escopeta_calibre12"
+    ]
+   },
+   "seguranca": {
+    "label": "Segurança",
+    "weapons": [
+     "pistola_9mm",
+     "escopeta_calibre12"
+    ]
+   },
+   "capanga": {
+    "label": "Capanga",
+    "weapons": [
+     "faca_de_combate",
+     "pistola_9mm",
+     "taco_de_beisebol"
+    ]
+   }
+  }
+ }
 }

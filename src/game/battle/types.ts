@@ -207,6 +207,8 @@ export interface BattleUnit {
   killXp: number;
   /** XP que esta unidade vale ao ser derrotada. */
   xpReward?: number;
+  /** Figurante: soldado comum que cai com 1–2 golpes. */
+  grunt?: boolean;
   /** Turnos restantes de recarga por habilidade. */
   cooldowns: Record<string, number>;
   /** Escudo de vida (absorve dano antes do HP). */

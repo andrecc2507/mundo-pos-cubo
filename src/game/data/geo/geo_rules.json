@@ -63,10 +63,13 @@
   "expireRepLoss": 2,
   "successRep": 5,
   "intercontinentalPayMult": 1.6,
-  "enemyCountBonus": -1,
+  "enemyCountBonus": -2,
   "enemyCountPerTier": 0.5,
   "localChance": 0.4,
-  "localLevelOffset": -0.5
+  "localLevelOffset": -0.5,
+  "gruntsBase": 3,
+  "gruntsPerTier": 0.5,
+  "_gruntsDoc": "Figurantes por luta de contrato: gruntsBase + perigo da região × gruntsPerTier + dificuldade (enemyCount). Os inimigos de verdade são squad + enemyCountBonus + perigo × enemyCountPerTier."
  },
  "recruits": {
   "everyHours": 120,
@@ -201,7 +204,8 @@
   "autoPerDefense": 0.22,
   "autoPerPopulation": 0.002,
   "baseSize": 3,
-  "levelOverSquad": 1
+  "levelOverSquad": 1,
+  "gruntsPerRaider": 0.5
  },
  "encounters": {
   "_doc": "Encontros na estrada (só por terra). chancePerHour × perigo da região (tier/3). Batalha: emboscada, bestas, caçadores (governo hostil). Sem batalha: escolha.",
@@ -268,7 +272,8 @@
     "weight": 2,
     "text": "Um esconderijo do mundo antigo, intacto."
    }
-  }
+  },
+  "grunts": 2
  },
  "difficulties": {
   "_doc": "Dificuldade do jogo base (a morte é permanente em todas). food: consumo de comida; pay: paga dos contratos; enemyLevel: nível a mais nos inimigos; enemyCount: inimigos a mais por luta; raidEvery: intervalo dos ataques (maior = mais raro); encounters: chance de encontros; start: recursos iniciais.",

@@ -277,6 +277,15 @@ da região, com alguns prédios arruinados espalhados (`geo_rules.json` → `map
 
 A **morte é permanente em todas**. A dificuldade é escolhida na criação, no passo da vila.
 
+## Figurantes
+
+Toda luta tem **figurantes**: soldados comuns (como os ADVENT básicos do XCOM 2) sem Dom nem técnicas,
+que caem com 1–2 golpes de um herói do mesmo nível (vida = 30 + 5 × nível, mira −10, pouco XP).
+Contratos trazem 3 + ½ × perigo da região (± dificuldade) junto de poucos inimigos de verdade
+(soldados de governo, seguranças, saqueadores ou capangas, conforme quem paga); caçadas trazem
+filhotes; ataques à vila trazem metade do bando em figurantes e encontros na estrada, 2. Números em
+`data/demo/demo.json` → `grunts` e `geo_rules.json` → `contracts`, `raids`, `encounters`.
+
 ## Equilíbrio (simulação longa)
 
 `tests/sim/geo_sim.test.ts` joga o geoscape sozinho por centenas de dias em cada dificuldade: pega

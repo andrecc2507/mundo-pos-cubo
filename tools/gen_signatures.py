@@ -409,9 +409,10 @@ add('desmaterializar', inn('Desmancha: golpes ignoram 30% da defesa.', pierce=0.
     sig('Desmanchar', 'Desmancha a matéria do alvo: dano igual a 35% da vida atual e destrói o que estiver no caminho.', 'magic', rng=4, pw=8, el='sombra', fx={'currentHpPct': 0.35, 'pierce': 1, 'destroyProps': True}, anim='beam'))
 
 
-out = os.path.join(os.path.dirname(__file__), '..', 'src', 'game', 'data', 'gifts', 'signatures.json')
-data = {'_doc': 'Gerado por tools/gen_signatures.py: passiva inata com efeito e técnica-assinatura de cada Dom (o que o torna único).', 'gifts': S}
-with open(out, 'w', encoding='utf-8') as f:
-    json.dump(data, f, ensure_ascii=False, indent=1)
-    f.write('\n')
-print(len(S), 'Dons com assinatura')
+if __name__ == '__main__':
+    out = os.path.join(os.path.dirname(__file__), '..', 'src', 'game', 'data', 'gifts', 'signatures.json')
+    data = {'_doc': 'Gerado por tools/gen_signatures.py: passiva inata com efeito e técnica-assinatura de cada Dom (o que o torna único).', 'gifts': S}
+    with open(out, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=1)
+        f.write('\n')
+    print(len(S), 'Dons com assinatura')

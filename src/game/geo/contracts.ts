@@ -8,7 +8,7 @@ import { DB } from '../data';
 import type { BattleSetup, BattleUnit, ObjectiveDef, Victory, Wave } from '../battle/types';
 import { unitFromCharacter } from '../battle/units';
 import { battleMap } from './maps';
-import { VILLAIN_LINES, makeBeast, makeVillain } from '../demo/demo_squad';
+import { VILLAIN_LINES, makeBeast, makeBeastGrunt, makeGrunt, makeVillain, type GruntKind } from '../demo/demo_squad';
 import { makeCharacter } from '../rules/recruit';
 import type { Character } from '../rules/character';
 import type { Biome } from '../data';
@@ -234,7 +234,12 @@ export function contractBattle(g: GeoGame, c: Contract, squad: BattleUnit[], rng
   const map = battleMap(region.id, biome, rng);
   const lv = c.level;
   const pool = beastPool(biome, lv);
-  const count = Math.max(2, Math.min(9, squad.length + C.enemyCountBonus + Math.floor(region.tier * C.enemyCountPerTier) + (difficulty(g).enemyCount ?? 0)));
+  const count = Math.max(1, Math.min(9, squad.length + C.enemyCountBonus + Math.floor(region.tier * C.enemyCountPerTier) + (difficulty(g).enemyCount ?? 0)));
+  // Figurantes: soldados comuns (ou feras pequenas) que caem com 1–2 golpes.
+  const grunts = Math.max(1, C.gruntsBase + Math.floor(region.tier * C.gruntsPerTier) + (difficulty(g).enemyCount ?? 0));
+  const beastsOnly = Object.keys(def.enemies).every((k) => k === 'besta');
+  const gruntKind: GruntKind = c.source === 'governo' || c.against ? 'soldado' : c.source === 'organizacao' ? 'seguranca' : rng.chance(0.5) ? 'saqueador' : 'capanga';
+  const grunt = (): BattleUnit => (beastsOnly ? makeBeastGrunt(rng, lv, pool) : makeGrunt(rng, lv, gruntKind));
   const weights = Object.entries(def.enemies) as ['vilao' | 'miliciano' | 'besta', number][];
   const total = weights.reduce((a, [, w]) => a + w, 0);
   const one = (): BattleUnit => {
@@ -260,9 +265,12 @@ export function contractBattle(g: GeoGame, c: Contract, squad: BattleUnit[], rng
     victory = { type: 'target', uid: boss.uid };
   }
   const waveRounds = def.waves ?? [];
-  const mainCount = waveRounds.length ? Math.max(2, Math.ceil(count * 0.5)) : count - enemies.length;
+  const mainCount = waveRounds.length ? Math.max(1, Math.ceil(count * 0.5)) : Math.max(0, count - enemies.length);
   for (let i = 0; i < mainCount; i++) enemies.push(one());
-  const waves: Wave[] = waveRounds.map((round) => ({ round, units: Array.from({ length: Math.max(1, Math.round(count / (waveRounds.length + 1))) }, one), say: 'Reforços inimigos chegando!' }));
+  const mainGrunts = waveRounds.length ? Math.ceil(grunts * 0.6) : grunts;
+  for (let i = 0; i < mainGrunts; i++) enemies.push(grunt());
+  const perWave = (n: number) => Math.max(0, Math.round(n / (waveRounds.length + 1)));
+  const waves: Wave[] = waveRounds.map((round) => ({ round, units: [...Array.from({ length: Math.max(1, perWave(count)) }, one), ...Array.from({ length: Math.max(1, Math.ceil((grunts - mainGrunts) / waveRounds.length)) }, grunt)], say: 'Reforços inimigos chegando!' }));
   const objectives = (def.objectives ?? []).flatMap((o) => Array.from({ length: o.count ?? 1 }, () => ({ kind: o.kind, label: o.label, turns: o.turns })));
   const vip = def.vip ? { unit: civilian(rng, c.civil ?? 'Civil', lv), captive: def.vip === 'captive' } : undefined;
   const allies = Array.from({ length: def.allies ?? 0 }, () => {

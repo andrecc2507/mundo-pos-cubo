@@ -7,6 +7,7 @@ import { Rng } from '@core';
 import { DB, NEW_CLASSES, type ClassId } from '../data';
 import type { BattleSetup, BattleUnit } from '../battle/types';
 import { unitFromCharacter, unitFromEnemy } from '../battle/units';
+import { killXp } from '../battle/engine';
 import { generateUrbanMap } from '../mapgen/urban';
 import { ATTRS, type Attr } from '../data';
 import { BASE_ATTR, MAX_LEVEL, allocate, emptyAttrs, fullHeal, learnSkill, statCost, type Character } from '../rules/character';
@@ -231,6 +232,39 @@ export function makeVillain(rng: Rng, level: number, opts: VillainOptions = {}):
     u.name = `${name}, o ${DEMO.bossTitles[rng.int(0, DEMO.bossTitles.length - 1)]}`;
     u.title = `Chefe · Dom: ${g?.name ?? 'nenhum'}`;
   } else if (!g) u.name = `${name} (miliciano)`;
+  return u;
+}
+
+export type GruntKind = keyof typeof DEMO.grunts.kinds;
+
+/**
+ * Figurante: soldado comum sem Dom nem técnicas, que cai com 1–2 golpes de um herói do mesmo nível
+ * (data/demo/demo.json → grunts). Vem em número, junto dos inimigos de verdade.
+ */
+export function makeGrunt(rng: Rng, level: number, kind: GruntKind = 'soldado'): BattleUnit {
+  const G = DEMO.grunts;
+  const k = G.kinds[kind];
+  const classId = rng.pick(['impacto', 'movimento', 'controle'] as DemoClass[]);
+  const c = makeMember(rng, { name: k.label, classId, level, gift: null, potential: 1, weapon: rng.pick(k.weapons), armor: null, utility: [rng.chance(G.grenadeChance) ? 'granada_fragmentacao' : null, null, null] });
+  c.skills = [];
+  const u = unitFromCharacter(c, 'enemy');
+  u.maxHp = u.hp = u.startHp = G.hpBase + G.hpPerLevel * level;
+  u.accuracy += G.accuracy;
+  u.xpReward = Math.round(killXp(level) * G.xpMult);
+  u.grunt = true;
+  u.title = 'Figurante';
+  return u;
+}
+
+/** Figurante animal: besta alterada pequena, que cai com 1–2 golpes. */
+export function makeBeastGrunt(rng: Rng, level: number, pool: string[] = DEMO.beasts): BattleUnit {
+  const u = makeBeast(rng, level, pool);
+  const G = DEMO.grunts;
+  u.maxHp = u.hp = u.startHp = G.hpBase + G.hpPerLevel * level;
+  u.xpReward = Math.round(killXp(level) * G.xpMult);
+  u.grunt = true;
+  u.name = u.name.replace(' alterado', ' (filhote)');
+  u.title = 'Figurante';
   return u;
 }
 

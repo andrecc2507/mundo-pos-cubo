@@ -12,7 +12,7 @@ import type { Rng } from '@core';
 import type { BattleResult, BattleSetup, BattleUnit, Wave } from '../battle/types';
 import { battleMap } from './maps';
 import { generateVillageMap } from '../mapgen/village_map';
-import { VILLAIN_LINES, makeBeast, makeVillain } from '../demo/demo_squad';
+import { VILLAIN_LINES, makeBeast, makeBeastGrunt, makeGrunt, makeVillain } from '../demo/demo_squad';
 import type { Biome } from '../data';
 import { GEO_RULES, SUPPLIES, addLog, awayIds, difficulty, newId, type GeoAlert, type GeoGame, type Raid, type RoadEncounter, type Squad } from './game';
 import { contractLevel, squadLevel } from './contracts';
@@ -66,7 +66,10 @@ export function defendersAvailable(g: GeoGame): string[] {
 }
 
 function raidEnemies(rng: Rng, r: Raid, n: number): BattleUnit[] {
-  return Array.from({ length: n }, () => (r.kind === 'bestas' ? makeBeast(rng, r.level) : makeVillain(rng, r.level, { gift: rng.chance(r.kind === 'expedicao' ? 0.6 : 0.4) })));
+  const real = Array.from({ length: n }, () => (r.kind === 'bestas' ? makeBeast(rng, r.level) : makeVillain(rng, r.level, { gift: rng.chance(r.kind === 'expedicao' ? 0.6 : 0.4) })));
+  // Figurantes: a tropa comum que vem junto (soldados da expedição, saqueadores do bando, filhotes).
+  const grunts = Array.from({ length: Math.round(n * RA.gruntsPerRaider) }, () => (r.kind === 'bestas' ? makeBeastGrunt(rng, r.level) : makeGrunt(rng, r.level, r.kind === 'expedicao' ? 'soldado' : 'saqueador')));
+  return [...real, ...grunts];
 }
 
 /** Batalha de defesa no mapa da vila: aguentar as rodadas (os atacantes chegam em ondas). */
@@ -209,6 +212,9 @@ export function encounterBattle(g: GeoGame, units: BattleUnit[], rng: Rng): Batt
   const map = battleMap(region.id, biome, rng);
   const enemies: BattleUnit[] = [];
   for (const [k, n] of Object.entries(t.enemies ?? {})) for (let i = 0; i < n!; i++) enemies.push(k === 'besta' ? makeBeast(rng, e.level) : makeVillain(rng, e.level, { gift: k === 'vilao' }));
+  // Figurantes acompanham quem tem gente (bandos, patrulhas); feras trazem filhotes.
+  const beasts = enemies.every((u) => !u.charId);
+  for (let i = 0; i < EN.grunts; i++) enemies.push(beasts ? makeBeastGrunt(rng, e.level) : makeGrunt(rng, e.level, rng.chance(0.5) ? 'saqueador' : 'capanga'));
   const info = encounterInfo(g, e);
   return {
     map,

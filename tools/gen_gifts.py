@@ -210,7 +210,7 @@ def opt(v):
     return None if v in ('-', '') else v
 
 
-def main():
+def build():
     out = []
     seen = set()
     for line in ROWS.strip().splitlines():
@@ -231,6 +231,11 @@ def main():
         if kit:
             g['kit'] = kit
         out.append(g)
+    return out
+
+
+def main():
+    out = build()
     path = os.path.join(os.path.dirname(__file__), '..', 'src', 'game', 'data', 'gifts', 'gifts.json')
     with open(path, 'w', encoding='utf-8') as f:
         f.write('[\n' + ',\n'.join(' ' + json.dumps(g, ensure_ascii=False) for g in out) + '\n]\n')
