@@ -9,7 +9,7 @@ import { DEMO_CLASSES, makeMember, resetSkills, type DemoClass } from '../demo/d
 import { fullHeal, gainXp, type Character } from '../rules/character';
 import { giftDef, rollGift } from '../rules/gifts';
 import * as stats from '../rules/stats';
-import { GEO_RULES, addLog, awayIds, newId, type GeoGame } from './game';
+import { GEO_RULES, SUPPLY_LABEL, addLog, awayIds, newId, type GeoGame, type Supply } from './game';
 import { sendHome } from './squads';
 import { effect, foodStorage, rosterCap } from './village';
 
@@ -177,7 +177,7 @@ export function applyContractResult(g: GeoGame, result: BattleResult): GeoResult
       g.food = Math.min(foodStorage(g), g.food + c.food);
       for (const [k, v] of Object.entries(c.supply)) g.supplies[k as keyof typeof g.supplies] += v!;
       if (c.source !== 'vila') g.reputation[c.regionId] = Math.min(100, (g.reputation[c.regionId] ?? 0) + c.rep);
-      sum.lines.push(`Contrato cumprido: ${[c.money ? `$${c.money}` : '', c.food ? `🍞 ${c.food}` : '', ...Object.entries(c.supply).map(([k, v]) => `${k} +${v}`), c.rep ? `reputação +${c.rep}` : ''].filter(Boolean).join(', ')}.`);
+      sum.lines.push(`Contrato cumprido: ${[c.money ? `$${c.money}` : '', c.food ? `🍞 ${c.food}` : '', ...Object.entries(c.supply).map(([k, v]) => `${SUPPLY_LABEL[k as Supply]} +${v}`), c.rep ? `reputação +${c.rep}` : ''].filter(Boolean).join(', ')}.`);
       addLog(g, `✔ ${c.title} cumprido.`, 'good');
     } else {
       c.status = 'failed';
