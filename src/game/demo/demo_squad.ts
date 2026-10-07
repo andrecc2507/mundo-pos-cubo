@@ -20,6 +20,8 @@ export type DemoClass = (typeof NEW_CLASSES)[number];
 export const DEMO_CLASSES = NEW_CLASSES as readonly DemoClass[];
 export const MAX_SQUAD = DEMO.maxSquad;
 export const DEMO_LEVELS = DEMO.levels;
+/** Falas dos vilões (começo, um deles cai, o chefe na pior). */
+export const VILLAIN_LINES = DEMO.villainLines;
 
 /** Opções da luta. */
 export interface DemoOptions {

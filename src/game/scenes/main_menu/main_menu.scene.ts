@@ -8,10 +8,8 @@ import { devPlayerUnits } from '../../dev/dev_squad';
 import { BIOME_LABEL, generateMap } from '../../mapgen/generator';
 import { IsoCamera } from '../../render/iso';
 import { drawBattle } from '../../render/battle_renderer';
-import { SAVE_SLOTS, latestSlot, loadGame, slotInfo } from '../../state/store';
-import { DIFFICULTIES, IRONMAN_TEXT, type DifficultyId } from '../../world/difficulty';
+import { GEO_AUTO, GEO_SLOTS, geoSlotInfo, latestGeoSlot, loadGeo } from '../../state/geo_store';
 import { openOptions } from '../shared/options_screen';
-import { SLOT_NAME, openLoad } from '../shared/saves_screen';
 import { planEncounter } from '../../world/encounters';
 import { unitFromEnemy } from '../../battle/units';
 import { DB } from '../../data';
@@ -32,7 +30,7 @@ export class MainMenuScene extends Scene {
     this.cam.panY = 40;
     this.cam.panX = 170;
     Audio.music('menu');
-    const hasSave = !!latestSlot(this.ctx.save);
+    const hasSave = !!latestGeoSlot(this.ctx.save);
     this.ui = layer();
     const item = (label: string, run: () => void, opts: { small?: boolean; disabled?: boolean } = {}) =>
       h('div', { class: `tm-item${opts.small ? ' tm-small' : ''}${opts.disabled ? ' disabled' : ''}`, text: label, onClick: run });
@@ -47,12 +45,13 @@ export class MainMenuScene extends Scene {
         h(
           'div',
           { class: 'title-menu' },
-          item(t('⚔ Demo de batalha'), () => this.ctx.scenes.go('demo')),
           item(t('Continuar'), () => {
-            if (loadGame(this.ctx.save)) this.ctx.scenes.go('world_map');
+            const slot = latestGeoSlot(this.ctx.save);
+            if (slot && loadGeo(this.ctx.save, slot)) this.ctx.scenes.go('geoscape');
           }, { disabled: !hasSave }),
-          item(t('Novo jogo'), () => this.newGame()),
-          item(t('Carregar'), () => openLoad(this.ctx.save, (slot) => loadGame(this.ctx.save, slot) && this.ctx.scenes.go('world_map')), { disabled: !hasSave }),
+          item(t('Novo jogo'), () => this.ctx.scenes.go('geo_creation')),
+          item(t('Carregar'), () => this.openGeoLoad(), { disabled: !hasSave }),
+          item(t('⚔ Demo de batalha'), () => this.ctx.scenes.go('demo')),
           item(t('Opções'), () => openOptions(() => this.ctx.scenes.go('main_menu'))),
           h('div', { class: 'title-sep' }),
           item(t('Bestiário'), () => this.ctx.scenes.go('bestiary'), { small: true }),
@@ -87,45 +86,24 @@ export class MainMenuScene extends Scene {
     drawTitleAtmosphere(ctx, this.cam.viewW, this.cam.viewH, this.time);
   }
 
-  /** Novo jogo: dificuldade, Modo Ferro e espaço do save. */
-  private newGame(): void {
-    let diff: DifficultyId = 'normal';
-    let ironman = false;
-    let tutorial = true;
-    const free = SAVE_SLOTS.find((x) => !this.ctx.save.has(x));
-    let slot = free ?? SAVE_SLOTS[0]!;
-    modal(t('Novo jogo'), (body, m) => {
-      const render = () => {
-        body.replaceChildren();
-        body.append(h('div', { class: 'section-title', text: t('Dificuldade') }));
-        const cards = h('div', { class: 'diff-cards' });
-        for (const id of Object.keys(DIFFICULTIES) as DifficultyId[]) {
-          const d = DIFFICULTIES[id];
-          cards.append(h('div', { class: `diff-card ${diff === id ? 'active' : ''}`, onClick: () => ((diff = id), render()) }, h('b', { text: d.label }), h('div', { class: 'muted', text: d.desc })));
-        }
-        const iron = h('div', { class: `diff-card iron ${ironman ? 'active' : ''}`, onClick: () => ((ironman = !ironman), render()) }, h('b', { text: `${ironman ? '☑' : '☐'} Modo Ferro ⛓` }), h('div', { class: 'muted', text: IRONMAN_TEXT }));
-        const tut = h('div', { class: `diff-card iron ${tutorial ? 'active' : ''}`, onClick: () => ((tutorial = !tutorial), render()) }, h('b', { text: `${tutorial ? '☑' : '☐'} Tutorial guiado 🎓` }), h('div', { class: 'muted', text: 'O Prólogo ensina um sistema por missão e libera os recursos do mapa aos poucos. Desligue se já conhece o jogo.' }));
-        body.append(cards, iron, tut, h('div', { class: 'section-title', text: t('Espaço do save') }));
-        const slots = h('div', { class: 'row' });
-        for (const x of SAVE_SLOTS) {
-          const info = slotInfo(this.ctx.save, x);
-          slots.append(btn(`${SLOT_NAME[x]}${info ? ' (ocupado)' : ''}`, () => ((slot = x), render()), { class: `small ${slot === x ? 'active' : ''}`, title: info?.label ?? 'Vazio' }));
-        }
-        body.append(slots);
-        const occupied = slotInfo(this.ctx.save, slot);
-        if (occupied) body.append(h('div', { style: 'color:#e08a7a;font-size:12px;margin-top:4px', text: `Começar aqui apaga: ${occupied.label}` }));
+  /** Carregar um jogo do Mundo Pós-Cubo. */
+  private openGeoLoad(): void {
+    modal(t('Carregar'), (body, m) => {
+      for (const slot of [...GEO_SLOTS, GEO_AUTO]) {
+        const info = geoSlotInfo(this.ctx.save, slot);
         body.append(
-          h('div', { class: 'row', style: 'justify-content:flex-end;margin-top:12px' },
-            btn(t('Cancelar'), () => m.close()),
-            btn(t('⚔ Começar campanha'), () => {
-              m.close();
-              this.ctx.scenes.go('creation', { difficulty: diff, ironman, tutorial, slot });
-            }, { class: 'primary' }),
+          h('div', { class: 'row', style: 'gap:8px;margin:4px 0;align-items:center' },
+            btn(slot === GEO_AUTO ? 'Automático' : `Espaço ${slot.split('_')[1]}`, () => {
+              if (loadGeo(this.ctx.save, slot)) {
+                m.close();
+                this.ctx.scenes.go('geoscape');
+              }
+            }, { disabled: !info }),
+            h('span', { class: 'muted', text: info ?? 'vazio' }),
           ),
         );
-      };
-      render();
-    }, { wide: true });
+      }
+    });
   }
 
   private quickBattleDialog(): void {

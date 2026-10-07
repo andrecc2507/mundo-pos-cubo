@@ -23,7 +23,8 @@ export class CanvasPointer {
   private dragging = false;
   private readonly off: (() => void)[] = [];
 
-  constructor(private readonly renderer: Renderer) {
+  /** `leftDrag`: arrastar com o botão esquerdo também move (globo); clique só sem arrastar. */
+  constructor(private readonly renderer: Renderer, opts: { leftDrag?: boolean } = {}) {
     const c = renderer.canvas;
     const on = <K extends keyof HTMLElementEventMap>(el: HTMLElement | Window, type: K, fn: (e: HTMLElementEventMap[K]) => void) => {
       el.addEventListener(type, fn as EventListener);
@@ -31,7 +32,7 @@ export class CanvasPointer {
     };
     on(c, 'mousemove', (e) => {
       const p = renderer.toLocal(e.clientX, e.clientY);
-      if (this.downAt && this.downAt.button !== 0) {
+      if (this.downAt && (this.downAt.button !== 0 || opts.leftDrag)) {
         this.dragDX += p.x - this.x;
         this.dragDY += p.y - this.y;
         if (Math.hypot(p.x - this.downAt.x, p.y - this.downAt.y) > 4) this.dragging = true;

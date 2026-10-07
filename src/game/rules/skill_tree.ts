@@ -208,7 +208,7 @@ export function lockReason(c: Learner, skillId: string): string | null {
   if (c.gift?.potential && tree.id === giftTreeId(c.gift.id) && f.skill.kind !== 'passive') {
     const slots = giftSlots(c.gift.potential);
     const used = tree.nodes.filter((n) => n.type !== 'base').flatMap((n) => n.skills).filter((s) => s.kind !== 'passive' && c.skills.includes(s.id)).length;
-    if (used >= slots) return `potencial ★${c.gift.potential}: só ${slots} técnicas do Dom`;
+    if (used >= slots) return 'o potencial do Dom não comporta mais técnicas';
   }
   // Teia única: subclasses de outra classe pedem treino cruzado (nível mínimo).
   if (f.node.group && f.node.group !== c.classId && c.level < CROSS_CLASS_LEVEL) return `treino cruzado: requer NV ${CROSS_CLASS_LEVEL}`;

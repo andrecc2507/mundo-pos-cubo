@@ -9,7 +9,7 @@ import type { BattleSetup, BattleUnit, ObjectiveDef, Victory, Wave } from '../ba
 import { unitFromCharacter } from '../battle/units';
 import { generateMap } from '../mapgen/generator';
 import { generateUrbanMap } from '../mapgen/urban';
-import { makeBeast, makeVillain } from '../demo/demo_squad';
+import { VILLAIN_LINES, makeBeast, makeVillain } from '../demo/demo_squad';
 import { makeCharacter } from '../rules/recruit';
 import type { Character } from '../rules/character';
 import type { Biome } from '../data';
@@ -253,7 +253,7 @@ export function contractBattle(g: GeoGame, c: Contract, squad: BattleUnit[], rng
     stealthStart: def.stealth,
     patrol: def.patrol,
     roundLimit: def.roundLimit,
-    villainLines: undefined,
+    villainLines: enemies.some((u) => u.gift) ? VILLAIN_LINES : undefined,
     context: {
       kind: 'contract',
       squadId,

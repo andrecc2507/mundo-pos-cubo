@@ -98,6 +98,8 @@ export function dailyPeople(g: GeoGame): void {
   const away = awayIds(g);
   const wounded = Object.values(g.roster).filter((c) => c.woundDays > 0 && !away.has(c.id));
   if (wounded.length && g.supplies.remedios > 0 && effect(g, 'healMult') > 0) g.supplies.remedios -= 1;
+  // Quem está em casa e sem ferimento descansa: vida e Stamina cheias.
+  for (const c of Object.values(g.roster)) if (!away.has(c.id) && c.woundDays <= 0) fullHeal(c);
   const xp = effect(g, 'trainXpPerDay');
   if (xp) for (const c of Object.values(g.roster)) if (!away.has(c.id) && c.woundDays <= 0) gainXp(c, xp);
   revealPotentials(g);

@@ -15,4 +15,6 @@ Jogo em TypeScript + Vite, sem engine. Leia `docs/ARCHITECTURE.md` antes de muda
   Valores de design vêm de `docs/design/variaveis.md` e ficam em `game/data/*.json` ou constantes nomeadas.
 - `window.__jogo` expõe o Engine para testes no navegador (Playwright) e depuração.
 - Docs e comentários em português; identificadores em inglês; arquivos em snake_case.
+- Mundo Pós-Cubo: regras do globo em `game/geo/` (puras), dados em `game/data/geo/`, desenho em
+  `docs/design/mapa_mundi.md`; batalha de demonstração em `docs/design/demo_batalha.md`.
 - Rode `npm test && npm run typecheck` antes de commitar.

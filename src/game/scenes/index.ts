@@ -11,6 +11,8 @@ import { MapEditorScene } from './map_editor/map_editor.scene';
 import { WorldMapScene } from './world_map/world_map.scene';
 import { CreationScene } from './creation/creation.scene';
 import { DemoScene } from './demo/demo.scene';
+import { GeoCreationScene } from './geo_creation/geo_creation.scene';
+import { GeoscapeScene } from './geoscape/geoscape.scene';
 
 export function registerScenes(scenes: SceneManager): void {
   scenes
@@ -24,5 +26,7 @@ export function registerScenes(scenes: SceneManager): void {
     .register('arsenal', () => new ArsenalScene())
     .register('materials', () => new MaterialsScene())
     .register('skill_trees', () => new SkillTreesScene())
-    .register('demo', () => new DemoScene());
+    .register('demo', () => new DemoScene())
+    .register('geo_creation', () => new GeoCreationScene())
+    .register('geoscape', () => new GeoscapeScene());
 }

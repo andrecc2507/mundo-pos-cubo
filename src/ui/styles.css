@@ -1914,3 +1914,34 @@ input {
   80% { opacity: 1; transform: rotate(-4deg) translateX(-2%) scale(1); }
   100% { opacity: 0; transform: rotate(-4deg) translateX(-30%) scale(0.98); }
 }
+
+/* ═════════════════════ Mapa-múndi (Mundo Pós-Cubo) ═════════════════════ */
+.geo-create { left: 8px; top: 8px; bottom: 8px; width: min(620px, 52vw); overflow: auto; padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; }
+.geo-create-body { display: flex; flex-direction: column; gap: 4px; }
+.geo-gifts { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 4px; }
+.geo-gift { padding: 5px 7px; cursor: pointer; }
+.geo-friends { display: grid; grid-template-columns: 110px 110px 150px 1fr; gap: 4px 8px; align-items: center; font-size: 13px; }
+.geo-top { left: 8px; right: 8px; top: 6px; height: 40px; display: flex; align-items: center; gap: 12px; padding: 4px 10px; font-size: 13px; overflow: hidden; }
+.geo-village { font-family: var(--font-display); color: #ffcf6e; letter-spacing: 1px; white-space: nowrap; }
+.geo-clock { font-variant-numeric: tabular-nums; color: #e6dccb; min-width: 120px; white-space: nowrap; }
+.geo-speeds { display: flex; gap: 2px; }
+.geo-res { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.geo-res.warn { color: #e57373; }
+.geo-left { left: 8px; top: 52px; bottom: 8px; width: min(330px, 32vw); display: flex; flex-direction: column; gap: 6px; padding: 8px; }
+.geo-tabs { display: flex; flex-wrap: wrap; gap: 2px; }
+.geo-left-body { flex: 1; overflow: auto; display: flex; flex-direction: column; gap: 4px; min-height: 0; }
+.geo-contract { padding: 5px 7px; cursor: pointer; }
+.geo-right { right: 8px; top: 52px; width: min(330px, 32vw); max-height: calc(100% - 60px); overflow: auto; padding: 8px 10px; display: flex; flex-direction: column; gap: 3px; font-size: 13px; }
+.geo-fac { padding: 5px 7px; }
+.geo-fac.locked { opacity: 0.55; }
+.geo-hero { padding: 5px 7px; cursor: pointer; display: flex; flex-direction: column; gap: 2px; }
+.geo-pick { display: block; font-size: 12px; padding: 2px 4px; cursor: pointer; }
+.geo-pick.on { background: rgba(201, 163, 91, 0.16); }
+.geo-pick.off { opacity: 0.5; cursor: default; }
+.modal .geo-sheet { height: min(70vh, 640px); display: flex; flex-direction: column; gap: 6px; }
+@media (max-width: 760px) {
+  .geo-left { width: auto; right: 8px; bottom: auto; max-height: 42vh; }
+  .geo-right { left: 8px; top: auto; bottom: 8px; width: auto; max-height: 40vh; }
+  .geo-create { width: auto; right: 8px; }
+  .geo-friends { grid-template-columns: 1fr 1fr; }
+}

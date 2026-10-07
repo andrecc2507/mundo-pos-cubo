@@ -1,7 +1,7 @@
 /**
  * O relógio do mapa-múndi (estilo Xenonauts) — módulo puro. `tick` avança o tempo em passos de no
- * máximo 1 hora e para quando algo pede a decisão do jogador (esquadrão chegou, contrato novo, obra
- * pronta, game over). Uma vez por dia roda a economia da vila (comida e dinheiro).
+ * máximo 1 hora e para quando algo pede a decisão do jogador (esquadrão chegou, obra pronta, fome,
+ * game over). Contrato novo só avisa. Uma vez por dia roda a economia da vila (comida e dinheiro).
  */
 import { GEO_RULES, addLog, awayIds, withRng, type GeoAlert, type GeoGame } from './game';
 import { expireContracts, maxOpenContracts, spawnContract } from './contracts';
@@ -24,13 +24,14 @@ export function tick(g: GeoGame, dtHours: number): GeoAlert[] {
   if (g.gameOver || dtHours <= 0) return [];
   const out: GeoAlert[] = [];
   let left = dtHours;
-  while (left > 1e-9 && !out.length && !g.gameOver) {
+  const stops = () => out.some((a) => a.kind === 'arrived' || a.pause !== false);
+  while (left > 1e-9 && !stops() && !g.gameOver) {
     const step = Math.min(1, left, nextEventIn(g));
     g.hours += Math.max(step, 1e-6);
     left -= step;
     out.push(...stepWorld(g, step));
   }
-  if (out.length || g.gameOver) g.speed = 0;
+  if (stops() || g.gameOver) g.speed = 0;
   g.alerts.push(...out);
   return out;
 }
@@ -68,7 +69,7 @@ function stepWorld(g: GeoGame, step: number): GeoAlert[] {
         const c = spawnContract(g, rng, { internal: rng.chance(0.25) });
         if (c) {
           addLog(g, `📜 Contrato novo: ${c.title}.`);
-          out.push({ kind: 'info', title: '📜 Contrato novo', text: c.title });
+          out.push({ kind: 'info', title: '📜 Contrato novo', text: c.title, pause: false });
         }
       }
       const [a, b] = GEO_RULES.contracts.spawnEveryHours;
@@ -90,7 +91,7 @@ export function foodUse(g: GeoGame): number {
 
 /** Comida produzida por dia (os moradores plantam um pouco; hortas plantam mais). */
 export function foodMade(g: GeoGame): number {
-  return E.basePopulationFood + effect(g, 'foodPerDay');
+  return E.basePopulationFood + g.population * E.foodMadePerPerson + effect(g, 'foodPerDay');
 }
 
 export function salaries(g: GeoGame): number {

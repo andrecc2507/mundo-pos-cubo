@@ -87,7 +87,7 @@ export interface LogEntry {
 /** Algo que para o relógio e pede a decisão do jogador. */
 export type GeoAlert =
   | { kind: 'arrived'; squadId: string; contractId: string }
-  | { kind: 'info'; title: string; text: string };
+  | { kind: 'info'; title: string; text: string; /** Para o relógio (padrão: sim). */ pause?: boolean };
 
 export interface GeoGame {
   version: 1;
@@ -124,6 +124,8 @@ export interface GeoGame {
   resets: number;
   /** Equipamento guardado na vila (id do item → quantidade). */
   stock: Record<string, number>;
+  /** Já viu a explicação inicial. */
+  introSeen?: boolean;
 }
 
 /** RNG do jogo: lê o estado salvo e grava de volta ao terminar. */

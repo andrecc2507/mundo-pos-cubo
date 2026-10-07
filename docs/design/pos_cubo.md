@@ -50,6 +50,9 @@ Na prática, cada mecânica é julgada por estas perguntas:
 | Economia | **Comida e dinheiro.** |
 | Campanha | Tem final; depois dele, a campanha continua aberta. |
 | Fora por ora | Viagem dimensional (os mundos paralelos do molde), veículos. |
+| Batalha | **Linha do tempo de velocidade** do molde (cada um age quando a barra enche). Os turnos por time (XCOM) foram testados e removidos. |
+| Tempo no globo | **Contínuo com pausa** (Xenonauts); detalhes em [mapa_mundi.md](mapa_mundi.md). |
+| Globo | Terra real estilizada: 21 regiões pós-Cubo sobre países reais; a Antártida é a Zona do Cubo. |
 
 ## 2. Inconsistências resolvidas
 
@@ -140,5 +143,6 @@ viaja por terra como no molde (estradas, pontos de passagem, encontros, comida).
 
 ## 7. Ainda em aberto
 
-- Lista e nomes dos governos, facções e regiões do globo.
+- ~~Lista e nomes dos governos, facções e regiões do globo.~~ Primeira versão em
+  `data/geo/world.json` (ver [mapa_mundi.md](mapa_mundi.md)); revisar nomes e fronteiras.
 - As 5 fases da história em missões (o cenário dá as fases, não as missões).
