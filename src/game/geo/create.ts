@@ -13,6 +13,7 @@ import { freshName, makeSpecialist, refreshRecruits, rollRecruit } from './peopl
 import { rollAffinity, rollPerks, rollProfession } from '../rules/perks';
 import { emptyLayout, startLayout } from './village_layout';
 import { emptyResearch } from './research';
+import { emitStory, emptyStory } from './story';
 import { CUBE, REGIONS, regionAt, regionById, type LonLat } from './world';
 
 const CLASS_WEAPON: Record<DemoClass, string> = { impacto: 'soco_ingles', movimento: 'pistola_9mm', suporte: 'pistola_9mm', controle: 'fuzil_assalto' };
@@ -145,6 +146,7 @@ export function newGeoGame(spec: NewGameSpec): GeoGame {
     engineering: { queue: [] },
     settings: { fairLuck: spec.fairLuck ?? (spec.difficulty ?? 'normal') !== 'dificil', ironman: !!spec.ironman },
     pool: spec.pool ? structuredClone(spec.pool) : undefined,
+    story: emptyStory(),
   };
   // A vila começa com a praça, algumas casas e o hangar (village_layout.json → start).
   startLayout(g);
@@ -184,5 +186,7 @@ export function newGeoGame(spec: NewGameSpec): GeoGame {
   g.specialists.push(makeSpecialist(g, rng, 'agricultor'), makeSpecialist(g, rng, 'medico'));
   g.nextRecruitAt = g.hours + GEO_RULES.recruits.everyHours;
   g.rng = rng.seed;
+  // A história começa: diálogo de abertura e os primeiros objetivos (data/story/triggers.json).
+  emitStory(g, { type: 'start' });
   return g;
 }

@@ -10,6 +10,7 @@ import { abortMission, arrivalTime, dispatch, dispatchBlock, planRoute, squadPos
 import { effect, foodStorage, stageDef } from '../../geo/village';
 import { buildQueue, defenseInfo, housing, popCap } from '../../geo/village_layout';
 import { availableProjects } from '../../geo/research';
+import { choose, pendingDialogs, rewardText as storyReward, speaker, storyText, storyTick, takeDialog, takeFeed, visibleObjectives } from '../../geo/story';
 import { CUBE, REGIONS, distanceKm, regionAt, regionById } from '../../geo/world';
 import { CanvasPointer } from '../../render/pointer';
 import { GlobeView, drawGlobe, drawRoute } from '../../render/globe';
@@ -68,6 +69,10 @@ export class GeoscapeScene extends Scene implements HubApi {
   private lastTopAt = -1;
   private busy = false;
   private feedItems: { text: string; kind?: string; at: number }[] = [];
+  private objectivesEl!: HTMLDivElement;
+  private objectivesOpen = true;
+  /** Velocidade de antes de um diálogo da história parar o relógio (volta depois dele). */
+  private resumeSpeed = 0;
 
   protected override onEnter(): void {
     const g = geoStore.game;
@@ -82,8 +87,9 @@ export class GeoscapeScene extends Scene implements HubApi {
     this.bar = h('div', { class: 'panel hub-bar' });
     this.left = h('div', { class: 'panel hub-left' });
     this.right = h('div', { class: 'panel hub-right' });
+    this.objectivesEl = h('div', { class: 'panel hub-objectives' });
     this.feed = h('div', { class: 'hub-feed' });
-    this.ui.append(this.left, this.right, this.feed, this.top, this.bar);
+    this.ui.append(this.left, h('div', { class: 'hub-rightcol' }, this.objectivesEl, this.right), this.feed, this.top, this.bar);
     this.pointer = new CanvasPointer(this.ctx.renderer, { leftDrag: true });
     this.village = new VillageView(this);
     this.globe.center = [g.village.at[0], g.village.at[1]];
@@ -121,10 +127,13 @@ export class GeoscapeScene extends Scene implements HubApi {
 
   refresh(): void {
     if (!this.g) return;
+    // Ações do jogador (obras, pesquisa, contratos…) podem cumprir objetivos na hora.
+    storyTick(this.g);
     this.renderTop();
     this.renderBar();
     this.renderLeft();
     this.renderRight();
+    this.renderObjectives();
     this.renderScreen();
   }
 
@@ -196,10 +205,16 @@ export class GeoscapeScene extends Scene implements HubApi {
     // O relógio corre no globo e na vila; para nas telas e nos avisos.
     if (this.g.speed > 0 && !modalOpen() && !this.screen && !this.busy && !this.g.gameOver) {
       const dayBefore = Math.floor(this.g.hours / 24);
+      const speedBefore = this.g.speed;
       const alerts = tick(this.g, hoursPerSecond(this.g) * dt);
+      // Diálogo da história parou o relógio: volta à mesma velocidade depois dele.
+      if (alerts.some((a) => a.kind === 'story') && alerts.every((a) => a.kind === 'story' || (a.kind === 'info' && a.pause === false))) this.resumeSpeed = speedBefore;
       if (Math.floor(this.g.hours / 24) !== dayBefore) autosaveGeo(this.ctx.save);
       if (alerts.length || this.g.gameOver) this.handleAlerts(alerts);
     }
+    // História: avisos do roteiro no feed e diálogos assim que nenhuma janela estiver aberta.
+    if (!modalOpen() && !this.screen && pendingDialogs(this.g)) this.showStory();
+    for (const text of takeFeed(this.g)) this.pushFeed(text, 'good');
     // Barra de cima e painéis com relógio a cada ~meia hora de jogo.
     if (Math.floor(this.g.hours * 2) !== this.lastTopAt) {
       this.lastTopAt = Math.floor(this.g.hours * 2);
@@ -461,6 +476,78 @@ export class GeoscapeScene extends Scene implements HubApi {
     for (const f of this.feedItems) this.feed.append(h('div', { class: f.kind ?? '', text: f.text }));
   }
 
+  // ───────────────────────────── história ─────────────────────────────
+
+  private renderObjectives(): void {
+    const el = this.objectivesEl;
+    clear(el);
+    const list = visibleObjectives(this.g);
+    el.style.display = list.length && !this.screen ? '' : 'none';
+    if (!list.length) return;
+    el.append(h('div', { class: 'hub-title', style: 'cursor:pointer', onClick: () => ((this.objectivesOpen = !this.objectivesOpen), this.renderObjectives()) },
+      h('span', { text: '🎯 Objetivos' }),
+      h('span', { class: 'chip', text: this.objectivesOpen ? '▾' : `▸ ${list.filter((o) => !o.done).length}` }),
+    ));
+    if (!this.objectivesOpen) return;
+    for (const o of list)
+      el.append(h('div', { class: `objective${o.done ? ' done' : ''}` },
+        h('b', { text: `${o.done ? '☑' : '☐'} ${o.def.title}` }),
+        o.done ? '' : h('div', { class: 'hint-line', text: o.def.desc }),
+        !o.done && o.def.reward ? h('div', { class: 'objective-reward', text: `Recompensa: ${storyReward(o.def.reward)}` }) : '',
+      ));
+  }
+
+  /** Mostra o próximo diálogo da história (retrato, falas e escolhas); `after` roda quando a fila acabar. */
+  private showStory(after?: () => void): void {
+    const g = this.g;
+    const next = takeDialog(g);
+    if (!next) return after?.();
+    const { id, def, ev } = next;
+    let i = 0;
+    modal(def.title ? storyText(g, def.title, ev) : '📖', (body, m) => {
+      body.classList.add('story-body');
+      const draw = () => {
+        clear(body);
+        const line = def.lines[i]!;
+        const who = speaker(g, line.who);
+        const c = who.charId ? g.roster[who.charId] : undefined;
+        const last = i >= def.lines.length - 1;
+        body.append(
+          h('div', { class: 'story-line' },
+            h('div', { class: 'story-portrait' }, c ? appearanceCanvas(c.appearance, 6, c.classId) : h('span', { class: 'story-icon', text: who.icon ?? '💬' })),
+            h('div', { class: 'col', style: 'gap:4px;min-width:0;flex:1' },
+              h('div', { class: 'story-who', text: who.name }),
+              h('div', { class: 'story-text', text: storyText(g, line.text, ev) }),
+            ),
+          ),
+          h('div', { class: 'story-progress', text: `${i + 1}/${def.lines.length}` }),
+        );
+        const row = h('div', { class: 'row', style: 'justify-content:flex-end;gap:6px;margin-top:8px;flex-wrap:wrap' });
+        if (!last) {
+          row.append(btn('Pular ⏭', () => ((i = def.lines.length - 1), draw()), { class: 'small ghost' }), btn('Continuar ▶', () => (i++, draw()), { class: 'primary' }));
+        } else if (def.choices?.length) {
+          def.choices.forEach((ch, k) => row.append(btn(storyText(g, ch.text, ev), () => (choose(g, id, k, ev), m.close()), { class: k === 0 ? 'primary' : '' })));
+        } else row.append(btn('Fechar', () => m.close(), { class: 'primary' }));
+        body.append(row);
+      };
+      draw();
+    }, {
+      closable: !def.choices?.length,
+      onClose: () => {
+        this.save();
+        this.refresh();
+        if (pendingDialogs(g)) return this.showStory(after);
+        if (after) {
+          this.resumeSpeed = 0;
+          return after();
+        }
+        // Volta o relógio à velocidade de antes (se a história o parou).
+        if (this.resumeSpeed && !g.speed && !g.raid && !g.encounter) this.setSpeed(this.resumeSpeed);
+        this.resumeSpeed = 0;
+      },
+    });
+  }
+
   // ───────────────────────────── contratos ─────────────────────────────
 
   private missionList(el: HTMLElement): void {
@@ -617,7 +704,8 @@ export class GeoscapeScene extends Scene implements HubApi {
     this.g.alerts = [];
     this.refresh();
     if (this.g.gameOver) return this.showGameOver();
-    if (alerts.some((a) => a.kind === 'raid') && this.g.raid) return this.raidModal();
+    // Ataque: a cena da história (alarme) vem antes da janela da defesa.
+    if (alerts.some((a) => a.kind === 'raid') && this.g.raid) return pendingDialogs(this.g) ? this.showStory(() => this.raidModal()) : this.raidModal();
     if (alerts.some((a) => a.kind === 'encounter') && this.g.encounter) return this.encounterModal();
     for (const a of alerts) if (a.kind === 'info') this.pushFeed(`${a.title}: ${a.text}`, /pronta|concluída|Engenharia/.test(a.title) ? 'good' : undefined);
     const research = alerts.find((a) => a.kind === 'info' && a.title.includes('Pesquisa'));

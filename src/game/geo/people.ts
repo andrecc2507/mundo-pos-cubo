@@ -20,6 +20,7 @@ import { createLegacy, legacyBonus } from './legacy';
 import { gainSynergy } from '../rules/duo';
 import { effect, foodStorage, rosterCap } from './village';
 import { daysOfService, displayName, rankUp } from '../rules/service';
+import { emitStory } from './story';
 
 const R = GEO_RULES.recruits;
 const CLASS_WEAPON: Record<DemoClass, string> = { impacto: 'soco_ingles', movimento: 'pistola_9mm', suporte: 'pistola_9mm', controle: 'fuzil_assalto' };
@@ -198,6 +199,7 @@ export function hire(g: GeoGame, i: number): Character | null {
   g.roster[c.id] = c;
   g.salaried.push(c.id);
   addLog(g, `🤝 ${c.name} entrou para o grupo.`, 'good');
+  emitStory(g, { type: 'hired', id: c.id, name: c.name });
   return c;
 }
 
@@ -340,6 +342,7 @@ export function applyUnitOutcomes(g: GeoGame, result: BattleResult, sum: GeoResu
       if (squad) squad.members = squad.members.filter((x) => x !== u.charId);
       sum.dead.push(ch.name);
       addLog(g, `☠ ${ch.name} morreu (${cause}).`, 'bad');
+      emitStory(g, { type: 'death', id: ch.id, name: ch.name });
       continue;
     }
     const frac = u.maxHp ? (u.lowHp ?? u.hp) / u.maxHp : 1;
@@ -364,6 +367,7 @@ export function applyUnitOutcomes(g: GeoGame, result: BattleResult, sum: GeoResu
     gainXp(ch, Math.round((result.context.baseXp + (u.killXp ?? 0)) * (1 + legacyBonus(g, 'xp') / 100)));
     // Os pontos novos ficam para gastar na vila (ficha do herói).
     if (ch.level > before) {
+      emitStory(g, { type: 'level_up', id: ch.id, name: ch.name, value: ch.level });
       sum.levelUps.push(`${ch.name} → NV ${ch.level}`);
       row.levelUp = ch.level;
       const r = rankUp(before, ch.level);
@@ -420,6 +424,8 @@ export function applyContractResult(g: GeoGame, result: BattleResult): GeoResult
       sum.lines.push(result.outcome === 'fled' ? 'O esquadrão recuou. Contrato perdido.' : 'Derrota. Contrato perdido.');
       addLog(g, `✖ ${c.title} fracassou.`, 'bad');
     }
+    // História: contrato cumprido ou perdido (contratos da história avisam pela chave deles).
+    emitStory(g, { type: result.outcome === 'victory' ? 'contract_done' : 'contract_failed', id: c.story ?? c.type, name: c.title });
   }
   if (squad) {
     if (!squad.members.length) {

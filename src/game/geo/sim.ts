@@ -3,7 +3,7 @@
  * máximo 1 hora e para quando algo pede a decisão do jogador (esquadrão chegou, obra pronta, fome,
  * game over). Contrato novo só avisa. Uma vez por dia roda a economia da vila (comida e dinheiro).
  */
-import { GEO_RULES, addLog, awayIds, difficulty, withRng, type GeoAlert, type GeoGame } from './game';
+import { GEO_RULES, addLog, awayIds, difficulty, withRng, type GeoAlert, type GeoGame, dayOf } from './game';
 import { expireContracts, maxOpenContracts, spawnContract } from './contracts';
 import { dailyPeople, healTick, refreshRecruits } from './people';
 import { arrivalTime, squadPosition } from './squads';
@@ -11,7 +11,8 @@ import { encounterTick, startRaid } from './events';
 import { dailyPolitics } from './politics';
 import { PEOPLE_RULES } from '../rules/perks';
 import { effect, foodStorage } from './village';
-import { buildTick, nextBuildIn, popCap, safetyGrowth } from './village_layout';
+import { BUILDINGS, buildTick, nextBuildIn, popCap, safetyGrowth } from './village_layout';
+import { emitStory, pendingDialogs, storyTick, takeFeed } from './story';
 import { craftHoursLeft, engineeringTick, researchHoursLeft, researchTick } from './research';
 
 const E = GEO_RULES.economy;
@@ -50,6 +51,7 @@ function nextEventIn(g: GeoGame): number {
 
 function stepWorld(g: GeoGame, step: number): GeoAlert[] {
   const out: GeoAlert[] = [];
+  const dialogsBefore = pendingDialogs(g);
   // Esquadrões chegando e voltando.
   for (const s of [...g.squads]) {
     if (s.state === 'onsite' || g.hours < arrivalTime(s) - 1e-9) continue;
@@ -62,17 +64,24 @@ function stepWorld(g: GeoGame, step: number): GeoAlert[] {
       addLog(g, `🏠 ${s.name} voltou para a vila.`, 'good');
     }
   }
-  // Obras.
   // Pesquisa e Engenharia.
   const found = researchTick(g, step, effect(g, 'research'));
-  if (found) out.push({ kind: 'info', title: '🔬 Pesquisa concluída', text: `${found.name}. Escolha o próximo projeto.` });
+  if (found) {
+    out.push({ kind: 'info', title: '🔬 Pesquisa concluída', text: `${found.name}. Escolha o próximo projeto.` });
+    emitStory(g, { type: 'research_done', id: found.id, name: found.name });
+  }
   const made = engineeringTick(g, step, effect(g, 'engineering'));
   if (made.length) out.push({ kind: 'info', title: '🔧 Engenharia', text: `${made.length} item(ns) pronto(s) no estoque.`, pause: false });
+  // Obras.
   const built = buildTick(g, step);
-  if (built.length) out.push({ kind: 'info', title: '🏗 Obra pronta', text: built.length > 3 ? `${built.length} obras prontas.` : `${built.join(', ')} ${built.length > 1 ? 'estão prontas' : 'está pronta'}.`, pause: false });
+  if (built.length) {
+    const names = built.map((b) => BUILDINGS[b.id]?.name ?? b.id);
+    out.push({ kind: 'info', title: '🏗 Obra pronta', text: built.length > 3 ? `${built.length} obras prontas.` : `${names.join(', ')} ${built.length > 1 ? 'estão prontas' : 'está pronta'}.`, pause: false });
+    for (const b of built) if (!BUILDINGS[b.id]?.line) emitStory(g, { type: 'building_done', id: b.id, name: BUILDINGS[b.id]?.name });
+  }
   healTick(g, step);
-  // Contratos: vencem e surgem novos.
-  expireContracts(g);
+  // Contratos: vencem e surgem novos. Contrato da história que vence conta como perdido para o roteiro.
+  for (const c of expireContracts(g)) if (c.story) emitStory(g, { type: 'contract_failed', id: c.story, name: c.title });
   if (g.hours >= g.nextContractAt) {
     withRng(g, (rng) => {
       const open = g.contracts.filter((c) => c.status === 'open').length;
@@ -98,7 +107,13 @@ function stepWorld(g: GeoGame, step: number): GeoAlert[] {
   if (g.hours >= g.nextDayAt) {
     g.nextDayAt += 24;
     out.push(...dailyEconomy(g));
+    emitStory(g, { type: 'day', value: dayOf(g) });
   }
+  // História: estágio novo, objetivos, avisos e diálogos. Diálogo novo para o relógio; os que já
+  // esperavam a tela não travam o tempo (simulações sem tela seguem andando).
+  storyTick(g);
+  for (const text of takeFeed(g)) out.push({ kind: 'info', title: '📖', text, pause: false });
+  if (pendingDialogs(g) > dialogsBefore) out.push({ kind: 'story' });
   return out;
 }
 

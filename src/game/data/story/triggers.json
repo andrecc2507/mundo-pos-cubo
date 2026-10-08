@@ -1,0 +1,249 @@
+{
+ "_doc": "Roteiro (geo/story.ts; manual em docs/design/gatilhos.md). triggers: gatilhos — on (acontecimento), match (id do acontecimento, opcional), if (condições, todas), once (padrão true), do (ações), draft (rascunho ignorado pelo jogo). dialogs: falas com quem fala (protagonista, amigo:1…5, personagem:<id>, radio, vila ou um nome) e escolhas opcionais com ações. objectives: título, descrição, condições de cumprido, recompensa e próximos objetivos. Marcadores no texto: {protagonista}, {vila}, {amigo1}…{amigo5}, {regiao}, {governo}, {evento}, {dia}, {fora}. O teste do roteiro (npm test) aponta ids e chaves erradas.",
+ "triggers": [
+  {
+   "id": "t_inicio",
+   "on": "start",
+   "do": [{ "dialog": "d_inicio" }, { "objective": "obj_horta" }]
+  },
+  {
+   "id": "t_horta",
+   "on": "objective_done",
+   "match": "obj_horta",
+   "do": [{ "dialog": "d_horta" }]
+  },
+  {
+   "id": "t_radio_bando",
+   "on": "day",
+   "if": [{ "day": [2] }],
+   "do": [{ "dialog": "d_radio_bando" }, { "objective": "obj_cerco" }, { "flag": "aviso_bando" }]
+  },
+  {
+   "id": "t_primeiro_contrato",
+   "on": "contract_done",
+   "do": [{ "dialog": "d_primeiro_contrato" }]
+  },
+  {
+   "id": "t_primeira_derrota",
+   "on": "contract_failed",
+   "do": [{ "dialog": "d_derrota" }]
+  },
+  {
+   "id": "t_primeiro_ataque",
+   "on": "raid_start",
+   "do": [{ "dialog": "d_ataque" }, { "objective": "obj_cerco" }]
+  },
+  {
+   "id": "t_ataque_vencido",
+   "on": "raid_won",
+   "do": [{ "dialog": "d_ataque_vencido" }, { "give": { "population": 3 } }, { "alert": "🏘 Três famílias que viram a defesa pediram para morar em {vila}." }]
+  },
+  {
+   "id": "t_ataque_perdido",
+   "on": "raid_lost",
+   "do": [{ "dialog": "d_ataque_perdido" }]
+  },
+  {
+   "id": "t_primeira_morte",
+   "on": "death",
+   "do": [{ "dialog": "d_luto" }]
+  },
+  {
+   "id": "t_primeira_pesquisa",
+   "on": "research_done",
+   "do": [{ "dialog": "d_pesquisa" }]
+  },
+  {
+   "id": "t_estagio1",
+   "on": "stage_up",
+   "if": [{ "stage": 1 }],
+   "do": [{ "dialog": "d_estagio1" }]
+  },
+  {
+   "id": "t_iracema",
+   "on": "day",
+   "if": [{ "day": [5] }, { "contractsDone": 1 }],
+   "do": [{ "dialog": "d_iracema" }]
+  },
+  {
+   "id": "t_tome_resgatado",
+   "on": "contract_done",
+   "match": "irmao_luz",
+   "do": [
+    { "dialog": "d_tome" },
+    { "recruit": { "name": "Tomé", "classId": "controle", "gift": "bioluminescencia", "potential": 4, "nickname": "Farol", "bio": "Irmão de Iracema. Foi usado como farol pelos bandos das estradas." } },
+    { "flag": "tome_no_grupo" }
+   ]
+  },
+  {
+   "id": "t_tome_perdido",
+   "on": "contract_failed",
+   "match": "irmao_luz",
+   "do": [{ "dialog": "d_tome_perdido" }, { "flag": "tome_perdido" }]
+  },
+  {
+   "id": "t_cubo_pesquisa",
+   "on": "research_done",
+   "match": "cubo",
+   "do": [{ "dialog": "d_cubo" }, { "flag": "segredo_do_cubo" }]
+  },
+  {
+   "id": "rascunho_exemplo",
+   "draft": true,
+   "on": "day",
+   "if": [{ "day": [12] }, { "flag": "tome_no_grupo" }],
+   "do": [{ "log": "Rascunho: Tomé conta o que viu nas estradas." }]
+  }
+ ],
+ "dialogs": {
+  "d_inicio": {
+   "title": "O começo de {vila}",
+   "lines": [
+    { "who": "vila", "text": "O portão improvisado range. Vinte e poucas famílias olham para vocês: é aqui que a vila começa." },
+    { "who": "protagonista", "text": "Anos depois da Ativação e a gente ainda vive de restos. Chega. {vila} vai ser diferente." },
+    { "who": "amigo:1", "text": "Diferente começa com comida, {protagonista}. Muita boca para alimentar. A horta vem primeiro." },
+    { "who": "amigo:2", "text": "E dinheiro. Quem faz o trabalho que ninguém quer recebe — tem contrato no rádio todo dia." },
+    { "who": "protagonista", "text": "Então é isso: horta, contratos e, assim que der, muro. Ninguém mais entra aqui sem pedir licença." }
+   ]
+  },
+  "d_horta": {
+   "lines": [
+    { "who": "amigo:3", "text": "Canteiro marcado! Em poucos dias tem verdura de verdade na mesa." },
+    { "who": "protagonista", "text": "Enquanto a horta cresce, vamos ver o que o rádio tem pra gente — e o que a oficina consegue aprender." }
+   ]
+  },
+  "d_radio_bando": {
+   "title": "Rádio, faixa aberta",
+   "lines": [
+    { "who": "radio", "text": "...aqui é o posto de {governo}. Bando armado visto nas estradas de {regiao}. Vilas sem cerca, cuidado. Repito: vilas sem cerca..." },
+    { "who": "amigo:4", "text": "Ouviu isso? Cercar tudo de uma vez sai caro, mas dá para ir trecho por trecho. Paliçada primeiro, muro depois." },
+    { "who": "protagonista", "text": "Abre a planta da vila e traça o cerco. Portão nos quatro lados — a gente também precisa sair." }
+   ]
+  },
+  "d_primeiro_contrato": {
+   "lines": [
+    { "who": "amigo:2", "text": "Primeiro pagamento. Não é muito, mas é nosso." },
+    { "who": "protagonista", "text": "E agora sabem que a gente cumpre o que promete. Isso vale mais que o dinheiro." }
+   ]
+  },
+  "d_derrota": {
+   "lines": [
+    { "who": "amigo:1", "text": "A gente voltou. Nem todo dia dá certo." },
+    { "who": "protagonista", "text": "Voltamos vivos. A gente aprende, se equipa e o próximo é nosso." }
+   ]
+  },
+  "d_ataque": {
+   "title": "Alarme",
+   "lines": [
+    { "who": "vila", "text": "Gritos no portão! Tem gente armada vindo pela estrada!" },
+    { "who": "protagonista", "text": "Todo mundo para a praça. Quem sabe atirar, nas janelas e nas torres. Ninguém toca na nossa gente." }
+   ]
+  },
+  "d_ataque_vencido": {
+   "lines": [
+    { "who": "amigo:5", "text": "Eles correram! Viu a cara deles quando deram de cara com a cerca?" },
+    { "who": "protagonista", "text": "Hoje a vila aprendeu que pode se defender. Amanhã a gente conserta o que quebrou." }
+   ]
+  },
+  "d_ataque_perdido": {
+   "lines": [
+    { "who": "vila", "text": "Levaram comida e quebraram o que puderam. Tem gente chorando na praça." },
+    { "who": "protagonista", "text": "A gente reconstrói. E da próxima vez eles vão encontrar muro de pedra." }
+   ]
+  },
+  "d_luto": {
+   "title": "Memorial",
+   "lines": [
+    { "who": "protagonista", "text": "{evento} não voltou." },
+    { "who": "amigo:1", "text": "O nome vai para o memorial. A gente não esquece." },
+    { "who": "protagonista", "text": "Não esquece e não desperdiça. Quem caiu caiu para a vila ficar de pé." }
+   ]
+  },
+  "d_pesquisa": {
+   "lines": [
+    { "who": "amigo:3", "text": "Os papéis fazem sentido! A oficina já consegue fabricar o que a gente desenhou." },
+    { "who": "protagonista", "text": "Engenharia, então. Equipamento bom traz todo mundo de volta." }
+   ]
+  },
+  "d_estagio1": {
+   "title": "Comunidade Fortificada",
+   "lines": [
+    { "who": "vila", "text": "{vila} agora é uma Comunidade Fortificada. Tem gente vindo de longe para morar aqui." },
+    { "who": "protagonista", "text": "Com gente vem responsabilidade. {governo} vai prestar atenção na gente — para o bem e para o mal." }
+   ]
+  },
+  "d_iracema": {
+   "title": "Iracema",
+   "lines": [
+    { "who": "vila", "text": "Uma mulher de olhos fundos atravessa o portão. Diz que se chama Iracema e pede para falar com quem manda." },
+    { "who": "Iracema", "text": "Levaram meu irmão, Tomé. Ele faz luz com as mãos — querem usar ele de farol nas estradas, para os comboios do bando." },
+    { "who": "Iracema", "text": "Ninguém mais quer ir atrás. Disseram que vocês vão." }
+   ],
+   "choices": [
+    { "text": "Vamos buscar o Tomé.", "do": [{ "contract": { "type": "resgate", "key": "irmao_luz", "title": "Resgate: o irmão de Iracema", "hours": 120, "money": 120 } }, { "flag": "aceitou_iracema" }] },
+    { "text": "Não temos gente para isso agora.", "do": [{ "flag": "recusou_iracema" }, { "log": "Iracema foi embora sem olhar para trás." }] }
+   ]
+  },
+  "d_tome": {
+   "title": "Tomé",
+   "lines": [
+    { "who": "Iracema", "text": "Tomé! Você está vivo..." },
+    { "who": "Tomé", "text": "Eles me faziam acender a noite inteira. Eu sei os caminhos deles. Sei onde guardam o que roubam." },
+    { "who": "protagonista", "text": "Então fica com a gente. {vila} precisa de quem enxerga no escuro." }
+   ]
+  },
+  "d_tome_perdido": {
+   "lines": [
+    { "who": "vila", "text": "Chegou a notícia: o bando levou Tomé para longe. Iracema não voltou mais à vila." }
+   ]
+  },
+  "d_cubo": {
+   "title": "O que é o Cubo?",
+   "lines": [
+    { "who": "amigo:3", "text": "Os fragmentos reagem aos Dons. Não é radiação, não é eletricidade... parece que respondem a quem está perto." },
+    { "who": "protagonista", "text": "Então o Cubo não só deu os Dons. Ele ainda está ouvindo." }
+   ]
+  }
+ },
+ "objectives": {
+  "obj_horta": {
+   "title": "Plante a primeira horta",
+   "desc": "Comida acaba rápido. Abra a Vila (tecla V), escolha Produção → Hortas e criação e posicione o canteiro.",
+   "done": [{ "placed": ["horta", 1] }],
+   "reward": { "money": 60 },
+   "next": ["obj_contrato", "obj_pesquisa"]
+  },
+  "obj_contrato": {
+   "title": "Cumpra o primeiro contrato",
+   "desc": "No Globo, clique num contrato, escolha até 6 pessoas e envie. Ao chegar, lute.",
+   "done": [{ "contractsDone": 1 }],
+   "reward": { "supplies": { "pecas": 2 } },
+   "next": ["obj_casas"]
+  },
+  "obj_pesquisa": {
+   "title": "Comece uma pesquisa",
+   "desc": "Abra Pesquisa e escolha um projeto. Fortificação libera muro de pedra e torre de vigia.",
+   "done": [{ "researchAny": true }],
+   "reward": { "money": 40 }
+  },
+  "obj_cerco": {
+   "title": "Cerque a vila",
+   "desc": "Na Vila, aba Defesa: trace paliçadas arrastando e ponha portões — ou use “Cercar a vila”.",
+   "done": [{ "enclosed": true }],
+   "reward": { "money": 80 }
+  },
+  "obj_casas": {
+   "title": "Abra espaço para mais gente",
+   "desc": "A população só cresce se houver moradia. Construa mais uma casa (Vila → Moradia).",
+   "done": [{ "building": ["casa", 4] }],
+   "reward": { "food": 20 },
+   "next": ["obj_estagio"]
+  },
+  "obj_estagio": {
+   "title": "Vire Comunidade Fortificada",
+   "desc": "Com população, reputação, dinheiro e peças suficientes, suba o estágio da vila (painel da Vila).",
+   "done": [{ "stage": 1 }],
+   "reward": { "money": 150 }
+  }
+ }
+}

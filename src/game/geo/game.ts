@@ -36,6 +36,8 @@ export interface Contract {
   intercontinental: boolean;
   /** Contrato contra um governo rival: a luta é no território dele (e ele não gosta). */
   against?: string;
+  /** Contrato da história (geo/story.ts): a chave que os gatilhos escutam ao cumprir ou falhar. */
+  story?: string;
   status: ContractStatus;
   squadId?: string;
 }
@@ -104,6 +106,8 @@ export type GeoAlert =
   | { kind: 'arrived'; squadId: string; contractId: string }
   | { kind: 'raid' }
   | { kind: 'encounter'; squadId: string }
+  /** Diálogo da história esperando a tela (geo/story.ts). */
+  | { kind: 'story' }
   | { kind: 'info'; title: string; text: string; /** Para o relógio (padrão: sim). */ pause?: boolean };
 
 export interface GeoGame {
@@ -166,6 +170,8 @@ export interface GeoGame {
   settings: CampaignSettings;
   /** Banco de personagens do jogador (state/character_pool.ts): candidatos a recruta com nome e visual dele. */
   pool?: PoolPerson[];
+  /** História: flags, gatilhos disparados, objetivos e diálogos na fila (geo/story.ts). */
+  story?: import('./story').StoryState;
 }
 
 /** Pessoa do banco de personagens (mesmo formato de state/character_pool.ts → PoolEntry). */

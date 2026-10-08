@@ -5,6 +5,7 @@ import { stageDef } from '../geo/village';
 import { migrateLayout } from '../geo/village_layout';
 import { emptyResearch } from '../geo/research';
 import { loadPool } from './character_pool';
+import { emptyStory } from '../geo/story';
 
 /** Espaços de save do Mundo Pós-Cubo (separados dos do molde). */
 export const GEO_SLOTS = ['mundo_1', 'mundo_2', 'mundo_3'];
@@ -41,6 +42,7 @@ export function loadGeo(save: SaveService, slot: string): boolean {
   g.nextRaidAt ??= g.hours + 24 * 10;
   g.research ??= emptyResearch();
   g.settings ??= { fairLuck: g.difficulty !== 'dificil', ironman: false };
+  g.story ??= { ...emptyStory(), stage: g.village.stage };
   // O banco de personagens vale para todas as campanhas: a mais nova versão entra no jogo carregado.
   g.pool = loadPool();
   g.engineering ??= { queue: [] };

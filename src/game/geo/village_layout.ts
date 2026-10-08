@@ -192,9 +192,9 @@ export function nextBuildIn(g: GeoGame): number {
   return a.length ? Math.min(...a.map((b) => b.work!)) : Infinity;
 }
 
-/** Avança as obras; devolve os nomes das que ficaram prontas. */
-export function buildTick(g: GeoGame, hours: number): string[] {
-  const done: string[] = [];
+/** Avança as obras; devolve as que ficaram prontas (ou consertadas). */
+export function buildTick(g: GeoGame, hours: number): PlacedBuilding[] {
+  const done: PlacedBuilding[] = [];
   for (const b of activeBuilds(g)) {
     b.work = Math.max(0, b.work! - hours);
     if (b.work > 1e-6) continue;
@@ -203,7 +203,7 @@ export function buildTick(g: GeoGame, hours: number): string[] {
     delete b.work;
     delete b.total;
     delete b.damaged;
-    done.push(def.name);
+    done.push(b);
     // Trechos de muro não enchem o registro: só as construções de verdade.
     if (!def.line || repaired) addLog(g, `🏗 ${def.name} ${repaired ? 'consertada' : 'pronta'}.`, 'good');
   }

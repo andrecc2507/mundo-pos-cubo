@@ -22,6 +22,7 @@ import { changeRep, isHostile, POLITICS } from './politics';
 import { abortMission, squadPosition } from './squads';
 import { foodStorage, itemPrice, rosterCap, SHOP } from './village';
 import { LAYOUT_RULES, defenseInfo, plazaCenter, raidDamage } from './village_layout';
+import { emitStory } from './story';
 import { REGIONS, regionAt, regionById } from './world';
 
 const RA = GEO_RULES.raids;
@@ -52,6 +53,7 @@ export function startRaid(g: GeoGame, rng: Rng): Raid {
   g.raid = raid;
   scheduleRaid(g, rng);
   addLog(g, `🚨 Ataque à vila: ${raidLabel(g, raid)}!`, 'bad');
+  emitStory(g, { type: 'raid_start', id: raid.kind, value: raid.level });
   return raid;
 }
 
@@ -131,10 +133,12 @@ export function resolveRaidAuto(g: GeoGame, rng: Rng): { won: boolean; text: str
   g.raid = undefined;
   if (won) {
     addLog(g, '🛡 A vila resistiu ao ataque sozinha.', 'good');
+    emitStory(g, { type: 'raid_won', id: 'auto' });
     return { won, text: 'Os moradores e os vigias seguraram o ataque.' };
   }
   const text = raidLoss(g, 1, rng);
   addLog(g, `🔥 A vila foi saqueada. ${text}`, 'bad');
+  emitStory(g, { type: 'raid_lost', id: 'auto' });
   return { won, text };
 }
 
@@ -148,10 +152,12 @@ export function applyRaidResult(g: GeoGame, result: BattleResult): GeoResultSumm
     sum.lines.push(`A vila resistiu! Os moradores confiam mais no grupo (reputação +${RA.winRep}).`);
     addLog(g, '🛡 Ataque à vila repelido.', 'good');
     if (r?.kind === 'expedicao' && r.gov) changeRep(g, r.gov, -3, true);
+    emitStory(g, { type: 'raid_won', id: 'batalha' });
   } else {
     const text = withRng(g, (rng) => raidLoss(g, result.outcome === 'fled' ? 1 : 0.8, rng));
     sum.lines.push(`A defesa caiu. ${text}`);
     addLog(g, `🔥 A vila foi saqueada. ${text}`, 'bad');
+    emitStory(g, { type: 'raid_lost', id: 'batalha' });
   }
   checkGameOver(g, sum);
   return sum;
