@@ -7,6 +7,7 @@ import type { Character } from '../rules/character';
 import RULES from '../data/geo/geo_rules.json';
 import type { LonLat } from './world';
 import type { Legacy } from './legacy';
+import type { VillageLayout } from './village_layout';
 
 export const GEO_RULES = RULES;
 export type Supply = 'combustivel' | 'remedios' | 'pecas';
@@ -59,18 +60,17 @@ export interface Squad {
   plane: boolean;
 }
 
-export interface Construction {
-  id: string;
-  doneAt: number;
-}
-
 export interface Village {
   name: string;
   at: LonLat;
   regionId: string;
   stage: number;
+  /** Nível de cada instalação: quantas estão prontas na planta (geo/village_layout.ts → syncFacilities). */
   facilities: Record<string, number>;
-  construction: Construction[];
+  /** A planta da vila: o que está construído, em obra e onde. */
+  layout: VillageLayout;
+  /** Saves antigos (antes da planta): obras em andamento. Convertido por migrateLayout. */
+  construction?: { id: string; doneAt: number }[];
 }
 
 export interface MemorialEntry {

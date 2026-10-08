@@ -1,9 +1,9 @@
 /**
  * Acontecimentos fora dos contratos — módulo puro:
  * - **Ataques à vila**: de tempos em tempos um bando, Bestas ou uma expedição de um governo hostil
- *   ataca. Quem está em casa defende numa batalha no mapa da vila (os muros dão guardas); sem
- *   defesa, a vila resolve sozinha pela força dos muros e da população. Perder custa comida,
- *   dinheiro e moradores.
+ *   ataca. Quem está em casa defende numa batalha no mapa da própria vila (a planta: muros, portões,
+ *   torres com vigias, armadilhas e holofotes); sem defesa, a vila resolve sozinha pela defesa que
+ *   tem no chão e pela população. Perder custa comida, dinheiro, moradores e construções.
  * - **Encontros na estrada** (só por terra): emboscadas, Bestas, caçadores de governo hostil
  *   (batalha ou fuga) e refugiados, mercadores, desertores com Dom e esconderijos (escolha).
  * Números em data/geo/geo_rules.json → raids e encounters.
@@ -14,13 +14,14 @@ import { battleMap, timeOfDayAt } from './maps';
 import { generateVillageMap } from '../mapgen/village_map';
 import { VILLAIN_LINES, makeBeast, makeBeastGrunt, makeGrunt, makeVillain } from '../demo/demo_squad';
 import type { Biome } from '../data';
-import { GEO_RULES, SUPPLIES, addLog, awayIds, difficulty, newId, type GeoAlert, type GeoGame, type Raid, type RoadEncounter, type Squad } from './game';
+import { GEO_RULES, SUPPLIES, addLog, awayIds, difficulty, newId, withRng, type GeoAlert, type GeoGame, type Raid, type RoadEncounter, type Squad } from './game';
 import { contractLevel, squadLevel } from './contracts';
 import { applyUnitOutcomes, checkGameOver, emptySummary, makeRecruit, makeSpecialist, type GeoResultSummary } from './people';
 import { PEOPLE_RULES, PROFESSIONS } from '../rules/perks';
 import { changeRep, isHostile, POLITICS } from './politics';
 import { abortMission, squadPosition } from './squads';
-import { effect, facilityLevel, foodStorage, itemPrice, rosterCap, SHOP } from './village';
+import { foodStorage, itemPrice, rosterCap, SHOP } from './village';
+import { LAYOUT_RULES, defenseInfo, raidDamage } from './village_layout';
 import { REGIONS, regionAt, regionById } from './world';
 
 const RA = GEO_RULES.raids;
@@ -37,9 +38,9 @@ export function scheduleRaid(g: GeoGame, rng: Rng): void {
   g.nextRaidAt = g.hours + rng.int(a!, b!) * 24 * haste * difficulty(g).raidEvery;
 }
 
-/** Defesa da vila: muros (nível) — usada na resolução automática e nos guardas. */
+/** Defesa da vila: o que está pronto no chão (cerco, torres, armadilhas…) — geo/village_layout.ts. */
 export function villageDefense(g: GeoGame): number {
-  return effect(g, 'defense');
+  return defenseInfo(g).score;
 }
 
 /** Começa um ataque (o relógio para e o jogador decide a defesa). */
@@ -72,24 +73,30 @@ function raidEnemies(rng: Rng, r: Raid, n: number): BattleUnit[] {
   return [...real, ...grunts];
 }
 
-/** Batalha de defesa no mapa da vila: aguentar as rodadas (os atacantes chegam em ondas). */
+/** Batalha de defesa no mapa da própria vila: aguentar as rodadas (os atacantes chegam em ondas). */
 export function raidBattle(g: GeoGame, defenders: BattleUnit[], rng: Rng): BattleSetup {
   const r = g.raid!;
   const seed = rng.int(1, 1e9);
   const first = Math.ceil(r.size * 0.6);
   const waves: Wave[] = [{ round: 3, units: raidEnemies(rng, r, r.size - first), say: 'Mais deles pelo outro lado!' }];
-  const guards = Array.from({ length: Math.min(4, facilityLevel(g, 'muros') * RA.guardsPerWall) }, () => {
+  const vm = generateVillageMap({ layout: g.village.layout, seed: g.seed, name: g.village.name });
+  // Um vigia no alto de cada torre pronta.
+  const guards = vm.guardSpots.slice(0, defenseInfo(g).guards).map((spot) => {
     const a = makeVillain(rng, Math.max(1, r.level - 2), { gift: false, name: 'Vigia' });
     a.team = 'player';
     a.name = 'Vigia da vila';
+    a.spawnAt = spot;
     return a;
   });
+  const D = LAYOUT_RULES.defenseRules;
+  const traps = vm.traps.map(([x, y]) => ({ x, y, team: 'player' as const, name: 'Armadilha da vila', damage: D.trapDamage + r.level * D.trapDamagePerLevel, status: { id: 'imobilizado', turns: 2 } }));
   return {
-    map: generateVillageMap({ seed, stage: g.village.stage, walls: facilityLevel(g, 'muros'), name: g.village.name }),
+    map: vm.map,
     players: defenders,
     enemies: raidEnemies(rng, r, first),
     allies: guards,
     waves,
+    traps,
     victory: { type: 'survive', rounds: RA.survivalRounds },
     ambush: false,
     timeOfDay: timeOfDayAt(g.hours, g.village.at[0]),
@@ -100,16 +107,17 @@ export function raidBattle(g: GeoGame, defenders: BattleUnit[], rng: Rng): Battl
   };
 }
 
-/** Perdas de um ataque que deu certo (metade com muros). */
-function raidLoss(g: GeoGame, factor: number): string {
-  const k = factor * (facilityLevel(g, 'muros') > 0 ? 0.5 : 1);
+/** Perdas de um ataque que deu certo (metade com a vila cercada) e construções danificadas. */
+function raidLoss(g: GeoGame, factor: number, rng: Rng): string {
+  const k = factor * (defenseInfo(g).enclosed ? 0.5 : 1);
   const food = Math.floor(g.food * RA.lossFoodPct * k);
   const money = Math.floor(Math.max(0, g.money) * RA.lossMoneyPct * k);
   const pop = Math.max(1, Math.floor(g.population * RA.lossPopPct * k));
   g.food -= food;
   g.money -= money;
   g.population = Math.max(GEO_RULES.economy.minPopulation, g.population - pop);
-  return `Saquearam 🍞 ${food} e $${money}; ${pop} moradores morreram ou fugiram.`;
+  const broken = raidDamage(g, rng, k);
+  return `Saquearam 🍞 ${food} e $${money}; ${pop} moradores morreram ou fugiram.${broken ? ` ${broken}` : ''}`;
 }
 
 /** Sem defensores: a vila resolve sozinha (muros, vigias e moradores). */
@@ -122,7 +130,7 @@ export function resolveRaidAuto(g: GeoGame, rng: Rng): { won: boolean; text: str
     addLog(g, '🛡 A vila resistiu ao ataque sozinha.', 'good');
     return { won, text: 'Os moradores e os vigias seguraram o ataque.' };
   }
-  const text = raidLoss(g, 1);
+  const text = raidLoss(g, 1, rng);
   addLog(g, `🔥 A vila foi saqueada. ${text}`, 'bad');
   return { won, text };
 }
@@ -138,7 +146,7 @@ export function applyRaidResult(g: GeoGame, result: BattleResult): GeoResultSumm
     addLog(g, '🛡 Ataque à vila repelido.', 'good');
     if (r?.kind === 'expedicao' && r.gov) changeRep(g, r.gov, -3, true);
   } else {
-    const text = raidLoss(g, result.outcome === 'fled' ? 1 : 0.8);
+    const text = withRng(g, (rng) => raidLoss(g, result.outcome === 'fled' ? 1 : 0.8, rng));
     sum.lines.push(`A defesa caiu. ${text}`);
     addLog(g, `🔥 A vila foi saqueada. ${text}`, 'bad');
   }

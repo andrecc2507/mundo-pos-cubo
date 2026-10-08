@@ -11,7 +11,7 @@ import { DIFFICULTIES, GEO_RULES, addLog, newId, type DifficultyId, type GeoGame
 import { spawnContract } from './contracts';
 import { freshName, makeSpecialist, refreshRecruits, rollRecruit } from './people';
 import { rollAffinity, rollPerks, rollProfession } from '../rules/perks';
-import { FACILITIES } from './village';
+import { emptyLayout, startLayout } from './village_layout';
 import { CUBE, REGIONS, regionAt, regionById, type LonLat } from './world';
 
 const CLASS_WEAPON: Record<DemoClass, string> = { impacto: 'soco_ingles', movimento: 'pistola_9mm', suporte: 'pistola_9mm', controle: 'fuzil_assalto' };
@@ -98,15 +98,13 @@ export function newGeoGame(spec: NewGameSpec): GeoGame {
   const diff = DIFFICULTIES[spec.difficulty ?? 'normal'];
   const reputation: Record<string, number> = {};
   for (const r of REGIONS) reputation[r.id] = r.id === home.id ? S.reputationHome : r.continent === home.continent ? S.reputationContinent : 0;
-  const facilities: Record<string, number> = {};
-  for (const [id, f] of Object.entries(FACILITIES)) if (f.builtAtStart) facilities[id] = f.builtAtStart;
   const g: GeoGame = {
     version: 1,
     seed: spec.seed,
     rng: rng.int(1, 0x7fffffff),
     hours: 8,
     speed: 0,
-    village: { name: spec.villageName.trim() || 'Vila', at: spec.villageAt, regionId, stage: 0, facilities, construction: [] },
+    village: { name: spec.villageName.trim() || 'Vila', at: spec.villageAt, regionId, stage: 0, facilities: {}, layout: emptyLayout() },
     money: Math.round(S.money * diff.start),
     food: Math.round(S.food * diff.start),
     population: S.population,
@@ -137,6 +135,8 @@ export function newGeoGame(spec: NewGameSpec): GeoGame {
     specialistPool: [],
     nextRaidAt: 8 + GEO_RULES.raids.everyDays[1]! * 24 * diff.raidEvery,
   };
+  // A vila começa com a praça, algumas casas e o hangar (village_layout.json → start).
+  startLayout(g);
   const P = GEO_RULES.protagonist;
   const hero = person(rng, spec.protagonist, P.realPotential, g.protagonistId);
   hero.gift!.shownPotential = P.shownPotential;

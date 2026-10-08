@@ -132,7 +132,7 @@
   "engenheiro": {
    "name": "Engenheiro(a)",
    "facilities": [
-    "muros",
+    "oficina",
     "deposito"
    ]
   },
@@ -145,8 +145,8 @@
   "soldado": {
    "name": "Ex-soldado",
    "facilities": [
-    "muros",
-    "treino"
+    "treino",
+    "quartel"
    ]
   },
   "cientista": {

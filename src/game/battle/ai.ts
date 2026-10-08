@@ -29,6 +29,7 @@ import * as tactics from './tactics';
 import * as downed from './downed';
 import * as scenery from './scenery';
 import * as patrol from './patrol';
+import { advanceCell, breachPlan } from './ai_path';
 import type { BattleState, BattleUnit, StatusId } from './types';
 
 /** Peso das habilidades frente ao ataque básico (as feras não ficam só lançando habilidades). */
@@ -401,7 +402,18 @@ export function planTurn(state: BattleState, u: BattleUnit): AiPlan {
     }
     if (spot) return { moveTo: null, action: { kind: 'skill', skill: blink, x: spot[0], y: spot[1] } };
   }
-  // Sem ataque possível: aproxima-se do alvo mais próximo (de preferência com linha de visão).
+  // Sem ataque possível: segue o menor caminho de verdade até o alvo (contorna muros e casas); sem
+  // caminho nenhum (vila cercada, portão fechado), arromba o que estiver no meio.
+  const route = advanceCell(state, u, goal.x, goal.y, tiles);
+  if (route === 'blocked') {
+    const siege = breachPlan(state, u, goal.x, goal.y, tiles);
+    if (siege) return siege;
+  } else if (route !== null) {
+    const [tx, ty, tl] = cellPos(state.map, route);
+    const prep = prepAction(state, u, all, [tx, ty], goal);
+    return { moveTo: [tx, ty], moveLevel: tl, action: prep };
+  }
+  // Sem caminho e nada a derrubar: chega o mais perto possível (de preferência com linha de visão).
   let bestTile: [number, number] | null = null;
   let bestLevel: number | undefined;
   let bestD = manhattan(u.x, u.y, goal.x, goal.y);

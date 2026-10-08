@@ -8,7 +8,8 @@ import { applyContractResult, assignSpecialist, dismiss, hire, hireBlock, hireCo
 import { ORIGINS, PEOPLE_RULES, PERKS, PROFESSIONS, perkLabel } from '../../rules/perks';
 import { foodMade, foodUse, hoursPerSecond, salaries, tick } from '../../geo/sim';
 import { abortMission, arrivalTime, dispatch, dispatchBlock, planRoute, squadPosition } from '../../geo/squads';
-import { FACILITIES, STAGES, buildBlock, buyItem, canTrade, facilityCost, facilityLevel, foodStorage, itemPrice, rosterCap, shopItems, stageBlock, stageDef, startBuild, tradeFood, upgradeStage } from '../../geo/village';
+import { FACILITIES, STAGES, buyItem, canTrade, facilityLevel, foodStorage, itemPrice, rosterCap, shopItems, stageBlock, stageDef, tradeFood, upgradeStage } from '../../geo/village';
+import { buildBlock, buildCost, buildQueue, startBuild } from '../../geo/village_layout';
 import { CONTINENT_LABEL, CUBE, REGIONS, distanceKm, regionAt, regionById } from '../../geo/world';
 import { CanvasPointer } from '../../render/pointer';
 import { GlobeView, drawGlobe, drawRoute } from '../../render/globe';
@@ -488,16 +489,16 @@ export class GeoscapeScene extends Scene {
     );
     for (const [id, f] of Object.entries(FACILITIES)) {
       const lv = facilityLevel(g, id);
-      const work = g.village.construction.find((c) => c.id === id);
+      const work = buildQueue(g).find((b) => b.id === id);
       const why = buildBlock(g, id);
-      const cost = facilityCost(id, lv);
+      const cost = buildCost(g, id);
       const locked = g.village.stage < f.stage;
       el.append(
         h('div', { class: `item geo-fac${locked ? ' locked' : ''}` },
           h('div', { class: 'row', style: 'justify-content:space-between' }, h('b', { text: `${f.icon} ${f.name}` }), h('span', { class: 'muted', text: `nível ${lv}/${f.max}` })),
           h('div', { class: 'muted', style: 'font-size:11px', text: f.desc }),
           work
-            ? h('div', { style: 'font-size:12px;color:#4fc3f7', text: `🔨 em obra · pronta em ${fmtHours(work.doneAt - g.hours)}` })
+            ? h('div', { style: 'font-size:12px;color:#4fc3f7', text: `🔨 em obra · faltam ${fmtHours(work.work ?? 0)} de trabalho` })
             : lv < f.max
               ? h('div', { class: 'row', style: 'gap:6px;align-items:center' }, btn(lv ? 'Melhorar' : 'Construir', () => (startBuild(this.g, id) ? this.renderAll() : toast(why ?? '')), { class: 'small', disabled: !!why }), h('span', { class: 'muted', style: 'font-size:11px', text: `$${cost.money} · ⚙ ${cost.pecas} · ${f.days} dias${why ? ` — ${why}` : ''}` }))
               : '',

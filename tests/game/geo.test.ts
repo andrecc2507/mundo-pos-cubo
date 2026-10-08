@@ -9,7 +9,8 @@ import { isAvailable, withRng } from '@game/geo/game';
 import { applyContractResult, hire } from '@game/geo/people';
 import { dailyEconomy, tick } from '@game/geo/sim';
 import { dispatch, dispatchBlock, planRoute } from '@game/geo/squads';
-import { buildBlock, facilityLevel, startBuild } from '@game/geo/village';
+import { facilityLevel } from '@game/geo/village';
+import { buildBlock, startBuild } from '@game/geo/village_layout';
 import { REGIONS, regionAt } from '@game/geo/world';
 
 const BRASILIA: [number, number] = [-47.9, -15.8];

@@ -19,7 +19,8 @@ import { squadUnits } from '@game/geo/legacy';
 import { applyContractResult, hire, hireBlock, hireSpecialist, assignSpecialist } from '@game/geo/people';
 import { foodMade, foodUse, salaries, tick } from '@game/geo/sim';
 import { dispatch, dispatchBlock, planRoute } from '@game/geo/squads';
-import { STAGES, facilityCost, buyItem, itemPrice, shopItems, buildBlock, canTrade, FACILITIES, foodStorage, rosterCap, startBuild, stageBlock, upgradeStage, tradeFood } from '@game/geo/village';
+import { STAGES, buyItem, itemPrice, shopItems, canTrade, FACILITIES, foodStorage, rosterCap, stageBlock, stageDef, upgradeStage, tradeFood } from '@game/geo/village';
+import { buildBlock, buildCost, defenseInfo, enclose, enclosureCost, housing, startBuild } from '@game/geo/village_layout';
 import { PROFESSIONS } from '@game/rules/perks';
 import { DB } from '@game/data';
 
@@ -94,7 +95,7 @@ function spendAll(g: GeoGame, rng: Rng): void {
   }
 }
 
-const BUILD_ORDER = ['horta', 'enfermaria', 'horta', 'muros', 'oficina', 'deposito', 'treino', 'mercado', 'recrutamento', 'inteligencia', 'quartel', 'centro_medico', 'arsenal', 'laboratorio', 'hangar'];
+const BUILD_ORDER = ['horta', 'enfermaria', 'horta', 'cerco', 'oficina', 'torre', 'deposito', 'treino', 'mercado', 'recrutamento', 'inteligencia', 'quartel', 'centro_medico', 'arsenal', 'laboratorio', 'hangar'];
 
 /** Decisões do dia: obras, estágio, contratação, comércio e despacho. */
 function manage(g: GeoGame, rng: Rng, st: Stats): void {
@@ -106,10 +107,19 @@ function manage(g: GeoGame, rng: Rng, st: Stats): void {
   const next = STAGES[g.village.stage + 1]?.require;
   const saving = next && g.population >= next.population * 0.9 && overallReputation(g) >= next.reputation ? next.money : 0;
   const reserve = salaries(g) * 5 + 60 + saving;
-  const order = net < 0 ? ['horta', ...BUILD_ORDER] : [...BUILD_ORDER, ...Object.keys(FACILITIES)];
+  // Moradia antes de lotar (o teto do estágio ainda deixa crescer).
+  const house = g.village.stage >= 2 ? 'predio' : g.village.stage >= 1 ? 'sobrado' : 'casa';
+  const needHouse = housing(g) < stageDef(g).popCap && g.population >= housing(g) - 3;
+  const order = [...(needHouse ? [house] : []), ...(net < 0 ? ['horta', ...BUILD_ORDER] : [...BUILD_ORDER, ...Object.keys(FACILITIES)])];
   for (const id of order) {
     if (g.money < reserve) break;
-    if (!buildBlock(g, id) && g.money - facilityCost(id, g.village.facilities[id] ?? 0).money >= reserve * 0.5) startBuild(g, id);
+    if (id === 'cerco') {
+      // Cerca a vila: paliçada no começo, muro de pedra depois.
+      const mat = g.village.stage >= 1 ? 'muro' : 'palicada';
+      if (!defenseInfo(g).enclosed && g.money - enclosureCost(g, mat).money >= reserve * 0.5) enclose(g, mat);
+      continue;
+    }
+    if (!buildBlock(g, id) && g.money - buildCost(g, id).money >= reserve * 0.5) startBuild(g, id);
   }
   // Especialistas.
   for (let i = 0; i < (g.specialistPool?.length ?? 0); i++) if (g.money > reserve * 2 && hireSpecialist(g, i)) break;

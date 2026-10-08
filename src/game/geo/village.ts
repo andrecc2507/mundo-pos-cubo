@@ -1,6 +1,7 @@
 /**
- * A vila — módulo puro: estágios (Vila → Base Militar), instalações e seus efeitos, obras, loja e
- * comércio. Números em data/geo/village.json.
+ * A vila — módulo puro: estágios (Vila → Base Militar), instalações e seus efeitos, loja e
+ * comércio. Onde cada coisa fica, as obras e a defesa estão na planta (geo/village_layout.ts).
+ * Números em data/geo/village.json.
  */
 import { DB } from '../data';
 import VILLAGE from '../data/geo/village.json';
@@ -96,47 +97,6 @@ export function facilityCost(id: string, level: number): { money: number; pecas:
   const f = FACILITIES[id]!;
   const k = Math.pow(1.6, level);
   return { money: Math.round(f.cost.money * k), pecas: Math.round(f.cost.pecas * k) };
-}
-
-/** Por que não dá para construir/melhorar agora (ou null). */
-export function buildBlock(g: GeoGame, id: string): string | null {
-  const f = FACILITIES[id];
-  if (!f) return 'instalação desconhecida';
-  const lv = facilityLevel(g, id);
-  if (lv >= f.max) return 'nível máximo';
-  if (g.village.construction.some((c) => c.id === id)) return 'em obra';
-  const needStage = Math.max(f.stage, f.minStageForLevel?.[lv] ?? 0);
-  if (g.village.stage < needStage) return `requer estágio ${STAGES[needStage]!.name}`;
-  if (g.village.construction.length >= 2) return 'duas obras já em andamento';
-  const cost = facilityCost(id, lv);
-  if (g.money < cost.money) return `faltam $${cost.money - g.money}`;
-  if (g.supplies.pecas < cost.pecas) return `faltam ${cost.pecas - g.supplies.pecas} peças`;
-  return null;
-}
-
-export function startBuild(g: GeoGame, id: string): boolean {
-  if (buildBlock(g, id)) return false;
-  const f = FACILITIES[id]!;
-  const cost = facilityCost(id, facilityLevel(g, id));
-  g.money -= cost.money;
-  g.supplies.pecas -= cost.pecas;
-  g.village.construction.push({ id, doneAt: g.hours + f.days * 24 });
-  addLog(g, `🔨 Obra começou: ${f.name} (${f.days} dias).`);
-  return true;
-}
-
-/** Obras prontas viram nível. Devolve os nomes terminados. */
-export function finishConstruction(g: GeoGame): string[] {
-  const done: string[] = [];
-  g.village.construction = g.village.construction.filter((c) => {
-    if (c.doneAt > g.hours) return true;
-    g.village.facilities[c.id] = facilityLevel(g, c.id) + 1;
-    const f = FACILITIES[c.id]!;
-    done.push(f.name);
-    addLog(g, `🏗 ${f.name} pronta (nível ${g.village.facilities[c.id]}).`, 'good');
-    return false;
-  });
-  return done;
 }
 
 /** Por que a vila não pode subir de estágio agora (ou null). */

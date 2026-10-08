@@ -1,5 +1,5 @@
 {
- "_doc": "A vila (geo/village.ts): os 4 estágios do cenário (§32) e as instalações. Custos em dinheiro e peças; tempo de obra em dias. Efeitos: foodPerDay, healMult (ferimentos saram mais rápido), trainXpPerDay (quem fica na vila treina), storage (estoque máximo de comida), defense (resiste a ataques à vila), shopTier (itens melhores na loja), discount (desconto na loja), flights (voos simultâneos), recruitBonus (recrutas a mais), contractBonus (contratos a mais), radiusKm (alcance dos contratos), revealPotential (revela o potencial real), popGrowth, rosterCap.",
+ "_doc": "A vila (geo/village.ts): os 4 estágios do cenário (§32) e as instalações. Custos em dinheiro e peças; tempo de obra em dias. Efeitos: foodPerDay, healMult (ferimentos saram mais rápido), trainXpPerDay (quem fica na vila treina), storage (estoque máximo de comida), shopTier (itens melhores na loja), discount (desconto na loja), flights (voos simultâneos), recruitBonus (recrutas a mais), contractBonus (contratos a mais), radiusKm (alcance dos contratos), revealPotential (revela o potencial real), popGrowth, rosterCap. Tamanho e visual de cada instalação no mapa da vila: village_layout.json → facilityLooks; muros, torres, casas e o resto da defesa: village_layout.json → structures.",
  "stages": [
   {
    "name": "Vila",
@@ -90,22 +90,6 @@
     2
    ],
    "desc": "O avião para os contratos intercontinentais. Nível 2 (estágio Base): dois voos ao mesmo tempo."
-  },
-  "muros": {
-   "name": "Muros e postos de vigia",
-   "icon": "🧱",
-   "stage": 1,
-   "max": 3,
-   "cost": {
-    "money": 300,
-    "pecas": 4
-   },
-   "days": 5,
-   "effect": {
-    "defense": 1,
-    "popGrowth": 0.2
-   },
-   "desc": "Defesa da vila; gente se sente segura e vem morar."
   },
   "oficina": {
    "name": "Oficina",

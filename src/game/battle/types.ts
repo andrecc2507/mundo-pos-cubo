@@ -235,6 +235,8 @@ export interface BattleUnit {
   isTarget?: boolean;
   /** Aliado controlado pela IA (personagens da história, tropas aliadas): do time do jogador, sem ordens. */
   ai?: boolean;
+  /** Começa neste lugar (x, y, andar) em vez das casas de início (vigia no alto da torre). */
+  spawnAt?: [number, number, number];
   /** Chefe: fases disparadas ao cair abaixo de uma fração da vida. */
   phases?: BossPhase[];
   /** Chefe de missão da história (barra de vida no topo). */
@@ -499,6 +501,8 @@ export interface BattleSetup {
   collapse?: boolean;
   /** Dificuldade: vida e dano dos inimigos, voltas de turno. */
   difficulty?: { enemyHp: number; enemyDmg: number; undo: number; permadeath: boolean };
+  /** Armadilhas já armadas no mapa (as da vila nos ataques): só o time dono as vê. */
+  traps?: Omit<Trap, 'ownerUid' | 'armed'>[];
 }
 
 export type ObjectiveKind = 'cela' | 'bau' | 'documentos' | 'runas';

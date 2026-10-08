@@ -133,6 +133,17 @@ export function createBattle(setup: BattleSetup): BattleState {
   const place = (units: BattleUnit[], kind: 'player' | 'enemy') => {
     const spots = spawnTiles(map, kind);
     for (const u of units) {
+      // Lugar marcado (vigia no alto da torre): fica lá se der para ficar.
+      const fixed = u.spawnAt;
+      if (fixed && inBounds(map, fixed[0], fixed[1]) && stack.standable(tileAt(map, fixed[0], fixed[1])!, fixed[2]) && !occupied.has(stack.cellId(map, fixed[0], fixed[1], fixed[2]))) {
+        u.x = fixed[0];
+        u.y = fixed[1];
+        stack.setLevel(map, u, fixed[2]);
+        occupied.add(stack.cellId(map, fixed[0], fixed[1], fixed[2]));
+        u.facing = kind === 'player' ? 0 : 2;
+        state.units.push(u);
+        continue;
+      }
       const spot = spots.find(([x, y]) => !occupied.has(idx(map, x, y)));
       if (!spot) continue;
       u.x = spot[0];
@@ -172,6 +183,8 @@ export function createBattle(setup: BattleSetup): BattleState {
     }
   }
   placeMissionPieces(state, setup);
+  // Armadilhas do mapa (as da vila): armadas desde o começo e invisíveis para o outro lado.
+  for (const t of setup.traps ?? []) (state.traps ??= []).push({ ...t, ownerUid: `map_${t.team}`, armed: true, spotted: [t.team] });
   if (setup.stealthStart) for (const u of state.units) if (u.team === 'player' && !u.bound) u.hidden = true;
   // Patrulhas desavisadas (emboscada noturna): o esquadrão escolhe a hora de atacar.
   // Missões furtivas também: os guardas fazem a ronda em vez de esperar parados.
@@ -513,7 +526,7 @@ export function reachable(state: BattleState, u: BattleUnit): Reach {
 }
 
 /** Vizinhos de uma célula com o custo do passo (lama e porta fechada custam 1 a mais). */
-function stepper(state: BattleState, u: BattleUnit): (cur: number, visit: (nc: number, step: number) => void) => void {
+export function stepper(state: BattleState, u: BattleUnit): (cur: number, visit: (nc: number, step: number) => void) => void {
   const map = state.map;
   // Bloqueio por célula (coluna + andar): inimigo no telhado não impede passar por dentro da casa.
   const blockers = new Set(opponents(state, u).map((o) => stack.unitCell(map, o)));
