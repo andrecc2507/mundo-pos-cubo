@@ -6,6 +6,7 @@
 import { Rng } from '@core';
 import { DB, NEW_CLASSES, type ClassId } from '../data';
 import type { BattleSetup, BattleUnit } from '../battle/types';
+import { LOOK_STYLES, lookFromSeed, lookSeed } from '../rules/appearance';
 import { unitFromCharacter, unitFromEnemy } from '../battle/units';
 import { killXp } from '../battle/engine';
 import { RUINS_THEMES, generateRuinsMap } from '../mapgen/ruins';
@@ -227,6 +228,8 @@ export function makeVillain(rng: Rng, level: number, opts: VillainOptions = {}):
   const g = opts.gift === false ? undefined : villainGift(rng, !!opts.boss);
   const name = opts.name ?? rng.pick(DEMO.villainNames);
   const c = makeMember(rng, { name, classId, level, gift: g?.id ?? null, potential: opts.potential ?? rng.int(2, 4), weapon: rng.pick(g ? DEMO.villainWeapons[classId] : DEMO.militiaWeapons), armor: opts.boss ? 'traje_de_heroi' : rng.chance(0.5) ? 'colete_tatico' : null, utility: [rng.chance(0.4) ? 'granada_fragmentacao' : null, null, null] });
+  // Visual de vilão (com Dom) ou de miliciano, estável pelo id (não gasta o RNG da luta).
+  c.appearance = { ...c.appearance, ...lookFromSeed(lookSeed(c.id), LOOK_STYLES[g ? 'vilao' : 'saqueador']) };
   const u = unitFromCharacter(c, 'enemy');
   if (opts.boss) {
     u.name = `${name}, o ${DEMO.bossTitles[rng.int(0, DEMO.bossTitles.length - 1)]}`;
@@ -247,6 +250,7 @@ export function makeGrunt(rng: Rng, level: number, kind: GruntKind = 'soldado'):
   const classId = rng.pick(['impacto', 'movimento', 'controle'] as DemoClass[]);
   const c = makeMember(rng, { name: k.label, classId, level, gift: null, potential: 1, weapon: rng.pick(k.weapons), armor: null, utility: [rng.chance(G.grenadeChance) ? 'granada_fragmentacao' : null, null, null] });
   c.skills = [];
+  c.appearance = { ...c.appearance, ...lookFromSeed(lookSeed(c.id), LOOK_STYLES[k.look] ?? LOOK_STYLES.saqueador) };
   const u = unitFromCharacter(c, 'enemy');
   u.maxHp = u.hp = u.startHp = G.hpBase + G.hpPerLevel * level;
   u.accuracy += G.accuracy;

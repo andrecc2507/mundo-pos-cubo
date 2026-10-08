@@ -3,12 +3,12 @@
  "stages": [
   {
    "name": "Vila",
-   "rosterCap": 10,
+   "rosterCap": 18,
    "popCap": 40
   },
   {
    "name": "Comunidade Fortificada",
-   "rosterCap": 14,
+   "rosterCap": 26,
    "popCap": 90,
    "require": {
     "population": 32,
@@ -19,7 +19,7 @@
   },
   {
    "name": "Base",
-   "rosterCap": 20,
+   "rosterCap": 36,
    "popCap": 180,
    "require": {
     "population": 75,
@@ -30,7 +30,7 @@
   },
   {
    "name": "Base Militar",
-   "rosterCap": 30,
+   "rosterCap": 50,
    "popCap": 320,
    "require": {
     "population": 150,

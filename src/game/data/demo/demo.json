@@ -224,7 +224,7 @@
   "taco_de_beisebol"
  ],
  "grunts": {
-  "_doc": "Figurantes: soldados comuns (como os ADVENT básicos do XCOM 2) que caem com 1–2 golpes. Vida = hpBase + hpPerLevel × nível; mira pior; dão pouco XP. Vêm em número junto dos inimigos de verdade.",
+  "_doc": "Figurantes: soldados comuns (como os ADVENT básicos do XCOM 2) que caem com 1–2 golpes. Vida = hpBase + hpPerLevel × nível; mira pior; dão pouco XP. Vêm em número junto dos inimigos de verdade. look = estilo de roupa (data/characters/outfits.json → styles).",
   "hpBase": 30,
   "hpPerLevel": 5,
   "accuracy": -10,
@@ -236,7 +236,8 @@
     "weapons": [
      "fuzil_assalto",
      "pistola_9mm"
-    ]
+    ],
+    "look": "soldado"
    },
    "saqueador": {
     "label": "Saqueador",
@@ -246,14 +247,16 @@
      "facao",
      "pistola_9mm",
      "escopeta_calibre12"
-    ]
+    ],
+    "look": "saqueador"
    },
    "seguranca": {
     "label": "Segurança",
     "weapons": [
      "pistola_9mm",
      "escopeta_calibre12"
-    ]
+    ],
+    "look": "seguranca"
    },
    "capanga": {
     "label": "Capanga",
@@ -261,7 +264,8 @@
      "faca_de_combate",
      "pistola_9mm",
      "taco_de_beisebol"
-    ]
+    ],
+    "look": "capanga"
    }
   }
  }

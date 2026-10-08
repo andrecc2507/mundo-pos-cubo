@@ -2,7 +2,8 @@ import type { Rng } from '@core';
 import { DB, type EnemyDef, type Rarity } from '../data';
 import { derive, utilitySlots, utilityUses, type Character } from '../rules/character';
 import { makeCharacter } from '../rules/recruit';
-import { grantedSkillIds, innateSkillIds, outfitKey, unlockedEvolutions } from '../rules/skill_tree';
+import { grantedSkillIds, innateSkillIds, unlockedEvolutions } from '../rules/skill_tree';
+import { normalizeAppearance } from '../rules/appearance';
 import * as stats from '../rules/stats';
 import { artFor } from '../render/sprite_anims';
 import BOND_DATA from '../data/battle/bonds.json';
@@ -55,6 +56,12 @@ function grantedRanks(c: Character): Record<string, number> {
     for (const e of DB.skills[id]?.evolutions ?? []) ranks[e] = r;
   }
   return ranks;
+}
+
+/** Visual da unidade: roupa pronta, acessório e cores do personagem (rules/appearance.ts). */
+function lookOf(c: Character, color: string, dark: string): BattleUnit['look'] {
+  const a = normalizeAppearance(c.appearance, c.id);
+  return { color, dark, hairColor: a.hairColor, hairStyle: a.hairStyle, skin: a.skin, outfit: a.outfit, headgear: a.headgear, colors: a.colors, size: 1, beast: false };
 }
 
 export function unitFromCharacter(c: Character, team: Team): BattleUnit {
@@ -116,16 +123,7 @@ export function unitFromCharacter(c: Character, team: Team): BattleUnit {
     killXp: 0,
     xpReward: 10 + c.level * 2,
     cooldowns: {},
-    look: {
-      color: cls.color,
-      dark: cls.dark,
-      hairColor: c.appearance.hairColor,
-      hairStyle: c.appearance.hairStyle,
-      skin: c.appearance.skin,
-      outfit: outfitKey(c),
-      size: 1,
-      beast: false,
-    },
+    look: lookOf(c, cls.color, cls.dark),
   };
 }
 

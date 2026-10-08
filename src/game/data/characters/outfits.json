@@ -1,0 +1,636 @@
+{
+ "_doc": "Roupas prontas (rules/appearance.ts): cada roupa substitui as linhas 7–15 do sprite (corpo, 12 colunas) e pode trazer linhas da cabeça (head). Letras: C = cor principal, D = secundária, A/B = detalhe, minúsculas = tom escuro da mesma cor, S = pele, K = botas, M = metal, G = lente/brilho. O jogador escolhe a roupa, o acessório de cabeça e as três cores; colors é o padrão da roupa. swatches = paleta de cores da personalização.",
+ "outfits": [
+  {
+   "id": "camiseta",
+   "name": "Camiseta e jeans",
+   "desc": "O básico de quem sobreviveu: camiseta, jeans e botas.",
+   "colors": {
+    "primary": "#c0392b",
+    "secondary": "#2f4a7a",
+    "accent": "#d9d2c3"
+   },
+   "body": [
+    "...CCCCCC...",
+    "..CCCCCCCC..",
+    "..SCCCCCCS..",
+    "..SCCCCCCS..",
+    "...CCBBCC...",
+    "...DDDDDD...",
+    "...DD..DD...",
+    "...dd..dd...",
+    "...KK..KK..."
+   ]
+  },
+  {
+   "id": "jaqueta",
+   "name": "Jaqueta de couro",
+   "desc": "Jaqueta aberta sobre a camiseta; mãos de fora.",
+   "colors": {
+    "primary": "#3b2a22",
+    "secondary": "#3a3f47",
+    "accent": "#c9b8a0"
+   },
+   "body": [
+    "...CCCCCC...",
+    "..CCcAAcCC..",
+    "..CCCAACCC..",
+    "..CCCAACCC..",
+    "..SccBBccS..",
+    "...DDDDDD...",
+    "...DD..DD...",
+    "...dd..dd...",
+    "...KK..KK..."
+   ]
+  },
+  {
+   "id": "moletom",
+   "name": "Moletom com capuz",
+   "desc": "Capuz levantado e bolso canguru.",
+   "head": [
+    "............",
+    "....CCCC....",
+    "...CCCCCC...",
+    "..CCSSSSCC..",
+    "..CSESSESC..",
+    "..cSSSSSSc.."
+   ],
+   "colors": {
+    "primary": "#4a5d4e",
+    "secondary": "#2b2b30",
+    "accent": "#8fa38a"
+   },
+   "body": [
+    "...cCCCCc...",
+    "..CCCCCCCC..",
+    "..CCCCCCCC..",
+    "..CCAAAACC..",
+    "..ScCCCCcS..",
+    "...DDDDDD...",
+    "...DD..DD...",
+    "...dd..dd...",
+    "...KK..KK..."
+   ]
+  },
+  {
+   "id": "colete",
+   "name": "Colete tático",
+   "desc": "Colete com bolsos sobre a camiseta; braços livres.",
+   "colors": {
+    "primary": "#6b6f5a",
+    "secondary": "#2d3326",
+    "accent": "#b39a5c"
+   },
+   "body": [
+    "...CDDDDC...",
+    "..CDDDDDDC..",
+    "..SDADDADS..",
+    "..SDDAADDS..",
+    "...DdBBdD...",
+    "...ddDDdd...",
+    "...dd..dd...",
+    "...dd..dd...",
+    "...KK..KK..."
+   ]
+  },
+  {
+   "id": "farda",
+   "name": "Farda",
+   "desc": "Uniforme militar com bolsos e cinto.",
+   "colors": {
+    "primary": "#5d6b45",
+    "secondary": "#3c4630",
+    "accent": "#2a2a2a"
+   },
+   "body": [
+    "...CCCCCC...",
+    "..CcCCCCcC..",
+    "..CcCCCCcC..",
+    "..SCCCCCCS..",
+    "...BBBBBB...",
+    "...CCCCCC...",
+    "...Cc..cC...",
+    "...CC..CC...",
+    "...KK..KK..."
+   ]
+  },
+  {
+   "id": "traje",
+   "name": "Traje de herói",
+   "desc": "Malha justa, emblema no peito, luvas e botas.",
+   "colors": {
+    "primary": "#1f5fbf",
+    "secondary": "#d23b2f",
+    "accent": "#f2c230"
+   },
+   "body": [
+    "...CCCCCC...",
+    "..CCCAACCC..",
+    "..DCCAACCD..",
+    "..DCCCCCCD..",
+    "...CBBBBC...",
+    "...CCCCCC...",
+    "...CC..CC...",
+    "...DD..DD...",
+    "...DD..DD..."
+   ]
+  },
+  {
+   "id": "capa",
+   "name": "Traje com capa",
+   "desc": "Traje de herói com a capa caindo pelas costas.",
+   "colors": {
+    "primary": "#2b2b33",
+    "secondary": "#a3202a",
+    "accent": "#e8c547"
+   },
+   "body": [
+    "..DCCCCCCD..",
+    ".DCCCAACCCD.",
+    ".DSCCAACCSD.",
+    ".DSCCCCCCSD.",
+    ".DdCBBBBCdD.",
+    ".DdCCCCCCdD.",
+    ".Dd.CC.CCdD.",
+    "..d.CC.CCd..",
+    "....DD.DD..."
+   ]
+  },
+  {
+   "id": "sobretudo",
+   "name": "Sobretudo",
+   "desc": "Casaco longo até os joelhos, gola alta.",
+   "colors": {
+    "primary": "#5a4632",
+    "secondary": "#2a2a2e",
+    "accent": "#9a8a72"
+   },
+   "body": [
+    "...CAAAAC...",
+    "..CCcAAcCC..",
+    "..CCCcCCCC..",
+    "..CCCcCCCC..",
+    "..SCBcBBCS..",
+    "...CCcCCC...",
+    "...Cc.cCC...",
+    "...dd..dd...",
+    "...KK..KK..."
+   ]
+  },
+  {
+   "id": "regata",
+   "name": "Regata e calça cargo",
+   "desc": "Braços de fora, calça cheia de bolsos.",
+   "colors": {
+    "primary": "#d8d3c4",
+    "secondary": "#6b5a3d",
+    "accent": "#3a3a3a"
+   },
+   "body": [
+    "...SCCCCS...",
+    "..SSCCCCSS..",
+    "..SCCCCCCS..",
+    "..SCCCCCCS..",
+    "...CCBBCC...",
+    "...DDDDDD...",
+    "...Dd..dD...",
+    "...DD..DD...",
+    "...KK..KK..."
+   ]
+  },
+  {
+   "id": "macacao",
+   "name": "Macacão de trabalho",
+   "desc": "Macacão com alças sobre a camisa.",
+   "colors": {
+    "primary": "#c9b89a",
+    "secondary": "#2f5d8a",
+    "accent": "#d9a441"
+   },
+   "body": [
+    "...CDCCDC...",
+    "..CCDCCDCC..",
+    "..SDDDDDDS..",
+    "..SDDAADDS..",
+    "...DDDDDD...",
+    "...DDDDDD...",
+    "...DD..DD...",
+    "...dd..dd...",
+    "...KK..KK..."
+   ]
+  },
+  {
+   "id": "armadura",
+   "name": "Armadura improvisada",
+   "desc": "Placas de sucata presas com tiras.",
+   "colors": {
+    "primary": "#6a5a48",
+    "secondary": "#3a3530",
+    "accent": "#b5651d"
+   },
+   "body": [
+    "...MCCCCM...",
+    "..MMMMMMMM..",
+    "..SMMAAMMS..",
+    "..SMmMMmMS..",
+    "...CCBBCC...",
+    "...DDDDDD...",
+    "...MD..DM...",
+    "...DD..DD...",
+    "...KK..KK..."
+   ]
+  },
+  {
+   "id": "jaleco",
+   "name": "Jaleco",
+   "desc": "Jaleco de médico ou cientista sobre a roupa.",
+   "colors": {
+    "primary": "#e8e6e0",
+    "secondary": "#3b4a5c",
+    "accent": "#d04a4a"
+   },
+   "body": [
+    "...CCCCCC...",
+    "..CCcDDcCC..",
+    "..CCCDDCAC..",
+    "..CCCDDCCC..",
+    "..SCCDDCCS..",
+    "...CCDDCC...",
+    "...Cd..dC...",
+    "...dd..dd...",
+    "...KK..KK..."
+   ]
+  }
+ ],
+ "headgear": [
+  {
+   "id": "nada",
+   "name": "Nada",
+   "rows": []
+  },
+  {
+   "id": "bone",
+   "name": "Boné",
+   "rows": [
+    "............",
+    "....DDDD....",
+    "...DDDDDDd.."
+   ]
+  },
+  {
+   "id": "gorro",
+   "name": "Gorro",
+   "rows": [
+    ".....AA.....",
+    "....AAAA....",
+    "...AAAAAA...",
+    "...aaaaaa..."
+   ]
+  },
+  {
+   "id": "bandana",
+   "name": "Bandana",
+   "rows": [
+    "............",
+    "............",
+    "...AAAAAA.A.",
+    "...aSSSSaA.."
+   ]
+  },
+  {
+   "id": "capacete",
+   "name": "Capacete",
+   "rows": [
+    "............",
+    "....MMMM....",
+    "...MMMMMM...",
+    "..mMSSSSMm.."
+   ]
+  },
+  {
+   "id": "mascara",
+   "name": "Máscara de olhos",
+   "rows": [
+    "",
+    "",
+    "",
+    "",
+    "...DEDDED..."
+   ]
+  },
+  {
+   "id": "gas",
+   "name": "Máscara de gás",
+   "rows": [
+    "",
+    "",
+    "",
+    "...MMMMMM...",
+    "...MGMMGM...",
+    "...MMAAMM...",
+    "....MMMM...."
+   ]
+  },
+  {
+   "id": "visor",
+   "name": "Visor",
+   "rows": [
+    "",
+    "",
+    "",
+    "",
+    "...GGGGGG..."
+   ]
+  },
+  {
+   "id": "lenco",
+   "name": "Lenço no rosto",
+   "rows": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "...AAAAAA...",
+    "....aAAa...."
+   ]
+  },
+  {
+   "id": "faixa",
+   "name": "Faixa na testa",
+   "rows": [
+    "",
+    "",
+    "",
+    "...AAAAAA.A."
+   ]
+  }
+ ],
+ "swatches": [
+  {
+   "id": "preto",
+   "name": "Preto",
+   "hex": "#1d1d22"
+  },
+  {
+   "id": "grafite",
+   "name": "Grafite",
+   "hex": "#3a3d44"
+  },
+  {
+   "id": "cinza",
+   "name": "Cinza",
+   "hex": "#7d8086"
+  },
+  {
+   "id": "branco",
+   "name": "Branco",
+   "hex": "#e8e6e0"
+  },
+  {
+   "id": "vermelho",
+   "name": "Vermelho",
+   "hex": "#c0392b"
+  },
+  {
+   "id": "vinho",
+   "name": "Vinho",
+   "hex": "#6d1f2b"
+  },
+  {
+   "id": "laranja",
+   "name": "Laranja",
+   "hex": "#d96a2b"
+  },
+  {
+   "id": "amarelo",
+   "name": "Amarelo",
+   "hex": "#e8c547"
+  },
+  {
+   "id": "mostarda",
+   "name": "Mostarda",
+   "hex": "#b39a3c"
+  },
+  {
+   "id": "oliva",
+   "name": "Verde-oliva",
+   "hex": "#5d6b45"
+  },
+  {
+   "id": "verde",
+   "name": "Verde",
+   "hex": "#3f8f4a"
+  },
+  {
+   "id": "agua",
+   "name": "Verde-água",
+   "hex": "#3aa8a0"
+  },
+  {
+   "id": "azul",
+   "name": "Azul",
+   "hex": "#1f5fbf"
+  },
+  {
+   "id": "marinho",
+   "name": "Azul-marinho",
+   "hex": "#22324f"
+  },
+  {
+   "id": "ceu",
+   "name": "Azul-claro",
+   "hex": "#6fa8dc"
+  },
+  {
+   "id": "roxo",
+   "name": "Roxo",
+   "hex": "#6a3d9a"
+  },
+  {
+   "id": "rosa",
+   "name": "Rosa",
+   "hex": "#d96aa0"
+  },
+  {
+   "id": "marrom",
+   "name": "Marrom",
+   "hex": "#5a3d28"
+  },
+  {
+   "id": "caqui",
+   "name": "Cáqui",
+   "hex": "#a08f68"
+  },
+  {
+   "id": "areia",
+   "name": "Areia",
+   "hex": "#d8c9a3"
+  }
+ ],
+ "styles": {
+  "_doc": "Estilos de visual sorteado (lookFromSeed): roupas, acessórios de cabeça (com a chance de usar um) e as cores possíveis (ids de swatches). heroi = recrutas e grupo; os outros vestem vilões e figurantes.",
+  "heroi": {
+   "outfits": [
+    "camiseta",
+    "jaqueta",
+    "moletom",
+    "colete",
+    "traje",
+    "capa",
+    "sobretudo",
+    "regata",
+    "macacao",
+    "jaleco"
+   ],
+   "headgear": [
+    "bone",
+    "gorro",
+    "bandana",
+    "mascara",
+    "visor",
+    "lenco",
+    "faixa"
+   ],
+   "headgearChance": 0.3,
+   "colors": [
+    "preto",
+    "grafite",
+    "cinza",
+    "branco",
+    "vermelho",
+    "vinho",
+    "laranja",
+    "amarelo",
+    "mostarda",
+    "oliva",
+    "verde",
+    "agua",
+    "azul",
+    "marinho",
+    "ceu",
+    "roxo",
+    "rosa",
+    "marrom",
+    "caqui",
+    "areia"
+   ]
+  },
+  "vilao": {
+   "outfits": [
+    "traje",
+    "capa",
+    "sobretudo",
+    "jaqueta",
+    "colete",
+    "armadura"
+   ],
+   "headgear": [
+    "mascara",
+    "gas",
+    "visor",
+    "lenco",
+    "capacete"
+   ],
+   "headgearChance": 0.6,
+   "colors": [
+    "preto",
+    "grafite",
+    "vinho",
+    "roxo",
+    "vermelho",
+    "marinho",
+    "oliva",
+    "laranja",
+    "amarelo"
+   ]
+  },
+  "soldado": {
+   "outfits": [
+    "farda",
+    "colete"
+   ],
+   "headgear": [
+    "capacete",
+    "bone",
+    "gas"
+   ],
+   "headgearChance": 0.85,
+   "colors": [
+    "oliva",
+    "caqui",
+    "grafite",
+    "marinho",
+    "preto",
+    "areia"
+   ]
+  },
+  "saqueador": {
+   "outfits": [
+    "jaqueta",
+    "regata",
+    "moletom",
+    "sobretudo",
+    "armadura",
+    "camiseta"
+   ],
+   "headgear": [
+    "lenco",
+    "bandana",
+    "gas",
+    "gorro",
+    "faixa"
+   ],
+   "headgearChance": 0.6,
+   "colors": [
+    "marrom",
+    "caqui",
+    "grafite",
+    "cinza",
+    "vinho",
+    "oliva",
+    "areia",
+    "preto"
+   ]
+  },
+  "seguranca": {
+   "outfits": [
+    "farda",
+    "colete",
+    "camiseta"
+   ],
+   "headgear": [
+    "bone",
+    "visor"
+   ],
+   "headgearChance": 0.5,
+   "colors": [
+    "preto",
+    "grafite",
+    "marinho",
+    "cinza"
+   ]
+  },
+  "capanga": {
+   "outfits": [
+    "jaqueta",
+    "regata",
+    "camiseta",
+    "sobretudo"
+   ],
+   "headgear": [
+    "bandana",
+    "lenco",
+    "faixa"
+   ],
+   "headgearChance": 0.4,
+   "colors": [
+    "preto",
+    "vermelho",
+    "grafite",
+    "vinho",
+    "marrom"
+   ]
+  }
+ }
+}

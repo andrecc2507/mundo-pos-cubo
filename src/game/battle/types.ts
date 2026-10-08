@@ -1,6 +1,7 @@
 import type { Rng } from '@core';
 import type { Attr, Attributes, Biome, ClassId, Element, Rarity, WeaponType } from '../data';
 import type { BattleMap } from './map';
+import type { OutfitColors } from '../rules/character';
 
 export type Team = 'player' | 'enemy';
 
@@ -138,8 +139,10 @@ export interface UnitLook {
   palette?: Record<string, string>;
   /** Arte pronta com animações (id em data/sprite_art.json); tem prioridade sobre `sprite`. */
   art?: string;
-  /** Roupa da subclasse principal (`classe:subclasse`). */
+  /** Roupa pronta, acessório de cabeça e cores (rules/appearance.ts). */
   outfit?: string;
+  headgear?: string;
+  colors?: OutfitColors;
 }
 
 export interface BattleUnit {

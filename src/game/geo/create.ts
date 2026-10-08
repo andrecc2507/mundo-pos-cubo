@@ -1,14 +1,15 @@
 /**
  * Novo jogo do Mundo Pós-Cubo — módulo puro: o protagonista (Dom escolhido entre os 10 iniciais,
- * potencial que parece ★3 mas é ★5), os 5 amigos (com Dom dos 10 ou sem; ao menos dois sem), a
- * vila no ponto do globo que o jogador escolheu e os recursos iniciais.
+ * potencial que parece ★3 mas é ★5), os 5 amigos (com Dom dos 10 ou sem; ao menos dois sem), os 10
+ * moradores que o jogador escolheu numa lista de candidatos, a vila no ponto do globo e os recursos
+ * iniciais.
  */
 import { Rng } from '@core';
 import { makeMember, type DemoClass } from '../demo/demo_squad';
-import type { Character } from '../rules/character';
-import { DIFFICULTIES, GEO_RULES, addLog, type DifficultyId, type GeoGame } from './game';
+import type { Appearance, Character } from '../rules/character';
+import { DIFFICULTIES, GEO_RULES, addLog, newId, type DifficultyId, type GeoGame } from './game';
 import { spawnContract } from './contracts';
-import { makeSpecialist, refreshRecruits } from './people';
+import { freshName, makeSpecialist, refreshRecruits, rollRecruit } from './people';
 import { rollAffinity, rollPerks, rollProfession } from '../rules/perks';
 import { FACILITIES } from './village';
 import { CUBE, REGIONS, regionAt, regionById, type LonLat } from './world';
@@ -20,6 +21,8 @@ export interface PersonSpec {
   classId: DemoClass;
   /** Um dos Dons iniciais, ou null (sem Dom). */
   gift: string | null;
+  /** Visual escolhido na criação (roupa, cores, cabelo, pele). */
+  appearance?: Appearance;
 }
 
 export interface NewGameSpec {
@@ -29,6 +32,28 @@ export interface NewGameSpec {
   villageAt: LonLat;
   protagonist: PersonSpec;
   friends: PersonSpec[];
+  /** Moradores escolhidos entre os candidatos (starterCandidates). Sem isso, os primeiros da lista. */
+  recruits?: Character[];
+}
+
+/**
+ * Candidatos a morador-combatente da tela de novo jogo: a lista de onde o jogador escolhe os 10
+ * primeiros recrutas. Estável pela semente; classes e Dons evitam repetir o grupo inicial.
+ */
+export function starterCandidates(seed: number, party: PersonSpec[] = [], count = GEO_RULES.start.recruitChoices): Character[] {
+  const rng = new Rng(seed ^ 0x5bd1e995);
+  const classCount: Record<string, number> = {};
+  for (const p of party) classCount[p.classId] = (classCount[p.classId] ?? 0) + 1;
+  const taken = new Set(party.map((p) => p.gift ?? '').filter(Boolean));
+  let n = 0;
+  const names = new Set(party.map((p) => p.name.trim()).filter(Boolean));
+  return Array.from({ length: count }, () => rollRecruit(rng, { levels: [1], classCount, taken, reveal: false, newId: () => `cand_${++n}`, names }));
+}
+
+/** Por que a escolha de recrutas não vale (ou null). */
+export function recruitsBlock(picked: number): string | null {
+  const need = GEO_RULES.start.recruitPicks;
+  return picked === need ? null : picked < need ? `escolha mais ${need - picked} recruta(s)` : `no máximo ${need} recrutas`;
 }
 
 /** Por que a vila não pode ficar aqui (ou null). */
@@ -60,6 +85,7 @@ function person(rng: Rng, p: PersonSpec, potential: number, id: string): Charact
   c.profession = rollProfession(rng);
   c.affinity = rollAffinity(rng, p.classId);
   c.perks = rollPerks(rng, rng.int(1, 2));
+  if (p.appearance) c.appearance = { ...p.appearance };
   return c;
 }
 
@@ -123,6 +149,19 @@ export function newGeoGame(spec: NewGameSpec): GeoGame {
   // Amigos de infância: vínculo alto entre todos (cenário §26).
   const ids = Object.keys(g.roster);
   for (const a of ids) g.roster[a]!.bonds = Object.fromEntries(ids.filter((b) => b !== a).map((b) => [b, GEO_RULES.friends.bond]));
+  // Os moradores que o jogador escolheu: gente da vila, sem salário, conhecidos do grupo.
+  const chosen = (spec.recruits ?? starterCandidates(spec.seed, [spec.protagonist, ...spec.friends])).slice(0, GEO_RULES.start.recruitPicks);
+  const names = new Set(Object.values(g.roster).map((c) => c.name));
+  for (const r of chosen) {
+    const c: Character = structuredClone(r);
+    c.id = newId(g, 'ch');
+    // Se alguém do grupo foi renomeado depois da lista, o recruta ganha uma inicial.
+    if (names.has(c.name)) c.name = freshName(rng, names, [c.name]);
+    names.add(c.name);
+    c.bonds = Object.fromEntries(ids.map((b) => [b, GEO_RULES.start.recruitBond]));
+    for (const b of ids) (g.roster[b]!.bonds ??= {})[c.id] = GEO_RULES.start.recruitBond;
+    g.roster[c.id] = c;
+  }
   addLog(g, `🏘 ${g.village.name} foi fundada em ${home.name} (${home.government.name}).`, 'good');
   // Primeiros contratos: perto de casa.
   for (let i = 0; i < 3; i++) spawnContract(g, rng, { internal: i === 0 });

@@ -1938,10 +1938,42 @@ input {
 .geo-pick { display: block; font-size: 12px; padding: 2px 4px; cursor: pointer; }
 .geo-pick.on { background: rgba(201, 163, 91, 0.16); }
 .geo-pick.off { opacity: 0.5; cursor: default; }
+.geo-friend-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 6px; }
+.geo-friend-card { display: flex; gap: 8px; align-items: flex-start; padding: 6px 8px; }
+.geo-friend-card input, .geo-friend-card select { min-width: 0; }
+.geo-friend-look { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: none; }
+.geo-recruit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 4px; }
+.geo-recruit { display: flex; gap: 6px; align-items: center; padding: 4px 6px; cursor: pointer; transition: background 0.12s, box-shadow 0.12s; }
+.geo-recruit:hover { background: rgba(255, 255, 255, 0.04); }
+.geo-recruit.on { background: rgba(201, 163, 91, 0.16); box-shadow: 0 0 0 1px var(--gold) inset; }
+.geo-recruit-look { flex: none; width: 30px; display: grid; place-items: center; }
 .modal .geo-sheet { height: min(70vh, 640px); display: flex; flex-direction: column; gap: 6px; }
 @media (max-width: 760px) {
   .geo-left { width: auto; right: 8px; bottom: auto; max-height: 42vh; }
   .geo-right { left: 8px; top: auto; bottom: 8px; width: auto; max-height: 40vh; }
   .geo-create { width: auto; right: 8px; }
   .geo-friends { grid-template-columns: 1fr 1fr; }
+}
+
+/* ───────────── Personalização do visual (roupas prontas e cores) ───────────── */
+.look-editor { display: grid; grid-template-columns: 200px 1fr; gap: 12px; align-items: start; }
+.look-preview { display: flex; flex-direction: column; align-items: center; gap: 6px; position: sticky; top: 0; padding: 8px; border: 1px solid var(--border); border-radius: 6px; background: radial-gradient(circle at 50% 40%, rgba(80, 110, 130, 0.25), rgba(0, 0, 0, 0.2)); }
+.look-sprite { image-rendering: pixelated; display: block; }
+.look-name { font-size: 12px; color: var(--muted); text-align: center; }
+.look-controls { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.look-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 4px; }
+.look-grid.small { grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); }
+.look-cell { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 2px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 5px; color: var(--fg); font: inherit; font-size: 10px; cursor: pointer; }
+.look-cell:hover { border-color: var(--gold); }
+.look-cell.on { border-color: var(--gold); background: rgba(201, 163, 91, 0.16); box-shadow: 0 0 0 1px var(--gold) inset; }
+.look-cell span { line-height: 1.1; text-align: center; }
+.look-color-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.look-label { font-size: 12px; color: var(--muted); min-width: 92px; }
+.look-swatches { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
+.look-swatch { width: 18px; height: 18px; border-radius: 3px; border: 1px solid rgba(0, 0, 0, 0.6); cursor: pointer; padding: 0; }
+.look-swatch.on { outline: 2px solid #fff; outline-offset: 1px; }
+.look-picker { width: 26px; height: 20px; padding: 0; border: 1px solid var(--border); background: none; cursor: pointer; }
+@media (max-width: 760px) {
+  .look-editor { grid-template-columns: 1fr; }
+  .look-preview { position: static; }
 }

@@ -99,9 +99,12 @@ export function foodUse(g: GeoGame): number {
   return (g.population * E.foodPerPersonPerDay + Object.keys(g.roster).length * E.foodPerFighterPerDay) * difficulty(g).food;
 }
 
-/** Comida produzida por dia (os moradores plantam um pouco; hortas plantam mais). */
+/** Comida produzida por dia (moradores e quem do grupo está em casa plantam um pouco; hortas plantam mais). */
 export function foodMade(g: GeoGame): number {
-  return E.basePopulationFood + g.population * E.foodMadePerPerson + effect(g, 'foodPerDay');
+  // Quem do grupo está em casa e sem ferimento ajuda nas hortas.
+  const away = awayIds(g);
+  const home = Object.values(g.roster).filter((c) => !away.has(c.id) && c.woundDays <= 0).length;
+  return E.basePopulationFood + g.population * E.foodMadePerPerson + home * E.foodMadePerFighterAtHome + effect(g, 'foodPerDay');
 }
 
 export function salaries(g: GeoGame): number {

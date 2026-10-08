@@ -1,29 +1,42 @@
 import { Rng, Scene } from '@core';
-import { btn, clear, h, layer, toast } from '@ui/dom';
+import { btn, clear, h, layer, modal, toast } from '@ui/dom';
 import { DB } from '../../data';
 import { Audio } from '../../audio/audio';
 import { DEMO_CLASSES, type DemoClass } from '../../demo/demo_squad';
 import { DIFFICULTIES, GEO_RULES, type DifficultyId } from '../../geo/game';
-import { newGeoGame, partyBlock, villageSpotBlock, type PersonSpec } from '../../geo/create';
+import { newGeoGame, partyBlock, recruitsBlock, starterCandidates, villageSpotBlock, type PersonSpec } from '../../geo/create';
 import { CONTINENT_LABEL, regionAt, regionById, type LonLat } from '../../geo/world';
 import { CanvasPointer } from '../../render/pointer';
 import { GlobeView, drawGlobe } from '../../render/globe';
 import { giftDef } from '../../rules/gifts';
+import { normalizeAppearance, randomLook } from '../../rules/appearance';
+import { ORIGINS, PROFESSIONS, perkLabel } from '../../rules/perks';
+import type { Character } from '../../rules/character';
 import { GEO_SLOTS, geoStore, saveGeo } from '../../state/geo_store';
-import { RARITY_COLOR } from '../shared/hero_sheet';
+import { RARITY_COLOR, stars } from '../shared/hero_sheet';
+import { appearanceCanvas, appearanceEditor } from '../shared/appearance_editor';
 
-type Step = 'hero' | 'friends' | 'village';
+type Step = 'hero' | 'friends' | 'recruits' | 'village';
 const FRIEND_NAMES = ['Bia', 'Caio', 'Duda', 'Enzo', 'Flora'];
+const STEPS: [Step, string][] = [['hero', '1 · Protagonista'], ['friends', '2 · Os cinco amigos'], ['recruits', '3 · Recrutas'], ['village', '4 · A vila']];
 
 /**
- * Novo jogo do Mundo Pós-Cubo: o protagonista (Dom entre os 10 iniciais), os 5 amigos de infância e
- * o lugar da vila no globo.
+ * Novo jogo do Mundo Pós-Cubo: o protagonista (Dom entre os 10 iniciais), os 5 amigos de infância,
+ * os 10 moradores que vão lutar junto (escolhidos numa lista) e o lugar da vila no globo.
  */
 export class GeoCreationScene extends Scene {
   readonly id = 'geo_creation';
   private step: Step = 'hero';
-  private hero: PersonSpec = { name: '', classId: 'impacto', gift: 'densidade' };
-  private friends: PersonSpec[] = FRIEND_NAMES.map((name, i) => ({ name, classId: DEMO_CLASSES[i % 4]!, gift: i < 3 ? GEO_RULES.starterGifts[(i * 3 + 2) % 10]! : null }));
+  private seed = new Rng(Date.now() % 1e9).int(1, 1e9);
+  private hero: PersonSpec = { name: '', classId: 'impacto', gift: 'densidade', appearance: normalizeAppearance(randomLook(new Rng(this.seed)), 'ch_protagonista') };
+  private friends: PersonSpec[] = FRIEND_NAMES.map((name, i) => ({
+    name,
+    classId: DEMO_CLASSES[i % 4]!,
+    gift: i < 3 ? GEO_RULES.starterGifts[(i * 3 + 2) % 10]! : null,
+    appearance: normalizeAppearance(randomLook(new Rng(this.seed + i + 1)), `ch_amigo_${i + 1}`),
+  }));
+  private candidates: Character[] | null = null;
+  private picked = new Set<number>();
   private villageName = 'Nova Esperança';
   private difficulty: DifficultyId = 'normal';
   private spot: LonLat | null = null;
@@ -88,15 +101,20 @@ export class GeoCreationScene extends Scene {
     }
   }
 
+  private go(step: Step): void {
+    this.step = step;
+    this.redraw();
+  }
+
   private redraw(): void {
     const el = this.panel;
     clear(el);
-    const steps: [Step, string][] = [['hero', '1 · Protagonista'], ['friends', '2 · Os cinco amigos'], ['village', '3 · A vila']];
-    el.append(h('div', { class: 'demo-title', text: 'NOVO JOGO' }), h('div', { class: 'tabs row' }, ...steps.map(([s, label]) => btn(label, () => ((this.step = s), this.redraw()), { class: this.step === s ? 'active' : '' }))));
+    el.append(h('div', { class: 'demo-title', text: 'NOVO JOGO' }), h('div', { class: 'tabs row' }, ...STEPS.map(([s, label]) => btn(label, () => this.go(s), { class: this.step === s ? 'active' : '' }))));
     const body = h('div', { class: 'geo-create-body' });
     el.append(body);
     if (this.step === 'hero') this.renderHero(body);
     else if (this.step === 'friends') this.renderFriends(body);
+    else if (this.step === 'recruits') this.renderRecruits(body);
     else this.renderVillage(body);
   }
 
@@ -127,6 +145,13 @@ export class GeoCreationScene extends Scene {
     return grid;
   }
 
+  /** Editor de visual de uma pessoa da criação (protagonista ou amigo). */
+  private lookTarget(p: PersonSpec, id: string): { id: string; appearance: NonNullable<PersonSpec['appearance']> } {
+    const t = { id, appearance: p.appearance ?? normalizeAppearance(randomLook(new Rng(this.seed)), id) };
+    p.appearance = t.appearance;
+    return new Proxy(t, { set: (o, k, v) => ((o as Record<string | symbol, unknown>)[k] = v, k === 'appearance' && (p.appearance = v), true) });
+  }
+
   private renderHero(el: HTMLElement): void {
     const name = h('input', { value: this.hero.name, placeholder: 'Nome do protagonista', class: 'demo-name' }) as HTMLInputElement;
     name.addEventListener('input', () => (this.hero.name = name.value));
@@ -137,12 +162,13 @@ export class GeoCreationScene extends Scene {
       h('div', { class: 'demo-section', text: 'Dom (um dos 10 iniciais)' }),
       h('div', { class: 'muted', style: 'font-size:12px', text: 'Potencial que se vê: ★★★☆☆ — "um Dom ainda não completamente desenvolvido".' }),
       this.giftCards(this.hero.gift, (id) => ((this.hero.gift = id), this.redraw()), false),
+      h('div', { class: 'demo-section', text: 'Visual' }),
+      appearanceEditor(this.lookTarget(this.hero, 'ch_protagonista'), () => undefined, this.hero.classId),
       h('div', { class: 'row', style: 'justify-content:space-between;margin-top:10px' },
         btn('← Menu', () => this.ctx.scenes.go('main_menu'), { class: 'small' }),
         btn('Próximo: os amigos →', () => {
           if (!this.hero.name.trim()) return toast('Dê um nome ao protagonista.');
-          this.step = 'friends';
-          this.redraw();
+          this.go('friends');
         }, { class: 'primary' }),
       ),
     );
@@ -150,8 +176,8 @@ export class GeoCreationScene extends Scene {
 
   private renderFriends(el: HTMLElement): void {
     el.append(h('p', { class: 'muted', text: `Cresceram juntos — o vínculo começa alto. Cada um pode ter um dos 10 Dons iniciais ou nenhum; ao menos ${GEO_RULES.friends.minWithoutGift} sem Dom, como a vila. Eles podem morrer.` }));
-    const table = h('div', { class: 'geo-friends' });
-    this.friends.forEach((f) => {
+    const grid = h('div', { class: 'geo-friend-cards' });
+    this.friends.forEach((f, i) => {
       const name = h('input', { value: f.name }) as HTMLInputElement;
       name.addEventListener('input', () => (f.name = name.value));
       const cls = h('select', {}) as HTMLSelectElement;
@@ -163,15 +189,78 @@ export class GeoCreationScene extends Scene {
       for (const id of GEO_RULES.starterGifts) gift.append(h('option', { value: id, text: giftDef(id)!.name }));
       gift.value = f.gift ?? '';
       gift.addEventListener('change', () => ((f.gift = gift.value || null), this.redraw()));
-      table.append(name, cls, gift, h('span', { class: 'muted', style: 'font-size:11px', text: f.gift ? giftDef(f.gift)!.description : 'Sem Dom' }));
+      const look = this.lookTarget(f, `ch_amigo_${i + 1}`);
+      grid.append(
+        h('div', { class: 'item geo-friend-card', style: `border-left:3px solid ${DB.classes[f.classId].color}` },
+          h('div', { class: 'geo-friend-look' }, appearanceCanvas(look.appearance, 3, f.classId), btn('🎨 Visual', () => modal(`Visual de ${f.name || 'amigo'}`, (body) => body.append(appearanceEditor(look, () => this.redraw(), f.classId)), { wide: true, onClose: () => this.redraw() }), { class: 'small' })),
+          h('div', { class: 'col', style: 'gap:3px;flex:1;min-width:0' },
+            name,
+            h('div', { class: 'row', style: 'gap:4px' }, cls, gift),
+            h('span', { class: 'muted', style: 'font-size:11px', text: f.gift ? giftDef(f.gift)!.description : 'Sem Dom: armas, classe e mais espaço para utilitários.' }),
+          ),
+        ),
+      );
     });
     const why = partyBlock({ protagonist: this.hero, friends: this.friends });
     el.append(
-      table,
+      grid,
       why ? h('div', { style: 'color:#e57373;margin-top:6px', text: `⚠ ${why}` }) : '',
       h('div', { class: 'row', style: 'justify-content:space-between;margin-top:10px' },
-        btn('← Protagonista', () => ((this.step = 'hero'), this.redraw()), { class: 'small' }),
-        btn('Próximo: a vila →', () => ((this.step = 'village'), this.redraw()), { class: 'primary', disabled: !!why }),
+        btn('← Protagonista', () => this.go('hero'), { class: 'small' }),
+        btn('Próximo: os recrutas →', () => this.go('recruits'), { class: 'primary', disabled: !!why }),
+      ),
+    );
+  }
+
+  private renderRecruits(el: HTMLElement): void {
+    this.candidates ??= starterCandidates(this.seed, [this.hero, ...this.friends]);
+    const need = GEO_RULES.start.recruitPicks;
+    const list = this.candidates;
+    el.append(
+      h('p', { class: 'muted', text: `A vila tem gente disposta a lutar. Escolha ${need} entre os ${list.length} voluntários: eles moram na vila (sem salário) e já conhecem o grupo. Potencial com ☆ pode estar errado por uma estrela — só o laboratório mede o Dom de verdade.` }),
+      h('div', { class: 'row', style: 'gap:6px;align-items:center;flex-wrap:wrap' },
+        h('b', { class: this.picked.size === need ? 'gold' : '', text: `Escolhidos: ${this.picked.size}/${need}` }),
+        btn('🎲 Completar', () => {
+          const rng = new Rng(Date.now() % 1e9);
+          const free = list.map((_, i) => i).filter((i) => !this.picked.has(i));
+          while (this.picked.size < need && free.length) this.picked.add(free.splice(rng.int(0, free.length - 1), 1)[0]!);
+          this.redraw();
+        }, { class: 'small', title: 'Escolhe ao acaso o que faltar' }),
+        btn('Limpar', () => (this.picked.clear(), this.redraw()), { class: 'small' }),
+      ),
+    );
+    const grid = h('div', { class: 'geo-recruit-grid' });
+    list.forEach((c, i) => {
+      const on = this.picked.has(i);
+      const gd = giftDef(c.gift?.id);
+      const cls = DB.classes[c.classId];
+      grid.append(
+        h('div', {
+          class: `item geo-recruit${on ? ' on' : ''}`,
+          style: `border-left:3px solid ${cls.color}`,
+          onClick: () => {
+            if (on) this.picked.delete(i);
+            else if (this.picked.size < need) this.picked.add(i);
+            else return toast(`Já são ${need}. Desmarque alguém primeiro.`);
+            this.redraw();
+          },
+        },
+          h('div', { class: 'geo-recruit-look' }, appearanceCanvas(normalizeAppearance(c.appearance, c.id), 2, c.classId)),
+          h('div', { class: 'col', style: 'gap:1px;min-width:0' },
+            h('div', { class: 'row', style: 'justify-content:space-between;gap:4px' }, h('b', { text: `${on ? '✔ ' : ''}${c.name}` }), h('span', { class: 'muted', style: 'font-size:11px', text: `${cls.name} · NV ${c.level}` })),
+            h('div', { style: `font-size:11px;color:${gd ? RARITY_COLOR[gd.rarity] : '#8f8474'}`, text: gd ? `${stars(c.gift!.shownPotential ?? c.gift!.potential)} ${gd.name}` : 'Sem Dom' }),
+            h('div', { class: 'muted', style: 'font-size:11px', text: `${ORIGINS[c.origin ?? '']?.name ?? ''}${c.profession ? ` · antes: ${PROFESSIONS[c.profession]?.name}` : ''}` }),
+            c.perks?.length ? h('div', { style: 'font-size:11px', text: c.perks.map(perkLabel).join(', ') }) : '',
+          ),
+        ),
+      );
+    });
+    const why = recruitsBlock(this.picked.size);
+    el.append(
+      grid,
+      h('div', { class: 'row', style: 'justify-content:space-between;margin-top:10px' },
+        btn('← Amigos', () => this.go('friends'), { class: 'small' }),
+        btn(why ? `Faltam ${need - this.picked.size}` : 'Próximo: a vila →', () => this.go('village'), { class: 'primary', disabled: !!why }),
       ),
     );
   }
@@ -181,7 +270,7 @@ export class GeoCreationScene extends Scene {
     name.addEventListener('input', () => (this.villageName = name.value));
     const rid = this.spot ? regionAt(this.spot) : undefined;
     const r = rid ? regionById(rid) : undefined;
-    const why = partyBlock({ protagonist: this.hero, friends: this.friends });
+    const why = partyBlock({ protagonist: this.hero, friends: this.friends }) ?? recruitsBlock(this.picked.size);
     el.append(
       h('p', { class: 'muted', text: 'Clique no globo onde a vila vai nascer (arraste para girar, roda para zoom). A região decide os primeiros contratos e o governo vizinho.' }),
       h('div', { class: 'demo-section', text: 'Nome da vila' }), name,
@@ -202,15 +291,16 @@ export class GeoCreationScene extends Scene {
         : h('div', { class: 'muted', text: 'Nenhum lugar escolhido.' }),
       why ? h('div', { style: 'color:#e57373;margin-top:6px', text: `⚠ ${why}` }) : '',
       h('div', { class: 'row', style: 'justify-content:space-between;margin-top:10px' },
-        btn('← Amigos', () => ((this.step = 'friends'), this.redraw()), { class: 'small' }),
+        btn('← Recrutas', () => this.go('recruits'), { class: 'small' }),
         btn('🏘 Fundar a vila', () => this.start(), { class: 'primary', disabled: !r || !!why }),
       ),
     );
   }
 
   private start(): void {
-    if (!this.spot) return;
-    const g = newGeoGame({ seed: new Rng(Date.now() % 1e9).int(1, 1e9), villageName: this.villageName, villageAt: this.spot, difficulty: this.difficulty, protagonist: this.hero, friends: this.friends });
+    if (!this.spot || !this.candidates) return;
+    const recruits = [...this.picked].sort((a, b) => a - b).map((i) => this.candidates![i]!);
+    const g = newGeoGame({ seed: this.seed, villageName: this.villageName, villageAt: this.spot, difficulty: this.difficulty, protagonist: this.hero, friends: this.friends, recruits });
     geoStore.game = g;
     geoStore.slot = GEO_SLOTS.find((s) => !this.ctx.save.has(s)) ?? GEO_SLOTS[0]!;
     saveGeo(this.ctx.save);

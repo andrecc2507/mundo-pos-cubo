@@ -53,11 +53,53 @@ describe('novo jogo', () => {
     const g = newGeoGame(spec());
     const hero = g.roster[g.protagonistId]!;
     expect(hero.gift).toMatchObject({ id: 'densidade', potential: 5, shownPotential: 3 });
-    expect(Object.keys(g.roster)).toHaveLength(6);
-    expect(Object.values(hero.bonds ?? {}).every((b) => b >= 60)).toBe(true);
+    // Protagonista + 5 amigos + os 10 moradores escolhidos (sem salário).
+    expect(Object.keys(g.roster)).toHaveLength(16);
+    expect(g.salaried).toHaveLength(0);
+    const friends = ['ch_amigo_1', 'ch_amigo_2', 'ch_amigo_3', 'ch_amigo_4', 'ch_amigo_5'];
+    expect(friends.every((id) => (hero.bonds?.[id] ?? 0) >= 60)).toBe(true);
+    expect(Object.keys(hero.bonds ?? {})).toHaveLength(15);
     expect(g.contracts.length).toBeGreaterThanOrEqual(2);
     expect(g.recruits.length).toBeGreaterThan(0);
     expect(g.village.facilities.hangar).toBe(1);
+  });
+});
+
+describe('novo jogo: os 10 recrutas escolhidos numa lista', () => {
+  it('a lista tem 20 candidatos estáveis pela semente; os escolhidos entram no grupo', async () => {
+    const { starterCandidates, recruitsBlock } = await import('@game/geo/create');
+    const a = starterCandidates(77);
+    const b = starterCandidates(77);
+    expect(a).toHaveLength(20);
+    expect(a.map((c) => c.name)).toEqual(b.map((c) => c.name));
+    expect(new Set(a.map((c) => c.id)).size).toBe(20);
+    expect(recruitsBlock(9)).toContain('mais 1');
+    expect(recruitsBlock(10)).toBeNull();
+    const picked = [a[19]!, a[3]!, a[7]!, a[0]!, a[11]!, a[12]!, a[13]!, a[14]!, a[15]!, a[16]!];
+    const g = newGeoGame({ ...spec(), recruits: picked });
+    const names = Object.values(g.roster).map((c) => c.name);
+    for (const p of picked) expect(names).toContain(p.name);
+    // Os escolhidos ganham ids novos da partida (não "cand_…").
+    expect(Object.keys(g.roster).some((id) => id.startsWith('cand_'))).toBe(false);
+  });
+
+  it('ninguém repete nome: lista, grupo, especialistas e levas seguintes', async () => {
+    const { starterCandidates } = await import('@game/geo/create');
+    const { freshName, refreshRecruits } = await import('@game/geo/people');
+    const s = spec(8);
+    const list = starterCandidates(8, [s.protagonist, ...s.friends]);
+    const listNames = list.map((c) => c.name);
+    expect(new Set(listNames).size).toBe(listNames.length);
+    for (const p of [s.protagonist, ...s.friends]) expect(listNames).not.toContain(p.name);
+    const g = newGeoGame(s);
+    for (let i = 0; i < 5; i++) {
+      const all = [...Object.values(g.roster), ...g.specialists, ...g.recruits, ...g.specialistPool].map((p) => p.name);
+      expect(new Set(all).size, all.join(',')).toBe(all.length);
+      withRng(g, (rng) => refreshRecruits(g, rng));
+    }
+    // Lista esgotada: ganha uma inicial em vez de repetir.
+    const used = new Set(['Bia']);
+    expect(freshName(new Rng(1), used, ['Bia'])).toMatch(/^Bia [A-Z]\.$/);
   });
 });
 

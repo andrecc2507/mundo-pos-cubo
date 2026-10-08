@@ -34,10 +34,22 @@ export function utilityUses(c: Pick<Character, 'gift' | 'classId'>, id: string |
   return slot < rule.slots ? rule.uses : 0;
 }
 
+/** Cores da roupa escolhidas pelo jogador (principal, secundária e detalhe). */
+export interface OutfitColors {
+  primary: string;
+  secondary: string;
+  accent: string;
+}
+
 export interface Appearance {
   hairStyle: number;
   hairColor: string;
   skin: string;
+  /** Roupa pronta (data/characters/outfits.json). Ausente em saves antigos: sai do id (rules/appearance.ts). */
+  outfit?: string;
+  /** Acessório de cabeça (boné, máscara, capacete…); 'nada' ou ausente = sem. */
+  headgear?: string;
+  colors?: OutfitColors;
 }
 
 export interface Equipment {
@@ -118,7 +130,7 @@ export interface Character {
 
 export const HAIR_COLORS = ['#2b1d14', '#6b3e1f', '#c98b3a', '#e8d27a', '#b33a2a', '#d9d9d9', '#3a4a8a', '#1a1a1a'];
 export const SKIN_TONES = ['#f6d3b3', '#e8b98f', '#c98e62', '#9a6440', '#6b422a', '#4a2e1e'];
-export const HAIR_STYLES = 4;
+export const HAIR_STYLES = 6;
 
 export const DEFAULT_WEAPON: Record<ClassId, string | null> = {
   aprendiz: 'faca_de_combate',

@@ -6,14 +6,15 @@ import { describeSkill } from '../../bestiary/describe';
 import { derive, learnSkill, statCost, utilitySlots, utilityUses, xpToNext, type Character } from '../../rules/character';
 import { AWAKENINGS, GIFT_CATEGORIES, GIFTS, OVERLOADS, PHILOSOPHY_LABEL, SIGNATURES_BY_GIFT, SIGNATURE_LEVEL, RARITY_LABEL, giftDef, giftSlots, giftStats, giftTreeId, rollGift, type GiftDef, type GiftRarity, type Philosophy } from '../../rules/gifts';
 import { CROSS_CLASS_LEVEL } from '../../rules/stats';
+import { appearanceEditor } from './appearance_editor';
 import { chainOf, learnerTrees, lockReason } from '../../rules/skill_tree';
 import {
   DEMO_CLASSES, DEMO_LEVELS, attrDown, attrUp, autoAttrs, autoSpend, resetAttrs, resetSkills, setClass, setGift, setLevel, setPotential,
   type DemoClass,
 } from '../../demo/demo_squad';
 
-export type SheetTab = 'ficha' | 'classes' | 'dom' | 'armas';
-const TAB_LABEL: Record<SheetTab, string> = { ficha: 'Ficha', classes: 'Classes', dom: 'Dom', armas: 'Armas' };
+export type SheetTab = 'ficha' | 'classes' | 'dom' | 'armas' | 'visual';
+const TAB_LABEL: Record<SheetTab, string> = { ficha: 'Ficha', classes: 'Classes', dom: 'Dom', armas: 'Armas', visual: 'Visual' };
 export const RARITY_COLOR: Record<GiftRarity, string> = { comum: '#b0a898', incomum: '#7fbf6e', raro: '#5ea8e0', epico: '#c08ae8', lendario: '#f0b54a', anomalo: '#ff5c8a' };
 export const WEAPON_TYPE_LABEL: Record<string, string> = { pistola: 'Pistola', fuzil: 'Fuzil', escopeta: 'Escopeta', precisao: 'Fuzil de precisão', metralhadora: 'Metralhadora', lanca_granadas: 'Lança-granadas', punhos: 'Punhos', lamina: 'Lâmina', contundente: 'Contundente' };
 export const MODERN_UTILITY = ['kit_medico', 'granada_fragmentacao', 'granada_fumaca', 'granada_atordoante', 'estimulante'];
@@ -116,7 +117,7 @@ export class HeroSheet {
     if (this.tab === 'ficha') {
       if (this.campaign) this.renderCampaignSheet(body, c);
       else this.renderSheet(body, c);
-    }
+    } else if (this.tab === 'visual') body.append(appearanceEditor(c, () => this.hooks.onChange(), c.classId));
     else {
       const trees = learnerTrees(c);
       const tree = this.tab === 'classes' ? trees.find((t) => t.id === 'teia') : this.tab === 'armas' ? trees.find((t) => t.id === 'armas') : c.gift ? trees.find((t) => t.id === giftTreeId(c.gift!.id)) : undefined;

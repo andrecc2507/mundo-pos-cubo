@@ -1,5 +1,6 @@
 import type { ClassId } from '../data';
-import { outfitFor } from './outfits';
+import type { Appearance, OutfitColors } from '../rules/character';
+import { headgearDef, outfitDef } from '../rules/appearance';
 import { artFor, type SpriteArt } from './sprite_anims';
 
 /**
@@ -32,11 +33,9 @@ const HAIR: string[][] = [
   ['............', '...HHHHHH...', '..HHHHHHHH..', '..HHSSSSHH..', '..HSESSESH..'],
   ['.....HH.....', '...HHHHHH...', '..HHHHHHHH..', '...HSSSSH...', '...SESSES...'],
   ['............', '....HHHH....', '...HHHHHH...', '..HHSSSSHH..', '..HSESSESH..'],
+  ['............', '............', '....HHHH....', '...HSSSSH...', '...SESSES...'],
+  ['...HHHHHH...', '..HHHHHHHH..', '..HHHHHHHH..', '..HHSSSSHH..', '..HSESSESH..'],
 ];
-
-/** Chapéus / elmos por classe (sobrepõem as primeiras linhas). */
-const HATS: Partial<Record<ClassId, string[]>> = {
-};
 
 const WEAPONS: Partial<Record<ClassId, [number, number, string][]>> = {
   aprendiz: [[10, 8, 'M'], [10, 9, 'M'], [10, 10, 'W']],
@@ -64,8 +63,10 @@ export interface SpriteSpec {
   hairColor: string;
   hairStyle: number;
   skin: string;
-  /** Roupa da subclasse (`classe:subclasse`), ver render/outfits.ts. */
+  /** Roupa pronta, acessório de cabeça e cores escolhidas (rules/appearance.ts). */
   outfit?: string;
+  headgear?: string;
+  colors?: OutfitColors;
   /** Pixel art própria (bestiário): substitui os modelos padrão. */
   sprite?: string[];
   palette?: Record<string, string>;
@@ -75,19 +76,28 @@ export interface SpriteSpec {
 
 const cache = new Map<string, HTMLCanvasElement>();
 
+/** Tom mais escuro de uma cor (#rrggbb): as letras minúsculas das roupas. */
+function shade(hex: string, k: number): string {
+  const n = parseInt(hex.slice(1, 7), 16);
+  if (!Number.isFinite(n)) return hex;
+  const c = (v: number) => Math.max(0, Math.min(255, Math.round(v * k)));
+  return `#${((1 << 24) | (c((n >> 16) & 255) << 16) | (c((n >> 8) & 255) << 8) | c(n & 255)).toString(16).slice(1)}`;
+}
+
 function palette(spec: SpriteSpec): Record<string, string> {
-  const outfit = outfitFor(spec.outfit);
-  const color = outfit?.color ?? spec.color;
-  return {
+  const color = spec.colors?.primary ?? spec.color;
+  const dark = spec.colors?.secondary ?? spec.dark;
+  const accent = spec.colors?.accent ?? '#ffd54f';
+  const pal: Record<string, string> = {
     H: spec.hairColor,
     S: spec.skin,
     E: '#1b1b24',
     C: color,
-    D: outfit?.dark ?? spec.dark,
-    A: outfit?.accent ?? '#ffd54f',
-    B: outfit?.accent ?? '#6d4c2a',
+    D: dark,
+    A: accent,
+    B: spec.colors ? accent : '#6d4c2a',
     K: '#2d2018',
-    M: '#b8c4cc',
+    M: '#9aa4ab',
     W: '#8a5a2b',
     G: '#4fe3ff',
     Y: '#ffd54f',
@@ -95,6 +105,14 @@ function palette(spec: SpriteSpec): Record<string, string> {
     T: color,
     N: '#e0c0a0',
   };
+  // Minúsculas: o tom escuro da mesma cor (dobras, bolsos, sombras da roupa).
+  for (const k of ['C', 'D', 'A', 'B', 'M']) pal[k.toLowerCase()] = shade(pal[k]!, 0.72);
+  return pal;
+}
+
+/** Spec de sprite de uma aparência (personalização, retratos fora da batalha). */
+export function appearanceSpec(a: Appearance, classId: ClassId = 'impacto'): SpriteSpec {
+  return { classId, beast: false, color: '#888', dark: '#444', hairColor: a.hairColor, hairStyle: a.hairStyle, skin: a.skin, outfit: a.outfit, headgear: a.headgear, colors: a.colors };
 }
 
 /**
@@ -156,11 +174,11 @@ export function spriteFor(spec: SpriteSpec): HTMLCanvasElement {
   if (spec.sprite?.length) rows = [...spec.sprite];
   else if (spec.beast) rows = [...BEAST];
   else {
-    rows = [...BODY];
+    const outfit = outfitDef(spec.outfit);
+    rows = outfit ? [...BODY.slice(0, 7), ...outfit.body] : [...BODY];
     const hair = HAIR[spec.hairStyle % HAIR.length]!;
     hair.forEach((r, i) => (rows[i] = r));
-    const hat = outfitFor(spec.outfit)?.hat ?? HATS[spec.classId];
-    if (hat) hat.forEach((r, i) => (rows[i] = mergeRow(rows[i]!, r)));
+    for (const over of [outfit?.head, headgearDef(spec.headgear)?.rows]) over?.forEach((r, i) => r && rows[i] !== undefined && (rows[i] = mergeRow(rows[i]!, r)));
     extra.push(...(WEAPONS[spec.classId] ?? []));
   }
   const w = Math.max(...rows.map((r) => r.length));

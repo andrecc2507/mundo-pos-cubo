@@ -260,12 +260,6 @@ export function mainSubclass(c: Learner): TreeNode | undefined {
   return best?.node;
 }
 
-/** Chave da roupa (`classe:subclasse`) do personagem, se já escolheu uma subclasse. */
-export function outfitKey(c: Learner): string | undefined {
-  const n = mainSubclass(c);
-  return n ? `${c.classId}:${n.id}` : undefined;
-}
-
 function nodeActive(c: Learner, n: TreeNode): boolean {
   return n.type === 'base' || hasSkillIn(c, n);
 }

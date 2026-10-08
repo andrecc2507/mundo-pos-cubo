@@ -1067,5 +1067,7 @@ export function unitSpec(u: BattleUnit): SpriteSpec {
     palette: u.look.palette,
     art: u.look.art,
     outfit: u.look.outfit,
+    headgear: u.look.headgear,
+    colors: u.look.colors,
   };
 }
