@@ -67,6 +67,17 @@ MENACE, Star Wars Zero Company. As fontes estão no fim.
 | Novo jogo | Depois do protagonista e dos 5 amigos, o jogador escolhe 10 recrutas numa lista maior (começa com 15 + o protagonista). | Pedido do diretor; também dá elenco para criar apego cedo. |
 | História | Sistema de gatilhos em JSON (condições → diálogo, flags, missões de história, recrutas, recursos, objetivos), pronto para receber o roteiro. | Pedido do diretor; Wildermyth mostra o valor de âncoras escritas no meio do sistêmico. |
 
+**Status:** tudo o que está na tabela já está no jogo. Os objetivos ficaram num quadro fixo no hub, e
+não num botão da barra. A barra também ganhou Pesquisa e Engenharia. O diretor pediu mais duas coisas
+no caminho, e elas também entraram:
+
+- **Pesquisa e Engenharia na base:** projetos liberam itens, construções e melhorias; a oficina
+  fabrica armas, armaduras e suporte.
+- **Névoa de guerra para os inimigos:** a IA só ataca quem o time dela vê; fora disso, segue pistas e
+  barulho e procura.
+
+Manuais: [mapa_mundi.md](mapa_mundi.md) (vila, hub, pesquisa) e [gatilhos.md](gatilhos.md) (história).
+
 ## 4. O que evitamos
 
 - Ícones demais no globo e listas de tarefas entre missões (Phoenix Point, Midnight Suns).

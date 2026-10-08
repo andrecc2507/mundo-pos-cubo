@@ -11,7 +11,7 @@ import { encounterTick, startRaid } from './events';
 import { dailyPolitics } from './politics';
 import { PEOPLE_RULES } from '../rules/perks';
 import { effect, foodStorage } from './village';
-import { BUILDINGS, buildTick, nextBuildIn, popCap, safetyGrowth } from './village_layout';
+import { BUILDINGS, buildQueue, buildTick, nextBuildIn, popCap, safetyGrowth } from './village_layout';
 import { emitStory, pendingDialogs, storyTick, takeFeed } from './story';
 import { craftHoursLeft, engineeringTick, researchHoursLeft, researchTick } from './research';
 
@@ -75,8 +75,12 @@ function stepWorld(g: GeoGame, step: number): GeoAlert[] {
   // Obras.
   const built = buildTick(g, step);
   if (built.length) {
-    const names = built.map((b) => BUILDINGS[b.id]?.name ?? b.id);
-    out.push({ kind: 'info', title: '🏗 Obra pronta', text: built.length > 3 ? `${built.length} obras prontas.` : `${names.join(', ')} ${built.length > 1 ? 'estão prontas' : 'está pronta'}.`, pause: false });
+    // Trechos de muro não avisam um a um: só quando o último da fila fica pronto.
+    const count = new Map<string, number>();
+    for (const b of built) if (!BUILDINGS[b.id]?.line) count.set(b.id, (count.get(b.id) ?? 0) + 1);
+    const parts = [...count].map(([id, n]) => `${BUILDINGS[id]?.name ?? id}${n > 1 ? ` ×${n}` : ''}`);
+    if (built.some((b) => BUILDINGS[b.id]?.line) && !buildQueue(g).some((b) => BUILDINGS[b.id]?.line)) parts.push('muros e cercas traçados');
+    if (parts.length) out.push({ kind: 'info', title: '🏗 Obra pronta', text: `${parts.join(', ')}.`, pause: false });
     for (const b of built) if (!BUILDINGS[b.id]?.line) emitStory(g, { type: 'building_done', id: b.id, name: BUILDINGS[b.id]?.name });
   }
   healTick(g, step);

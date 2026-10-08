@@ -233,7 +233,7 @@
   }
  },
  "raids": {
-  "_doc": "Ataques à vila: um a cada everyDays (sorteio), mais cedo em região perigosa. Quem está em casa pode defender (batalha no mapa da vila; muros dão guardas e barreiras); sem defesa, a vila resolve sozinha pela força dos muros.",
+  "_doc": "Ataques à vila: um a cada everyDays (sorteio), mais cedo em região perigosa. Quem está em casa pode defender (batalha no mapa feito da planta da vila: muros e portões barram, torres dão vigias, armadilhas ferem); sem defensores, a vila resolve sozinha pelos pontos de defesa da planta (village_layout.json → defenseRules).",
   "everyDays": [
    10,
    18

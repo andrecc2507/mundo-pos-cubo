@@ -62,7 +62,7 @@ export class MainMenuScene extends Scene {
           item(t('Batalha rápida (dev)'), () => this.quickBattleDialog(), { small: true }),
         ),
       ),
-      h('div', { class: 'title-foot', text: t('DEMO DE BATALHA · VELOCIDADE') }),
+      h('div', { class: 'title-foot', text: t('VILA · CONTRATOS · DONS') }),
     );
     this.ui.append(screen);
     DevPanel.setGroups([

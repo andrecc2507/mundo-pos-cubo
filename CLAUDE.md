@@ -17,4 +17,8 @@ Jogo em TypeScript + Vite, sem engine. Leia `docs/ARCHITECTURE.md` antes de muda
 - Docs e comentários em português; identificadores em inglês; arquivos em snake_case.
 - Mundo Pós-Cubo: regras do globo em `game/geo/` (puras), dados em `game/data/geo/`, desenho em
   `docs/design/mapa_mundi.md`; batalha de demonstração em `docs/design/demo_batalha.md`.
+- História: roteiro em `game/data/story/triggers.json` (manual em `docs/design/gatilhos.md`). As regras
+  só avisam acontecimentos com `emitStory`; nenhuma regra depende do roteiro. O teste do roteiro
+  (`validateScript`) aponta ids e chaves erradas.
+- Mudou o formato do save do globo? Migre em `state/geo_store.ts` (saves antigos continuam abrindo).
 - Rode `npm test && npm run typecheck` antes de commitar.

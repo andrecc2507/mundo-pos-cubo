@@ -6,13 +6,14 @@
 > `andrecc2507/JOGO` e não faz mais parte deste.
 
 ## Visão
-- **Gênero:** RPG tático — globo com tempo contínuo (vila, contratos, política) + batalhas em grade
-  isométrica com linha do tempo de velocidade.
+- **Gênero:** RPG tático — globo com tempo contínuo (vila construível, contratos, política, pesquisa)
+  + batalhas em grade isométrica com linha do tempo de velocidade.
 - **Pitch:** depois do Cubo, parte da humanidade ganhou Dons. A luta por turno tem que parecer uma
   luta de Boku no Hero: o Dom é a estrela, forçá-lo tem preço e heróis salvam pessoas.
 - **Plataforma:** navegador (desktop).
-- **Referências:** XCOM 2 e Xenonauts (esquadrão, globo, figurantes), Boku no Hero (Dons), Final
-  Fantasy Tactics (câmera), Baldur's Gate 3 (cenário interativo), Ragnarok Online (atributos).
+- **Referências:** XCOM 2 e Xenonauts (esquadrão, globo, hub, figurantes), Boku no Hero (Dons), Final
+  Fantasy Tactics (câmera), Baldur's Gate 3 (cenário interativo), Ragnarok Online (atributos), Age of
+  Empires e They Are Billions (a planta da vila que vira o campo da defesa).
 
 ## Pilares
 1. **O Dom é a estrela** — e ir além do limite (Strain → Overload) tem preço.
@@ -27,7 +28,9 @@
 | Decisões consolidadas | [design/pos_cubo.md](design/pos_cubo.md) |
 | Dons (catálogo de 335) | [design/dons.md](design/dons.md) |
 | Classes e árvore de armas | [design/classes_armas.md](design/classes_armas.md) |
-| Globo, contratos, vila | [design/mapa_mundi.md](design/mapa_mundi.md) |
+| Globo, hub, contratos, vila, pesquisa | [design/mapa_mundi.md](design/mapa_mundi.md) |
+| História e gatilhos (manual do roteiro) | [design/gatilhos.md](design/gatilhos.md) |
+| Pesquisa de mercado (o que os jogadores pedem) | [design/pesquisa_mercado.md](design/pesquisa_mercado.md) |
 | Demo de batalha | [design/demo_batalha.md](design/demo_batalha.md) |
 | Matemática (atributos, dano, acerto) | [design/matematica.md](design/matematica.md) |
 | Elementos | [design/elementos.md](design/elementos.md) |

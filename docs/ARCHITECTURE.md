@@ -20,15 +20,15 @@ A lógica de regras é **pura** (sem DOM, testável no Node) e fica separada das
 
 | pasta | responsabilidade |
 |-------|------------------|
-| `game/rules` | `stats` (matemática central: atributos, derivados, acerto, dano, linha do tempo — números em `data/balance.json`), `balance_sim` (simulação de balanceamento), personagem, atributos derivados, curva de custo, XP, recrutamento, `gifts` (Dons: árvores, técnicas, P/C/V), `mastery` (Maestria por uso), `perks`, `duo` (técnicas de dupla), `skill_tree` (teia das classes e árvores auxiliares) |
-| `game/battle` | `map` (tiles), `stack` (prédios: peças empilhadas, andares, portas/janelas/escadas, física de desabamento; ver `docs/design/predios.md`), `los` (visão 3D), `elements` (superfícies, nuvens, status, clima), `engine` (barra de ação, movimento, ações, combos, vitória), `creature_fx` (efeitos das criaturas: passivas, reações, agarrões, invocações, posturas, mecânicas únicas, reação única por batalha), `cover` (cobertura estilo XCOM), `props` (coberturas destrutíveis), `notices` (avisos de ambiente e estado), `ai` |
+| `game/rules` | `stats` (matemática central: atributos, derivados, acerto, dano, linha do tempo — números em `data/balance.json`), `balance_sim` (simulação de balanceamento), personagem, atributos derivados, curva de custo, XP, recrutamento, `gifts` (Dons: árvores, técnicas, P/C/V), `mastery` (Maestria por uso), `perks`, `duo` (técnicas de dupla), `skill_tree` (teia das classes e árvores auxiliares), `service` (patentes, apelidos e dias de serviço) |
+| `game/battle` | `map` (tiles), `stack` (prédios: peças empilhadas, andares, portas/janelas/escadas, física de desabamento; ver `docs/design/predios.md`), `los` (visão 3D), `elements` (superfícies, nuvens, status, clima), `engine` (barra de ação, movimento, ações, combos, vitória), `creature_fx` (efeitos das criaturas: passivas, reações, agarrões, invocações, posturas, mecânicas únicas, reação única por batalha), `cover` (cobertura estilo XCOM), `props` (coberturas destrutíveis), `notices` (avisos de ambiente e estado), `ai`, `ai_path` (caminho real até o alvo, cerco e brecha em muros e portões), `intel` (névoa de guerra do inimigo: o que o time vê, pistas, barulho e busca) |
 | `game/bestiary` | edições locais do bestiário (`bestiary_store`) e resumo mecânico das habilidades (`describe`) |
-| `game/mapgen` | ruínas pós-apocalípticas por região (`ruins`, padrão das batalhas), geração por bioma e mapas salvos do editor |
-| `game/geo` | globo: jogo novo (`create`), estado e relógio (`game`), vila (`village`), contratos, ataques e encontros (`events`), política, pessoas e recrutamento (`people`), legado dos mortos (`legacy`), esquadrões e avião (`squads`), simulação longa (`sim`) |
+| `game/mapgen` | ruínas pós-apocalípticas por região (`ruins`, padrão das batalhas), geração por bioma, mapa da batalha de defesa feito da planta da vila (`village_map`) e mapas salvos do editor |
+| `game/geo` | globo: jogo novo (`create`), estado e relógio (`game`, `sim`), vila e estágios (`village`), planta da vila com obras, cerco e defesa (`village_layout`), pesquisa e engenharia (`research`), contratos, ataques e encontros (`events`), política, pessoas e recrutamento (`people`), legado dos mortos (`legacy`), esquadrões e avião (`squads`), história: gatilhos, diálogos e objetivos (`story`, roteiro em `data/story/triggers.json`) |
 | `game/demo` | esquadrão da demo, vilões, figurantes e feras alteradas (`demo_squad`) |
 | `game/render` | câmera isométrica com 4 rotações, sprites em pixel art gerados por código ou arte pronta com animações por pose (`sprite_anims`, ver `docs/design/sprites.md`), `anim_style` (qual animação cada ação usa) e `battle_fx` (golpes, projéteis, partículas, clarões) |
 | `game/scenes` | orquestram lógica + render + UI em DOM (`src/ui/dom.ts`; menus flutuantes em `src/ui/menu.ts`) |
-| `game/state` | `store`: resultado de batalha e mapa do editor; `geo_store`: jogo do globo, espaços de save e salvamento automático; `settings`: opções do jogador (velocidade, texto, teclas, acessibilidade, idioma) |
+| `game/state` | `store`: resultado de batalha e mapa do editor; `geo_store`: jogo do globo, espaços de save, salvamento automático e migrações; `settings`: opções do jogador (velocidade, texto, teclas, acessibilidade, idioma); `character_pool`: banco de personagens |
 | `game/i18n` | `t('texto em português')` → texto no idioma das opções (dicionários `<idioma>.json`, chave = texto em português) |
 | `game/input` | `gamepad`: controle via Gamepad API (botões → ações; analógico move um cursor que clica) |
 
@@ -36,6 +36,15 @@ Fluxo globo ↔ batalha: o globo monta um `BattleSetup` (`geo/contracts.ts`, `ge
 cena `battle`; ao terminar, a batalha grava `store.battleResult` e volta; o globo aplica o resultado
 (XP, Maestria, mortes permanentes, ferimentos, dinheiro, contrato, legado). `npm run sim` roda batalhas
 IA × IA em massa e grava `docs/design/simulacao.md`.
+
+Hub (`scenes/geoscape`): `geoscape.scene.ts` monta a barra de cima, a barra de comandos, os painéis, o
+quadro de objetivos e os diálogos; `screens.ts` são as telas cheias (Esquadrão, Recrutar, Intendência,
+Pesquisa, Engenharia, Governos, Memorial, Registro); `village_view.ts` desenha e edita a planta da vila.
+As telas falam com a cena por `hub_api.ts`.
+
+História: as regras avisam acontecimentos com `emitStory` (contrato, ataque, obra, pesquisa, morte…);
+`geo/story.ts` roda os gatilhos do roteiro e põe diálogos e avisos em filas que a cena mostra. Nenhuma
+regra depende da história: sem roteiro, o jogo roda igual. Manual em `docs/design/gatilhos.md`.
 
 ## Fluxo de um frame
 
