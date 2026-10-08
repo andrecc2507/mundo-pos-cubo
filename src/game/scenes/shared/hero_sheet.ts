@@ -7,6 +7,7 @@ import { derive, learnSkill, statCost, utilitySlots, utilityUses, xpToNext, type
 import { AWAKENINGS, GIFT_CATEGORIES, GIFTS, OVERLOADS, PHILOSOPHY_LABEL, SIGNATURES_BY_GIFT, SIGNATURE_LEVEL, RARITY_LABEL, giftDef, giftSlots, giftStats, giftTreeId, rollGift, type GiftDef, type GiftRarity, type Philosophy } from '../../rules/gifts';
 import { CROSS_CLASS_LEVEL } from '../../rules/stats';
 import { appearanceEditor } from './appearance_editor';
+import { cleanNickname, rankOf } from '../../rules/service';
 import { chainOf, learnerTrees, lockReason } from '../../rules/skill_tree';
 import {
   DEMO_CLASSES, DEMO_LEVELS, attrDown, attrUp, autoAttrs, autoSpend, resetAttrs, resetSkills, setClass, setGift, setLevel, setPotential,
@@ -50,6 +51,8 @@ export interface SheetHooks {
   reset?: { cost: number; run: () => boolean };
   /** Campanha: potencial que se vê (o real pode estar escondido). */
   shownPotential?: (c: Character) => number;
+  /** Campanha: linha da ficha de serviço (missões, abates, dias de serviço). */
+  service?: (c: Character) => string;
 }
 
 /**
@@ -83,6 +86,11 @@ export class HeroSheet {
     const name = h('input', { value: c.name, class: 'demo-name' }) as HTMLInputElement;
     name.maxLength = 24;
     name.addEventListener('change', () => ((c.name = name.value.trim() || c.name), this.hooks.onChange()));
+    // Apelido (aparece entre aspas depois do nome, no relatório e no memorial).
+    const nick = h('input', { value: c.nickname ?? '', placeholder: 'apelido', class: 'sheet-nick', title: 'Apelido' }) as HTMLInputElement;
+    nick.maxLength = 18;
+    nick.addEventListener('change', () => ((c.nickname = cleanNickname(nick.value)), this.hooks.onChange()));
+    const rank = rankOf(c.level);
     const tabs = h('div', { class: 'tabs row' });
     for (const t of Object.keys(TAB_LABEL) as SheetTab[]) {
       const label = t === 'dom' && !c.gift ? 'Dom (sem)' : TAB_LABEL[t];
@@ -90,7 +98,10 @@ export class HeroSheet {
     }
     el.append(
       h('div', { class: 'row', style: 'gap:10px;align-items:center;flex-wrap:wrap' },
+        h('span', { class: 'rank-badge', title: `Patente: ${rank.name} (sobe com o nível)`, text: `${rank.icon} ${rank.name}` }),
         name,
+        nick,
+        this.hooks.service ? h('span', { class: 'muted', style: 'font-size:12px', text: this.hooks.service(c) }) : '',
         h('span', { class: 'evolve-points', text: `✦ ${c.skillPoints} ponto(s) de habilidade` }),
         h('span', { class: 'muted', text: `◆ ${c.statPoints} de atributo` }),
         h('span', { style: 'flex:1' }),

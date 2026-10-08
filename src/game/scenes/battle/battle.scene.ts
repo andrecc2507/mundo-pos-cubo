@@ -18,7 +18,7 @@ import { diffNotices, snapshot, type Snapshot } from '../../battle/notices';
 import { reactionKey, restoreBattle, runWithReactions, snapshotBattle, type BattleSnapshot, type ReactionQuestion } from '../../battle/reaction_prompt';
 import { losBlocker } from '../../battle/los';
 import { describeSkill } from '../../bestiary/describe';
-import { BALANCE, BATTLE_TIME_SCALE, TACTICS, actionInterval } from '../../rules/stats';
+import { BALANCE, BATTLE_TIME_SCALE, TACTICS, WEAPONS, actionInterval } from '../../rules/stats';
 import { applyElementToTile, steerSmoke, unitAt } from '../../battle/elements';
 import {
   BASIC_ATTACK,
@@ -1630,6 +1630,8 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
         el.append(h('div', { class: 'gold', text: `Acerto ${p.chance}% · Dano ${p.min}–${p.max} · Crítico ${p.crit}%` }));
         el.append(h('div', { style: `font-size:11px;color:${p.min >= target.hp ? '#ff5252' : p.max >= target.hp ? '#ffb74d' : '#bdbdbd'}`, text: p.min >= target.hp ? '☠ Golpe letal se acertar' : p.max >= target.hp ? '☠ Pode matar (dano alto ou crítico)' : `Vida depois: ${Math.max(0, target.hp - p.max)}–${target.hp - p.min} de ${target.maxHp}` }));
         if (p.cover !== 'none') el.append(h('div', { style: 'color:#4fc3f7', text: `🛡 Alvo em cobertura ${p.cover === 'full' ? 'total (−40%)' : 'parcial (−20%)'}` }));
+        if (p.focus) el.append(h('div', { style: 'color:#81c784', text: `🎯 Foco +${p.focus}% (Sorte justa: errou ${u.focus} vez(es) seguida(s))` }));
+        if (p.flanked) el.append(h('div', { style: 'color:#ffb74d', text: `⚡ Flanqueado: a cobertura dele não protege deste lado (+${WEAPONS.flankCrit}% de crítico)` }));
         if (p.obscured) el.append(h('div', { style: 'color:#bdbdbd', text: `🌫 Fumaça no caminho (−${BALANCE.hit.obscuredPenalty}% de acerto; some se estiverem lado a lado)` }));
         if (p.adv) el.append(h('div', { style: `color:${p.adv > 0 ? '#81c784' : '#e57373'}`, text: p.adv > 0 ? '▲ Vantagem: rola o acerto duas vezes e fica com o melhor' : '▼ Desvantagem: rola o acerto duas vezes e fica com o pior' }));
         if (u.statuses.suprimido) el.append(h('div', { style: 'color:#ffb74d', text: `📌 Você está suprimido (−${TACTICS.suppressAccuracy}% de acerto)` }));

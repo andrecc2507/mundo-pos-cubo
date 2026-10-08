@@ -81,6 +81,13 @@ export interface Character {
   equipment: Equipment;
   appearance: Appearance;
   kills: number;
+  /** Ficha de serviço (rules/service.ts): apelido, missões lutadas e quando entrou no grupo (hora do jogo). */
+  nickname?: string;
+  missions?: number;
+  joinedAt?: number;
+  /** Veio do banco de personagens (id da entrada) e a frase sobre a pessoa. */
+  poolId?: string;
+  bio?: string;
   /** Habilidades que liberam escudo / duas armas (futuro). */
   canDualWield?: boolean;
   /** Lealdade (0–100): uso, nível, equipamento e atenção (world/loyalty.ts). */

@@ -14,7 +14,7 @@ import { battleMap, timeOfDayAt } from './maps';
 import { generateVillageMap } from '../mapgen/village_map';
 import { VILLAIN_LINES, makeBeast, makeBeastGrunt, makeGrunt, makeVillain } from '../demo/demo_squad';
 import type { Biome } from '../data';
-import { GEO_RULES, SUPPLIES, addLog, awayIds, difficulty, newId, withRng, type GeoAlert, type GeoGame, type Raid, type RoadEncounter, type Squad } from './game';
+import { GEO_RULES, SUPPLIES, addLog, awayIds, battleOptions, difficulty, newId, withRng, type GeoAlert, type GeoGame, type Raid, type RoadEncounter, type Squad } from './game';
 import { contractLevel, squadLevel } from './contracts';
 import { applyUnitOutcomes, checkGameOver, emptySummary, makeRecruit, makeSpecialist, type GeoResultSummary } from './people';
 import { PEOPLE_RULES, PROFESSIONS } from '../rules/perks';
@@ -99,6 +99,7 @@ export function raidBattle(g: GeoGame, defenders: BattleUnit[], rng: Rng): Battl
     traps,
     // Os atacantes sabem onde fica a vila: sem ninguém à vista, marcham para a praça.
     hunt: { enemy: plazaCenter(g.village.layout) },
+    ...battleOptions(g),
     victory: { type: 'survive', rounds: RA.survivalRounds },
     ambush: false,
     timeOfDay: timeOfDayAt(g.hours, g.village.at[0]),
@@ -237,6 +238,7 @@ export function encounterBattle(g: GeoGame, units: BattleUnit[], rng: Rng): Batt
     canFlee: true,
     seed,
     villainLines: enemies.some((u) => u.gift) ? VILLAIN_LINES : undefined,
+    ...battleOptions(g),
     context: { kind: 'encounter', geo: 'road', squadId: e.squadId, baseXp: 20 + e.level * 6, gold: 0, itemDrops: [], title: `${info.icon} ${info.name} — ${region.name}` },
   };
 }
@@ -314,6 +316,7 @@ export function resolveEncounterChoice(g: GeoGame, choice: EncounterChoice): str
       if (!o.recruit) return '';
       if (Object.keys(g.roster).length >= rosterCap(g)) return 'O grupo está cheio.';
       o.recruit.id = newId(g, 'ch');
+      o.recruit.joinedAt = g.hours;
       g.roster[o.recruit.id] = o.recruit;
       g.salaried.push(o.recruit.id);
       addLog(g, `🙋 ${o.recruit.name} se juntou ao grupo na estrada.`, 'good');

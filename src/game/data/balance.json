@@ -220,5 +220,10 @@
   "searchReach": 1,
   "searchRadius": 8,
   "nearSpawnChance": 0.5
+ },
+ "fairLuck": {
+  "_doc": "Sorte justa (opção da campanha, ligada por padrão em História e Normal): cada ataque errado seguido dá Foco à unidade do jogador — +perMiss de acerto no próximo ataque, até maxStacks. Acertar zera. Aparece na previsão de golpe.",
+  "perMiss": 10,
+  "maxStacks": 3
  }
 }

@@ -293,6 +293,13 @@ export const LIGHT = balance.light;
 export const TACTICS = balance.tactics;
 /** Névoa de guerra da IA: raios de barulho, pistas e procura (battle/intel.ts). */
 export const INTEL = balance.intel;
+/** Sorte justa: Foco (+acerto) depois de erros seguidos das unidades do jogador. */
+export const FAIR_LUCK = balance.fairLuck;
+
+/** Bônus de acerto do Foco acumulado (0 sem a opção ou fora do time do jogador). */
+export function focusBonus(stacks: number | undefined): number {
+  return Math.min(FAIR_LUCK.maxStacks, Math.max(0, stacks ?? 0)) * FAIR_LUCK.perMiss;
+}
 export const WEAPONS = balance.weapons;
 
 /**

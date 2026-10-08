@@ -2178,3 +2178,14 @@ select, input { background: #08121a; border: 1px solid #23414f; color: var(--fg)
   .hub-cols { grid-template-columns: 1fr; }
   .build-grid { grid-template-columns: 1fr; }
 }
+
+/* Ficha de serviço, memorial e relatório pós-missão */
+.rank-badge { font-family: var(--font-display); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(242, 181, 68, 0.45); padding: 1px 6px; border-radius: 2px; white-space: nowrap; }
+.sheet-nick { width: 120px; font-style: italic; }
+.memorial-card { border-left: 2px solid #4a5d68; }
+.memorial-card canvas { image-rendering: pixelated; filter: grayscale(0.7) brightness(0.85); }
+.memorial-epitaph { width: 100%; font-style: italic; font-size: 12px; background: transparent; border: none; border-bottom: 1px dashed #2a4553; color: #c9d6dc; padding: 2px 0; }
+.report-grid { display: flex; flex-direction: column; gap: 3px; }
+.report-row { display: grid; grid-template-columns: 28px 1fr auto auto auto; gap: 8px; align-items: center; padding: 3px 6px; border: 1px solid #17303b; border-radius: 2px; background: rgba(57, 197, 214, 0.03); }
+.report-row.mvp { border-color: var(--gold); background: rgba(242, 181, 68, 0.1); }
+.report-row canvas { image-rendering: pixelated; }

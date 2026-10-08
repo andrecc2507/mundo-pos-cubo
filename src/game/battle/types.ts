@@ -239,6 +239,8 @@ export interface BattleUnit {
   spawnAt?: [number, number, number];
   /** IA sem ninguém à vista: ponto que está vasculhando (battle/intel.ts). */
   searchAt?: [number, number];
+  /** Sorte justa: ataques errados seguidos (cada um dá acerto no próximo). */
+  focus?: number;
   /** Chefe: fases disparadas ao cair abaixo de uma fração da vida. */
   phases?: BossPhase[];
   /** Chefe de missão da história (barra de vida no topo). */
@@ -370,6 +372,8 @@ export interface BattleState {
   intelSeen?: Partial<Record<Team, string[]>>;
   /** Para onde cada time marcha quando não vê ninguém nem tem pista (BattleSetup.hunt). */
   huntAt?: Partial<Record<Team, [number, number]>>;
+  /** Sorte justa ligada nesta batalha. */
+  fairLuck?: boolean;
   time: number;
   round: number;
   nextRoundAt: number;
@@ -513,6 +517,8 @@ export interface BattleSetup {
   traps?: Omit<Trap, 'ownerUid' | 'armed'>[];
   /** Para onde cada time marcha quando não vê ninguém (ataque à vila: os atacantes vão para a praça). */
   hunt?: Partial<Record<Team, [number, number]>>;
+  /** Sorte justa: erros seguidos do jogador dão Foco (+acerto) no próximo ataque. */
+  fairLuck?: boolean;
 }
 
 export type ObjectiveKind = 'cela' | 'bau' | 'documentos' | 'runas';
@@ -548,6 +554,8 @@ export interface UnitOutcome {
   lowHp?: number;
   kills: number;
   killXp: number;
+  /** Dano causado na luta (relatório pós-missão). */
+  dealt?: number;
   items: (string | null)[];
   feats?: string[];
   /** Técnicas usadas na luta (Maestria por uso). */

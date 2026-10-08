@@ -4,6 +4,7 @@ import { regionById } from '../geo/world';
 import { stageDef } from '../geo/village';
 import { migrateLayout } from '../geo/village_layout';
 import { emptyResearch } from '../geo/research';
+import { loadPool } from './character_pool';
 
 /** Espaços de save do Mundo Pós-Cubo (separados dos do molde). */
 export const GEO_SLOTS = ['mundo_1', 'mundo_2', 'mundo_3'];
@@ -21,8 +22,10 @@ export function saveGeo(save: SaveService, slot = geoStore.slot): void {
   geoStore.slot = slot;
 }
 
+/** Salvamento automático (no Ironman, no próprio espaço da campanha: não existe outra cópia). */
 export function autosaveGeo(save: SaveService): void {
-  if (geoStore.game) save.save(GEO_AUTO, geoStore.game);
+  if (!geoStore.game) return;
+  save.save(geoStore.game.settings?.ironman ? geoStore.slot : GEO_AUTO, geoStore.game);
 }
 
 export function loadGeo(save: SaveService, slot: string): boolean {
@@ -37,6 +40,9 @@ export function loadGeo(save: SaveService, slot: string): boolean {
   g.specialistPool ??= [];
   g.nextRaidAt ??= g.hours + 24 * 10;
   g.research ??= emptyResearch();
+  g.settings ??= { fairLuck: g.difficulty !== 'dificil', ironman: false };
+  // O banco de personagens vale para todas as campanhas: a mais nova versão entra no jogo carregado.
+  g.pool = loadPool();
   g.engineering ??= { queue: [] };
   // Saves de antes da planta da vila: as instalações viram construções no terreno.
   migrateLayout(g);
@@ -66,7 +72,7 @@ export function geoSlotInfo(save: SaveService, slot: string): string | null {
     const g = save.load<GeoGame>(slot);
     if (!g) return null;
     const hero = g.roster[g.protagonistId]?.name ?? 'Protagonista';
-    return `${g.village.name} (${regionById(g.village.regionId)?.name}) · ${stageDef(g).name} · ${hero} · ${clockLabel(g.hours)} · ${DIFFICULTIES[g.difficulty ?? 'normal']?.name ?? ''}${g.gameOver ? ' · FIM' : ''}`;
+    return `${g.village.name} (${regionById(g.village.regionId)?.name}) · ${stageDef(g).name} · ${hero} · ${clockLabel(g.hours)} · ${DIFFICULTIES[g.difficulty ?? 'normal']?.name ?? ''}${g.settings?.ironman ? ' · 🔒 Ironman' : ''}${g.gameOver ? ' · FIM' : ''}`;
   } catch {
     return 'Save ilegível';
   }

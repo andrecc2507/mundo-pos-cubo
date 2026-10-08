@@ -342,7 +342,9 @@
  "pool": {
   "classDeficitWeight": 0.25,
   "repeatGiftPenalty": 0.5,
-  "specialistsPerLevy": 2
+  "specialistsPerLevy": 2,
+  "characterPoolChance": 0.4,
+  "_characterPoolDoc": "Banco de personagens (state/character_pool.ts): cada candidato a recruta tem esta chance de ser alguém do banco (nome, apelido e visual do jogador), se houver alguém do banco que ainda não está no grupo nem na leva."
  },
  "specialists": {
   "salaryPerDay": 3,

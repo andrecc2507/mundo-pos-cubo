@@ -13,7 +13,7 @@ import { makeCharacter } from '../rules/recruit';
 import type { Character } from '../rules/character';
 import type { Biome } from '../data';
 import CONTRACTS from '../data/geo/contracts.json';
-import { GEO_RULES, addLog, dayOf, difficulty, newId, type Contract, type GeoGame, type Supply } from './game';
+import { GEO_RULES, addLog, dayOf, difficulty, newId, type Contract, type GeoGame, type Supply, battleOptions } from './game';
 import { effect } from './village';
 import { REGIONS, distanceKm, randomPointInRegion, regionById, type LonLat } from './world';
 import { POLITICS, changeRep, isHostile } from './politics';
@@ -290,6 +290,7 @@ export function contractBattle(g: GeoGame, c: Contract, squad: BattleUnit[], rng
     stealthStart: def.stealth,
     patrol: def.patrol,
     roundLimit: def.roundLimit,
+    ...battleOptions(g),
     villainLines: enemies.some((u) => u.gift) ? VILLAIN_LINES : undefined,
     context: {
       kind: 'contract',

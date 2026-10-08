@@ -80,6 +80,17 @@ export interface MemorialEntry {
   gift?: string;
   at: number;
   cause: string;
+  /** Ficha de serviço no dia da queda. */
+  nickname?: string;
+  level?: number;
+  kills?: number;
+  missions?: number;
+  days?: number;
+  /** Missão em que caiu (título). */
+  mission?: string;
+  /** Epitáfio escrito pelo jogador. */
+  epitaph?: string;
+  appearance?: import('../rules/character').Appearance;
 }
 
 export interface LogEntry {
@@ -151,6 +162,35 @@ export interface GeoGame {
   /** Pesquisa (projeto atual, feitos, progresso) e fila da Engenharia (geo/research.ts). */
   research: ResearchState;
   engineering: { queue: EngineeringJob[] };
+  /** Opções escolhidas no novo jogo. */
+  settings: CampaignSettings;
+  /** Banco de personagens do jogador (state/character_pool.ts): candidatos a recruta com nome e visual dele. */
+  pool?: PoolPerson[];
+}
+
+/** Pessoa do banco de personagens (mesmo formato de state/character_pool.ts → PoolEntry). */
+export interface PoolPerson {
+  id: string;
+  name: string;
+  nickname?: string;
+  appearance: import('../rules/character').Appearance;
+  bio?: string;
+}
+
+/** Opções da campanha (novo jogo). */
+export interface CampaignSettings {
+  /** Sorte justa: erros seguidos dão Foco (+acerto) no próximo ataque. */
+  fairLuck: boolean;
+  /** Ironman: um só save automático, sem salvar à mão e sem voltar turno. */
+  ironman: boolean;
+}
+
+/** Opções que toda batalha do mapa-múndi leva (Sorte justa, voltas de turno no Ironman). */
+export function battleOptions(g: GeoGame): { fairLuck?: boolean; difficulty?: { enemyHp: number; enemyDmg: number; undo: number; permadeath: boolean } } {
+  return {
+    fairLuck: g.settings?.fairLuck || undefined,
+    difficulty: g.settings?.ironman ? { enemyHp: 1, enemyDmg: 1, undo: 0, permadeath: true } : undefined,
+  };
 }
 
 /** Especialista da vila: profissão do mundo antigo; designado a uma instalação, melhora o efeito dela. */

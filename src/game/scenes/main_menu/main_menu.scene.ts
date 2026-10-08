@@ -11,6 +11,7 @@ import { IsoCamera } from '../../render/iso';
 import { drawBattle } from '../../render/battle_renderer';
 import { GEO_AUTO, GEO_SLOTS, geoSlotInfo, latestGeoSlot, loadGeo } from '../../state/geo_store';
 import { openOptions } from '../shared/options_screen';
+import { openCharacterPool } from '../shared/pool_screen';
 import { unitFromEnemy } from '../../battle/units';
 import { DB } from '../../data';
 import { Rng } from '@core';
@@ -52,6 +53,7 @@ export class MainMenuScene extends Scene {
           item(t('Novo jogo'), () => this.ctx.scenes.go('geo_creation')),
           item(t('Carregar'), () => this.openGeoLoad(), { disabled: !hasSave }),
           item(t('⚔ Demo de batalha'), () => this.ctx.scenes.go('demo')),
+          item(t('Banco de personagens'), () => openCharacterPool()),
           item(t('Opções'), () => openOptions(() => this.ctx.scenes.go('main_menu'))),
           h('div', { class: 'title-sep' }),
           item(t('Bestiário'), () => this.ctx.scenes.go('bestiary'), { small: true }),

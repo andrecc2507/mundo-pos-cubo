@@ -19,6 +19,7 @@ import { giftDef } from '../../rules/gifts';
 import { normalizeAppearance } from '../../rules/appearance';
 import { RARITY_COLOR, stars } from '../shared/hero_sheet';
 import { appearanceCanvas } from '../shared/appearance_editor';
+import { rankOf } from '../../rules/service';
 import { itemStatLine } from '../shared/item_text';
 import { fmtHours, type HubApi, type ScreenId } from './hub_api';
 
@@ -46,8 +47,8 @@ export function soldierCard(hub: HubApi, c: Character, opts: { onClick?: () => v
   return h('div', { class: `soldier${opts.state ? ` ${opts.state}` : ''}`, style: `border-left:3px solid ${cls.color}`, onClick: opts.onClick ?? (() => undefined) },
     appearanceCanvas(normalizeAppearance(c.appearance, c.id), opts.compact ? 2 : 3, c.classId),
     h('div', { class: 'col', style: 'gap:1px;min-width:0;flex:1' },
-      h('div', { class: 'sn', text: `${c.id === g.protagonistId ? '★ ' : ''}${c.name}${pts ? ' •' : ''}` }),
-      h('div', { class: 'sc', text: `${cls.name} · NV ${c.level}` }),
+      h('div', { class: 'sn', text: `${c.id === g.protagonistId ? '★ ' : ''}${c.name}${c.nickname ? ` “${c.nickname}”` : ''}${pts ? ' •' : ''}` }),
+      h('div', { class: 'sc', text: `${rankOf(c.level).icon} ${rankOf(c.level).name} · ${cls.name} · NV ${c.level}` }),
       h('div', { class: 'sc', style: `color:${gd ? RARITY_COLOR[gd.rarity] : '#8797a2'}`, text: gd ? `${stars(shown)} ${gd.name}` : 'Sem Dom' }),
       opts.compact ? '' : bar(Math.min(c.hp, d.maxHp), d.maxHp, '#6fd18a', `HP ${Math.min(c.hp, d.maxHp)}/${d.maxHp}`),
       status ? h('div', { class: 'sc', style: `color:${away ? '#4fb3e8' : '#e98b80'}`, text: status }) : '',
@@ -268,12 +269,32 @@ function memorialScreen(body: HTMLElement, hub: HubApi): string {
   const g = hub.g;
   if (!g.memorial.length) body.append(h('div', { class: 'hint-line', text: 'Ninguém caiu. Que continue assim.' }));
   const grid = h('div', { class: 'hub-cards' });
-  for (const m of [...g.memorial].reverse())
-    grid.append(h('div', { class: 'rcard' },
-      h('div', { class: 'rt' }, h('span', { class: 'ic', text: '🕯' }), h('span', { text: m.name })),
-      h('div', { class: 'hint-line', text: `${(DB.classes as Record<string, { name: string } | undefined>)[m.classId]?.name ?? m.classId}${m.gift ? ` · ${giftDef(m.gift)?.name}` : ''}` }),
+  for (const m of [...g.memorial].reverse()) {
+    const epitaph = h('input', { value: m.epitaph ?? '', placeholder: 'Escreva um epitáfio…', class: 'memorial-epitaph' }) as HTMLInputElement;
+    epitaph.maxLength = 90;
+    epitaph.addEventListener('change', () => {
+      m.epitaph = epitaph.value.trim() || undefined;
+      hub.save();
+    });
+    const rank = m.level ? rankOf(m.level) : undefined;
+    grid.append(h('div', { class: 'rcard memorial-card' },
+      h('div', { class: 'row', style: 'gap:8px;align-items:center;flex-wrap:nowrap' },
+        m.appearance ? appearanceCanvas(m.appearance, 3, m.classId as never) : h('span', { class: 'ic', text: '🕯' }),
+        h('div', { class: 'col', style: 'gap:0;min-width:0' },
+          h('b', { text: `${rank ? `${rank.icon} ${rank.name} ` : ''}${m.name}${m.nickname ? ` “${m.nickname}”` : ''}` }),
+          h('span', { class: 'hint-line', text: `${(DB.classes as Record<string, { name: string } | undefined>)[m.classId]?.name ?? m.classId}${m.gift ? ` · ${giftDef(m.gift)?.name}` : ''}${m.level ? ` · NV ${m.level}` : ''}` }),
+        ),
+      ),
       h('div', { class: 'rd', text: `${m.cause} — ${clockLabel(m.at)}` }),
+      m.mission ? h('div', { class: 'hint-line', text: `Missão: ${m.mission}` }) : '',
+      h('div', { class: 'stat-chips' },
+        m.missions !== undefined ? h('span', { class: 'chip', text: `${m.missions} missões` }) : '',
+        m.kills !== undefined ? h('span', { class: 'chip', text: `${m.kills} abates` }) : '',
+        m.days !== undefined ? h('span', { class: 'chip', text: `${m.days} dias de serviço` }) : '',
+      ),
+      epitaph,
     ));
+  }
   body.append(grid);
   if (g.legacies.length) {
     body.append(h('div', { class: 'hub-sub', text: `Legados (${g.activeLegacies.length}/${LEGACY_RULES.capacity} ativos)` }));

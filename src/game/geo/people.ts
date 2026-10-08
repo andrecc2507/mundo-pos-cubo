@@ -14,11 +14,12 @@ import { ORIGINS, PEOPLE_RULES, PROFESSIONS, affinityMasteryMult, perkEvent, rol
 import { DB } from '../data';
 import { POLITICS, changeRep } from './politics';
 import { regionById } from './world';
-import { GEO_RULES, SUPPLY_LABEL, addLog, awayIds, newId, type GeoGame, type Specialist, type Supply } from './game';
+import { GEO_RULES, SUPPLY_LABEL, addLog, awayIds, newId, type GeoGame, type PoolPerson, type Specialist, type Supply } from './game';
 import { sendHome } from './squads';
 import { createLegacy, legacyBonus } from './legacy';
 import { gainSynergy } from '../rules/duo';
 import { effect, foodStorage, rosterCap } from './village';
+import { daysOfService, displayName, rankUp } from '../rules/service';
 
 const R = GEO_RULES.recruits;
 const CLASS_WEAPON: Record<DemoClass, string> = { impacto: 'soco_ingles', movimento: 'pistola_9mm', suporte: 'pistola_9mm', controle: 'fuzil_assalto' };
@@ -43,6 +44,8 @@ export interface RecruitContext {
   newId: () => string;
   /** Nomes já usados (ninguém confunde duas "Bia" na ficha); o sorteio acrescenta o novo. */
   names: Set<string>;
+  /** Pessoas do banco de personagens ainda livres (quem sai numa leva é tirado daqui). */
+  pool?: PoolPerson[];
 }
 
 /** Nomes em uso na vila: grupo, especialistas e candidatos à vista. */
@@ -63,7 +66,10 @@ export function freshName(rng: Rng, used: Set<string>, pool: readonly string[] =
 export function recruitContext(g: GeoGame, taken: Set<string> = new Set(Object.values(g.roster).map((c) => c.gift?.id ?? '').filter(Boolean))): RecruitContext {
   const classCount: Record<string, number> = {};
   for (const c of Object.values(g.roster)) classCount[c.classId] = (classCount[c.classId] ?? 0) + 1;
-  return { levels: Object.values(g.roster).map((c) => c.level), classCount, taken, reveal: effect(g, 'revealPotential') > 0, newId: () => newId(g, 'ch'), names: namesInUse(g) };
+  // Do banco de personagens, só quem não está no grupo nem na leva atual.
+  const inUse = new Set([...Object.values(g.roster), ...g.recruits].map((c) => c.poolId).filter(Boolean));
+  const pool = (g.pool ?? []).filter((p) => !inUse.has(p.id));
+  return { levels: Object.values(g.roster).map((c) => c.level), classCount, taken, reveal: effect(g, 'revealPotential') > 0, newId: () => newId(g, 'ch'), names: namesInUse(g), pool };
 }
 
 /**
@@ -103,6 +109,16 @@ export function rollRecruit(rng: Rng, ctx: RecruitContext): Character {
   const potential = rollPotential(rng);
   const c = makeMember(rng, { name: freshName(rng, ctx.names), classId, level, gift: giftId, potential, weapon: CLASS_WEAPON[classId], armor: null, utility: [null, null, null] });
   c.id = ctx.newId();
+  // Às vezes é alguém do banco de personagens do jogador (nome, apelido e visual dele).
+  if (ctx.pool?.length && rng.chance(PEOPLE_RULES.pool.characterPoolChance)) {
+    const p = ctx.pool.splice(rng.int(0, ctx.pool.length - 1), 1)[0]!;
+    c.name = p.name;
+    c.nickname = p.nickname;
+    c.appearance = structuredClone(p.appearance);
+    c.poolId = p.id;
+    c.bio = p.bio;
+    ctx.names.add(p.name);
+  }
   c.origin = originId;
   c.profession = rollProfession(rng);
   c.affinity = rollAffinity(rng, classId);
@@ -178,6 +194,7 @@ export function hire(g: GeoGame, i: number): Character | null {
   if (hireBlock(g, i)) return null;
   const c = g.recruits.splice(i, 1)[0]!;
   g.money -= hireCost(c);
+  c.joinedAt = g.hours;
   g.roster[c.id] = c;
   g.salaried.push(c.id);
   addLog(g, `🤝 ${c.name} entrou para o grupo.`, 'good');
@@ -245,6 +262,21 @@ export interface GeoResultSummary {
   /** Técnicas que subiram de nível pela Maestria. */
   mastery: string[];
   gameOver?: string;
+  /** Relatório pós-missão: uma linha por herói que lutou. */
+  report?: ReportRow[];
+}
+
+/** Linha do relatório pós-missão. */
+export interface ReportRow {
+  charId: string;
+  name: string;
+  kills: number;
+  dealt: number;
+  status: 'ok' | 'ferido' | 'grave' | 'caido' | 'morto';
+  woundDays?: number;
+  levelUp?: number;
+  rankUp?: string;
+  mvp?: boolean;
 }
 
 /**
@@ -256,10 +288,14 @@ export function applyUnitOutcomes(g: GeoGame, result: BattleResult, sum: GeoResu
   // Sinergia: quem lutou junto (e sobreviveu) se aproxima.
   gainSynergy(outcomes.filter((u) => u.alive).map((u) => g.roster[u.charId]!), result.outcome === 'victory');
   const anySurvivor = outcomes.some((u) => u.alive);
+  const report: ReportRow[] = (sum.report = []);
   for (const u of outcomes) {
     const ch = g.roster[u.charId]!;
     ch.kills += u.kills;
+    ch.missions = (ch.missions ?? 0) + 1;
     g.stats.kills += u.kills;
+    const row: ReportRow = { charId: ch.id, name: displayName(ch), kills: u.kills, dealt: u.dealt ?? 0, status: 'ok' };
+    report.push(row);
     ch.equipment.utility = [...u.items];
     // Recuo: quem ainda sangrava é carregado pelos que fugiram e volta gravemente ferido.
     if (!u.alive && u.bleeding && result.outcome === 'fled' && anySurvivor && GEO_RULES.wounds.carryOutOnFlee) {
@@ -267,6 +303,8 @@ export function applyUnitOutcomes(g: GeoGame, result: BattleResult, sum: GeoResu
       ch.woundDays = Math.max(ch.woundDays, stats.BALANCE.wounds.daysAtZero);
       ch.severeWound = true;
       sum.lines.push(`${ch.name} caiu sangrando — os outros o carregaram na fuga.`);
+      row.status = 'caido';
+      row.woundDays = Math.ceil(ch.woundDays);
       continue;
     }
     if (!u.alive) {
@@ -276,9 +314,25 @@ export function applyUnitOutcomes(g: GeoGame, result: BattleResult, sum: GeoResu
         ch.woundDays = Math.max(ch.woundDays, stats.BALANCE.wounds.daysAtZero);
         ch.severeWound = true;
         sum.lines.push(`${ch.name} caiu desacordado — os amigos o tiraram de lá.`);
+        row.status = 'caido';
+        row.woundDays = Math.ceil(ch.woundDays);
         continue;
       }
-      g.memorial.push({ name: ch.name, classId: ch.classId, gift: ch.gift?.id, at: g.hours, cause });
+      row.status = 'morto';
+      g.memorial.push({
+        name: ch.name,
+        classId: ch.classId,
+        gift: ch.gift?.id,
+        at: g.hours,
+        cause,
+        nickname: ch.nickname,
+        level: ch.level,
+        kills: ch.kills,
+        missions: ch.missions,
+        days: daysOfService(ch, g.hours),
+        mission: result.context.title,
+        appearance: ch.appearance,
+      });
       const lg = createLegacy(g, ch);
       if (lg) sum.lines.push(`🕯 ${ch.name} deixou um legado: ${lg.title} — ${lg.text}`);
       delete g.roster[u.charId];
@@ -303,17 +357,28 @@ export function applyUnitOutcomes(g: GeoGame, result: BattleResult, sum: GeoResu
     if (days > 0) {
       ch.woundDays = Math.max(ch.woundDays, days);
       ch.severeWound = stats.severeWound(u.hp / Math.max(1, u.maxHp));
+      row.status = ch.severeWound ? 'grave' : 'ferido';
+      row.woundDays = Math.ceil(ch.woundDays);
     }
     const before = ch.level;
     gainXp(ch, Math.round((result.context.baseXp + (u.killXp ?? 0)) * (1 + legacyBonus(g, 'xp') / 100)));
     // Os pontos novos ficam para gastar na vila (ficha do herói).
-    if (ch.level > before) sum.levelUps.push(`${ch.name} → NV ${ch.level}`);
+    if (ch.level > before) {
+      sum.levelUps.push(`${ch.name} → NV ${ch.level}`);
+      row.levelUp = ch.level;
+      const r = rankUp(before, ch.level);
+      if (r) row.rankUp = r.name;
+      row.name = displayName(ch);
+    }
     // Maestria por uso: o que foi usado na luta melhora.
     for (const id of gainMastery(ch, u.castLog, (sid) => !!DB.skills[sid]?.gift, (sid) => affinityMasteryMult(ch, sid) * (1 + legacyBonus(g, 'mastery') / 100))) {
       const m = masteryOf(ch, id);
       sum.mastery.push(`${ch.name}: ${DB.skills[id]?.name ?? id} ${m >= 100 ? '— Maestria 100! Escolha a variante na ficha' : `→ Nv ${masteryRank(m)}`}`);
     }
   }
+  // Destaque da missão: quem mais derrubou e mais dano causou.
+  const best = [...report].sort((a, b) => b.kills * 40 + b.dealt - (a.kills * 40 + a.dealt))[0];
+  if (best && (best.kills > 0 || best.dealt > 0)) best.mvp = true;
 }
 
 /** Fim de jogo: protagonista morto ou grupo vazio. */

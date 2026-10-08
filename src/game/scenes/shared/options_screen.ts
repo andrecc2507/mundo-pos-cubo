@@ -63,7 +63,7 @@ export function openOptions(onChange?: () => void): void {
           );
         } else if (tab === 'acessibilidade') {
           content.append(
-            row('Tamanho da fonte', slider(settings.fontScale, 0.85, 1.4, 0.05, (v) => ((settings.fontScale = v), saveSettings()), (v) => `${Math.round(v * 100)}%`)),
+            row('Tamanho da interface', slider(settings.fontScale, 0.85, 1.4, 0.05, (v) => ((settings.fontScale = v), saveSettings()), (v) => `${Math.round(v * 100)}%`)),
             row('Modo de cor', choice(Object.keys(COLOR_MODE_LABEL) as ColorMode[], settings.colorMode, (v) => COLOR_MODE_LABEL[v], (v) => (settings.colorMode = v))),
             h('div', { class: 'muted', style: 'font-size:12px;margin-top:6px', text: 'O modo de cor troca as cores de aliados e inimigos (barras, marcadores e painéis) por pares que continuam distintos para cada tipo de daltonismo.' }),
           );

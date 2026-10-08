@@ -1,0 +1,13 @@
+{
+ "_doc": "Patentes por nível (rules/service.ts): sobem sozinhas com o nível e aparecem antes do nome (insígnia e abreviação). O relatório pós-missão avisa quem subiu de patente.",
+ "ranks": [
+  { "level": 1, "name": "Recruta", "short": "Rct", "icon": "·" },
+  { "level": 3, "name": "Soldado", "short": "Sd", "icon": "▴" },
+  { "level": 5, "name": "Cabo", "short": "Cb", "icon": "▴▴" },
+  { "level": 8, "name": "Sargento", "short": "Sgt", "icon": "▴▴▴" },
+  { "level": 11, "name": "Tenente", "short": "Ten", "icon": "◆" },
+  { "level": 14, "name": "Capitão", "short": "Cap", "icon": "◆◆" },
+  { "level": 17, "name": "Major", "short": "Maj", "icon": "★" },
+  { "level": 20, "name": "Coronel", "short": "Cel", "icon": "★★" }
+ ]
+}

@@ -185,6 +185,7 @@ export function createBattle(setup: BattleSetup): BattleState {
   }
   placeMissionPieces(state, setup);
   if (setup.hunt) state.huntAt = setup.hunt;
+  if (setup.fairLuck) state.fairLuck = true;
   // Armadilhas do mapa (as da vila): armadas desde o começo e invisíveis para o outro lado.
   for (const t of setup.traps ?? []) (state.traps ??= []).push({ ...t, ownerUid: `map_${t.team}`, armed: true, spotted: [t.team] });
   if (setup.stealthStart) for (const u of state.units) if (u.team === 'player' && !u.bound) u.hidden = true;
@@ -1060,6 +1061,8 @@ export interface HitPreview {
   adv?: number;
   /** Flanqueado (XCOM): tem cobertura, mas não contra este atirador. */
   flanked?: boolean;
+  /** Sorte justa: acerto a mais pelo Foco (erros seguidos). */
+  focus?: number;
 }
 
 type HitKind = 'basic' | SkillDef['kind'];
@@ -1127,6 +1130,9 @@ export function previewHit(state: BattleState, a: BattleUnit, d: BattleUnit, kin
   else chance = stats.physicalHitChance(a.accuracy + accBonus + m.accuracy, d.evasion + m.evasion, heightDiff(state, a, d) * h.heightBonus - (d.defending ? h.defendingPenalty : 0) - COVER_PENALTY[cover]);
   // Sob supressão: mira tremida.
   if (a.statuses.suprimido) chance -= stats.TACTICS.suppressAccuracy;
+  // Sorte justa: cada erro seguido do jogador vira Foco no próximo ataque.
+  const focus = state.fairLuck && a.team === 'player' ? stats.focusBonus(a.focus) : 0;
+  chance += focus;
   const obscured = !!obscuredBy(state.map, a.x, a.y, d.x, d.y, a.uid);
   // Névoa lunar: quem a lançou crava críticos dentro dela.
   const under = tileAt(state.map, a.x, a.y);
@@ -1140,7 +1146,7 @@ export function previewHit(state: BattleState, a: BattleUnit, d: BattleUnit, kin
   if (m.immune) return { chance: 0, min: 0, max: 0, crit: 0, cover };
   // Flanco (XCOM): o alvo tem cobertura, mas não contra quem atira — crítico extra.
   const flanked = !magic && cover === 'none' && chebyshev(a.x, a.y, d.x, d.y) > 1 && coverSides(state.map, d.x, d.y).length > 0;
-  return { chance: Math.round(chance), min: Math.max(1, Math.floor(dmg * 0.9)), max: Math.max(1, Math.ceil(dmg * 1.1)), crit: Math.min(100, a.crit + m.crit + cloudCrit + (flanked ? stats.WEAPONS.flankCrit : 0)), cover, obscured, adv, flanked };
+  return { chance: Math.round(Math.min(100, chance)), min: Math.max(1, Math.floor(dmg * 0.9)), max: Math.max(1, Math.ceil(dmg * 1.1)), crit: Math.min(100, a.crit + m.crit + cloudCrit + (flanked ? stats.WEAPONS.flankCrit : 0)), cover, obscured, adv, flanked, focus: focus || undefined };
 }
 
 /** Soma de vantagens (+1) e desvantagens (−1) do ataque de `a` em `d`: −1, 0 ou +1. */
@@ -1258,6 +1264,8 @@ export function resolveAttack(state: BattleState, a: BattleUnit, d: BattleUnit, 
   const p = previewHit(state, a, d, kind, power, el, accBonus, mult, sk);
   const magic = kind === 'magic';
   if (p.max <= 0 || !state.rng.chance(p.chance / 100)) {
+    // Sorte justa: errar dá Foco para o próximo ataque.
+    if (state.fairLuck && a.team === 'player' && p.max > 0) a.focus = Math.min(stats.FAIR_LUCK.maxStacks, (a.focus ?? 0) + 1);
     state.events.push({ type: 'miss', uid: d.uid });
     state.log.push(p.max <= 0 ? `${d.name} é imune ao golpe de ${a.name}.` : `${a.name} errou ${d.name}.`);
     // Tiro que erra um alvo protegido acerta a cobertura (dano médio, sem sorteio a mais).
@@ -1265,6 +1273,7 @@ export function resolveAttack(state: BattleState, a: BattleUnit, d: BattleUnit, 
     if (cover) damageProp(state, cover[0], cover[1], Math.round((p.min + p.max) / 2));
     return false;
   }
+  if (a.focus) delete a.focus;
   const crit = state.rng.chance(p.crit / 100);
   let amount = Math.round(state.rng.range(p.min, p.max));
   if (crit) amount = Math.round(amount * fx.critMult(a));
@@ -2363,6 +2372,7 @@ export function buildResult(state: BattleState, context: BattleContext): BattleR
         lowHp: Math.min(u.lowHp ?? u.hp, u.hp),
         kills: u.kills,
         killXp: u.killXp,
+        dealt: Math.round(u.dealt ?? 0),
         items: [...u.items],
         feats: u.feats,
         castLog: u.castLog ? { ...u.castLog } : undefined,

@@ -20,6 +20,8 @@ import { squadUnits } from '../../geo/legacy';
 import { applyEncounterResult, applyRaidResult, defendersAvailable, encounterBattle, encounterInfo, fleeEncounter, raidBattle, raidLabel, resolveEncounterChoice, resolveRaidAuto, type EncounterChoice } from '../../geo/events';
 import { GEO_SLOTS, autosaveGeo, geoSlotInfo, geoStore, saveGeo } from '../../state/geo_store';
 import { HeroSheet } from '../shared/hero_sheet';
+import { appearanceCanvas } from '../shared/appearance_editor';
+import { daysOfService } from '../../rules/service';
 import { VillageView } from './village_view';
 import { SCREENS, soldierCard } from './screens';
 import { fmtHours, type HubApi, type ScreenId } from './hub_api';
@@ -383,7 +385,9 @@ export class GeoscapeScene extends Scene implements HubApi {
         res('★', `${overallReputation(g)}`, 'reputação'),
         res('🛡', d.score.toFixed(1), d.enclosed ? 'cercada' : 'aberta', d.enclosed ? 'good' : ''),
       ),
-      btn('💾', () => this.saveMenu(), { class: 'small', title: 'Salvar' }),
+      g.settings?.ironman
+        ? h('span', { class: 'chip amber', title: 'Ironman: o jogo salva sozinho, num só espaço', text: '🔒 Ironman' })
+        : btn('💾', () => this.saveMenu(), { class: 'small', title: 'Salvar' }),
       btn('☰', () => (saveGeo(this.ctx.save), this.ctx.scenes.go('main_menu')), { class: 'small', title: 'Menu principal (salva antes)' }),
     );
   }
@@ -579,6 +583,7 @@ export class GeoscapeScene extends Scene implements HubApi {
       onChange: () => (draw(), this.refresh()),
       redraw: () => draw(),
       shownPotential: (x) => x.gift?.shownPotential ?? x.gift?.potential ?? 0,
+      service: (x) => `${x.missions ?? 0} missões · ${x.kills} abates · ${daysOfService(x, g.hours)} dias de serviço`,
       reset: { cost: resetCost(g, c), run: () => resetBuild(g, c) },
       equip: {
         options: (x, slot) => Object.keys(g.stock).filter((id) => (g.stock[id] ?? 0) > 0 && DB.items[id]?.slot === slot && canEquip(x, id)),
@@ -683,15 +688,38 @@ export class GeoscapeScene extends Scene implements HubApi {
     const win = sum.outcome === 'victory';
     const title = kind === 'raid' ? (win ? '🛡 A vila resistiu' : '🔥 A vila caiu') : kind === 'road' ? (win ? '✔ Estrada livre' : '↩ O esquadrão recuou') : win ? '✔ Contrato cumprido' : '✖ Contrato perdido';
     modal(title, (body, m) => {
+      body.append(h('h3', { text: sum.title }));
+      if (sum.report?.length) body.append(this.reportTable(sum));
       body.append(
-        h('h3', { text: sum.title }),
         ...sum.lines.map((l) => h('p', { text: l })),
         sum.levelUps.length ? h('p', { class: 'gold', text: `Subiram de nível: ${sum.levelUps.join(', ')} (gaste os pontos em 🪖 Esquadrão).` }) : '',
         sum.mastery.length ? h('p', { class: 'muted', text: `Maestria: ${sum.mastery.join(' · ')}` }) : '',
         sum.dead.length ? h('p', { style: 'color:#e98b80', text: `☠ Mortos: ${sum.dead.join(', ')}. Os nomes vão para o 🕯 Memorial.` }) : '',
         h('div', { class: 'row', style: 'justify-content:flex-end' }, btn('Continuar', () => (m.close(), this.g.gameOver && this.showGameOver()), { class: 'primary' })),
       );
-    });
+    }, { wide: true });
+  }
+
+  /** Relatório pós-missão: retrato, abates, dano, estado, nível e patente; o destaque ganha ★. */
+  private reportTable(sum: ReturnType<typeof applyContractResult>): HTMLElement {
+    const STATUS: Record<string, [string, string]> = { ok: ['✔ inteiro', '#8fdca5'], ferido: ['✚ ferido', '#f2b544'], grave: ['✚ ferido grave', '#e98b80'], caido: ['⬇ caiu, foi carregado', '#e98b80'], morto: ['☠ morreu', '#e05545'] };
+    const grid = h('div', { class: 'report-grid' });
+    for (const r of sum.report!) {
+      const c = this.g.roster[r.charId];
+      const [label, color] = STATUS[r.status]!;
+      grid.append(h('div', { class: `report-row${r.mvp ? ' mvp' : ''}` },
+        c ? appearanceCanvas(c.appearance, 2, c.classId) : h('span', { text: '🕯' }),
+        h('div', { class: 'col', style: 'gap:0;min-width:0' },
+          h('b', { text: `${r.mvp ? '★ ' : ''}${r.name}` }),
+          h('span', { style: `font-size:11px;color:${color}`, text: `${label}${r.woundDays ? ` (${r.woundDays}d)` : ''}` }),
+        ),
+        h('span', { class: 'chip', text: `${r.kills} abate(s)` }),
+        h('span', { class: 'chip', text: `${r.dealt} de dano` }),
+        r.levelUp ? h('span', { class: 'chip amber', text: `NV ${r.levelUp}${r.rankUp ? ` · ${r.rankUp}` : ''}` }) : h('span', {}),
+      ));
+    }
+    const mvp = sum.report!.find((r) => r.mvp);
+    return h('div', { class: 'col', style: 'gap:4px' }, mvp ? h('div', { class: 'gold', text: `★ Destaque da missão: ${mvp.name}` }) : '', grid);
   }
 
   private showGameOver(): void {

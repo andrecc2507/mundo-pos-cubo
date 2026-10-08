@@ -13,6 +13,7 @@ import { normalizeAppearance, randomLook } from '../../rules/appearance';
 import { ORIGINS, PROFESSIONS, perkLabel } from '../../rules/perks';
 import type { Character } from '../../rules/character';
 import { GEO_SLOTS, geoStore, saveGeo } from '../../state/geo_store';
+import { loadPool } from '../../state/character_pool';
 import { RARITY_COLOR, stars } from '../shared/hero_sheet';
 import { appearanceCanvas, appearanceEditor } from '../shared/appearance_editor';
 
@@ -39,6 +40,9 @@ export class GeoCreationScene extends Scene {
   private picked = new Set<number>();
   private villageName = 'Nova Esperança';
   private difficulty: DifficultyId = 'normal';
+  /** Sorte justa: null segue o padrão da dificuldade (ligada em História e Normal). */
+  private fairLuck: boolean | null = null;
+  private ironman = false;
   private spot: LonLat | null = null;
   private ui!: HTMLDivElement;
   private panel!: HTMLDivElement;
@@ -213,7 +217,7 @@ export class GeoCreationScene extends Scene {
   }
 
   private renderRecruits(el: HTMLElement): void {
-    this.candidates ??= starterCandidates(this.seed, [this.hero, ...this.friends]);
+    this.candidates ??= starterCandidates(this.seed, [this.hero, ...this.friends], undefined, loadPool());
     const need = GEO_RULES.start.recruitPicks;
     const list = this.candidates;
     el.append(
@@ -247,7 +251,7 @@ export class GeoCreationScene extends Scene {
         },
           h('div', { class: 'geo-recruit-look' }, appearanceCanvas(normalizeAppearance(c.appearance, c.id), 2, c.classId)),
           h('div', { class: 'col', style: 'gap:1px;min-width:0' },
-            h('div', { class: 'row', style: 'justify-content:space-between;gap:4px' }, h('b', { text: `${on ? '✔ ' : ''}${c.name}` }), h('span', { class: 'muted', style: 'font-size:11px', text: `${cls.name} · NV ${c.level}` })),
+            h('div', { class: 'row', style: 'justify-content:space-between;gap:4px' }, h('b', { text: `${on ? '✔ ' : ''}${c.name}${c.nickname ? ` “${c.nickname}”` : ''}${c.poolId ? ' ✎' : ''}`, title: c.poolId ? `Do seu banco de personagens${c.bio ? `: ${c.bio}` : ''}` : '' }), h('span', { class: 'muted', style: 'font-size:11px', text: `${cls.name} · NV ${c.level}` })),
             h('div', { style: `font-size:11px;color:${gd ? RARITY_COLOR[gd.rarity] : '#8f8474'}`, text: gd ? `${stars(c.gift!.shownPotential ?? c.gift!.potential)} ${gd.name}` : 'Sem Dom' }),
             h('div', { class: 'muted', style: 'font-size:11px', text: `${ORIGINS[c.origin ?? '']?.name ?? ''}${c.profession ? ` · antes: ${PROFESSIONS[c.profession]?.name}` : ''}` }),
             c.perks?.length ? h('div', { style: 'font-size:11px', text: c.perks.map(perkLabel).join(', ') }) : '',
@@ -280,6 +284,9 @@ export class GeoCreationScene extends Scene {
           h('div', { class: `demo-class${this.difficulty === id ? ' selected' : ''}`, style: '--cls:#c9a35b', onClick: () => ((this.difficulty = id), this.redraw()) }, h('b', { text: DIFFICULTIES[id].name }), h('div', { class: 'muted', text: DIFFICULTIES[id].desc })),
         ),
       ),
+      h('div', { class: 'demo-section', text: 'Opções da campanha' }),
+      this.toggle('🎯 Sorte justa', 'Cada ataque errado seguido dá Foco (+10% de acerto no próximo, até +30%). Aparece na previsão do golpe. Recomendada.', this.fairLuck ?? this.difficulty !== 'dificil', (v) => (this.fairLuck = v)),
+      this.toggle('🔒 Ironman', 'Um só save, automático. Sem salvar à mão e sem voltar turno: cada decisão fica.', this.ironman, (v) => (this.ironman = v)),
       h('div', { class: 'demo-section', text: 'Lugar' }),
       r
         ? h('div', { class: 'demo-gift' },
@@ -297,10 +304,17 @@ export class GeoCreationScene extends Scene {
     );
   }
 
+  private toggle(label: string, desc: string, on: boolean, set: (v: boolean) => void): HTMLElement {
+    const cb = h('input', { type: 'checkbox' }) as HTMLInputElement;
+    cb.checked = on;
+    cb.addEventListener('change', () => (set(cb.checked), this.redraw()));
+    return h('label', { class: `geo-pick${on ? ' on' : ''}`, style: 'display:flex;gap:8px;align-items:flex-start;padding:4px 6px' }, cb, h('div', {}, h('b', { text: label }), h('div', { class: 'muted', style: 'font-size:11.5px', text: desc })));
+  }
+
   private start(): void {
     if (!this.spot || !this.candidates) return;
     const recruits = [...this.picked].sort((a, b) => a - b).map((i) => this.candidates![i]!);
-    const g = newGeoGame({ seed: this.seed, villageName: this.villageName, villageAt: this.spot, difficulty: this.difficulty, protagonist: this.hero, friends: this.friends, recruits });
+    const g = newGeoGame({ seed: this.seed, villageName: this.villageName, villageAt: this.spot, difficulty: this.difficulty, protagonist: this.hero, friends: this.friends, recruits, fairLuck: this.fairLuck ?? this.difficulty !== 'dificil', ironman: this.ironman, pool: loadPool() });
     geoStore.game = g;
     geoStore.slot = GEO_SLOTS.find((s) => !this.ctx.save.has(s)) ?? GEO_SLOTS[0]!;
     saveGeo(this.ctx.save);

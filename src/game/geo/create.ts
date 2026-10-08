@@ -7,7 +7,7 @@
 import { Rng } from '@core';
 import { makeMember, type DemoClass } from '../demo/demo_squad';
 import type { Appearance, Character } from '../rules/character';
-import { DIFFICULTIES, GEO_RULES, addLog, newId, type DifficultyId, type GeoGame } from './game';
+import { DIFFICULTIES, GEO_RULES, addLog, newId, type DifficultyId, type GeoGame, type PoolPerson } from './game';
 import { spawnContract } from './contracts';
 import { freshName, makeSpecialist, refreshRecruits, rollRecruit } from './people';
 import { rollAffinity, rollPerks, rollProfession } from '../rules/perks';
@@ -35,20 +35,26 @@ export interface NewGameSpec {
   friends: PersonSpec[];
   /** Moradores escolhidos entre os candidatos (starterCandidates). Sem isso, os primeiros da lista. */
   recruits?: Character[];
+  /** Sorte justa (padrão: ligada em História e Normal) e Ironman (padrão: desligado). */
+  fairLuck?: boolean;
+  ironman?: boolean;
+  /** Banco de personagens do jogador (candidatos a recruta com nome e visual dele). */
+  pool?: PoolPerson[];
 }
 
 /**
  * Candidatos a morador-combatente da tela de novo jogo: a lista de onde o jogador escolhe os 10
  * primeiros recrutas. Estável pela semente; classes e Dons evitam repetir o grupo inicial.
  */
-export function starterCandidates(seed: number, party: PersonSpec[] = [], count = GEO_RULES.start.recruitChoices): Character[] {
+export function starterCandidates(seed: number, party: PersonSpec[] = [], count = GEO_RULES.start.recruitChoices, pool: PoolPerson[] = []): Character[] {
   const rng = new Rng(seed ^ 0x5bd1e995);
   const classCount: Record<string, number> = {};
   for (const p of party) classCount[p.classId] = (classCount[p.classId] ?? 0) + 1;
   const taken = new Set(party.map((p) => p.gift ?? '').filter(Boolean));
   let n = 0;
   const names = new Set(party.map((p) => p.name.trim()).filter(Boolean));
-  return Array.from({ length: count }, () => rollRecruit(rng, { levels: [1], classCount, taken, reveal: false, newId: () => `cand_${++n}`, names }));
+  const free = pool.filter((p) => !names.has(p.name));
+  return Array.from({ length: count }, () => rollRecruit(rng, { levels: [1], classCount, taken, reveal: false, newId: () => `cand_${++n}`, names, pool: free }));
 }
 
 /** Por que a escolha de recrutas não vale (ou null). */
@@ -137,27 +143,32 @@ export function newGeoGame(spec: NewGameSpec): GeoGame {
     nextRaidAt: 8 + GEO_RULES.raids.everyDays[1]! * 24 * diff.raidEvery,
     research: emptyResearch(),
     engineering: { queue: [] },
+    settings: { fairLuck: spec.fairLuck ?? (spec.difficulty ?? 'normal') !== 'dificil', ironman: !!spec.ironman },
+    pool: spec.pool ? structuredClone(spec.pool) : undefined,
   };
   // A vila começa com a praça, algumas casas e o hangar (village_layout.json → start).
   startLayout(g);
   const P = GEO_RULES.protagonist;
   const hero = person(rng, spec.protagonist, P.realPotential, g.protagonistId);
   hero.gift!.shownPotential = P.shownPotential;
+  hero.joinedAt = g.hours;
   g.roster[hero.id] = hero;
   spec.friends.forEach((f, i) => {
     const c = person(rng, f, f.gift ? rng.int(2, 4) : 0, `ch_amigo_${i + 1}`);
     if (c.gift) c.gift.shownPotential = c.gift.potential;
+    c.joinedAt = g.hours;
     g.roster[c.id] = c;
   });
   // Amigos de infância: vínculo alto entre todos (cenário §26).
   const ids = Object.keys(g.roster);
   for (const a of ids) g.roster[a]!.bonds = Object.fromEntries(ids.filter((b) => b !== a).map((b) => [b, GEO_RULES.friends.bond]));
   // Os moradores que o jogador escolheu: gente da vila, sem salário, conhecidos do grupo.
-  const chosen = (spec.recruits ?? starterCandidates(spec.seed, [spec.protagonist, ...spec.friends])).slice(0, GEO_RULES.start.recruitPicks);
+  const chosen = (spec.recruits ?? starterCandidates(spec.seed, [spec.protagonist, ...spec.friends], undefined, spec.pool)).slice(0, GEO_RULES.start.recruitPicks);
   const names = new Set(Object.values(g.roster).map((c) => c.name));
   for (const r of chosen) {
     const c: Character = structuredClone(r);
     c.id = newId(g, 'ch');
+    c.joinedAt = g.hours;
     // Se alguém do grupo foi renomeado depois da lista, o recruta ganha uma inicial.
     if (names.has(c.name)) c.name = freshName(rng, names, [c.name]);
     names.add(c.name);
