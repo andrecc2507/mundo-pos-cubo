@@ -7,6 +7,7 @@ import { DB } from '../data';
 import VILLAGE from '../data/geo/village.json';
 import { addLog, overallReputation, type GeoGame, type Supply } from './game';
 import { PEOPLE_RULES, PROFESSIONS } from '../rules/perks';
+import { researchBonus } from './research';
 
 export interface StageDef {
   name: string;
@@ -31,6 +32,10 @@ export interface FacilityEffect {
   radiusKm?: number;
   revealPotential?: number;
   rosterCap?: number;
+  /** Pontos de pesquisa por hora (Centro de pesquisa). */
+  research?: number;
+  /** Trabalho de fabricação por hora (Oficina de engenharia). */
+  engineering?: number;
 }
 
 export interface FacilityDef {
@@ -70,9 +75,9 @@ export function specialistBoost(g: GeoGame, facility: string): number {
   return 1 + Math.min(PEOPLE_RULES.specialists.maxPerFacility, n) * PEOPLE_RULES.specialists.boostPerSpecialist;
 }
 
-/** Soma de um efeito em todas as instalações (efeito × nível × especialistas). */
+/** Soma de um efeito em todas as instalações (efeito × nível × especialistas) e nas pesquisas feitas. */
 export function effect(g: GeoGame, key: keyof FacilityEffect): number {
-  let sum = 0;
+  let sum = researchBonus(g, key);
   for (const [id, lv] of Object.entries(g.village.facilities)) {
     const v = (FACILITIES[id]?.effect[key] ?? 0) * lv;
     sum += v && !FLAT.includes(key) ? v * specialistBoost(g, id) : v;

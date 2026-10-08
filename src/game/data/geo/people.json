@@ -139,7 +139,8 @@
   "professor": {
    "name": "Professor(a)",
    "facilities": [
-    "treino"
+    "treino",
+    "pesquisa"
    ]
   },
   "soldado": {
@@ -152,6 +153,7 @@
   "cientista": {
    "name": "Cientista",
    "facilities": [
+    "pesquisa",
     "laboratorio",
     "inteligencia"
    ]

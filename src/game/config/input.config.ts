@@ -16,6 +16,9 @@ export const INPUT_BINDINGS: InputBindings = {
   pan_down: ['KeyS', 'ArrowDown', 'PadDown', 'PadRDown'],
   pan_left: ['KeyA', 'ArrowLeft', 'PadLeft', 'PadRLeft'],
   pan_right: ['KeyD', 'ArrowRight', 'PadRight', 'PadRRight'],
+  /** Hub: alterna entre o globo e a vila; gira a construção que vai ser posicionada. */
+  view_toggle: ['KeyV', 'PadSelect'],
+  rotate_piece: ['KeyR'],
   floor_up: ['PageUp'],
   floor_down: ['PageDown'],
   debug_toggle: ['F3'],

@@ -3,6 +3,7 @@ import { DIFFICULTIES, clockLabel, type GeoGame } from '../geo/game';
 import { regionById } from '../geo/world';
 import { stageDef } from '../geo/village';
 import { migrateLayout } from '../geo/village_layout';
+import { emptyResearch } from '../geo/research';
 
 /** Espaços de save do Mundo Pós-Cubo (separados dos do molde). */
 export const GEO_SLOTS = ['mundo_1', 'mundo_2', 'mundo_3'];
@@ -35,6 +36,8 @@ export function loadGeo(save: SaveService, slot: string): boolean {
   g.activeLegacies ??= [];
   g.specialistPool ??= [];
   g.nextRaidAt ??= g.hours + 24 * 10;
+  g.research ??= emptyResearch();
+  g.engineering ??= { queue: [] };
   // Saves de antes da planta da vila: as instalações viram construções no terreno.
   migrateLayout(g);
   g.speed = 0;

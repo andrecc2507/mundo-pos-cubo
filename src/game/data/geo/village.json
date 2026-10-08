@@ -1,5 +1,5 @@
 {
- "_doc": "A vila (geo/village.ts): os 4 estágios do cenário (§32) e as instalações. Custos em dinheiro e peças; tempo de obra em dias. Efeitos: foodPerDay, healMult (ferimentos saram mais rápido), trainXpPerDay (quem fica na vila treina), storage (estoque máximo de comida), shopTier (itens melhores na loja), discount (desconto na loja), flights (voos simultâneos), recruitBonus (recrutas a mais), contractBonus (contratos a mais), radiusKm (alcance dos contratos), revealPotential (revela o potencial real), popGrowth, rosterCap. Tamanho e visual de cada instalação no mapa da vila: village_layout.json → facilityLooks; muros, torres, casas e o resto da defesa: village_layout.json → structures.",
+ "_doc": "A vila (geo/village.ts): os 4 estágios do cenário (§32) e as instalações. Custos em dinheiro e peças; tempo de obra em dias. Efeitos: foodPerDay, healMult (ferimentos saram mais rápido), trainXpPerDay (quem fica na vila treina), storage (estoque máximo de comida), shopTier (itens melhores na loja), discount (desconto na loja), flights (voos simultâneos), recruitBonus (recrutas a mais), contractBonus (contratos a mais), radiusKm (alcance dos contratos), revealPotential (revela o potencial real), popGrowth, rosterCap, research (pontos de pesquisa por hora), engineering (trabalho de fabricação por hora). Tamanho e visual de cada instalação no mapa da vila: village_layout.json → facilityLooks; muros, torres, casas e o resto da defesa: village_layout.json → structures.",
  "stages": [
   {
    "name": "Vila",
@@ -71,6 +71,21 @@
    },
    "desc": "Feridos saram mais rápido (gasta remédios quando tem)."
   },
+  "pesquisa": {
+   "name": "Centro de pesquisa",
+   "icon": "🔬",
+   "stage": 0,
+   "max": 3,
+   "cost": {
+    "money": 250,
+    "pecas": 2
+   },
+   "days": 4,
+   "effect": {
+    "research": 1
+   },
+   "desc": "Pesquisa projetos que liberam itens, construções e melhorias. Cada nível pesquisa mais rápido."
+  },
   "hangar": {
    "name": "Hangar",
    "icon": "✈",
@@ -92,9 +107,9 @@
    "desc": "O avião para os contratos intercontinentais. Nível 2 (estágio Base): dois voos ao mesmo tempo."
   },
   "oficina": {
-   "name": "Oficina",
+   "name": "Oficina de engenharia",
    "icon": "🔧",
-   "stage": 1,
+   "stage": 0,
    "max": 2,
    "cost": {
     "money": 350,
@@ -102,10 +117,11 @@
    },
    "days": 5,
    "effect": {
-    "shopTier": 1,
-    "discount": 0.08
+    "shopTier": 0.5,
+    "discount": 0.08,
+    "engineering": 1
    },
-   "desc": "Conserta e fabrica: armas melhores na loja e desconto."
+   "desc": "Fabrica o que a pesquisa liberou (fila na Engenharia) e conserta: desconto na loja e, no nível 2, armas melhores. Cada nível trabalha mais rápido."
   },
   "deposito": {
    "name": "Depósitos",

@@ -207,6 +207,7 @@
  "facilityLooks": {
   "horta": { "cat": "producao", "w": 3, "h": 3, "battle": { "plot": "terra", "props": ["feno", "arbusto", "flores"] } },
   "enfermaria": { "cat": "servicos", "w": 3, "h": 3, "battle": { "stamp": "casa_vila", "floors": 1 } },
+  "pesquisa": { "cat": "base", "w": 4, "h": 3, "battle": { "stamp": "predio", "floors": 1 } },
   "hangar": { "cat": "base", "w": 5, "h": 4, "battle": { "stamp": "predio", "floors": 1 } },
   "oficina": { "cat": "base", "w": 3, "h": 3, "battle": { "stamp": "casa_pedra", "floors": 1 } },
   "deposito": { "cat": "producao", "w": 3, "h": 3, "battle": { "plot": "cascalho", "props": ["container", "caixa", "barril"] } },
@@ -226,6 +227,8 @@
   ["casa", 10, 17],
   ["barraco", 19, 17],
   ["barraco", 22, 13],
-  ["hangar", 4, 21]
+  ["hangar", 4, 21],
+  ["pesquisa", 23, 18],
+  ["oficina", 5, 12]
  ]
 }

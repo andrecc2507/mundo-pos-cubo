@@ -1,0 +1,196 @@
+{
+ "_doc": "Pesquisa e Engenharia (geo/research.ts). Pesquisa: um projeto por vez; anda com os pontos por hora do Centro de pesquisa (effect research, mais com cientistas designados). points: pontos de pesquisa; money: custo para começar; requires: projetos antes. unlocks.recipes: itens que a Engenharia passa a fabricar; unlocks.buildings: construções da vila liberadas; bonus: efeitos permanentes (somados às instalações em village.ts → effect). Engenharia: fila de fabricação; anda com o trabalho por hora da Oficina (effect engineering). Receita: money e pecas por unidade (pagos ao pôr na fila), hours de trabalho por unidade; research = o projeto que libera.",
+ "projects": {
+  "sucata": {
+   "name": "Sucata útil",
+   "icon": "🔩",
+   "tier": 1,
+   "points": 72,
+   "money": 60,
+   "requires": [],
+   "unlocks": { "recipes": ["colete_placas", "pistola_modificada"] },
+   "desc": "Desmontar o que sobrou do mundo antigo e montar de novo, melhor. Abre a Engenharia de armas e coletes."
+  },
+  "medicina": {
+   "name": "Medicina de campo",
+   "icon": "✚",
+   "tier": 1,
+   "points": 96,
+   "money": 80,
+   "requires": [],
+   "unlocks": { "recipes": ["kit_medico_avancado", "estimulante_forte"] },
+   "bonus": { "healMult": 0.25 },
+   "desc": "Protocolos de trauma dos hospitais que caíram. Feridos saram mais rápido e kits melhores."
+  },
+  "fortificacao": {
+   "name": "Fortificação",
+   "icon": "🧱",
+   "tier": 1,
+   "points": 96,
+   "money": 80,
+   "requires": [],
+   "unlocks": { "buildings": ["muro", "torre"], "recipes": ["barricada_portatil"] },
+   "desc": "Muros de pedra e torres de vigia de verdade (a vila ainda precisa do estágio certo)."
+  },
+  "bestas": {
+   "name": "Biologia das Bestas",
+   "icon": "🐾",
+   "tier": 1,
+   "points": 120,
+   "money": 100,
+   "requires": [],
+   "unlocks": { "recipes": ["couraca_de_couro_grosso", "lamina_de_presa", "antidoto"] },
+   "desc": "O que o Cubo fez com os animais — e o que dá para aproveitar do couro, das presas e do veneno."
+  },
+  "dons": {
+   "name": "Estudo dos Dons",
+   "icon": "✨",
+   "tier": 1,
+   "points": 144,
+   "money": 120,
+   "requires": [],
+   "bonus": { "revealPotential": 1 },
+   "desc": "Medir o Dom de alguém sem o laboratório: o potencial que se vê nos recrutas passa a ser o real."
+  },
+  "balistica": {
+   "name": "Balística",
+   "icon": "🎯",
+   "tier": 2,
+   "points": 144,
+   "money": 150,
+   "requires": ["sucata"],
+   "unlocks": { "recipes": ["fuzil_modular", "escopeta_automatica"] },
+   "desc": "Canos, molas e munição recarregada: armas de fogo que não engasgam."
+  },
+  "armadilhas": {
+   "name": "Armadilhas",
+   "icon": "⚙",
+   "tier": 2,
+   "points": 96,
+   "money": 80,
+   "requires": ["sucata"],
+   "unlocks": { "buildings": ["armadilha"] },
+   "desc": "Armadilhas escondidas em volta da vila, que só os moradores sabem onde estão."
+  },
+  "eletronica": {
+   "name": "Eletrônica recuperada",
+   "icon": "📡",
+   "tier": 2,
+   "points": 168,
+   "money": 160,
+   "requires": ["sucata"],
+   "unlocks": { "buildings": ["holofote"], "recipes": ["granada_pem", "drone_reconhecimento"] },
+   "bonus": { "contractBonus": 1 },
+   "desc": "Rádios, holofotes e drones. Escutar as frequências também traz mais contratos."
+  },
+  "quimica": {
+   "name": "Química improvisada",
+   "icon": "⚗",
+   "tier": 2,
+   "points": 144,
+   "money": 140,
+   "requires": ["medicina"],
+   "unlocks": { "recipes": ["granada_de_cinza", "cristal_congelante", "antidoto_mais"] },
+   "desc": "Incendiárias, gás criogênico e antídotos de verdade."
+  },
+  "carapaca": {
+   "name": "Couraças de Besta",
+   "icon": "🛡",
+   "tier": 2,
+   "points": 168,
+   "money": 180,
+   "requires": ["bestas"],
+   "unlocks": { "recipes": ["couraca_de_carapaca", "arco_de_chifre"] },
+   "desc": "Carapaças e chifres das Bestas viram proteção e armas silenciosas."
+  },
+  "blindagem": {
+   "name": "Blindagem pesada",
+   "icon": "🦺",
+   "tier": 2,
+   "points": 192,
+   "money": 220,
+   "requires": ["sucata", "fortificacao"],
+   "unlocks": { "recipes": ["armadura_pesada", "traje_de_heroi"] },
+   "desc": "Placas, kevlar e trajes sob medida para quem tem Dom."
+  },
+  "exo": {
+   "name": "Exoesqueleto",
+   "icon": "🦾",
+   "tier": 3,
+   "points": 288,
+   "money": 400,
+   "requires": ["blindagem", "eletronica"],
+   "unlocks": { "recipes": ["exoesqueleto_leve", "luvas_hidraulicas", "martelo_pneumatico"] },
+   "desc": "Pistões e baterias: força de máquina para quem não tem Dom."
+  },
+  "vibro": {
+   "name": "Lâminas vibratórias",
+   "icon": "🗡",
+   "tier": 3,
+   "points": 240,
+   "money": 300,
+   "requires": ["eletronica", "bestas"],
+   "unlocks": { "recipes": ["lamina_vibratoria", "luvas_de_impacto"] },
+   "desc": "Motores de vibração em lâminas e luvas: corta e esmaga o que o aço comum não vence."
+  },
+  "gauss": {
+   "name": "Armas eletromagnéticas",
+   "icon": "⚡",
+   "tier": 3,
+   "points": 360,
+   "money": 500,
+   "requires": ["balistica", "eletronica"],
+   "unlocks": { "recipes": ["rifle_gauss"] },
+   "desc": "Bobinas e capacitores em vez de pólvora."
+  },
+  "traje": {
+   "name": "Traje reativo",
+   "icon": "🦸",
+   "tier": 3,
+   "points": 360,
+   "money": 500,
+   "requires": ["exo", "dons"],
+   "unlocks": { "recipes": ["traje_reativo"] },
+   "desc": "O traje que os heróis de antes do Cubo usavam, refeito com o que sobrou."
+  },
+  "cubo": {
+   "name": "Fragmentos do Cubo",
+   "icon": "🔷",
+   "tier": 3,
+   "points": 480,
+   "money": 600,
+   "requires": ["dons", "eletronica"],
+   "unlocks": { "recipes": ["amplificador_cubo"] },
+   "desc": "O que é o Cubo, afinal? Os fragmentos reagem aos Dons — e alguém precisa entender por quê."
+  }
+ },
+ "recipes": {
+  "colete_placas": { "money": 90, "pecas": 2, "hours": 24, "research": "sucata" },
+  "pistola_modificada": { "money": 110, "pecas": 2, "hours": 24, "research": "sucata" },
+  "kit_medico_avancado": { "money": 50, "pecas": 0, "hours": 8, "research": "medicina" },
+  "estimulante_forte": { "money": 40, "pecas": 0, "hours": 6, "research": "medicina" },
+  "barricada_portatil": { "money": 25, "pecas": 0, "hours": 4, "research": "fortificacao" },
+  "couraca_de_couro_grosso": { "money": 70, "pecas": 0, "hours": 16, "research": "bestas" },
+  "lamina_de_presa": { "money": 120, "pecas": 1, "hours": 24, "research": "bestas" },
+  "antidoto": { "money": 20, "pecas": 0, "hours": 4, "research": "bestas" },
+  "fuzil_modular": { "money": 220, "pecas": 4, "hours": 36, "research": "balistica" },
+  "escopeta_automatica": { "money": 200, "pecas": 4, "hours": 36, "research": "balistica" },
+  "granada_pem": { "money": 45, "pecas": 1, "hours": 8, "research": "eletronica" },
+  "drone_reconhecimento": { "money": 80, "pecas": 2, "hours": 12, "research": "eletronica" },
+  "granada_de_cinza": { "money": 50, "pecas": 1, "hours": 8, "research": "quimica" },
+  "cristal_congelante": { "money": 45, "pecas": 1, "hours": 8, "research": "quimica" },
+  "antidoto_mais": { "money": 60, "pecas": 0, "hours": 8, "research": "quimica" },
+  "couraca_de_carapaca": { "money": 200, "pecas": 2, "hours": 48, "research": "carapaca" },
+  "arco_de_chifre": { "money": 180, "pecas": 1, "hours": 36, "research": "carapaca" },
+  "armadura_pesada": { "money": 260, "pecas": 6, "hours": 48, "research": "blindagem" },
+  "traje_de_heroi": { "money": 220, "pecas": 4, "hours": 48, "research": "blindagem" },
+  "exoesqueleto_leve": { "money": 420, "pecas": 10, "hours": 72, "research": "exo" },
+  "luvas_hidraulicas": { "money": 300, "pecas": 6, "hours": 48, "research": "exo" },
+  "martelo_pneumatico": { "money": 280, "pecas": 6, "hours": 48, "research": "exo" },
+  "lamina_vibratoria": { "money": 320, "pecas": 6, "hours": 48, "research": "vibro" },
+  "luvas_de_impacto": { "money": 260, "pecas": 5, "hours": 48, "research": "vibro" },
+  "rifle_gauss": { "money": 600, "pecas": 14, "hours": 96, "research": "gauss" },
+  "traje_reativo": { "money": 520, "pecas": 12, "hours": 72, "research": "traje" },
+  "amplificador_cubo": { "money": 700, "pecas": 16, "hours": 96, "research": "cubo" }
+ }
+}

@@ -101,6 +101,8 @@ export interface BattleDrawOptions {
   hoverCell?: number;
   /** Altura de desenho de quem está em animação (passo a passo entre andares). */
   displayH?: Map<string, number>;
+  /** Vista sem combate (a vila): unidades sem barras de vida e de ação, só uma sombra no chão. */
+  plain?: boolean;
 }
 
 export interface Intent {
@@ -936,9 +938,9 @@ function drawUnit(ctx: CanvasRenderingContext2D, cam: IsoCamera, map: BattleMap,
   const [sx, sy] = cam.project(map, pos[0], pos[1], unitBaseH(map, u, o) + (o.lift?.get(u.uid) ?? 0));
   const active = o.activeUid === u.uid;
   if (!corpse) {
-    ctx.fillStyle = u.team === 'player' ? 'rgba(79,195,247,0.55)' : 'rgba(239,83,80,0.55)';
+    ctx.fillStyle = o.plain ? 'rgba(0,0,0,0.3)' : u.team === 'player' ? 'rgba(79,195,247,0.55)' : 'rgba(239,83,80,0.55)';
     ctx.beginPath();
-    ctx.ellipse(sx, sy, 13 * z * u.look.size, 6 * z * u.look.size, 0, 0, Math.PI * 2);
+    ctx.ellipse(sx, sy, (o.plain ? 8 : 13) * z * u.look.size, (o.plain ? 4 : 6) * z * u.look.size, 0, 0, Math.PI * 2);
     ctx.fill();
   }
   if (!u.alive && !corpse) ctx.globalAlpha = 0.35;
@@ -951,7 +953,7 @@ function drawUnit(ctx: CanvasRenderingContext2D, cam: IsoCamera, map: BattleMap,
   const scale = 2 * z * u.look.size * (16 / Math.max(16, img.width - 2));
   drawCanvas(ctx, poseFrame(u, o) ?? img, sx, sy + 2 * z + bob, scale, flip);
   ctx.globalAlpha = 1;
-  if (!u.alive) return;
+  if (!u.alive || o.plain) return;
   const top = sy - Math.max(30 * z, img.height * scale - 2 * z) - 6 * z;
   const bw = 26 * z;
   ctx.fillStyle = 'rgba(0,0,0,0.7)';

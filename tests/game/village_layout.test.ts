@@ -45,8 +45,10 @@ describe('planta da vila', () => {
   it('o jogo começa com praça, casas e hangar prontos; moradia limita a população', () => {
     const g = newGeoGame(spec());
     const ids = g.village.layout.buildings.map((b) => b.id).sort();
-    expect(ids).toEqual(['barraco', 'barraco', 'casa', 'casa', 'casa', 'hangar', 'praca']);
+    expect(ids).toEqual(['barraco', 'barraco', 'casa', 'casa', 'casa', 'hangar', 'oficina', 'pesquisa', 'praca']);
     expect(facilityLevel(g, 'hangar')).toBe(1);
+    expect(facilityLevel(g, 'pesquisa')).toBe(1);
+    expect(facilityLevel(g, 'oficina')).toBe(1);
     expect(housing(g)).toBe(32);
     expect(popCap(g)).toBe(32);
     expect(buildQueue(g)).toHaveLength(0);
@@ -56,6 +58,8 @@ describe('planta da vila', () => {
     const g = newGeoGame(spec(2));
     expect(placeBlock(g, 'casa', 0, 0)).toContain('fora');
     expect(placeBlock(g, 'casa', 14, 12)).toContain('ocupado');
+    expect(placeBlock(g, 'muro', 4, 4)).toContain('pesquisa');
+    g.research.done.push('fortificacao');
     expect(placeBlock(g, 'muro', 4, 4)).toContain('estágio');
     expect(placeBlock(g, 'torre', 4, 4)).toContain('estágio');
     g.money = 10;
@@ -126,11 +130,12 @@ describe('planta da vila', () => {
     const g = newGeoGame(spec(6)) as GeoGame & { village: { construction?: { id: string; doneAt: number }[] } };
     delete (g.village as { layout?: unknown }).layout;
     g.village.facilities = { hangar: 1, horta: 2, enfermaria: 1 };
-    g.village.construction = [{ id: 'oficina', doneAt: g.hours + 30 }];
+    g.village.construction = [{ id: 'treino', doneAt: g.hours + 30 }];
     migrateLayout(g);
     expect(g.village.layout.buildings.filter((b) => b.id === 'horta' && !b.work)).toHaveLength(2);
-    expect(g.village.layout.buildings.find((b) => b.id === 'oficina')?.work).toBe(30);
-    expect(g.village.facilities).toEqual({ hangar: 1, horta: 2, enfermaria: 1 });
+    expect(g.village.layout.buildings.find((b) => b.id === 'treino')?.work).toBe(30);
+    expect(g.village.facilities).toMatchObject({ hangar: 1, horta: 2, enfermaria: 1 });
+    expect(g.village.facilities.treino).toBeUndefined();
     expect(g.village.construction).toBeUndefined();
   });
 });
@@ -139,6 +144,7 @@ describe('a vila no mapa de batalha', () => {
   it('casas, torre com vigia, armadilha, portão com alavanca e quem começa onde', () => {
     const g = newGeoGame(spec(7));
     g.village.stage = 1;
+    g.research.done.push('fortificacao', 'armadilhas');
     g.money = 9000;
     g.supplies.pecas = 50;
     place(g, 'torre', 24, 4);
@@ -162,6 +168,7 @@ describe('a vila no mapa de batalha', () => {
   it('ataque à vila: o vigia começa no alto da torre e as armadilhas são só nossas', () => {
     const g = newGeoGame(spec(8));
     g.village.stage = 1;
+    g.research.done.push('fortificacao', 'armadilhas');
     g.money = 9000;
     g.supplies.pecas = 50;
     place(g, 'torre', 24, 4);

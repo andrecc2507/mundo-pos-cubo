@@ -12,6 +12,7 @@ import { dailyPolitics } from './politics';
 import { PEOPLE_RULES } from '../rules/perks';
 import { effect, foodStorage } from './village';
 import { buildTick, nextBuildIn, popCap, safetyGrowth } from './village_layout';
+import { craftHoursLeft, engineeringTick, researchHoursLeft, researchTick } from './research';
 
 const E = GEO_RULES.economy;
 
@@ -42,7 +43,7 @@ export function tick(g: GeoGame, dtHours: number): GeoAlert[] {
 
 /** Quanto falta para o próximo acontecimento marcado (para não passar dele num passo). */
 function nextEventIn(g: GeoGame): number {
-  const times = [g.nextContractAt, g.nextRecruitAt, g.nextDayAt, g.nextRaidAt, g.hours + nextBuildIn(g), ...g.squads.filter((s) => s.state !== 'onsite').map(arrivalTime)];
+  const times = [g.nextContractAt, g.nextRecruitAt, g.nextDayAt, g.nextRaidAt, g.hours + nextBuildIn(g), g.hours + researchHoursLeft(g, effect(g, 'research')), g.hours + craftHoursLeft(g, effect(g, 'engineering')), ...g.squads.filter((s) => s.state !== 'onsite').map(arrivalTime)];
   const future = times.filter((t) => t > g.hours).map((t) => t - g.hours);
   return future.length ? Math.max(1e-6, Math.min(...future)) : 1;
 }
@@ -62,6 +63,11 @@ function stepWorld(g: GeoGame, step: number): GeoAlert[] {
     }
   }
   // Obras.
+  // Pesquisa e Engenharia.
+  const found = researchTick(g, step, effect(g, 'research'));
+  if (found) out.push({ kind: 'info', title: '🔬 Pesquisa concluída', text: `${found.name}. Escolha o próximo projeto.` });
+  const made = engineeringTick(g, step, effect(g, 'engineering'));
+  if (made.length) out.push({ kind: 'info', title: '🔧 Engenharia', text: `${made.length} item(ns) pronto(s) no estoque.`, pause: false });
   const built = buildTick(g, step);
   if (built.length) out.push({ kind: 'info', title: '🏗 Obra pronta', text: built.length > 3 ? `${built.length} obras prontas.` : `${built.join(', ')} ${built.length > 1 ? 'estão prontas' : 'está pronta'}.`, pause: false });
   healTick(g, step);

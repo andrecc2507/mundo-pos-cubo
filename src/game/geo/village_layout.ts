@@ -12,6 +12,7 @@ import type { Prop, Terrain } from '../battle/map';
 import type { StructureId } from '../mapgen/structures';
 import { addLog, newId, type GeoGame } from './game';
 import { FACILITIES, STAGES, facilityCost, stageDef } from './village';
+import { PROJECTS, buildingResearch, buildingUnlocked } from './research';
 
 export const LAYOUT_RULES = LAYOUT;
 const DEF = LAYOUT.defenseRules;
@@ -235,6 +236,7 @@ export function placeBlock(g: GeoGame, id: string, x: number, y: number, rot = f
   const l = g.village.layout;
   const n = countOf(g, id);
   if (d.max !== undefined && n >= d.max) return d.facility ? 'nível máximo' : `no máximo ${d.max}`;
+  if (!buildingUnlocked(g, id)) return `requer a pesquisa ${PROJECTS[buildingResearch(id)!]!.name}`;
   const needStage = d.facility ? Math.max(d.stage, FACILITIES[id]!.minStageForLevel?.[n] ?? 0) : d.stage;
   if (g.village.stage < needStage) return `requer estágio ${STAGES[needStage]!.name}`;
   const occ = occupancy(l);

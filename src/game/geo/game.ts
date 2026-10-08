@@ -8,6 +8,7 @@ import RULES from '../data/geo/geo_rules.json';
 import type { LonLat } from './world';
 import type { Legacy } from './legacy';
 import type { VillageLayout } from './village_layout';
+import type { EngineeringJob, ResearchState } from './research';
 
 export const GEO_RULES = RULES;
 export type Supply = 'combustivel' | 'remedios' | 'pecas';
@@ -147,6 +148,9 @@ export interface GeoGame {
   raid?: Raid;
   /** Encontro na estrada esperando decisão. */
   encounter?: RoadEncounter;
+  /** Pesquisa (projeto atual, feitos, progresso) e fila da Engenharia (geo/research.ts). */
+  research: ResearchState;
+  engineering: { queue: EngineeringJob[] };
 }
 
 /** Especialista da vila: profissão do mundo antigo; designado a uma instalação, melhora o efeito dela. */

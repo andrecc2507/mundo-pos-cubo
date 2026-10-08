@@ -12,6 +12,7 @@ import { spawnContract } from './contracts';
 import { freshName, makeSpecialist, refreshRecruits, rollRecruit } from './people';
 import { rollAffinity, rollPerks, rollProfession } from '../rules/perks';
 import { emptyLayout, startLayout } from './village_layout';
+import { emptyResearch } from './research';
 import { CUBE, REGIONS, regionAt, regionById, type LonLat } from './world';
 
 const CLASS_WEAPON: Record<DemoClass, string> = { impacto: 'soco_ingles', movimento: 'pistola_9mm', suporte: 'pistola_9mm', controle: 'fuzil_assalto' };
@@ -134,6 +135,8 @@ export function newGeoGame(spec: NewGameSpec): GeoGame {
     activeLegacies: [],
     specialistPool: [],
     nextRaidAt: 8 + GEO_RULES.raids.everyDays[1]! * 24 * diff.raidEvery,
+    research: emptyResearch(),
+    engineering: { queue: [] },
   };
   // A vila começa com a praça, algumas casas e o hangar (village_layout.json → start).
   startLayout(g);
