@@ -16,6 +16,7 @@ import { coverAgainst } from './cover';
 import * as stack from './stack';
 import type { BattleState, BattleUnit } from './types';
 import { BASIC_ATTACK, inRange, opponents, skillRange, structureHit, type SkillLike } from './engine';
+import * as intel from './intel';
 
 export type TacticKind = 'shove' | 'throw' | 'stabilize' | 'scenery' | 'propShot' | 'shootProp';
 
@@ -92,7 +93,7 @@ export function tacticOptions(state: BattleState, u: BattleUnit): { value: numbe
     const [sx, sy] = [si % map.w, Math.floor(si / map.w)];
     const p = tileAt(map, sx, sy)!.p!;
     for (const o of opponents(state, u)) {
-      if (o.hidden || !tactics.arcReach(state, u, o.x, o.y, stats.throwRange(u.attrs.str))) continue;
+      if (o.hidden || !intel.knownTo(state, u.team, o.uid) || !tactics.arcReach(state, u, o.x, o.y, stats.throwRange(u.attrs.str))) continue;
       // Barril de pólvora vale pela explosão; caixa e feno só quando o golpe compensa (gasta a ação).
       const v = (p === 'barril_polvora' ? blastValue(state, u, o.x, o.y) : 0) + structureHit(u, 'basic', stats.TACTICS.throwPower) * 0.8;
       out.push({ value: v, action: { kind: 'tactic', tactic: 'throw', x: o.x, y: o.y, from: [sx, sy] } });

@@ -39,6 +39,8 @@ export function restoreBattle(state: BattleState, snap: Snapshot): void {
   Object.assign(state, data, { units, map: state.map });
   if (!data.pending) delete state.pending;
   if (!data.traps) delete state.traps;
+  if (!data.intel) delete state.intel;
+  if (!data.intelSeen) delete state.intelSeen;
   state.rng.reseed(snap.seed);
 }
 

@@ -66,6 +66,18 @@
   "text": "Unidades escondidas não são vistas fora do cone de visão inimigo. Mato e fumaça ajudam. Ser visto faz aparecer um \"!\" e acaba o esconderijo. Em infiltrações, o esquadrão começa escondido."
  },
  {
+  "id": "nevoa_inimiga",
+  "cat": "Batalha",
+  "term": "Névoa de guerra dos inimigos",
+  "text": "Os inimigos seguem as mesmas regras de visão que você: de dia, em campo aberto, veem longe; à noite, dentro de prédios ou com você escondido, não. 👁 sobre um herói = os inimigos o veem agora; ◌ = estão sem vê-lo. Eles lembram onde o viram por último, ouvem tiros (golpes e técnicas fazem menos barulho) e sabem de onde veio o golpe que levaram — e vão até lá. Sem pista, vasculham o mapa; num ataque à vila, marcham para a praça."
+ },
+ {
+  "id": "cerco",
+  "cat": "Batalha",
+  "term": "Cerco à vila",
+  "text": "No ataque à vila, a luta é no mapa da própria vila. Sem caminho até vocês, os atacantes arrombam o trecho mais fraco: paliçada cede rápido, muro de pedra aguenta muito mais. Portões têm uma alavanca do lado de dentro. Vigias ficam no alto das torres e as armadilhas da vila são invisíveis para eles."
+ },
+ {
   "id": "fumaca",
   "cat": "Batalha",
   "term": "Fumaça, vapor e clarão",

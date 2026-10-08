@@ -21,7 +21,7 @@ import { PEOPLE_RULES, PROFESSIONS } from '../rules/perks';
 import { changeRep, isHostile, POLITICS } from './politics';
 import { abortMission, squadPosition } from './squads';
 import { foodStorage, itemPrice, rosterCap, SHOP } from './village';
-import { LAYOUT_RULES, defenseInfo, raidDamage } from './village_layout';
+import { LAYOUT_RULES, defenseInfo, plazaCenter, raidDamage } from './village_layout';
 import { REGIONS, regionAt, regionById } from './world';
 
 const RA = GEO_RULES.raids;
@@ -97,6 +97,8 @@ export function raidBattle(g: GeoGame, defenders: BattleUnit[], rng: Rng): Battl
     allies: guards,
     waves,
     traps,
+    // Os atacantes sabem onde fica a vila: sem ninguém à vista, marcham para a praça.
+    hunt: { enemy: plazaCenter(g.village.layout) },
     victory: { type: 'survive', rounds: RA.survivalRounds },
     ambush: false,
     timeOfDay: timeOfDayAt(g.hours, g.village.at[0]),

@@ -237,6 +237,8 @@ export interface BattleUnit {
   ai?: boolean;
   /** Começa neste lugar (x, y, andar) em vez das casas de início (vigia no alto da torre). */
   spawnAt?: [number, number, number];
+  /** IA sem ninguém à vista: ponto que está vasculhando (battle/intel.ts). */
+  searchAt?: [number, number];
   /** Chefe: fases disparadas ao cair abaixo de uma fração da vida. */
   phases?: BossPhase[];
   /** Chefe de missão da história (barra de vida no topo). */
@@ -362,6 +364,12 @@ export interface TurnState {
 export interface BattleState {
   map: BattleMap;
   units: BattleUnit[];
+  /** Névoa de guerra dos dois lados: última posição vista/ouvida de cada inimigo, por time (battle/intel.ts). */
+  intel?: Partial<Record<Team, Record<string, { x: number; y: number; round: number }>>>;
+  /** Quem cada time está vendo agora (uids), na última atualização. */
+  intelSeen?: Partial<Record<Team, string[]>>;
+  /** Para onde cada time marcha quando não vê ninguém nem tem pista (BattleSetup.hunt). */
+  huntAt?: Partial<Record<Team, [number, number]>>;
   time: number;
   round: number;
   nextRoundAt: number;
@@ -503,6 +511,8 @@ export interface BattleSetup {
   difficulty?: { enemyHp: number; enemyDmg: number; undo: number; permadeath: boolean };
   /** Armadilhas já armadas no mapa (as da vila nos ataques): só o time dono as vê. */
   traps?: Omit<Trap, 'ownerUid' | 'armed'>[];
+  /** Para onde cada time marcha quando não vê ninguém (ataque à vila: os atacantes vão para a praça). */
+  hunt?: Partial<Record<Team, [number, number]>>;
 }
 
 export type ObjectiveKind = 'cela' | 'bau' | 'documentos' | 'runas';

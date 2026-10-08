@@ -139,7 +139,8 @@ export function breachPoint(state: BattleState, u: BattleUnit, gx: number, gy: n
       if (!inBounds(map, nx, ny)) continue;
       const ni = idx(map, nx, ny);
       const nt = map.tiles[ni]!;
-      if (!isWalkable(nt)) continue;
+      // O destino conta mesmo sem dar para pisar nele (a fonte no meio da praça, um alvo no telhado).
+      if (!isWalkable(nt) && ni !== goal && !obstacle(map, nx, ny)) continue;
       const ob = ni === goal ? null : obstacle(map, nx, ny);
       let step: number;
       if (ob) step = 1 + Math.ceil(ob.hp / hit) * Math.max(2, u.move);

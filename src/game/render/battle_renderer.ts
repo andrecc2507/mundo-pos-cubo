@@ -103,6 +103,8 @@ export interface BattleDrawOptions {
   displayH?: Map<string, number>;
   /** Vista sem combate (a vila): unidades sem barras de vida e de ação, só uma sombra no chão. */
   plain?: boolean;
+  /** Unidades do jogador que os inimigos estão vendo agora (ganham um 👁 vermelho). */
+  spotted?: Set<string>;
 }
 
 export interface Intent {
@@ -985,6 +987,16 @@ function drawUnit(ctx: CanvasRenderingContext2D, cam: IsoCamera, map: BattleMap,
   if (!ready && g > 0) {
     ctx.fillStyle = 'rgba(255,255,255,0.35)';
     ctx.fillRect(sx - ab / 2, ay, ab * g, 1.5 * z);
+  }
+  // Avistado pelos inimigos (névoa de guerra deles): olho vermelho do lado esquerdo da barra.
+  if (u.team === 'player' && o.spotted) {
+    const seen = o.spotted.has(u.uid);
+    ctx.font = `${Math.round(9 * z)}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.globalAlpha = seen ? 1 : 0.55;
+    ctx.fillText(seen ? '👁' : '◌', sx - bw / 2 - 6 * z, top + 4 * z);
+    ctx.globalAlpha = 1;
+    ctx.textAlign = 'left';
   }
   const react = o.reaction?.(u) ?? 'none';
   if (react !== 'none') {

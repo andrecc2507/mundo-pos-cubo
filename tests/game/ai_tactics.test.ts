@@ -116,6 +116,8 @@ describe('IA tática', () => {
     [foe.x, foe.y] = [7, 9];
     foe.skills = ['selos_selo_de_confinamento'];
     foe.mp = foe.maxMp = 99;
+    // De dia, em campo aberto, a IA vê os três (com névoa, quem está longe no escuro não conta).
+    s.timeOfDay = 'dia';
     turnOf(s, foe);
     const plan = planTurn(s, foe);
     expect(plan.action).toMatchObject({ kind: 'skill' });

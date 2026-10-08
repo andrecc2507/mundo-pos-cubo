@@ -291,6 +291,8 @@ export const LIGHT = balance.light;
 
 /** Números das mecânicas táticas (empurrar, arremessar, supressão, furtividade, concentração…). */
 export const TACTICS = balance.tactics;
+/** Névoa de guerra da IA: raios de barulho, pistas e procura (battle/intel.ts). */
+export const INTEL = balance.intel;
 export const WEAPONS = balance.weapons;
 
 /**

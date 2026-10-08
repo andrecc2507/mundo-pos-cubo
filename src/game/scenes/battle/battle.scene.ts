@@ -10,6 +10,7 @@ import { STRAIN, giftDef } from '../../rules/gifts';
 import { bar, btn, clear, h, layer, modal, toast } from '@ui/dom';
 import { DB, item, skill, type AnimStyle } from '../../data';
 import { aimAt, planTurn, runTactic } from '../../battle/ai';
+import { refreshIntel } from '../../battle/intel';
 import { canStrike, mpCost, reactionState } from '../../battle/creature_fx';
 import * as fx from '../../battle/creature_fx';
 import { coverSides } from '../../battle/cover';
@@ -1057,6 +1058,8 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
 
   private refresh(): void {
     this.vision = teamVision(this.state, 'player');
+    // Os inimigos também têm névoa: atualiza o que eles veem (o 👁 mostra quem do esquadrão está à vista).
+    if (!this.state.outcome) refreshIntel(this.state, 'enemy', teamVision(this.state, 'enemy'));
     this.checkBarks();
     this.renderTop();
     this.renderCard();
@@ -1736,6 +1739,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
       pose: (x) => this.poseOf(x),
       showDead: (x) => (!!x.downed && !x.carriedBy) || (!!artFor(x.look.art)?.clips.dead && (this.state.revealAll || this.vision.has(idx(this.state.map, x.x, x.y)))),
       reaction: (x) => (x.team === 'player' || visibleToPlayer(this.state, x, this.vision) ? reactionState(x) : 'none'),
+      spotted: new Set(this.state.intelSeen?.enemy ?? []),
       vision: this.state.revealAll ? null : this.vision,
       activeUid: this.state.activeUid,
       cones,

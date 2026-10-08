@@ -17,6 +17,7 @@ import * as scenery from './scenery';
 import * as confine from './confine';
 import type { BattleContext, BattleResult, BattleSetup, BattleState, BattleUnit, Objective, StatusId, Team, Wave } from './types';
 import * as fx from './creature_fx';
+import * as intel from './intel';
 import * as stats from '../rules/stats';
 import { SKILL_MAX_RANK, isNewClass, rankCooldown } from '../rules/skill_tree';
 import { variantDef } from '../rules/mastery';
@@ -183,6 +184,7 @@ export function createBattle(setup: BattleSetup): BattleState {
     }
   }
   placeMissionPieces(state, setup);
+  if (setup.hunt) state.huntAt = setup.hunt;
   // Armadilhas do mapa (as da vila): armadas desde o começo e invisíveis para o outro lado.
   for (const t of setup.traps ?? []) (state.traps ??= []).push({ ...t, ownerUid: `map_${t.team}`, armed: true, spotted: [t.team] });
   if (setup.stealthStart) for (const u of state.units) if (u.team === 'player' && !u.bound) u.hidden = true;
@@ -1169,6 +1171,8 @@ export function bondLevelNear(state: BattleState, a: BattleUnit): number {
 
 export function damage(state: BattleState, target: BattleUnit, amount: number, attacker: BattleUnit | undefined, el: Element | undefined, crit = false, magic = false): void {
   if (!target.alive) return;
+  // Quem leva o golpe sabe de onde ele veio (névoa de guerra da IA).
+  intel.revealAttacker(state, target, attacker);
   // Prisioneiro na cela: as grades protegem (ninguém mata o refém por acidente).
   if (target.vip && target.bound) return;
   if (state.enemyDmgMult && attacker?.team === 'enemy' && target.team === 'player') amount = Math.max(1, Math.round(amount * state.enemyDmgMult));
@@ -1522,6 +1526,8 @@ export function attack(state: BattleState, u: BattleUnit, x: number, y: number):
   }
   if (u.maxAmmo) u.ammo = (u.ammo ?? u.maxAmmo) - 1;
   faceTowards(u, x, y);
+  // Tiro e golpe fazem barulho: o outro lado, por perto, fica sabendo onde foi.
+  intel.noise(state, u, intel.attackNoise(u));
   const imbue = fx.imbueOf(u);
   const el = imbue?.element ?? (u.weaponType === 'natural' ? fx.currentStance(state, u)?.element ?? u.element : undefined);
   const kind: HitKind = imbue?.magic ? 'magic' : 'basic';
@@ -1626,6 +1632,7 @@ export function castSkill(state: BattleState, u: BattleUnit, s: SkillLike, x: nu
   const dealt0 = u.dealt ?? 0;
   const ok = castSkillInner(state, u, s, x, y, combo);
   const def = DB.skills[s.id];
+  if (ok) intel.noise(state, u, intel.SKILL_NOISE);
   if (ok && def) {
     // Dom: Strain (e talvez Overload).
     gift.afterGiftCast(state, u, def);

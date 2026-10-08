@@ -17,6 +17,7 @@ import {
   reachable,
   skillRange,
   skillUsable,
+  teamVision,
   type SkillLike,
 } from './engine';
 import { canStrike, isDebuff, isFera, passiveFx } from './creature_fx';
@@ -30,6 +31,7 @@ import * as downed from './downed';
 import * as scenery from './scenery';
 import * as patrol from './patrol';
 import { advanceCell, breachPlan } from './ai_path';
+import * as intel from './intel';
 import type { BattleState, BattleUnit, StatusId } from './types';
 
 /** Peso das habilidades frente ao ataque básico (as feras não ficam só lançando habilidades). */
@@ -92,9 +94,9 @@ function expectedValue(state: BattleState, u: BattleUnit, s: SkillLike, x: numbe
   const fera = isFera(s);
   let victims: BattleUnit[];
   if (fxd.randomTargets) {
-    const pool = opponents(state, u).filter((o) => !o.hidden || seesHidden(u));
+    const pool = opponents(state, u).filter((o) => isKnown(o, u) && (!o.hidden || seesHidden(u)));
     victims = pool.slice(0, Math.min(pool.length, fxd.randomTargets));
-  } else victims = areaOf(state, u, s, x, y).map(([tx, ty]) => unitAt(state, tx, ty)).filter((t): t is BattleUnit => !!t && t !== u);
+  } else victims = areaOf(state, u, s, x, y).map(([tx, ty]) => unitAt(state, tx, ty)).filter((t): t is BattleUnit => !!t && t !== u && isKnown(t, u));
   let total = 0;
   const weak = passiveFx(u).some((f) => f.focusWeak);
   for (const t of victims) {
@@ -129,7 +131,7 @@ function expectedValue(state: BattleState, u: BattleUnit, s: SkillLike, x: numbe
     if (fxd.execute && t.hp <= t.maxHp * fxd.execute) dmg = Math.max(dmg, t.hp * (p.chance / 100));
     // Ricochete: o tiro salta para os inimigos perto do alvo.
     if (fxd.chain) {
-      const near = opponents(state, u).filter((o) => o !== t && manhattan(o.x, o.y, t.x, t.y) <= 3).length;
+      const near = opponents(state, u).filter((o) => o !== t && isKnown(o, u) && manhattan(o.x, o.y, t.x, t.y) <= 3).length;
       dmg += dmg * (fxd.chainMult ?? 0.7) * Math.min(fxd.chain, near);
     }
     // Supressão prende o alvo; empurrar/derrubar tira de posição.
@@ -274,8 +276,27 @@ function fleePlan(state: BattleState, u: BattleUnit): AiPlan {
   return { moveTo: best && (best[0] !== u.x || best[1] !== u.y) ? best : null, action: { kind: 'defend' } };
 }
 
+/**
+ * Quem o time da unidade está vendo agora (névoa de guerra da IA): só esses entram nas contas de
+ * ataque. Fica valendo durante o planejamento de um turno.
+ */
+let planSeen: Set<string> | null = null;
+
+function isKnown(t: BattleUnit, u: BattleUnit): boolean {
+  return t.team === u.team || !planSeen || planSeen.has(t.uid);
+}
+
 /** Decide movimento + ação para uma unidade controlada pela IA. */
 export function planTurn(state: BattleState, u: BattleUnit): AiPlan {
+  planSeen = intel.refreshIntel(state, u.team, teamVision(state, u.team));
+  try {
+    return planTurnInner(state, u);
+  } finally {
+    planSeen = null;
+  }
+}
+
+function planTurnInner(state: BattleState, u: BattleUnit): AiPlan {
   if (u.statuses.medo) return fleePlan(state, u);
   if (u.unaware) return patrolPlan(state, u);
   // Preso num confinamento inimigo: quebrar um selo.
@@ -286,7 +307,7 @@ export function planTurn(state: BattleState, u: BattleUnit): AiPlan {
     .map((id) => skill(id) as SkillLike)
     .filter((s) => !DB.skills[s.id]?.passive && skillUsable(state, u, s))
     .sort((a, b) => (DB.skills[b.id]?.evolvedOf ? 1 : 0) - (DB.skills[a.id]?.evolvedOf ? 1 : 0));
-  let targets = opponents(state, u).filter((o) => !o.hidden || seesHidden(u));
+  let targets = opponents(state, u).filter((o) => isKnown(o, u) && (!o.hidden || seesHidden(u)));
   // Provocado: só ataca quem provocou.
   const taunter = u.statuses.provocado ? targets.find((o) => o.uid === u.fx?.taunt) : undefined;
   if (taunter) targets = [taunter];
@@ -388,7 +409,7 @@ export function planTurn(state: BattleState, u: BattleUnit): AiPlan {
   // Sem munição e sem nada melhor: recarrega (de onde está).
   if (u.maxAmmo && !u.ammo) return { moveTo: null, action: { kind: 'reload' } };
   const goal = [...targets].sort((a, b) => manhattan(u.x, u.y, a.x, a.y) - manhattan(u.x, u.y, b.x, b.y))[0];
-  if (!goal) return { moveTo: null, action: { kind: 'defend' } };
+  if (!goal) return huntPlan(state, u, tiles);
   // Teleporte como deslocamento: salta para perto do alvo.
   const blink = all.find((s) => DB.skills[s.id]?.fx?.teleport);
   if (blink && manhattan(u.x, u.y, goal.x, goal.y) > u.move) {
@@ -430,6 +451,22 @@ export function planTurn(state: BattleState, u: BattleUnit): AiPlan {
   // Turno só de aproximação: aproveita a ação para se preparar (encantar a arma, buff próprio, armadilha no caminho).
   const prep = prepAction(state, u, all, bestTile ?? [u.x, u.y], goal);
   return { moveTo: bestTile, moveLevel: bestLevel, action: prep ?? (bestTile ? null : { kind: 'defend' }) };
+}
+
+/**
+ * Ninguém à vista: vai até a pista mais recente (última posição vista, tiro ouvido, de onde veio o
+ * golpe) ou, sem pista, vasculha o mapa. Arromba o que estiver no caminho se precisar.
+ */
+function huntPlan(state: BattleState, u: BattleUnit, tiles: number[]): AiPlan {
+  const at = intel.huntGoal(state, u);
+  if (!at) return { moveTo: null, action: { kind: 'defend' } };
+  const route = advanceCell(state, u, at[0], at[1], tiles);
+  if (typeof route === 'number') {
+    const [x, y, l] = cellPos(state.map, route);
+    return { moveTo: [x, y], moveLevel: l, action: null };
+  }
+  if (route === 'blocked') return breachPlan(state, u, at[0], at[1], tiles) ?? { moveTo: null, action: { kind: 'defend' } };
+  return { moveTo: null, action: { kind: 'defend' } };
 }
 
 /** Ação de preparo num turno sem alvo ao alcance. */
