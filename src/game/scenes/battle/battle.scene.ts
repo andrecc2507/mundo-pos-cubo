@@ -349,13 +349,27 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
     }
   }
 
+  /**
+   * O que um inimigo fez fora da vista não entra no registro: só fica o que atingiu os heróis do
+   * jogador (dano, estados), sem dizer quem foi.
+   */
+  private hideUnseenLog(u: BattleUnit, from: number, seenAtStart: boolean): void {
+    if (u.team === 'player' || seenAtStart || visibleToPlayer(this.state, u, this.vision) || this.state.revealAll) return;
+    const names = this.state.units.filter((x) => x.team === 'player').map((x) => x.name);
+    const kept = this.state.log.slice(from).filter((line) => names.some((n) => line.includes(n))).map((line) => line.split(u.name).join('Algo fora da vista'));
+    this.state.log.splice(from, this.state.log.length - from, ...kept);
+  }
+
   private wait(t: number, fn: () => void): void {
     this.timers.push({ t, fn });
   }
 
   private runAi(u: BattleUnit): void {
     const plan = planTurn(this.state, u);
+    const logBefore = this.state.log.length;
+    const seenAtStart = visibleToPlayer(this.state, u, this.vision);
     const finish = () => {
+      this.hideUnseenLog(u, logBefore, seenAtStart);
       this.refresh();
       this.wait(0.35, () => {
         this.guarded(
@@ -442,7 +456,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
         );
         const palette = paletteFor({ kind: def?.kind ?? 'physical', element: sk.element });
         this.focus(at[0], at[1], 0.25);
-        this.showBanner(shooter, shot.kind === 'opportunity' ? '⚔ Ataque de oportunidade!' : `🎯 Prontidão${def ? `: ${def.name}` : '!'}`);
+        if (visibleToPlayer(this.state, shooter, this.vision)) this.showBanner(shooter, shot.kind === 'opportunity' ? '⚔ Ataque de oportunidade!' : `🎯 Prontidão${def ? `: ${def.name}` : '!'}`);
         this.hitPalette = palette;
         const impact = this.bfx.play(style, this.worldOf(shooter.x, shooter.y), this.worldOf(at[0], at[1]), palette[0], palette[1], sk.radius ?? 0);
         this.wait(impact, () => {
@@ -647,7 +661,9 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
       else if (visible && !self && style !== 'dash' && style !== 'leap') this.lunges.set(u.uid, { dx: Math.sign(tx - u.x), dy: Math.sign(ty - u.y), start: this.time });
       this.wait(visible ? (magic && !self ? 0.4 : 0.16) : 0, () => {
         if (manhattan(u.x, u.y, tx, ty) > 3) this.focus((u.x + tx) / 2, (u.y + ty) / 2, 0.3);
-        const impact = this.bfx.play(style, visible ? from : to, to, palette[0], palette[1], radius);
+        // Fora da vista do jogador: nada de efeito na tela (só o resultado, se cair onde ele vê).
+        const seenTarget = this.vision.has(idx(this.state.map, tx, ty)) || !!this.state.revealAll;
+        const impact = visible || seenTarget ? this.bfx.play(style, visible ? from : to, to, palette[0], palette[1], radius) : 0;
         if ((style === 'dash' || style === 'leap') && visible && !self) {
           const k = Math.max(0, 1 - 0.9 / Math.max(1, manhattan(u.x, u.y, tx, ty)));
           this.travel = { uid: u.uid, from: [u.x, u.y], to: [u.x + (tx - u.x) * k, u.y + (ty - u.y) * k], start: this.time, dur: impact, leap: style === 'leap' };
@@ -1204,7 +1220,9 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
       this.bars.set(u.uid, { fill, hp, chip: c });
       return c;
     };
-    const side = (team: 'player' | 'enemy') => h('div', { class: 'row', style: 'flex-wrap:nowrap;gap:3px' }, ...this.state.units.filter((u) => u.team === team && (u.alive || !u.summonedBy)).map(chip));
+    // Inimigos só aparecem na barra quando estão à vista: o jogador não sabe quantos são.
+    const shown = (u: BattleUnit) => (u.team === 'player' ? u.alive || !u.summonedBy : u.alive && visibleToPlayer(this.state, u, this.vision));
+    const side = (team: 'player' | 'enemy') => h('div', { class: 'row', style: 'flex-wrap:nowrap;gap:3px' }, ...this.state.units.filter((u) => u.team === team && shown(u)).map(chip));
     const v = this.state.victory;
     const objs = this.state.objectives ?? [];
     const goal =
@@ -1231,7 +1249,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
     }
     const visible = visibleToPlayer(this.state, u, this.vision);
     if (!visible) {
-      el.append(h('div', { class: 'muted', text: 'Um inimigo oculto está agindo…' }));
+      el.append(h('div', { class: 'muted', text: 'Aguardando a próxima barra de ação…' }));
       return;
     }
     el.append(unitCard(u));
@@ -1710,8 +1728,11 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
       for (const i of m.range) highlights.set(this.shownCell(i), `rgba(255,200,90,${(0.24 + pulse * 0.08).toFixed(3)})`);
       // Mira no chão (mais longe que o alcance normal): violeta suave.
       for (const i of m.ground ?? []) if (!m.tiles.has(i)) highlights.set(this.shownCell(i), 'rgba(190,150,255,0.22)');
-      for (const i of m.tiles) highlights.set(this.shownCell(i), `rgba(255,120,40,${(0.42 + pulse * 0.12).toFixed(3)})`);
-      glow = new Set([...m.tiles].map((i) => this.shownCell(i)));
+      // Prontidão: só o cone sob o cursor aparece (todas as direções valem).
+      if (m.tactic !== 'overwatch') {
+        for (const i of m.tiles) highlights.set(this.shownCell(i), `rgba(255,120,40,${(0.42 + pulse * 0.12).toFixed(3)})`);
+        glow = new Set([...m.tiles].map((i) => this.shownCell(i)));
+      }
       fireLine = this.fireLineFor(u, m);
       if (this.hover && u && (m.tiles.has(idx(this.state.map, this.hover[0], this.hover[1])) || m.ground?.has(idx(this.state.map, this.hover[0], this.hover[1])))) {
         const sk = m.itemSlot !== undefined ? ({ ...BASIC_ATTACK, shape: 'radius', radius: item(u.items[m.itemSlot]!).use?.radius ?? 0, target: 'tile' } as SkillLike) : m.skill;

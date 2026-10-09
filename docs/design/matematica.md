@@ -186,6 +186,18 @@ golpes físicos de Clérigo e Mago com bastão escalavam com INT. A INT continua
 das curas; a varinha segue disparando magia no ataque básico. Arcos e facas escalam com DES, como no
 Ragnarok.
 
+## Alcance e distância
+
+- **Tiro e técnica à distância:** sem limite de alcance — basta ver o alvo. O alcance da arma ou da
+  técnica é o **alcance eficaz**, mais 1 casa a cada 8 de DES; além dele, −5 de acerto por casa (até
+  −70). Igual ao Xenonauts: de longe dá, mas é difícil.
+- **Arremesso** (granadas, frascos, técnicas em arco): máximo de 3 casas + 1 a cada 10 de FOR.
+- **Fixos:** corpo a corpo, toque, cura, movimento, linhas e cones usam o alcance da ficha.
+- **Suporte em alguém** (marcar presa, ordens): sem limite, se vê o alvo.
+- **Sair da cobertura:** quem está colado num obstáculo se inclina para uma casa livre ao lado e mira
+  dali; objeto colado em quem atira ou no alvo não corta a linha (é cobertura, não parede).
+- Números em `balance.json` → `rangeFalloff` e `tactics.throwBaseRange`/`throwStrPerTile`.
+
 ## Ferimentos
 
 Só fica ferido quem **chegou abaixo de 50% da vida em algum momento da luta** — mesmo que tenha

@@ -218,14 +218,15 @@
   ]
  },
  "intel": {
-  "_doc": "Névoa de guerra dos dois lados (battle/intel.ts): a IA só ataca quem o time dela vê agora (mesmas regras de visão do jogador). Barulho: quem do outro lado está até este raio ouve e fica sabendo onde foi (tiro de arma de fogo, golpe corpo a corpo, técnica). Quem é atingido sabe de onde veio. Sem ninguém à vista, a IA vai até a pista mais recente; pistas mais velhas que staleRounds rodadas são esquecidas; chegando a searchReach casas da pista sem ver ninguém, a pista esfria e ela procura (nearSpawnChance: procurar perto de onde o outro lado entrou; senão, em volta de si até searchRadius casas).",
+  "_doc": "Névoa de guerra dos dois lados (battle/intel.ts): a IA só ataca quem o time dela vê agora (mesmas regras de visão do jogador). Barulho: quem do outro lado está até este raio ouve e fica sabendo onde foi (tiro de arma de fogo, golpe corpo a corpo, técnica). Quem é atingido sabe de onde veio. Sem ninguém à vista, a IA vai até a pista mais recente; pistas mais velhas que staleRounds rodadas são esquecidas; chegando a searchReach casas da pista sem ver ninguém, a pista esfria e ela procura (nearSpawnChance: procurar perto de onde o outro lado entrou; senão, em volta de si até searchRadius casas). Sem pista nem alvo, cada inimigo segue o dever do contrato: guarda um objetivo não cumprido ou o chefe, ficando a até guardRadius casas dele.",
   "noiseGun": 9,
   "noiseMelee": 4,
   "noiseSkill": 6,
   "staleRounds": 4,
   "searchReach": 1,
   "searchRadius": 8,
-  "nearSpawnChance": 0.5
+  "nearSpawnChance": 0.5,
+  "guardRadius": 3
  },
  "fairLuck": {
   "_doc": "Sorte justa (opção da campanha, ligada por padrão em História e Normal): cada ataque errado seguido dá Foco à unidade do jogador — +perMiss de acerto no próximo ataque, até maxStacks. Acertar zera. Aparece na previsão de golpe.",

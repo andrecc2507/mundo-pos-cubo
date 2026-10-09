@@ -86,6 +86,11 @@ Estilo XCOM/Xenonauts: o globo (ou a vila) no meio e a gestão em painéis.
 
 ## Contratos (cenário §29)
 
+- **Prazo:** conta só até o esquadrão partir. Depois de enviado, a viagem não importa.
+- **Cancelar a ida:** um esquadrão a caminho pode voltar; o contrato reabre se ainda estiver no prazo.
+- **Dia ou noite:** ao chegar, lutar agora ou esperar o outro período (o relógio avisa quando
+  chegar a hora; o contrato não vence com o esquadrão no local).
+
 **Fontes:** governo, comunidade, indivíduo, organização, intermediário e a **própria vila**. A vila
 pede o que está faltando: comida, combustível, remédios ou peças.
 
@@ -199,7 +204,9 @@ Cada torre põe um **vigia** no alto durante os ataques (até 4).
 
 ## Pesquisa e Engenharia
 
-- **Pesquisa:** um projeto por vez. Começar custa dinheiro; o projeto anda com os pontos por hora do
+- **Pesquisa:** um projeto por vez. Começar custa **materiais de pesquisa** (sucata, componentes,
+  químicos, tecido de Besta, amostra de Dom, fragmento do Cubo), que caem nas missões vencidas conforme
+  o tipo de contrato, de ataque ou de encontro (`data/geo/materials.json`); o projeto anda com os pontos por hora do
   Centro de pesquisa (mais níveis e cientistas designados, mais rápido). Alguns pedem outros antes.
 - **16 projetos:** Sucata útil, Medicina de campo, Fortificação (muro de pedra e torre), Biologia das
   Bestas, Estudo dos Dons, Balística, Armadilhas, Eletrônica recuperada (holofote), Química

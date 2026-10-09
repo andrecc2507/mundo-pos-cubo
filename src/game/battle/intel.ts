@@ -117,7 +117,27 @@ export function huntGoal(state: BattleState, u: BattleUnit): [number, number] | 
   // Sabem para onde ir (o ataque à vila marcha para a praça) até chegar lá.
   const goal = state.huntAt?.[u.team];
   if (goal && manhattan(u.x, u.y, goal[0], goal[1]) > 2) return goal;
+  // Sem saber do jogador, cada um segue o seu dever no contrato: guardar o que interessa.
+  const duty = dutyPoint(state, u);
+  if (duty !== undefined) return duty;
   return searchPoint(state, u);
+}
+
+/**
+ * Dever da IA no contrato quando não sabe do jogador: guardar o objetivo mais perto ainda não
+ * cumprido (cela, baú, documentos, pontos marcados) ou ficar perto do chefe. Já no posto: fica
+ * (null = segura a posição). Sem dever: undefined (sai procurando).
+ */
+export function dutyPoint(state: BattleState, u: BattleUnit): [number, number] | null | undefined {
+  if (u.team !== 'enemy') return undefined;
+  const posts: [number, number][] = (state.objectives ?? []).filter((o) => !o.done && !o.carrier).map((o) => [o.x, o.y]);
+  const boss = state.units.find((o) => o.alive && o.boss && o.team === u.team && o !== u);
+  if (boss) posts.push([boss.x, boss.y]);
+  if (!posts.length) return undefined;
+  // Cada guarda fica com um posto (pelo número da unidade), para não se amontoarem todos no mesmo.
+  const k = [...u.uid].reduce((a, c) => a + c.charCodeAt(0), 0) % posts.length;
+  const [px, py] = posts[k]!;
+  return manhattan(u.x, u.y, px, py) > INTEL.guardRadius ? [px, py] : null;
 }
 
 /** Ponto de procura (fica guardado até chegar perto dele). */

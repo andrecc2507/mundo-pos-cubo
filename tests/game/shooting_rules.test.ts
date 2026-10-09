@@ -80,3 +80,16 @@ describe('suporte à distância', () => {
     expect(s).toBeTruthy();
   });
 });
+
+describe('IA sem saber do jogador', () => {
+  it('guarda o objetivo do contrato em vez de vagar', async () => {
+    const { dutyPoint } = await import('@game/battle/intel');
+    const { s, d } = duel(2, 2, 20, 20);
+    s.objectives = [{ kind: 'bau', label: 'Baú', turns: 1, x: 10, y: 10, progress: 0, done: false }];
+    expect(dutyPoint(s, d)).toEqual([10, 10]);
+    [d.x, d.y] = [11, 10];
+    expect(dutyPoint(s, d)).toBeNull();
+    s.objectives[0]!.done = true;
+    expect(dutyPoint(s, d)).toBeUndefined();
+  });
+});
