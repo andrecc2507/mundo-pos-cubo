@@ -6,7 +6,8 @@ import { CONTRACT_TYPES, SOURCES, contractBattle, contractText, rewardText } fro
 import { GEO_RULES, SUPPLIES, SUPPLY_LABEL, awayIds, clockLabel, isAvailable, overallReputation, withRng, type Contract, type GeoAlert, type GeoGame, type Squad } from '../../geo/game';
 import { applyContractResult, dismiss, resetBuild, resetCost } from '../../geo/people';
 import { foodMade, foodUse, hoursPerSecond, salaries, tick } from '../../geo/sim';
-import { abortMission, arrivalTime, dispatch, dispatchBlock, planRoute, squadPosition } from '../../geo/squads';
+import { abortMission, arrivalTime, dispatch, dispatchBlock, hoursUntil, planRoute, recallSquad, squadPosition, waitFor } from '../../geo/squads';
+import { timeOfDayAt } from '../../geo/maps';
 import { effect, foodStorage, stageDef } from '../../geo/village';
 import { buildQueue, defenseInfo, housing, popCap } from '../../geo/village_layout';
 import { availableProjects } from '../../geo/research';
@@ -573,11 +574,12 @@ export class GeoscapeScene extends Scene implements HubApi {
       list.append(h('div', { class: 'hub-sub', text: '🚩 Em campo' }));
       for (const s of g.squads) {
         const c = g.contracts.find((x) => x.id === s.contractId);
-        const label = s.state === 'going' ? `a caminho · chega em ${fmtHours(arrivalTime(s) - g.hours)}` : s.state === 'onsite' ? 'no local' : `voltando · chega em ${fmtHours(arrivalTime(s) - g.hours)}`;
+        const label = s.state === 'going' ? `a caminho · chega em ${fmtHours(arrivalTime(s) - g.hours)}` : s.state === 'onsite' ? (s.waitUntil !== undefined ? `no local · espera ${fmtHours(Math.max(0, s.waitUntil - g.hours))}` : 'no local') : `voltando · chega em ${fmtHours(arrivalTime(s) - g.hours)}`;
         list.append(h('div', { class: 'item', onClick: () => (this.globe.center = squadPosition(g, s)) },
           h('b', { text: `${s.plane ? '✈ ' : ''}${s.name}` }),
           h('div', { class: 'hint-line', text: `${c?.title ?? ''} · ${label}` }),
-          s.state === 'onsite' ? btn('⚔ Ir para a luta', () => this.arrival(s.id), { class: 'small primary' }) : '',
+          s.state === 'onsite' ? btn('⚔ Ir para a luta', () => ((s.waitUntil = undefined), this.arrival(s.id)), { class: 'small primary' }) : '',
+          s.state === 'going' ? btn('↩ Cancelar ida', () => (recallSquad(g, s), this.save(), this.refresh()), { class: 'small' }) : '',
         ));
       }
     }
@@ -616,7 +618,7 @@ export class GeoscapeScene extends Scene implements HubApi {
         h('span', { text: 'Recompensa' }), h('span', { text: rewardText(c) }),
         h('span', { text: 'Região' }), h('span', { text: `${r.name} · ${r.government.type} · sua rep. ${Math.floor(g.reputation[r.id] ?? 0)}` }),
         h('span', { text: 'Viagem' }), h('span', { text: `${Math.round(distanceKm(g.village.at, c.at))} km · ${fmtHours(plan.totalHours)}${plan.plane ? ` · ✈ avião (⛽ ${plan.fuel}${plan.money ? ` + $${plan.money}` : ''})` : ' · por terra'}` }),
-        h('span', { text: 'Prazo' }), h('span', { style: `color:${c.expiresAt - g.hours < 24 ? '#e98b80' : '#f2b544'}`, text: `vence em ${fmtHours(Math.max(0, c.expiresAt - g.hours))}` }),
+        h('span', { text: 'Prazo para enviar' }), h('span', { style: `color:${c.expiresAt - g.hours < 24 ? '#e98b80' : '#f2b544'}`, text: `vence em ${fmtHours(Math.max(0, c.expiresAt - g.hours))}` }),
       ),
     );
     if (c.status !== 'open') {
@@ -755,10 +757,24 @@ export class GeoscapeScene extends Scene implements HubApi {
             m.close();
             this.refresh();
           }),
-          btn('⚔ Lutar', () => {
-            m.close();
-            this.fight(s, c);
-          }, { class: 'primary' }),
+          ...(() => {
+            const now = timeOfDayAt(this.g.hours, c.at[0]);
+            const other = now === 'dia' ? 'noite' : 'dia';
+            const wait = hoursUntil(this.g, c.at[0], other);
+            return [
+              btn(`${other === 'noite' ? '🌙 Esperar a noite' : '☀ Esperar o dia'} (${fmtHours(wait)})`, () => {
+                waitFor(this.g, s, other);
+                m.close();
+                if (this.g.speed === 0) this.setSpeed(1);
+                this.save();
+                this.refresh();
+              }),
+              btn(`⚔ Lutar agora (${now === 'dia' ? '☀ dia' : '🌙 noite'})`, () => {
+                m.close();
+                this.fight(s, c);
+              }, { class: 'primary' }),
+            ];
+          })(),
         ),
       );
     }, { closable: false, wide: true });

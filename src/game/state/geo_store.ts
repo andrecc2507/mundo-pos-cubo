@@ -4,6 +4,7 @@ import { regionById } from '../geo/world';
 import { stageDef } from '../geo/village';
 import { migrateLayout } from '../geo/village_layout';
 import { emptyResearch } from '../geo/research';
+import { startMaterials } from '../geo/materials';
 import { loadPool } from './character_pool';
 import { emptyStory } from '../geo/story';
 
@@ -41,6 +42,7 @@ export function loadGeo(save: SaveService, slot: string): boolean {
   g.specialistPool ??= [];
   g.nextRaidAt ??= g.hours + 24 * 10;
   g.research ??= emptyResearch();
+  g.materials ??= startMaterials();
   g.settings ??= { fairLuck: g.difficulty !== 'dificil', ironman: false };
   g.story ??= { ...emptyStory(), stage: g.village.stage };
   // O banco de personagens vale para todas as campanhas: a mais nova versão entra no jogo carregado.

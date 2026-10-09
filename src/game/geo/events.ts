@@ -16,7 +16,7 @@ import { VILLAIN_LINES, makeBeast, makeBeastGrunt, makeGrunt, makeVillain } from
 import type { Biome } from '../data';
 import { GEO_RULES, SUPPLIES, addLog, awayIds, battleOptions, difficulty, newId, withRng, type GeoAlert, type GeoGame, type Raid, type RoadEncounter, type Squad } from './game';
 import { contractLevel, squadLevel } from './contracts';
-import { applyUnitOutcomes, checkGameOver, emptySummary, makeRecruit, makeSpecialist, type GeoResultSummary } from './people';
+import { applyUnitOutcomes, checkGameOver, collectDrops, emptySummary, makeRecruit, makeSpecialist, type GeoResultSummary } from './people';
 import { PEOPLE_RULES, PROFESSIONS } from '../rules/perks';
 import { changeRep, isHostile, POLITICS } from './politics';
 import { abortMission, squadPosition } from './squads';
@@ -152,6 +152,7 @@ export function applyRaidResult(g: GeoGame, result: BattleResult): GeoResultSumm
     sum.lines.push(`A vila resistiu! Os moradores confiam mais no grupo (reputação +${RA.winRep}).`);
     addLog(g, '🛡 Ataque à vila repelido.', 'good');
     if (r?.kind === 'expedicao' && r.gov) changeRep(g, r.gov, -3, true);
+    if (r) collectDrops(g, sum, { kind: 'raid', raid: r.kind, level: r.level });
     emitStory(g, { type: 'raid_won', id: 'batalha' });
   } else {
     const text = withRng(g, (rng) => raidLoss(g, result.outcome === 'fled' ? 1 : 0.8, rng));
@@ -259,6 +260,7 @@ export function applyEncounterResult(g: GeoGame, result: BattleResult): GeoResul
     const loot = 30 + (e?.level ?? 1) * 12;
     g.money += loot;
     sum.lines.push(`Estrada livre. Recolheram $${loot} dos atacantes.`);
+    collectDrops(g, sum, { kind: 'road', level: e?.level ?? 1 });
     if (e?.type === 'cacadores') changeRep(g, e.regionId, -2, true);
   } else if (squad) {
     sum.lines.push('O esquadrão recuou e volta para a vila.');

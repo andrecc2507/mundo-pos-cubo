@@ -1,0 +1,39 @@
+{
+ "_doc": "Materiais de pesquisa (geo/materials.ts): recolhidos nas missões vencidas e gastos para começar projetos de pesquisa (research.json → materials). pools: o que cada contrato, ataque à vila e encontro na estrada deixa (sorteio entre os ids da lista; repetir um id aumenta a chance). amount: base + nível do inimigo × perLevel.",
+ "materials": {
+  "sucata": { "name": "Sucata de metal", "icon": "🔩", "desc": "Armas quebradas, placas e peças tiradas dos inimigos." },
+  "componentes": { "name": "Componentes eletrônicos", "icon": "💾", "desc": "Rádios, miras, drones e placas de circuito." },
+  "quimicos": { "name": "Químicos", "icon": "🧪", "desc": "Munição, remédios, combustível e explosivos recuperados." },
+  "tecido_besta": { "name": "Tecido de Besta", "icon": "🦴", "desc": "Couro, ossos, presas e glândulas de animais alterados pelo Cubo." },
+  "amostra_dom": { "name": "Amostra de Dom", "icon": "🧬", "desc": "Sangue e tecido de quem tem Dom: estudo do que o Cubo faz no corpo." },
+  "fragmento_cubo": { "name": "Fragmento do Cubo", "icon": "💠", "desc": "Lasca do Cubo que ainda pulsa. Rara." }
+ },
+ "amount": { "base": 2, "perLevel": 0.35 },
+ "start": { "sucata": 6, "quimicos": 3, "tecido_besta": 2, "componentes": 2 },
+ "pools": {
+  "contract": {
+   "protecao": ["sucata", "sucata", "quimicos", "amostra_dom"],
+   "escolta": ["sucata", "quimicos", "componentes"],
+   "resgate": ["sucata", "quimicos", "amostra_dom"],
+   "reconhecimento": ["componentes", "componentes", "sucata"],
+   "recursos": ["quimicos", "sucata", "sucata"],
+   "tecnologia": ["componentes", "componentes", "fragmento_cubo", "sucata"],
+   "eliminacao": ["amostra_dom", "amostra_dom", "sucata"],
+   "investigacao": ["amostra_dom", "componentes", "fragmento_cubo"],
+   "transporte": ["sucata", "quimicos", "componentes"],
+   "sabotagem": ["componentes", "quimicos", "sucata"],
+   "instalacoes": ["componentes", "sucata", "quimicos"],
+   "caca": ["tecido_besta", "tecido_besta", "tecido_besta", "amostra_dom"],
+   "remedios": ["quimicos", "quimicos", "tecido_besta"],
+   "combustivel": ["quimicos", "quimicos", "sucata"],
+   "pecas": ["sucata", "sucata", "componentes"],
+   "desaparecidos": ["tecido_besta", "amostra_dom", "sucata"]
+  },
+  "raid": {
+   "bando": ["sucata", "quimicos", "amostra_dom"],
+   "bestas": ["tecido_besta", "tecido_besta", "amostra_dom"],
+   "expedicao": ["componentes", "sucata", "amostra_dom"]
+  },
+  "road": ["sucata", "quimicos", "tecido_besta"]
+ }
+}

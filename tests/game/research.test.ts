@@ -43,9 +43,12 @@ describe('pesquisa', () => {
     expect(effect(g, 'research')).toBeGreaterThan(0);
     expect(availableProjects(g).map((p) => p.id)).toContain('sucata');
     expect(researchBlock(g, 'balistica')).toContain('Sucata');
-    const before = g.money;
+    const money = g.money;
+    const sucata = g.materials!.sucata!;
     expect(startResearch(g, 'sucata')).toBe(true);
-    expect(g.money).toBe(before - PROJECTS.sucata!.money);
+    // Pesquisa paga com materiais das missões, não com dinheiro.
+    expect(g.money).toBe(money);
+    expect(g.materials!.sucata).toBe(sucata - PROJECTS.sucata!.materials.sucata!);
     expect(availableRecipes(g)).toHaveLength(0);
     let alert = false;
     for (let i = 0; i < 200 && !alert; i++) alert = tick(g, 2).some((a) => a.kind === 'info' && a.title.includes('Pesquisa'));
@@ -53,6 +56,8 @@ describe('pesquisa', () => {
     expect(g.research.done).toContain('sucata');
     expect(g.research.current).toBeUndefined();
     expect(availableRecipes(g).map((r) => r.item)).toContain('colete_placas');
+    expect(researchBlock(g, 'balistica')).toContain('faltam');
+    g.materials = { sucata: 20, quimicos: 20 };
     expect(researchBlock(g, 'balistica')).toBeNull();
   });
 
@@ -60,11 +65,11 @@ describe('pesquisa', () => {
     const g = newGeoGame(spec(2));
     startResearch(g, 'medicina');
     researchTick(g, 10, 2);
-    const m = g.money;
     startResearch(g, 'sucata');
+    const left = { ...g.materials };
     expect(g.research.progress.medicina).toBeCloseTo(20);
     expect(startResearch(g, 'medicina')).toBe(true);
-    expect(g.money).toBe(m - PROJECTS.sucata!.money);
+    expect(g.materials).toEqual(left);
   });
 
   it('bônus de pesquisa somam aos efeitos e construções esperam a pesquisa', () => {

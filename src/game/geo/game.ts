@@ -61,6 +61,8 @@ export interface Squad {
   contractId: string;
   /** Usa o avião (contrato intercontinental). */
   plane: boolean;
+  /** No local, esperando o dia ou a noite para lutar: avisa de novo nesta hora. */
+  waitUntil?: number;
 }
 
 export interface Village {
@@ -145,6 +147,8 @@ export interface GeoGame {
   resets: number;
   /** Equipamento guardado na vila (id do item → quantidade). */
   stock: Record<string, number>;
+  /** Materiais de pesquisa recolhidos nas missões (geo/materials.ts). */
+  materials?: Record<string, number>;
   /** Já viu a explicação inicial. */
   introSeen?: boolean;
   /** Dificuldade (data/geo/geo_rules.json → difficulties). Morte permanente em todas. */

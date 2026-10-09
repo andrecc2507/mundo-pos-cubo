@@ -10,6 +10,7 @@ import { hire, hireBlock, hireCost, hireSpecialist } from '../../geo/people';
 import { PEOPLE_RULES, PERKS, PROFESSIONS, ORIGINS, perkLabel } from '../../rules/perks';
 import { FACILITIES, buyItem, canTrade, effect, facilityLevel, foodStorage, itemPrice, rosterCap, shopItems, tradeFood } from '../../geo/village';
 import { PROJECTS, RECIPES, availableProjects, availableRecipes, cancelCraft, craftBlock, craftHoursLeft, queueCraft, researchBlock, researchHoursLeft, researched, startResearch } from '../../geo/research';
+import { MATERIALS, materialsText } from '../../geo/materials';
 import { LEGACY_RULES, toggleLegacy } from '../../geo/legacy';
 import { BUILDINGS } from '../../geo/village_layout';
 import { POLITICS, STANCE_COLOR, STANCE_LABEL, rep, stance } from '../../geo/politics';
@@ -162,6 +163,11 @@ function researchScreen(body: HTMLElement, hub: HubApi): string {
     ));
   } else body.append(h('div', { class: 'rcard' }, h('div', { class: 'rt', text: '🔬 Nenhum projeto em andamento — escolha um abaixo.' })));
   if (rate <= 0) body.append(h('div', { style: 'color:#e98b80', text: '⚠ Sem Centro de pesquisa pronto: nada anda. Construa um na vila.' }));
+  // Materiais de pesquisa: vêm das missões vencidas.
+  body.append(h('div', { class: 'row', style: 'gap:6px;flex-wrap:wrap;align-items:center' },
+    h('span', { class: 'hint-line', text: 'Materiais (recolhidos nas missões):' }),
+    ...Object.entries(MATERIALS).map(([id, m]) => h('span', { class: 'chip', title: `${m.name}: ${m.desc}`, text: `${m.icon} ${m.name} ${g.materials?.[id] ?? 0}` })),
+  ));
   const card = (id: string, state: 'available' | 'locked' | 'done') => {
     const p = PROJECTS[id]!;
     const why = state === 'available' ? researchBlock(g, id) : null;
@@ -174,7 +180,7 @@ function researchScreen(body: HTMLElement, hub: HubApi): string {
       state === 'locked' ? h('div', { class: 'hint-line', text: `Requer: ${p.requires.filter((r) => !researched(g, r)).map((r) => PROJECTS[r]?.name).join(', ')}` }) : '',
       state === 'available' && g.research.current !== id
         ? h('div', { class: 'row', style: 'gap:6px;align-items:center' },
-            btn(paid ? 'Retomar' : `Pesquisar ($${p.money})`, () => (startResearch(g, id) ? hub.refresh() : toast(why ?? '')), { class: 'small primary', disabled: !!why }),
+            btn(paid ? 'Retomar' : `Pesquisar (${materialsText(p.materials)})`, () => (startResearch(g, id) ? hub.refresh() : toast(why ?? '')), { class: 'small primary', disabled: !!why }),
             h('span', { class: 'hint-line', text: `${p.points} pts · ~${fmtHours(rate > 0 ? (p.points - (g.research.progress[id] ?? 0)) / rate : Infinity)}` }),
           )
         : '',

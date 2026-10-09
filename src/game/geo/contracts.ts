@@ -8,6 +8,7 @@ import { DB } from '../data';
 import type { BattleSetup, BattleUnit, ObjectiveDef, Victory, Wave } from '../battle/types';
 import { unitFromCharacter } from '../battle/units';
 import { battleMap, timeOfDayAt } from './maps';
+import type { TimeOfDay } from '../battle/types';
 import { VILLAIN_LINES, beastPool, makeBeast, makeBeastGrunt, makeGrunt, makeVillain, type GruntKind } from '../demo/demo_squad';
 import { makeCharacter } from '../rules/recruit';
 import type { Character } from '../rules/character';
@@ -221,7 +222,7 @@ function civilian(rng: Rng, name: string, level: number): BattleUnit {
 }
 
 /** Monta a batalha do contrato para o esquadrão (personagens já prontos). */
-export function contractBattle(g: GeoGame, c: Contract, squad: BattleUnit[], rng: Rng, squadId: string): BattleSetup {
+export function contractBattle(g: GeoGame, c: Contract, squad: BattleUnit[], rng: Rng, squadId: string, timeOfDay?: TimeOfDay): BattleSetup {
   const def = CONTRACT_TYPES[c.type]!;
   const region = regionById(locationRegion(c))!;
   const biome = rng.pick(region.biomes);
@@ -284,7 +285,7 @@ export function contractBattle(g: GeoGame, c: Contract, squad: BattleUnit[], rng
     objectives,
     victory,
     ambush: false,
-    timeOfDay: timeOfDayAt(g.hours, c.at[0]),
+    timeOfDay: timeOfDay ?? timeOfDayAt(g.hours, c.at[0]),
     canFlee: true,
     seed,
     stealthStart: def.stealth,

@@ -13,6 +13,7 @@ import { freshName, makeSpecialist, refreshRecruits, rollRecruit } from './peopl
 import { rollAffinity, rollPerks, rollProfession } from '../rules/perks';
 import { emptyLayout, startLayout } from './village_layout';
 import { emptyResearch } from './research';
+import { startMaterials } from './materials';
 import { emitStory, emptyStory } from './story';
 import { CUBE, REGIONS, regionAt, regionById, type LonLat } from './world';
 
@@ -143,6 +144,7 @@ export function newGeoGame(spec: NewGameSpec): GeoGame {
     specialistPool: [],
     nextRaidAt: 8 + GEO_RULES.raids.everyDays[1]! * 24 * diff.raidEvery,
     research: emptyResearch(),
+    materials: startMaterials(),
     engineering: { queue: [] },
     settings: { fairLuck: spec.fairLuck ?? (spec.difficulty ?? 'normal') !== 'dificil', ironman: !!spec.ironman },
     pool: spec.pool ? structuredClone(spec.pool) : undefined,

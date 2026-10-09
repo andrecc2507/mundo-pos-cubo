@@ -1,6 +1,6 @@
 /**
  * Pesquisa e Engenharia da vila — módulo puro.
- * - **Pesquisa**: um projeto por vez, que anda com os pontos por hora do Centro de pesquisa (mais com
+ * - **Pesquisa**: um projeto por vez, pago com materiais recolhidos nas missões (geo/materials.ts), que anda com os pontos por hora do Centro de pesquisa (mais com
  *   cientistas e professores designados). Projetos liberam receitas, construções da vila e bônus.
  * - **Engenharia**: fila de fabricação na Oficina. Cada unidade é paga ao entrar na fila e leva
  *   horas de trabalho; pronta, vai para o estoque da vila.
@@ -9,6 +9,7 @@
 import DATA from '../data/geo/research.json';
 import { DB } from '../data';
 import { addLog, type GeoGame } from './game';
+import { materialsText, missingMaterials, payMaterials, type Materials } from './materials';
 
 export interface ResearchProject {
   id: string;
@@ -16,7 +17,8 @@ export interface ResearchProject {
   icon: string;
   tier: number;
   points: number;
-  money: number;
+  /** Materiais de pesquisa para começar (geo/materials.ts). */
+  materials: Materials;
   requires: string[];
   unlocks?: { recipes?: string[]; buildings?: string[] };
   /** Efeitos permanentes (mesmas chaves das instalações, somados em village.ts → effect). */
@@ -88,7 +90,10 @@ export function researchBlock(g: GeoGame, id: string): string | null {
   if (miss.length) return `requer ${miss.map((r) => PROJECTS[r]?.name ?? r).join(', ')}`;
   if (g.research.current === id) return 'em andamento';
   // Já pago antes (trocou de projeto no meio): volta sem pagar de novo.
-  if (!(g.research.progress[id] ?? 0) && g.money < p.money) return `faltam $${p.money - g.money}`;
+  if (!(g.research.progress[id] ?? 0)) {
+    const miss = missingMaterials(g, p.materials);
+    if (Object.keys(miss).length) return `faltam ${materialsText(miss)}`;
+  }
   return null;
 }
 
@@ -101,7 +106,7 @@ export function startResearch(g: GeoGame, id: string): boolean {
   if (researchBlock(g, id)) return false;
   const p = PROJECTS[id]!;
   if (!(g.research.progress[id] ?? 0)) {
-    g.money -= p.money;
+    payMaterials(g, p.materials);
     g.research.progress[id] = 1e-6;
   }
   g.research.current = id;

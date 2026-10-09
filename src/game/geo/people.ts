@@ -14,13 +14,14 @@ import { ORIGINS, PEOPLE_RULES, PROFESSIONS, affinityMasteryMult, perkEvent, rol
 import { DB } from '../data';
 import { POLITICS, changeRep } from './politics';
 import { regionById } from './world';
-import { GEO_RULES, SUPPLY_LABEL, addLog, awayIds, newId, type GeoGame, type PoolPerson, type Specialist, type Supply } from './game';
+import { GEO_RULES, SUPPLY_LABEL, addLog, awayIds, newId, withRng, type GeoGame, type PoolPerson, type Specialist, type Supply } from './game';
 import { sendHome } from './squads';
 import { createLegacy, legacyBonus } from './legacy';
 import { gainSynergy } from '../rules/duo';
 import { effect, foodStorage, rosterCap } from './village';
 import { daysOfService, displayName, rankUp } from '../rules/service';
 import { emitStory } from './story';
+import { addMaterials, materialsText, rollDrops, type DropSource } from './materials';
 
 const R = GEO_RULES.recruits;
 const CLASS_WEAPON: Record<DemoClass, string> = { impacto: 'soco_ingles', movimento: 'pistola_9mm', suporte: 'pistola_9mm', controle: 'fuzil_assalto' };
@@ -397,6 +398,13 @@ export function emptySummary(title: string, outcome: BattleResult['outcome']): G
   return { title, outcome, lines: [], dead: [], levelUps: [], mastery: [] };
 }
 
+/** Materiais de pesquisa recolhidos numa missão vencida (com a linha do resumo). */
+export function collectDrops(g: GeoGame, sum: GeoResultSummary, src: DropSource): void {
+  const got = withRng(g, (rng) => rollDrops(rng, src));
+  if (!Object.keys(got).length) return;
+  addMaterials(g, got);
+  sum.lines.push(`Materiais de pesquisa recolhidos: ${materialsText(got)}.`);
+}
 /** Aplica o resultado de uma batalha de contrato ao jogo (e manda o esquadrão para casa). */
 export function applyContractResult(g: GeoGame, result: BattleResult): GeoResultSummary {
   const squad = g.squads.find((s) => s.id === result.context.squadId);
@@ -416,6 +424,7 @@ export function applyContractResult(g: GeoGame, result: BattleResult): GeoResult
         sum.lines.push(`${regionById(c.against)?.government.name} não vai esquecer (reputação −${POLITICS.againstRepLoss}).`);
       }
       sum.lines.push(`Contrato cumprido: ${[c.money ? `$${c.money}` : '', c.food ? `🍞 ${c.food}` : '', ...Object.entries(c.supply).map(([k, v]) => `${SUPPLY_LABEL[k as Supply]} +${v}`), c.rep ? `reputação +${c.rep}` : ''].filter(Boolean).join(', ')}.`);
+      collectDrops(g, sum, { kind: 'contract', type: c.type, level: c.level });
       addLog(g, `✔ ${c.title} cumprido.`, 'good');
     } else {
       c.status = 'failed';

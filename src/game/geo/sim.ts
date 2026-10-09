@@ -44,7 +44,7 @@ export function tick(g: GeoGame, dtHours: number): GeoAlert[] {
 
 /** Quanto falta para o próximo acontecimento marcado (para não passar dele num passo). */
 function nextEventIn(g: GeoGame): number {
-  const times = [g.nextContractAt, g.nextRecruitAt, g.nextDayAt, g.nextRaidAt, g.hours + nextBuildIn(g), g.hours + researchHoursLeft(g, effect(g, 'research')), g.hours + craftHoursLeft(g, effect(g, 'engineering')), ...g.squads.filter((s) => s.state !== 'onsite').map(arrivalTime)];
+  const times = [g.nextContractAt, g.nextRecruitAt, g.nextDayAt, g.nextRaidAt, g.hours + nextBuildIn(g), g.hours + researchHoursLeft(g, effect(g, 'research')), g.hours + craftHoursLeft(g, effect(g, 'engineering')), ...g.squads.filter((s) => s.state !== 'onsite').map(arrivalTime), ...g.squads.flatMap((s) => (s.waitUntil !== undefined ? [s.waitUntil] : []))];
   const future = times.filter((t) => t > g.hours).map((t) => t - g.hours);
   return future.length ? Math.max(1e-6, Math.min(...future)) : 1;
 }
@@ -54,6 +54,11 @@ function stepWorld(g: GeoGame, step: number): GeoAlert[] {
   const dialogsBefore = pendingDialogs(g);
   // Esquadrões chegando e voltando.
   for (const s of [...g.squads]) {
+    if (s.state === 'onsite' && s.waitUntil !== undefined && g.hours >= s.waitUntil - 1e-9) {
+      s.waitUntil = undefined;
+      out.push({ kind: 'arrived', squadId: s.id, contractId: s.contractId });
+      continue;
+    }
     if (s.state === 'onsite' || g.hours < arrivalTime(s) - 1e-9) continue;
     if (s.state === 'going') {
       s.state = 'onsite';

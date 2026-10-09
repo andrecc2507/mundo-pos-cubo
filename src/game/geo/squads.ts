@@ -8,6 +8,8 @@ import { GEO_RULES, addLog, isAvailable, newId, type Contract, type GeoGame, typ
 import { flights } from './village';
 import { distanceKm, lerpGeo, regionById, sameContinent, type LonLat } from './world';
 import { changeRep, landing } from './politics';
+import { timeOfDayAt } from './maps';
+import type { TimeOfDay } from '../battle/types';
 
 const T = GEO_RULES.travel;
 
@@ -70,7 +72,6 @@ export function dispatchBlock(g: GeoGame, c: Contract, members: string[]): strin
   if (members.length > GEO_RULES.squad.max) return `no máximo ${GEO_RULES.squad.max} por esquadrão`;
   for (const id of members) if (!isAvailable(g, id)) return `${g.roster[id]?.name ?? id} não está disponível`;
   const plan = planRoute(g, c);
-  if (g.hours + plan.totalHours > c.expiresAt) return 'não chega antes do prazo';
   if (plan.plane) {
     if (plan.refused) return 'governo hostil recusa o pouso no aeródromo';
     if (planesInUse(g) >= flights(g)) return flights(g) ? 'o avião está fora' : 'a vila não tem hangar';
@@ -129,6 +130,37 @@ export function sendHome(g: GeoGame, s: Squad): void {
   const hours = [...s.legs].reverse().map((l) => l.endH - l.startH);
   s.legs = absolute(back, hours, g.hours);
   s.state = 'returning';
+}
+
+/** Cancela a ida: o esquadrão volta de onde está e o contrato volta a ficar aberto (se ainda no prazo). */
+export function recallSquad(g: GeoGame, s: Squad): void {
+  if (s.state !== 'going') return;
+  const c = g.contracts.find((x) => x.id === s.contractId);
+  if (c) {
+    c.status = c.expiresAt > g.hours ? 'open' : 'expired';
+    c.squadId = undefined;
+  }
+  const here = squadPosition(g, s);
+  const spent = Math.max(0.1, g.hours - (s.legs[0]?.startH ?? g.hours));
+  const leg = s.legs.find((l) => g.hours < l.endH) ?? s.legs[s.legs.length - 1]!;
+  s.legs = absolute([{ from: here, to: g.village.at, mode: leg.mode }], [spent], g.hours);
+  s.state = 'returning';
+  addLog(g, `↩ ${s.name} voltou atrás${c ? ` (${c.title} segue aberto)` : ''}.`);
+}
+
+/** Horas até o próximo período (dia ou noite) no lugar. */
+export function hoursUntil(g: GeoGame, lon: number, tod: TimeOfDay): number {
+  for (let h = 0; h <= 24; h += 0.25) if (timeOfDayAt(g.hours + h, lon) === tod) return h;
+  return 0;
+}
+
+/** O esquadrão no local espera o dia ou a noite para lutar (o contrato não vence com ele lá). */
+export function waitFor(g: GeoGame, s: Squad, tod: TimeOfDay): number {
+  const c = g.contracts.find((x) => x.id === s.contractId);
+  const h = c ? hoursUntil(g, c.at[0], tod) : 0;
+  s.waitUntil = g.hours + Math.max(0.25, h + 0.5);
+  addLog(g, `⏳ ${s.name} espera ${tod === 'noite' ? 'a noite' : 'o dia'} para agir.`);
+  return h;
 }
 
 /** O esquadrão desiste no local: contrato falha e volta. */
