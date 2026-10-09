@@ -94,6 +94,7 @@ export function unitFromCharacter(c: Character, team: Team): BattleUnit {
     weaponAtk: d.weaponAtk,
     weaponRange: d.weaponRange,
     weaponType: d.weaponType,
+    weaponName: c.equipment.weapon ? DB.items[c.equipment.weapon]?.name : undefined,
     ...ammoOf(c),
     attackAttr: d.attackAttr,
     accuracy: d.accuracy + q.accuracy,

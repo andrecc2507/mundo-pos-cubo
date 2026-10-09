@@ -97,6 +97,8 @@ export interface BattleDrawOptions {
   confines?: { x0: number; y0: number; x1: number; y1: number }[];
   /** Corte de andar: peças que começam nesta altura ou acima não são desenhadas (ver dentro dos prédios). */
   cut?: number;
+  /** Colunas cujas paredes ficam translúcidas (herói do jogador dentro de um prédio ali perto). */
+  seeThrough?: Set<number>;
   /** Célula sob o cursor (andar do prédio); sem ela, o cursor marca a coluna toda. */
   hoverCell?: number;
   /** Altura de desenho de quem está em animação (passo a passo entre andares). */
@@ -230,12 +232,16 @@ export function drawBattle(ctx: CanvasRenderingContext2D, cam: IsoCamera, map: B
       const [px, py] = cam.project(map, x, y, p.h);
       const l = k + 1;
       const cell = i + l * cells;
+      // Herói dentro do prédio: as paredes em volta ficam translúcidas para ver onde pisar.
+      const ghost = o.seeThrough?.has(i);
+      if (ghost) ctx.globalAlpha = 0.3;
       drawBlock(ctx, p as Tile, x, y, px, py, (p.h - p.b) * STEP_H * z, hw, hh, z, o, cell, -1, false);
       if (p.s) drawSurface(ctx, p as Tile, px, py, hw, hh, o.time);
       drawMarks(ctx, x, y, px, py, hw, hh, z, o, cell);
       drawFog(ctx, px, py, hw, hh, o, cell);
       if (p.p) drawProp(ctx, p as Tile, px, py, z, o.time, x, y);
       if (p.hp !== undefined) drawPieceHp(ctx, p, px, py, z);
+      if (ghost) ctx.globalAlpha = 1;
       for (const c of unitsAt(l)) drawUnit(ctx, cam, map, c.u, o, z);
     }
     // Escada de dentro (alçapão) só aparece com o corte de andar; a de fora, sempre.

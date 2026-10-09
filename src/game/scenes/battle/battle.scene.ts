@@ -18,7 +18,7 @@ import { diffNotices, snapshot, type Snapshot } from '../../battle/notices';
 import { reactionKey, restoreBattle, runWithReactions, snapshotBattle, type BattleSnapshot, type ReactionQuestion } from '../../battle/reaction_prompt';
 import { losBlocker } from '../../battle/los';
 import { describeSkill } from '../../bestiary/describe';
-import { BALANCE, BATTLE_TIME_SCALE, TACTICS, WEAPONS, actionInterval } from '../../rules/stats';
+import { BALANCE, BATTLE_TIME_SCALE, TACTICS, WEAPONS, actionInterval, effectiveRange } from '../../rules/stats';
 import { applyElementToTile, steerSmoke, unitAt } from '../../battle/elements';
 import {
   BASIC_ATTACK,
@@ -42,6 +42,7 @@ import {
   buildResult,
   canCast,
   skillUsable,
+  WEAPON_NAME,
   freeSkills,
   castSkill,
   comboAsSkill,
@@ -66,6 +67,9 @@ import {
   predictOrder,
   reachable,
   setOverwatch,
+  overwatchShape,
+  rangeRule,
+  baseRange,
   skillRange,
   skillTargets,
   stepTime,
@@ -107,7 +111,7 @@ type Mode =
   /** Formação inicial: escolher onde cada herói começa, dentro da área de início. */
   | { kind: 'deploy'; tiles: Set<number>; selected: string | null; trapper?: string; trapType?: string }
   | { kind: 'move'; reach: Reach; tiles: Set<number> }
-  | { kind: 'target'; label: string; tiles: Set<number>; range: Set<number>; skill?: SkillLike; combo?: ComboOption; itemSlot?: number; attack?: boolean; capture?: boolean; interact?: boolean; ground?: Set<number>; tactic?: 'shove' | 'throwPick' | 'throwTo' | 'propShot' | 'launch' | 'carry' | 'stabilize'; from?: number; confineA?: [number, number] };
+  | { kind: 'target'; label: string; tiles: Set<number>; range: Set<number>; skill?: SkillLike; combo?: ComboOption; itemSlot?: number; attack?: boolean; capture?: boolean; interact?: boolean; ground?: Set<number>; tactic?: 'shove' | 'throwPick' | 'throwTo' | 'propShot' | 'launch' | 'carry' | 'stabilize' | 'overwatch'; from?: number; owSkill?: string; confineA?: [number, number] };
 
 interface MoveAnim {
   uid: string;
@@ -522,6 +526,23 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
    * Corte de andar: com a unidade ativa dentro de um prédio (sob teto), esconde o que fica acima do
    * andar dela para dar para ver lá dentro. PageUp/PageDown sobem e descem o corte.
    */
+  /** Colunas de prédio em volta dos heróis que estão lá dentro: paredes translúcidas. */
+  private seeThrough(): Set<number> | undefined {
+    const map = this.state.map;
+    const out = new Set<number>();
+    for (const u of this.state.units) {
+      if (!u.alive || u.team !== 'player') continue;
+      const t = tileAt(map, u.x, u.y);
+      if (!t || !stack.covered(t, stack.unitLevel(map, u))) continue;
+      for (let dy = -4; dy <= 4; dy++)
+        for (let dx = -4; dx <= 4; dx++) {
+          const c = tileAt(map, u.x + dx, u.y + dy);
+          if (c?.up?.length) out.add(idx(map, u.x + dx, u.y + dy));
+        }
+    }
+    return out.size ? out : undefined;
+  }
+
   private viewCut(): number | undefined {
     const map = this.state.map;
     const u = activeUnit(this.state);
@@ -957,6 +978,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
       if (m.attack) this.performSkill(u, BASIC_ATTACK, x, y, () => attack(this.state, u, x, y), done);
       else if (m.capture) this.performSkill(u, BASIC_ATTACK, x, y, () => capture(this.state, u, x, y), done, '⛓ Render');
       else if (m.interact) this.perform(u, '🖐 Interagir', 'buff', ELEMENT_PALETTE.apoio, x, y, 0, () => interact(this.state, u, x, y), done);
+      else if (m.tactic === 'overwatch') this.selfAction(u, m.owSkill ? `Prontidão: ${skill(m.owSkill).name}` : 'Prontidão', 'charge', () => setOverwatch(this.state, u, m.owSkill, [x, y]));
       else if (m.tactic === 'shove') this.perform(u, '💪 Empurrar', 'dash', ELEMENT_PALETTE.fisico, x, y, 0, () => tactics.shove(this.state, u, x, y), done);
       else if (m.tactic === 'throwPick') {
         this.setMode({ kind: 'target', label: '🪣 Arremessar: escolha onde (em arco, por cima de muros)', tiles: new Set(tactics.throwTargets(this.state, u)), range: new Set(), tactic: 'throwTo', from: i });
@@ -1297,7 +1319,8 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
       ...(u.maxAmmo ? [btn('🔫 Recarregar', () => this.doReload(u), { disabled: acted || (u.ammo ?? 0) >= u.maxAmmo, class: !u.ammo ? 'primary' : '', title: 'Gasta a ação, mas é rápido: a próxima vez chega na metade do tempo.' })] : []),
       btn(t('✨ Habilidades'), () => this.openSkills(u), { disabled: (acted && !freeSkills(s, u).length) || (!u.skills.length && !comboOptions(s, u).length) }),
       btn(t('🎒 Itens'), () => this.openItems(u), { disabled: acted || !u.items.some(Boolean) || !!u.statuses.sem_itens }),
-      btn(`📋 Ações básicas (${basics.filter((b) => !b.disabled).length})`, () => this.openBasicActions(u), { title: 'Defender, Procurar, Empurrar, Esconder, Desengajar, Prontidão, Esperar, Fugir…' }),
+      btn('🎯 Prontidão', () => this.openOverwatch(u), { disabled: acted || u.weaponRange < 1, title: 'Fica de tocaia num cone: ataca (ou solta a técnica preparada) no primeiro inimigo que se mover nele. Gasta a ação.' }),
+      btn(`📋 Ações básicas (${basics.filter((b) => !b.disabled).length})`, () => this.openBasicActions(u), { title: 'Defender, Procurar, Empurrar, Esconder, Desengajar, Fugir…' }),
       btn('⚡ Especiais', () => this.openSpecialActions(u), { title: 'Voltar turno e outras ações especiais' }),
       ...((this.state.objectives ?? []).length || interactTargets(s, u).length
         ? [btn('🖐 Interagir', () => this.setMode({ kind: 'target', label: 'Interagir: escolha o objetivo ao lado', tiles: new Set(interactTargets(s, u)), range: this.rangeOf(u, undefined, 1), interact: true }), { disabled: acted || !interactTargets(s, u).length })]
@@ -1312,7 +1335,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
       ...(doorTargets(s, u).length
         ? [btn('🚪 Porta', () => this.setMode({ kind: 'target', label: 'Porta: abrir ou fechar (ação livre — espie antes de entrar)', tiles: new Set(doorTargets(s, u)), range: this.rangeOf(u, undefined, 1), interact: true }))]
         : []),
-      ...(acted ? [btn(t('⏭ Encerrar turno'), () => this.endTurnNow(), { class: 'primary' })] : []),
+      btn(t('⏭ Encerrar turno'), () => this.endTurnNow(), { class: acted ? 'primary' : '', title: acted ? 'Termina o turno.' : 'Termina o turno sem agir: a próxima vez chega antes (barra começa em 50%).' }),
     );
     el.append(row);
   }
@@ -1343,13 +1366,11 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
       { label: '💪 Empurrar', desc: 'Força contra Força: joga quem está ao lado 1 casa (2 com muita Força) — de telhados, no fogo, na água. Gasta a ação.', disabled: !tactics.shoveTargets(s, u).length, why: acted ? usedAction : 'Ninguém ao lado para empurrar', run: () => this.setMode({ kind: 'target', label: 'Empurrar (gasta a ação do turno): Força × Força — escolha quem está ao lado', tiles: new Set(tactics.shoveTargets(s, u)), range: this.rangeOf(u, undefined, 1), tactic: 'shove' }) },
       { label: `🌑 Esconder (${hideChance(s, u)}%)`, desc: 'Some da vista dos inimigos (melhor em arbustos, fumaça e no escuro). Gasta a ação.', disabled: acted || u.hidden, why: u.hidden ? 'Já está escondido' : usedAction, run: () => this.selfAction(u, 'Esconder', 'smoke', () => hide(s, u)) },
       { label: '↩ Desengajar', desc: 'Recua com cuidado: o resto do movimento deste turno não provoca ataques de oportunidade. Gasta a ação.', disabled: acted, why: usedAction, run: () => this.selfAction(u, 'Desengajar', 'buff', () => disengage(s, u)) },
-      { label: '🎯 Prontidão', desc: 'Fica de tocaia: ataca (ou solta a habilidade preparada) no primeiro inimigo que se mover ao alcance.', disabled: acted || u.weaponRange < 1, why: usedAction || 'Sem alcance', run: () => this.openOverwatch(u) },
       { label: `⛓ Render (${captureChance(u)}%)`, desc: 'Captura um humano ao lado com até 25% da vida.', disabled: acted || !captureTargets(s, u).length, why: acted ? usedAction : 'Nenhum humano rendível ao lado', run: () => this.setMode({ kind: 'target', label: `Render: humano adjacente com até 25% da vida (${captureChance(u)}%)`, tiles: new Set(captureTargets(s, u)), range: this.rangeOf(u, undefined, 1), capture: true }) },
     ];
     if (tactics.throwSources(s, u).length) out.push({ label: '🪣 Arremessar objeto', desc: 'Levanta e arremessa um objeto ao lado (barril, caixa, feno).', disabled: acted, why: usedAction, run: () => this.setMode({ kind: 'target', label: 'Arremessar: escolha o objeto ao lado (barril, caixa, feno…)', tiles: new Set(tactics.throwSources(s, u)), range: new Set(), tactic: 'throwPick' }) });
     if (tactics.propShotTargets(s, u, skillRange(u, BASIC_ATTACK)).length) out.push({ label: '🎯 Derrubar lustre', desc: 'Um tiro na corrente: o lustre despenca em quem estiver embaixo.', disabled: acted, why: usedAction, run: () => this.setMode({ kind: 'target', label: 'Mire no lustre: ele despenca em quem estiver embaixo', tiles: new Set(tactics.propShotTargets(s, u, skillRange(u, BASIC_ATTACK))), range: new Set(), tactic: 'propShot' }) });
     if (build.launchTargets(s, u).length) out.push({ label: '🦍 Ser arremessado', desc: 'Um aliado grande arremessa você até telhados (gasta o movimento).', run: () => this.setMode({ kind: 'target', label: 'Um aliado grande arremessa você (até telhados) — gasta o movimento', tiles: new Set(build.launchTargets(s, u)), range: new Set(), tactic: 'launch' }) });
-    if (!acted) out.push({ label: t('⏭ Esperar (barra 50%)'), desc: 'Passa a vez sem agir: a próxima barra começa pela metade.', run: () => this.endTurnNow() });
     if (s.canFlee)
       out.push({ label: `🏃 Fugir (${fleeChance(s)}%)`, desc: 'Tenta tirar o esquadrão da batalha.', danger: true, run: () => {
         flee(s, u);
@@ -1453,7 +1474,14 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
   /** Prontidão com a arma ou com uma habilidade preparada (o MP é pago agora; se ninguém vier, se perde). */
   private openOverwatch(u: BattleUnit): void {
     const s = this.state;
-    const ready = (skillId?: string, title = 'Prontidão') => this.selfAction(u, title, 'charge', () => setOverwatch(s, u, skillId));
+    // Depois de escolher arma ou técnica, o jogador aponta o cone que vai vigiar.
+    const ready = (skillId?: string) => {
+      const sk = skillId ? (skill(skillId) as SkillLike) : BASIC_ATTACK;
+      const len = Math.max(2, rangeRule(u, sk) === 'shot' ? effectiveRange(baseRange(u, sk), u.attrs.dex) : skillRange(u, sk));
+      const tiles = new Set<number>();
+      for (let y = 0; y < s.map.h; y++) for (let x = 0; x < s.map.w; x++) if ((x !== u.x || y !== u.y) && Math.max(Math.abs(x - u.x), Math.abs(y - u.y)) <= len) tiles.add(idx(s.map, x, y));
+      this.setMode({ kind: 'target', label: `🎯 Prontidão: aponte a direção — o cone mostra o que fica vigiado (${len} casas)`, tiles, range: new Set(), skill: overwatchShape(len), tactic: 'overwatch', owSkill: skillId });
+    };
     const options = u.skills.map((id) => skill(id) as SkillLike).filter((sk) => readyable(sk));
     if (!options.length) {
       ready();
@@ -1486,7 +1514,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
             ),
             btn('Preparar', () => {
               self.close();
-              ready(sk.id, `Prontidão: ${sk.name}`);
+              ready(sk.id);
             }, { disabled: !skillUsable(s, u, sk) }),
           ),
         );
@@ -1720,6 +1748,7 @@ export class BattleScene extends Scene<{ setup: import('../../battle/types').Bat
       hoverCell: this.hoverCell ?? undefined,
       confines: this.state.confines,
       cut: this.viewCut(),
+      seeThrough: this.seeThrough(),
       displayH: this.displayH,
       units: this.state.units,
       unitVisible: (x) => (x.alive || this.dyingShown.has(x.uid)) && visibleToPlayer(this.state, x, this.vision),
@@ -1948,6 +1977,14 @@ function giftLine(u: BattleUnit): HTMLElement | null {
   );
 }
 
+/** Arma empunhada: nome, ataque, alcance eficaz (tiro) e munição. */
+function weaponLine(u: BattleUnit): HTMLElement {
+  const name = u.weaponName ?? (u.weaponType === 'natural' ? 'Garras e dentes' : WEAPON_NAME[u.weaponType] ?? 'Mãos nuas');
+  const reach = u.weaponRange > 1 ? `alcance eficaz ${effectiveRange(u.weaponRange, u.attrs.dex)}` : 'corpo a corpo';
+  const ammo = u.maxAmmo ? ` · pente ${u.ammo ?? 0}/${u.maxAmmo}` : '';
+  return h('div', { style: 'font-size:12px', title: 'Arma empunhada. Tiros vão além do alcance eficaz, mas o acerto cai a cada casa.', text: `🗡 ${name[0]!.toUpperCase()}${name.slice(1)} · ATQ ${u.weaponAtk} · ${reach}${ammo}` });
+}
+
 export function unitCard(u: BattleUnit): HTMLElement {
   const chips = (Object.keys(u.statuses) as StatusId[]).map((s) => {
     const info = STATUS_INFO[s];
@@ -1970,6 +2007,7 @@ export function unitCard(u: BattleUnit): HTMLElement {
     h('div', { class: 'row', style: 'justify-content:space-between' }, h('b', { text: u.name, style: `color:${u.team === 'player' ? '#4fc3f7' : '#ef5350'}` }), h('span', { class: 'muted', title: DB.classes[u.classId].name, text: `${u.title ? `${u.title} · ` : ''}${u.classId === 'fera' ? DB.classes[u.classId].name : buildLabel(u)} · Nv ${u.level}` })),
     bar(u.hp, u.maxHp, '#66bb6a', `HP ${u.hp}/${u.maxHp}`),
     u.maxMp ? bar(u.mp, u.maxMp, '#42a5f5', `${isNewClass(u.classId) ? 'Stamina' : 'MP'} ${u.mp}/${u.maxMp}`) : null,
+    weaponLine(u),
     giftLine(u),
     bar(Math.min(100, u.gauge), 100, '#fdd835', `Barra ${Math.floor(Math.min(100, u.gauge))}%`),
     h('div', { class: 'muted', style: 'font-size:11px', text: `FOR ${u.attrs.str} DES ${u.attrs.dex} VEL ${u.attrs.spd} INT ${u.attrs.int} VIT ${u.attrs.vit} · Mov ${u.move} · ${actionInterval(u.attrs.spd).toFixed(1)} s/ação` }),

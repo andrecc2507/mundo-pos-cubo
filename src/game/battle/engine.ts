@@ -850,6 +850,7 @@ function triggerOverwatch(state: BattleState, mover: BattleUnit, step: number): 
   for (const o of opponents(state, mover)) {
     if (!o.overwatch || !mover.alive || !o.alive) continue;
     const sk = o.overwatchSkill ? (skill(o.overwatchSkill) as SkillLike) : undefined;
+    if (o.overwatchArea && !o.overwatchArea.includes(idx(state.map, mover.x, mover.y))) continue;
     if (!inRange(state, o, overwatchRange(o), mover.x, mover.y, 1, !(sk && DB.skills[sk.id]?.fx?.homing))) continue;
     o.overwatch = false;
     delete o.overwatchSkill;
@@ -935,7 +936,9 @@ export function rangeRule(u: BattleUnit, s: SkillLike): 'shot' | 'throw' | 'fixe
   const f = DB.skills[s.id]?.fx;
   if (f?.arc) return 'throw';
   if (f?.teleport || f?.dashThrough || f?.leap || f?.allyStep || f?.behind || f?.swap || f?.extraMove) return 'fixed';
-  if (s.shape === 'line' || s.shape === 'cone' || s.kind === 'heal' || s.kind === 'utility') return 'fixed';
+  if (s.shape === 'line' || s.shape === 'cone' || s.kind === 'heal') return 'fixed';
+  // Utilitário no chão (construir, fumaça…) tem alcance; em alguém (marcar presa, ordens) é só ver.
+  if (s.kind === 'utility' && s.target === 'tile') return 'fixed';
   return 'shot';
 }
 
@@ -1623,7 +1626,7 @@ export function canCast(u: BattleUnit, s: SkillLike): boolean {
 }
 
 /** Por que a habilidade não pode ser usada agora (texto curto para a interface), ou null. */
-const WEAPON_NAME: Record<string, string> = { pistola: 'pistola', fuzil: 'fuzil', escopeta: 'escopeta', precisao: 'fuzil de precisão', metralhadora: 'metralhadora', lanca_granadas: 'lança-granadas', punhos: 'punhos', lamina: 'lâmina', contundente: 'contundente' };
+export const WEAPON_NAME: Record<string, string> = { pistola: 'pistola', fuzil: 'fuzil', escopeta: 'escopeta', precisao: 'fuzil de precisão', metralhadora: 'metralhadora', lanca_granadas: 'lança-granadas', punhos: 'punhos', lamina: 'lâmina', contundente: 'contundente' };
 
 export function castBlockReason(state: BattleState, u: BattleUnit, s: SkillLike): string | null {
   const def = DB.skills[s.id];
@@ -2071,7 +2074,19 @@ export function hide(state: BattleState, u: BattleUnit): boolean {
  * habilidade: o MP e a recarga são pagos agora e, se ninguém entrar no alcance até o próximo turno,
  * a magia se desfaz sem devolver o MP.
  */
-export function setOverwatch(state: BattleState, u: BattleUnit, skillId?: string): boolean {
+/** Casas vigiadas pela prontidão mirando (x, y): cone até o alcance eficaz, só onde a vista alcança. */
+export function overwatchCone(state: BattleState, u: BattleUnit, x: number, y: number, skillId?: string): number[] {
+  const sk = skillId ? (skill(skillId) as SkillLike) : BASIC_ATTACK;
+  const len = Math.max(2, rangeRule(u, sk) === 'shot' ? stats.effectiveRange(baseRange(u, sk), u.attrs.dex) : skillRange(u, sk));
+  return areaOf(state, u, overwatchShape(len), x, y).map(([tx, ty]) => idx(state.map, tx, ty));
+}
+
+/** Forma do cone da prontidão (para desenhar ao mirar). */
+export function overwatchShape(len: number): SkillLike {
+  return { id: 'prontidao', name: 'Prontidão', mp: 0, range: len, target: 'tile', shape: 'cone', kind: 'utility', power: 0 };
+}
+
+export function setOverwatch(state: BattleState, u: BattleUnit, skillId?: string, aim?: [number, number]): boolean {
   if (skillId) {
     const sk = skill(skillId) as SkillLike;
     if (!u.skills.includes(skillId) || !readyable(sk) || !canCast(u, sk)) return false;
@@ -2085,6 +2100,7 @@ export function setOverwatch(state: BattleState, u: BattleUnit, skillId?: string
     state.log.push(`🎯 ${u.name} está de prontidão.`);
   }
   u.overwatch = true;
+  u.overwatchArea = aim ? overwatchCone(state, u, aim[0], aim[1], skillId) : undefined;
   finishAction(state, u, true);
   return true;
 }

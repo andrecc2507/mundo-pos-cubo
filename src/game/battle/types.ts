@@ -166,6 +166,8 @@ export interface BattleUnit {
   weaponAtk: number;
   weaponRange: number;
   weaponType: WeaponType;
+  /** Nome da arma empunhada (painel da batalha). */
+  weaponName?: string;
   /** Arma de fogo: tiros no pente e o tamanho do pente (sem `maxAmmo` = não usa munição). */
   ammo?: number;
   maxAmmo?: number;
@@ -199,6 +201,8 @@ export interface BattleUnit {
   overwatch: boolean;
   /** Habilidade preparada na prontidão (MP já pago); sem ela, a prontidão usa a arma. */
   overwatchSkill?: string;
+  /** Casas vigiadas pela prontidão (cone escolhido pelo jogador); ausente = em volta toda. */
+  overwatchArea?: number[];
   /** Já deu o ataque de oportunidade desde o seu último turno. */
   oaUsed?: boolean;
   defending: boolean;

@@ -70,3 +70,13 @@ describe('tiro: cobertura, alcance e ações', () => {
     expect(useItem(s, a, 0, d.x, d.y)).toBe(false);
   });
 });
+
+describe('suporte à distância', () => {
+  it('marcar presa e ordens alcançam qualquer um à vista', async () => {
+    const { DB } = await import('@game/data');
+    const { s, a } = duel(2, 2, 20, 2);
+    expect(skillRange(a, DB.skills.cacador_marcar! as never)).toBe(UNLIMITED_RANGE);
+    expect(skillRange(a, DB.skills.estrategista_ordem! as never)).toBe(UNLIMITED_RANGE);
+    expect(s).toBeTruthy();
+  });
+});
