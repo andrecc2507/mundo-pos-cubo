@@ -332,7 +332,18 @@ export function collideDamage(maxHp: number): number {
   return Math.max(1, Math.round(safe(maxHp) * balance.tactics.collidePct));
 }
 
-/** Alcance do arremesso de objeto: 2 + 1 a cada 10 de FOR. */
+/** Alcance eficaz de tiro: alcance da arma/técnica + 1 casa a cada `dexPerTile` de DES. */
+export function effectiveRange(baseRange: number, dex: number): number {
+  return baseRange + Math.floor(safe(dex) / balance.rangeFalloff.dexPerTile);
+}
+
+/** Acerto perdido por atirar além do alcance eficaz (Xenonauts): −perTile por casa, até −maxPenalty. */
+export function rangePenalty(dist: number, baseRange: number, dex: number): number {
+  const r = balance.rangeFalloff;
+  return Math.min(r.maxPenalty, Math.max(0, dist - effectiveRange(baseRange, dex)) * r.perTile);
+}
+
+/** Alcance do arremesso (granadas, frascos, técnicas em arco): 3 + 1 a cada 10 de FOR. */
 export function throwRange(str: number): number {
   return balance.tactics.throwBaseRange + Math.floor(safe(str) / balance.tactics.throwStrPerTile);
 }

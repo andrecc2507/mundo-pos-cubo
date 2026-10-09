@@ -26,12 +26,12 @@ function battle(timeOfDay?: TimeOfDay): BattleState {
 }
 
 describe('mirar no chão e luz à noite', () => {
-  it('magia de alvo único pode mirar no chão, mais longe que o alcance normal', () => {
+  it('magia de alvo único pode mirar no chão longe: técnica à distância não tem limite de alcance', () => {
     const s = battle();
     const u = s.units.find((x) => x.team === 'player')!;
     const tiles = groundTargets(s, u, FIREBALL, new Set());
     expect(tiles).toContain(idx(s.map, 2, 2 + FIREBALL.range + GROUND_AIM_BONUS));
-    expect(tiles).not.toContain(idx(s.map, 2, 2 + FIREBALL.range + GROUND_AIM_BONUS + 1));
+    expect(tiles).toContain(idx(s.map, 2, 2 + FIREBALL.range + GROUND_AIM_BONUS + 1));
   });
 
   it('bola de fogo no chão de pedra deixa brasas (luz); num barril, quebra/incendeia', () => {

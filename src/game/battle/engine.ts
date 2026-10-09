@@ -917,10 +917,35 @@ export type SkillLike = Pick<SkillDef, 'range' | 'target' | 'shape' | 'radius' |
   mp: number;
 };
 
+/** Alcance "sem limite": até onde a vista alcança (a linha de visão decide). */
+export const UNLIMITED_RANGE = 99;
+
+/** Alcance da ficha (arma ou técnica): é o alcance eficaz dos tiros e o máximo das técnicas fixas. */
+export function baseRange(u: BattleUnit, s: SkillLike): number {
+  return s.range < 0 ? u.weaponRange : s.range;
+}
+
+/**
+ * Regra de alcance: `shot` (tiros e técnicas à distância: sem limite, acerto cai com a distância;
+ * suporte à distância também, se vê o alvo), `throw` (arremesso em arco: máximo pela FOR) ou `fixed`
+ * (corpo a corpo, toque, cura, movimento, linhas e cones: o alcance da ficha).
+ */
+export function rangeRule(u: BattleUnit, s: SkillLike): 'shot' | 'throw' | 'fixed' {
+  if (baseRange(u, s) <= 1 || s.target === 'self') return 'fixed';
+  const f = DB.skills[s.id]?.fx;
+  if (f?.arc) return 'throw';
+  if (f?.teleport || f?.dashThrough || f?.leap || f?.allyStep || f?.behind || f?.swap || f?.extraMove) return 'fixed';
+  if (s.shape === 'line' || s.shape === 'cone' || s.kind === 'heal' || s.kind === 'utility') return 'fixed';
+  return 'shot';
+}
+
 export function skillRange(u: BattleUnit, s: SkillLike): number {
-  const r = s.range < 0 ? u.weaponRange : s.range;
+  const r = baseRange(u, s);
   // Esmagado pela gravidade: ataques à distância só alcançam o vizinho.
   if (u.statuses.sem_alcance && (s.kind === 'ranged' || s.range < 0)) return Math.min(r, 1);
+  const rule = rangeRule(u, s);
+  if (rule === 'shot') return UNLIMITED_RANGE;
+  if (rule === 'throw') return stats.throwRange(u.attrs.str);
   return r;
 }
 
@@ -1128,6 +1153,9 @@ export function previewHit(state: BattleState, a: BattleUnit, d: BattleUnit, kin
   const h = stats.BALANCE.hit;
   if (magic) chance = stats.magicHitChance(d.evasion - d.level, m.accuracy, m.evasion);
   else chance = stats.physicalHitChance(a.accuracy + accBonus + m.accuracy, d.evasion + m.evasion, heightDiff(state, a, d) * h.heightBonus - (d.defending ? h.defendingPenalty : 0) - COVER_PENALTY[cover]);
+  // Distância: além do alcance eficaz (arma/técnica + DES), o acerto cai a cada casa.
+  const shot = sk ?? BASIC_ATTACK;
+  if (rangeRule(a, shot) === 'shot') chance = Math.max(stats.BALANCE.hit.min, chance - stats.rangePenalty(chebyshev(a.x, a.y, d.x, d.y), baseRange(a, shot), a.attrs.dex));
   // Sob supressão: mira tremida.
   if (a.statuses.suprimido) chance -= stats.TACTICS.suppressAccuracy;
   // Sorte justa: cada erro seguido do jogador vira Foco no próximo ataque.
@@ -1609,13 +1637,14 @@ export function castBlockReason(state: BattleState, u: BattleUnit, s: SkillLike)
   const cost = fx.mpCost(u, s);
   if (u.mp < cost) return `${u.gift || isNewClass(u.classId) ? 'STAMINA' : 'MP'} INSUFICIENTE (${u.mp}/${cost})`;
   if (def && def.classId === 'fera' && !fx.creatureUsable(state, u, def)) return 'CONDIÇÃO NÃO ATENDIDA (terreno ou situação)';
-  if (state.turn.acted && !def?.fx?.free) return 'JÁ AGIU NESTE TURNO';
+  // Técnicas rápidas (movimento) e ações livres não gastam a ação do turno.
+  if (state.turn.acted && !def?.fx?.free && def?.apCost !== 1) return 'JÁ AGIU NESTE TURNO';
   return null;
 }
 
 /** Habilidades sem custo de ação prontas para uso (valem mesmo depois de agir). */
 export function freeSkills(state: BattleState, u: BattleUnit): SkillLike[] {
-  return u.skills.map((id) => DB.skills[id]).filter((d): d is SkillDef => !!d?.fx?.free && skillUsable(state, u, d as SkillLike)) as SkillLike[];
+  return u.skills.map((id) => DB.skills[id]).filter((d): d is SkillDef => !!(d?.fx?.free || d?.apCost === 1) && skillUsable(state, u, d as SkillLike)) as SkillLike[];
 }
 
 /** Como `canCast`, mas também checa requisitos do terreno e da situação (criaturas). */
@@ -1639,8 +1668,11 @@ export function castSkill(state: BattleState, u: BattleUnit, s: SkillLike, x: nu
   if (keep && state.conc?.[u.uid] && canCast(u, s)) conc.end(state, u, 'troca de foco');
   const before = keep ? conc.snapshot(state) : undefined;
   const dealt0 = u.dealt ?? 0;
+  const actedBefore = state.turn.acted;
   const ok = castSkillInner(state, u, s, x, y, combo);
   const def = DB.skills[s.id];
+  // Técnica rápida (movimento): não gasta a ação do turno.
+  if (ok && def?.apCost === 1 && state.activeUid === u.uid) state.turn.acted = actedBefore;
   if (ok) intel.noise(state, u, intel.SKILL_NOISE);
   if (ok && def) {
     // Dom: Strain (e talvez Overload).
@@ -1650,8 +1682,6 @@ export function castSkill(state: BattleState, u: BattleUnit, s: SkillLike, x: nu
       const t = unitAt(state, x, y);
       if (t) gift.grantAp(state, t, def.fx.grantAp, u);
     }
-    // Técnica rápida (meia ação): a próxima vez chega na metade do tempo.
-    if (def.apCost === 1 && u.alive && state.activeUid === u.uid) state.turn.timeMult = Math.min(state.turn.timeMult ?? 1, QUICK_TIME_MULT);
   }
   // Telemetria: parte do dano que veio de habilidades (simulação de balanceamento).
   if (ok) {
@@ -1851,15 +1881,16 @@ export function itemTargets(state: BattleState, u: BattleUnit, itemId: string): 
       } else if (it.use?.heal || it.use?.mp) {
         // Ao lado: bebe/dá a poção inteira. Mais longe: arremessa (cura em área, efeito menor).
         const t = unitAt(state, x, y);
-        if ((t && t.team === u.team && d <= 1) || (d > 1 && tactics.arcReach(state, u, x, y, stats.TACTICS.arcRange))) out.push(idx(state.map, x, y));
-      } else if (tactics.arcReach(state, u, x, y, it.use?.flare ? 6 : stats.TACTICS.arcRange)) out.push(idx(state.map, x, y));
+        if ((t && t.team === u.team && d <= 1) || (d > 1 && tactics.arcReach(state, u, x, y, stats.throwRange(u.attrs.str)))) out.push(idx(state.map, x, y));
+      } else if (tactics.arcReach(state, u, x, y, stats.throwRange(u.attrs.str))) out.push(idx(state.map, x, y));
     }
   return out;
 }
 
 export function useItem(state: BattleState, u: BattleUnit, slot: number, x: number, y: number): boolean {
   const itemId = u.items[slot];
-  if (!itemId || itemUsesLeft(u, slot) <= 0) return false;
+  // Usar item gasta a ação do turno.
+  if (!itemId || itemUsesLeft(u, slot) <= 0 || state.turn.acted) return false;
   const it = item(itemId);
   const use = it.use ?? {};
   const potion = (t: BattleUnit, mult: number) => {
@@ -1885,7 +1916,7 @@ export function useItem(state: BattleState, u: BattleUnit, slot: number, x: numb
     potion(t, 1);
   } else if (use.heal || use.mp) {
     // Poção arremessada: estoura e cura aliados em volta (raio 1), com efeito menor.
-    if (!tactics.arcReach(state, u, x, y, stats.TACTICS.arcRange)) return false;
+    if (!tactics.arcReach(state, u, x, y, stats.throwRange(u.attrs.str))) return false;
     faceTowards(u, x, y);
     for (const [dx, dy] of [[0, 0], ...DIRS]) {
       const t = unitAt(state, x + dx!, y + dy!);
@@ -1893,7 +1924,7 @@ export function useItem(state: BattleState, u: BattleUnit, slot: number, x: numb
       if (inBounds(state.map, x + dx!, y + dy!)) state.events.push({ type: 'fx', x: x + dx!, y: y + dy!, element: 'luz' });
     }
   } else if (use.flare) {
-    if (!tactics.arcReach(state, u, x, y, 6)) return false;
+    if (!tactics.arcReach(state, u, x, y, stats.throwRange(u.attrs.str))) return false;
     const r = stats.TACTICS.flareRadius;
     for (let dy = -r; dy <= r; dy++)
       for (let dx = -r; dx <= r; dx++) {
@@ -1902,7 +1933,7 @@ export function useItem(state: BattleState, u: BattleUnit, slot: number, x: numb
       }
     state.events.push({ type: 'fx', x, y, element: 'luz' });
   } else {
-    if (!tactics.arcReach(state, u, x, y, stats.TACTICS.arcRange)) return false;
+    if (!tactics.arcReach(state, u, x, y, stats.throwRange(u.attrs.str))) return false;
     faceTowards(u, x, y);
     const r = use.radius ?? 1;
     for (let dy = -r; dy <= r; dy++)

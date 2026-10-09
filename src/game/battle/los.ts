@@ -43,6 +43,27 @@ export interface LosBlock {
  * telhados e portas fechadas dos prédios cortam a linha (janelas e portas abertas, não).
  */
 export function losBlocker(map: BattleMap, ax: number, ay: number, bx: number, by: number, za?: number, zb?: number): LosBlock | null {
+  const direct = straightBlocker(map, ax, ay, bx, by, za, zb);
+  if (!direct) return null;
+  // Sair da cobertura (XCOM): quem está colado num obstáculo se inclina para uma casa livre ao lado e
+  // mira dali — a árvore ou a quina do muro onde se protege não impede o tiro.
+  const a = tileAt(map, ax, ay);
+  if (!a) return direct;
+  const base = za ?? a.h;
+  for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]] as const) {
+    const nx = ax + dx;
+    const ny = ay + dy;
+    const t = tileAt(map, nx, ny);
+    if (!t || (nx === bx && ny === by)) continue;
+    if (t.p && PROPS[t.p].blocksLos) continue;
+    if (Math.abs(t.h - base) > 1 && za === undefined) continue;
+    if (rayBlocked(map, ax, ay, base + 1.5, nx, ny, base + 1.5)) continue;
+    if (!straightBlocker(map, nx, ny, bx, by, za === undefined ? undefined : base, zb)) return null;
+  }
+  return direct;
+}
+
+function straightBlocker(map: BattleMap, ax: number, ay: number, bx: number, by: number, za?: number, zb?: number): LosBlock | null {
   const a = tileAt(map, ax, ay);
   const b = tileAt(map, bx, by);
   if (!a || !b) return { x: bx, y: by, reason: 'fora do mapa' };
@@ -55,7 +76,9 @@ export function losBlocker(map: BattleMap, ax: number, ay: number, bx: number, b
     const t = tileAt(map, x, y)!;
     const lineH = ha + ((hb - ha) * (i + 1)) / n;
     if (t.h > lineH) return { x, y, reason: 'terreno mais alto no caminho' };
-    if (t.p && PROPS[t.p].blocksLos && t.h + PROPS[t.p].height > lineH) return { x, y, reason: PROPS[t.p].name };
+    // Objeto colado em quem atira ou no alvo não corta a linha: é cobertura, não parede.
+    const touching = i === 0 || i === path.length - 1;
+    if (t.p && PROPS[t.p].blocksLos && t.h + PROPS[t.p].height > lineH && !touching) return { x, y, reason: PROPS[t.p].name };
   }
   const wall = rayBlocked(map, ax, ay, ha, bx, by, hb);
   if (wall) return { x: wall[0], y: wall[1], reason: 'parede, teto ou porta fechada' };

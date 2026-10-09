@@ -73,6 +73,12 @@
   "defendingPenalty": 10,
   "obscuredPenalty": 40
  },
+ "rangeFalloff": {
+  "_doc": "Tiro e técnica à distância sem limite de alcance (basta ver o alvo). Até o alcance eficaz (alcance da arma ou da técnica + 1 casa a cada dexPerTile de DES) não perde nada; depois, −perTile de acerto por casa, até −maxPenalty. Arremesso (granadas, frascos, técnicas em arco) tem alcance máximo pela FOR (tactics.throwBaseRange + FOR / throwStrPerTile).",
+  "dexPerTile": 8,
+  "perTile": 5,
+  "maxPenalty": 70
+ },
  "evasion": {
   "spdDiv": 3,
   "dexDiv": 5
@@ -142,7 +148,7 @@
   "shoveMax": 95,
   "shoveFarMargin": 12,
   "collidePct": 0.06,
-  "throwBaseRange": 2,
+  "throwBaseRange": 3,
   "throwStrPerTile": 10,
   "throwPower": 3,
   "explodeRadius": 2,

@@ -64,13 +64,12 @@ describe('Dons em batalha: Strain, Overload, Despertar, Impulso', async () => {
     expect(s.log.some((l) => l.includes('OVERLOAD'))).toBe(true);
   });
 
-  it('técnica de movimento do Dom é rápida: a próxima vez chega na metade do tempo', async () => {
-    const { QUICK_TIME_MULT } = await import('@game/battle/engine');
+  it('técnica de movimento do Dom é rápida: não gasta a ação do turno', () => {
     const { s, u } = setup('eletricidade');
     expect(s.activeUid).toBe(u.uid);
     castSkill(s, u, DB.skills.eletricidade_m1! as never, 6, 6);
     expect([u.x, u.y]).toEqual([6, 6]);
-    expect(s.turn.timeMult).toBe(QUICK_TIME_MULT);
+    expect(s.turn.acted).toBe(false);
   });
 
   it('Impulso adianta a barra do aliado', async () => {
