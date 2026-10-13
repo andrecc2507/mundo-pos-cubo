@@ -6,7 +6,7 @@
    "desc": "Treinou num dos centros que ainda funcionam.",
    "attrs": {
     "dex": 2,
-    "int": 2
+    "wil": 2
    },
    "level": 0,
    "cost": 1.15,
@@ -81,7 +81,7 @@
    "name": "Especialista técnico",
    "desc": "Sabe consertar e operar o que sobrou.",
    "attrs": {
-    "int": 3
+    "wil": 3
    },
    "level": 0,
    "cost": 1.1,

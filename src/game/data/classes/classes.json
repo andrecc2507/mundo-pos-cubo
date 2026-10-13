@@ -13,8 +13,8 @@
     "bias": { "spd": 5, "dex": 4 }, "color": "#fdd835", "dark": "#8d7a12" },
   { "id": "suporte", "name": "Suporte", "role": "pelos outros: curar, proteger, comandar, resgatar",
     "move": 6, "jump": 1, "hpFactor": 1.1, "mpBase": 16, "mpPerLevel": 1.6, "weapons": ["punhos", "lamina", "contundente", "pistola", "fuzil", "escopeta", "precisao", "metralhadora", "lanca_granadas"],
-    "bias": { "int": 4, "vit": 3, "dex": 2 }, "color": "#43a047", "dark": "#1d5b20" },
+    "bias": { "wil": 4, "vit": 3, "dex": 2 }, "color": "#43a047", "dark": "#1d5b20" },
   { "id": "controle", "name": "Controle", "role": "pelo campo: prender, empurrar, negar espaço",
     "move": 6, "jump": 1, "hpFactor": 1.0, "mpBase": 14, "mpPerLevel": 1.4, "weapons": ["punhos", "lamina", "contundente", "pistola", "fuzil", "escopeta", "precisao", "metralhadora", "lanca_granadas"],
-    "bias": { "int": 4, "dex": 3, "spd": 2 }, "color": "#1e88e5", "dark": "#0d3c6e" }
+    "bias": { "wil": 4, "dex": 3, "spd": 2 }, "color": "#1e88e5", "dark": "#0d3c6e" }
 ]

@@ -1123,11 +1123,11 @@ export function previewHit(state: BattleState, a: BattleUnit, d: BattleUnit, kin
   const insp = a.statuses.inspirado ? 1.25 : 1;
   const def = sk ? DB.skills[sk.id] : undefined;
   const defScale = def?.fx?.defScaling ?? 0;
-  const scaling = def?.scaling ?? (magic ? { int: 1 } : { [a.attackAttr]: 1 });
+  const scaling = def?.scaling ?? (magic ? { wil: 1 } : { [a.attackAttr]: 1 });
   const weaponBase = magic ? (stats.magicUsesWeapon(def?.scaling) ? a.weaponAtk : 0) : a.weaponAtk;
   const raw = stats.rawPower(weaponBase, a.attrs, scaling, a.level) + (a.def + a.attrs.vit) * defScale;
   // Fortificado, quebrado e penetração mexem na defesa efetiva do alvo (m.def).
-  const res = magic ? stats.magicResistance(d.attrs.int * m.def) : stats.physicalResistance(d.def * m.def);
+  const res = magic ? stats.magicResistance(d.attrs.wil * m.def) : stats.physicalResistance(d.def * m.def);
   // Multiplicador da teia (ajuste de balanceamento da subclasse; ver docs/design/simulacao.md).
   const variant = def ? variantDef(a.variants?.[def.id]) : undefined;
   if (variant?.acc) accBonus += variant.acc;
@@ -1348,7 +1348,7 @@ export function structureHit(u: BattleUnit, kind: HitKind, power: number): numbe
   const weaponBase = magic ? 0 : u.weaponAtk;
   // Demolidor (passiva): mais dano em paredes e objetos.
   const demolish = fx.passiveFx(u).reduce((m, f) => m * (f.demolish ?? 1), 1);
-  return Math.round(stats.structureDamage(stats.rawPower(weaponBase, u.attrs, magic ? { int: 1 } : { [u.attackAttr]: 1 }, u.level), power) * demolish);
+  return Math.round(stats.structureDamage(stats.rawPower(weaponBase, u.attrs, magic ? { wil: 1 } : { [u.attackAttr]: 1 }, u.level), power) * demolish);
 }
 
 /** Objeto que pode ser alvo do ataque básico em (x, y): sem unidade em cima e com cobertura. */

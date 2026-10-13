@@ -271,7 +271,7 @@ export function treeMpBonus(c: Learner): number {
 
 /** Soma dos bônus percentuais dos nós ativos. */
 export function treeBonus(c: Learner): Required<NodeBonus> {
-  const out: Required<NodeBonus> = { hp: 0, mp: 0, accuracy: 0, speed: 0, magic: 0, str: 0, dex: 0, int: 0 };
+  const out: Required<NodeBonus> = { hp: 0, mp: 0, accuracy: 0, speed: 0, magic: 0, str: 0, dex: 0, wil: 0 };
   for (const n of treeOf(c.classId)?.nodes ?? []) {
     if (!n.bonus || !nodeActive(c, n)) continue;
     for (const k of Object.keys(out) as (keyof NodeBonus)[]) out[k] += n.bonus[k] ?? 0;

@@ -58,5 +58,5 @@
   { "id": "luvas_de_impacto", "name": "Luvas de Impacto", "slot": "weapon", "rarity": "epico", "price": 560, "weaponType": "punhos", "atk": 16, "range": 1, "bonus": { "str": 3 }, "description": "Placas de impacto que soltam a energia do soco de uma vez." },
   { "id": "rifle_gauss", "name": "Rifle Eletromagnético", "slot": "weapon", "rarity": "lendario", "price": 1300, "weaponType": "precisao", "atk": 20, "range": 13, "ammo": 2, "bonus": { "crit": 12, "accuracy": 5 }, "description": "Bobinas e capacitores: o projétil sai mais rápido que o som e sem estampido." },
   { "id": "traje_reativo", "name": "Traje Reativo", "slot": "armor", "rarity": "lendario", "price": 1200, "def": 9, "bonus": { "evasion": 8 }, "description": "Tecido que endurece no impacto, feito sob medida para quem tem Dom." },
-  { "id": "amplificador_cubo", "name": "Amplificador do Cubo", "slot": "accessory", "rarity": "lendario", "price": 1500, "bonus": { "int": 3, "spd": 1 }, "description": "Um fragmento do Cubo preso num circuito. O Dom de quem o usa fica mais forte — e mais estranho." }
+  { "id": "amplificador_cubo", "name": "Amplificador do Cubo", "slot": "accessory", "rarity": "lendario", "price": 1500, "bonus": { "wil": 3, "spd": 1 }, "description": "Um fragmento do Cubo preso num circuito. O Dom de quem o usa fica mais forte — e mais estranho." }
 ]

@@ -155,7 +155,7 @@ export const statCost = stats.attributeCost;
 export const xpToNext = stats.xpToNext;
 
 export function emptyAttrs(v = 0): Attributes {
-  return { str: v, dex: v, spd: v, int: v, vit: v };
+  return { str: v, dex: v, spd: v, wil: v, vit: v };
 }
 
 export interface Derived {
@@ -166,7 +166,7 @@ export interface Derived {
   magicDmg: number;
   /** Armadura (equipamentos). */
   def: number;
-  /** Poder físico do atributo de ataque e poder mágico (INT). */
+  /** Poder físico do atributo de ataque e poder mágico (VON). */
   physPower: number;
   magicPower: number;
   /** Redução de dano física e mágica (0–1). */
@@ -221,17 +221,17 @@ export function derive(c: Character): Derived {
   attrs.spd = Math.round(attrs.spd * (1 + tb.speed));
   attrs.str = Math.round(attrs.str * (1 + tb.str));
   attrs.dex = Math.round(attrs.dex * (1 + tb.dex));
-  attrs.int = Math.round(attrs.int * (1 + tb.int));
+  attrs.wil = Math.round(attrs.wil * (1 + tb.wil));
   return {
     attrs,
     maxHp: Math.round(stats.maxHp(cls.hpFactor, c.level, attrs.vit) * (1 + tb.hp)),
-    maxMp: Math.round(stats.maxMp(cls.mpBase, cls.mpPerLevel, c.level, attrs.int, treeMpBonus(c)) * (1 + tb.mp)),
+    maxMp: Math.round(stats.maxMp(cls.mpBase, cls.mpPerLevel, c.level, attrs.wil, treeMpBonus(c)) * (1 + tb.mp)),
     magicDmg: tb.magic,
     def,
     physPower: stats.physicalPower(attrs, attackAttr),
     magicPower: stats.magicPower(attrs),
     physRes: stats.physicalResistance(def),
-    magicRes: stats.magicResistance(attrs.int),
+    magicRes: stats.magicResistance(attrs.wil),
     actionInterval: stats.actionInterval(attrs.spd),
     weaponAtk: weapon?.atk ?? 3,
     weaponRange: weapon?.range ?? 1,

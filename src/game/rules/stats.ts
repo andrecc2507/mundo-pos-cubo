@@ -99,7 +99,7 @@ export function xpToNext(level: number): number {
 
 // ───────────────────────────── atributos → derivados ─────────────────────────────
 
-/** Poder de um atributo: valor + ⌊valor/10⌋² (FOR → físico, DES → arcos, INT → mágico). */
+/** Poder de um atributo: valor + ⌊valor/10⌋² (FOR → físico, DES → arcos, VON → mágico). */
 export function attrPower(value: number): number {
   const v = safe(value);
   return v + Math.floor(v / balance.power.softStep) ** 2;
@@ -110,7 +110,7 @@ export function physicalPower(attrs: Attributes, attackAttr: Attr = 'str'): numb
 }
 
 export function magicPower(attrs: Attributes): number {
-  return attrPower(attrs.int);
+  return attrPower(attrs.wil);
 }
 
 // ───────────────────────── regra dos 5 golpes ─────────────────────────
@@ -141,9 +141,9 @@ export function maxHp(factor: number, level: number, vit: number): number {
   return Math.max(1, Math.round(safe(factor) * HITS_TO_KILL * (referenceWeapon(level) + attrPower(vit) + levelAttack(level))));
 }
 
-/** MP máximo: (base da classe + nível × crescimento + extras) × (1 + INT × 2%). */
-export function maxMp(base: number, perLevel: number, level: number, int: number, extra = 0): number {
-  return Math.round((safe(base) + safe(level) * safe(perLevel) + safe(extra)) * (1 + safe(int) * balance.mp.intPct));
+/** MP máximo: (base da classe + nível × crescimento + extras) × (1 + VON × 2%). */
+export function maxMp(base: number, perLevel: number, level: number, wil: number, extra = 0): number {
+  return Math.round((safe(base) + safe(level) * safe(perLevel) + safe(extra)) * (1 + safe(wil) * balance.mp.intPct));
 }
 
 /** Precisão (HIT do Ragnarok): nível + DES + bônus. */
@@ -167,10 +167,10 @@ export function physicalResistance(armor: number): number {
   return Math.min(d.maxReduction, a / (a + d.armorK));
 }
 
-/** Resistência mágica: INT / (INT + 150), limitada a 70%. */
-export function magicResistance(int: number): number {
+/** Resistência mágica: VON / (VON + 150), limitada a 70%. */
+export function magicResistance(wil: number): number {
   const r = balance.magicResistance;
-  const i = safe(int);
+  const i = safe(wil);
   return Math.min(r.max, i / (i + r.intK));
 }
 
@@ -226,9 +226,9 @@ export function rawPower(base: number, attrs: Attributes, scaling: Partial<Recor
 
 /**
  * Cura de uma habilidade: ((Σ poder(atributo) × peso + bônus de nível) × 0,6 + bônus de cura) ×
- * multiplicador da habilidade. Peso padrão INT 1 (a teia pode trocar: Defensor INT 0,6 + VIT 0,6).
+ * multiplicador da habilidade. Peso padrão VON 1 (a teia pode trocar: Defensor VON 0,6 + VIT 0,6).
  */
-export function healPower(attrs: Attributes, healBonus: number, power: number, level = 0, scaling: Partial<Record<Attr, number>> = { int: 1 }): number {
+export function healPower(attrs: Attributes, healBonus: number, power: number, level = 0, scaling: Partial<Record<Attr, number>> = { wil: 1 }): number {
   return Math.max(1, Math.round((rawPower(0, attrs, scaling, level) * balance.skill.heal.intWeight + safe(healBonus)) * skillMultiplier(power)));
 }
 
@@ -348,10 +348,10 @@ export function throwRange(str: number): number {
   return balance.tactics.throwBaseRange + Math.floor(safe(str) / balance.tactics.throwStrPerTile);
 }
 
-/** Chance de perceber uma armadilha inimiga perto (por turno): 15% + DES + INT. */
-export function perceiveChance(dex: number, int: number): number {
+/** Chance de perceber uma armadilha inimiga perto (por turno): 15% + DES + VON. */
+export function perceiveChance(dex: number, wil: number): number {
   const t = balance.tactics;
-  return clamp(t.perceiveBase + t.perceivePerAttr * (safe(dex) + safe(int)), 0, 95);
+  return clamp(t.perceiveBase + t.perceivePerAttr * (safe(dex) + safe(wil)), 0, 95);
 }
 
 /** Arrombar fechadura: 20% + 2 por ponto do maior entre DES e FOR. */
@@ -361,13 +361,13 @@ export function lockpickChance(dex: number, str: number): number {
 }
 
 /**
- * Manter a concentração ao sofrer dano: 70% + VIT + INT − 0,6 por ponto percentual da vida máxima
+ * Manter a concentração ao sofrer dano: 70% + VIT + VON − 0,6 por ponto percentual da vida máxima
  * que o golpe tirou; entre 5% e 95%.
  */
-export function concentrationChance(vit: number, int: number, damage: number, maxHp: number): number {
+export function concentrationChance(vit: number, wil: number, damage: number, maxHp: number): number {
   const t = balance.tactics;
   const pct = (100 * safe(damage)) / Math.max(1, safe(maxHp));
-  return clamp(Math.round(t.concentrationBase + t.concentrationPerAttr * (safe(vit) + safe(int)) - t.concentrationPerDamagePct * pct), 5, 95);
+  return clamp(Math.round(t.concentrationBase + t.concentrationPerAttr * (safe(vit) + safe(wil)) - t.concentrationPerDamagePct * pct), 5, 95);
 }
 
 /** Vantagem (rola duas vezes, fica com a melhor) e desvantagem (fica com a pior). */

@@ -45,7 +45,7 @@ describe('cenário interativo', () => {
   it('perceber: armadilha inimiga fica visível; Procurar acha passagem secreta', () => {
     const { s, hero } = battle();
     hero.attrs.dex = 99;
-    hero.attrs.int = 99;
+    hero.attrs.wil = 99;
     s.traps = [{ x: 7, y: 10, team: 'enemy', ownerUid: 'x', name: 'Armadilha de Urso', armed: true }];
     scenery.perceive(s, hero);
     expect(s.traps[0]!.spotted).toContain('player');

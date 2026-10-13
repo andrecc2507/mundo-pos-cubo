@@ -186,7 +186,7 @@ export function skillCard(s: CreatureSkill | TreeSkill, hooks: FormHooks, remove
       : null,
     s.kind !== 'passive' && s.kind !== 'reaction' && s.power
       ? h('div', { class: 'row', style: 'gap:8px;flex-wrap:wrap' },
-          h('span', { class: 'muted', style: 'font-size:11px', text: 'Escala (0 em todos = padrão: atributo da arma, ou INT nas magias):' }),
+          h('span', { class: 'muted', style: 'font-size:11px', text: 'Escala (0 em todos = padrão: atributo da arma, ou VON nas magias):' }),
           ...ATTRS.map((at) =>
             num(ATTR_SHORT[at], s.scaling?.[at] ?? 0, (v) => {
               const next = { ...s.scaling, [at]: Math.max(0, Math.round(v * 100) / 100) || undefined };

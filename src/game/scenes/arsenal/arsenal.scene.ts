@@ -16,7 +16,7 @@ const SLOT_LABEL: Record<ItemSlot, string> = { weapon: 'Arma', offhand: 'Mão se
 const WEAPON_LABEL: Record<WeaponType, string> = { natural: 'Natural', pistola: 'Pistola', fuzil: 'Fuzil', escopeta: 'Escopeta', precisao: 'Fuzil de precisão', metralhadora: 'Metralhadora', lanca_granadas: 'Lança-granadas', punhos: 'Punhos', lamina: 'Lâmina', contundente: 'Contundente' };
 /** Atributo que escala cada tipo de arma (mesma regra de rules/character). */
 const WEAPON_ATTR: Record<WeaponType, Attr> = { natural: 'str', pistola: 'dex', fuzil: 'dex', escopeta: 'dex', precisao: 'dex', metralhadora: 'dex', lanca_granadas: 'dex', punhos: 'str', lamina: 'str', contundente: 'str' };
-const BONUS_FIELDS: [string, string][] = [['str', 'FOR'], ['dex', 'DES'], ['spd', 'VEL'], ['int', 'INT'], ['vit', 'VIT'], ['crit', 'Crítico %'], ['accuracy', 'Precisão'], ['evasion', 'Esquiva'], ['heal', 'Cura']];
+const BONUS_FIELDS: [string, string][] = [['str', 'FOR'], ['dex', 'DES'], ['spd', 'VEL'], ['int', 'VON'], ['vit', 'VIT'], ['crit', 'Crítico %'], ['accuracy', 'Precisão'], ['evasion', 'Esquiva'], ['heal', 'Cura']];
 /** Atributo principal típico de um personagem focado, por nível (ver docs/design/matematica.md). */
 const REF_ATTR: [number, number][] = [[1, 11], [20, 35], [40, 55], [60, 70]];
 const last = { id: '', slot: 'weapon' as ItemSlot | '' };

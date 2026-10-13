@@ -37,7 +37,7 @@ um resumo gerado a partir dos dados (o que o motor realmente faz) acima de cada 
 
 | tipo | o que faz |
 |------|-----------|
-| `physical` / `ranged` / `magic` | ataque (físico usa FOR + arma natural; magia usa INT) |
+| `physical` / `ranged` / `magic` | ataque (físico usa FOR + arma natural; magia usa VON) |
 | `buff` / `heal` | status ou cura em aliados na área |
 | `utility` | efeito em si (esconder, teleportar, escudo, limpar status…) |
 | `summon` | invoca criaturas |
@@ -48,7 +48,7 @@ um resumo gerado a partir dos dados (o que o motor realmente faz) acima de cada 
 
 | bloco | efeito |
 |-------|--------|
-| `noDamage` | só aplica status (chance ~85% ajustada pela INT) |
+| `noDamage` | só aplica status (chance ~85% ajustada pela VON) |
 | `hits` | vários golpes por uso |
 | `push` / `pull` | empurra / puxa N m (bater em obstáculo fere) |
 | `retreat` | recua N m depois de atacar |

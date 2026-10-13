@@ -22,9 +22,9 @@ describe('progressão estilo Ragnarok', () => {
   it('distribuir atributo gasta o custo da curva', () => {
     const c = makeCharacter(new Rng(2), { classId: 'controle' });
     c.statPoints = 10;
-    const v = c.attrs.int;
-    expect(allocate(c, 'int')).toBe(true);
-    expect(c.attrs.int).toBe(v + 1);
+    const v = c.attrs.wil;
+    expect(allocate(c, 'wil')).toBe(true);
+    expect(c.attrs.wil).toBe(v + 1);
     expect(c.statPoints).toBe(10 - statCost(v));
   });
 
@@ -42,7 +42,7 @@ describe('progressão estilo Ragnarok', () => {
     const c = makeCharacter(new Rng(5), { classId: 'impacto' });
     const d1 = derive(c);
     c.attrs.vit += 5;
-    c.attrs.int += 5;
+    c.attrs.wil += 5;
     const d2 = derive(c);
     expect(d2.maxHp).toBeGreaterThan(d1.maxHp);
     expect(d2.maxMp).toBeGreaterThan(d1.maxMp);

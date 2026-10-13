@@ -1,7 +1,7 @@
 /** Tipos dos domínios de dados (conteúdo em JSON). */
 
-/** Cinco atributos (sem Sorte): Força, Destreza, Velocidade, Inteligência e Vitalidade. */
-export const ATTRS = ['str', 'dex', 'spd', 'int', 'vit'] as const;
+/** Cinco atributos (sem Sorte): Força, Destreza, Velocidade, Vontade e Vitalidade. */
+export const ATTRS = ['str', 'dex', 'spd', 'wil', 'vit'] as const;
 export type Attr = (typeof ATTRS)[number];
 export type Attributes = Record<Attr, number>;
 
@@ -9,10 +9,10 @@ export const ATTR_LABEL: Record<Attr, string> = {
   str: 'Força',
   dex: 'Destreza',
   spd: 'Velocidade',
-  int: 'Inteligência',
+  wil: 'Vontade',
   vit: 'Vitalidade',
 };
-export const ATTR_SHORT: Record<Attr, string> = { str: 'FOR', dex: 'DES', spd: 'VEL', int: 'INT', vit: 'VIT' };
+export const ATTR_SHORT: Record<Attr, string> = { str: 'FOR', dex: 'DES', spd: 'VEL', wil: 'VON', vit: 'VIT' };
 
 export type ClassId = 'aprendiz' | 'fera' | 'impacto' | 'movimento' | 'suporte' | 'controle';
 /** Classes do Mundo Pós-Cubo (teia única). */
@@ -42,7 +42,7 @@ export interface ClassDef {
   /** Multiplicador da vida (regra dos 5 golpes): Guerreiro 1,3 · Clérigo 1,15 · Arqueiro/Ladino 1 · Mago 0,85. */
   hpFactor: number;
   mpBase: number;
-  /** MP ganho por nível (antes do multiplicador de INT). */
+  /** MP ganho por nível (antes do multiplicador de VON). */
   mpPerLevel: number;
   weapons: WeaponType[];
   /** Pontos extras na distribuição inicial de recrutas desta classe. */
@@ -99,7 +99,7 @@ export interface SkillDef {
   /** Habilidade suprema do nó. */
   ultimate?: boolean;
   anim?: AnimStyle;
-  /** Peso de cada atributo no poder da habilidade (ausente = o atributo de ataque da arma, ou INT nas magias). */
+  /** Peso de cada atributo no poder da habilidade (ausente = o atributo de ataque da arma, ou VON nas magias). */
   scaling?: Partial<Record<Attr, number>>;
   /** Custo de tempo: multiplica o intervalo até a próxima ação (1,5 = demora 50% mais; 0,7 = ação rápida). */
   timeMult?: number;
@@ -631,7 +631,7 @@ export interface CreatureSkill {
   signature?: boolean;
   /** Animação (padrão: escolhida pelo tipo, formato e elemento). */
   anim?: AnimStyle;
-  /** Peso de cada atributo no poder da habilidade (ausente = o atributo de ataque da arma, ou INT nas magias). */
+  /** Peso de cada atributo no poder da habilidade (ausente = o atributo de ataque da arma, ou VON nas magias). */
   scaling?: Partial<Record<Attr, number>>;
   /** Custo de tempo: multiplica o intervalo até a próxima ação (1,5 = demora 50% mais; 0,7 = ação rápida). */
   timeMult?: number;
@@ -685,10 +685,10 @@ export interface NodeBonus {
   accuracy?: number;
   speed?: number;
   magic?: number;
-  /** Força, Destreza e Inteligência (passivas das classes base). */
+  /** Força, Destreza e Vontade (passivas das classes base). */
   str?: number;
   dex?: number;
-  int?: number;
+  wil?: number;
 }
 
 export type TreeNodeType = 'base' | 'evolucao' | 'hibrida' | 'ramo';
@@ -721,7 +721,7 @@ export interface TreeNode {
   bonus?: NodeBonus;
   /**
    * Escala das habilidades desta teia por tipo (peso × poder do atributo): físico/à distância,
-   * magia e cura. Ex.: Berserker físico FOR 1,1; Espadachim Arcano FOR 0,65 + INT 0,65.
+   * magia e cura. Ex.: Berserker físico FOR 1,1; Espadachim Arcano FOR 0,65 + VON 0,65.
    * A habilidade pode ter o próprio `scaling`, que vale por cima deste.
    */
   scaling?: { physical?: Partial<Record<Attr, number>>; magic?: Partial<Record<Attr, number>>; heal?: Partial<Record<Attr, number>> };

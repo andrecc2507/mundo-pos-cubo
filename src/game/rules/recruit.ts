@@ -186,7 +186,7 @@ export function recruitPrice(level: number, classId: ClassId): number {
 /** Sugere a classe de um Aprendiz pelo maior atributo. */
 export function suggestedClass(c: Character): ClassId {
   const top = ATTRS.reduce((a, b) => (c.attrs[a] >= c.attrs[b] ? a : b));
-  const map: Record<Attr, ClassId> = { str: 'impacto', vit: 'impacto', dex: 'controle', int: 'suporte', spd: 'movimento' };
+  const map: Record<Attr, ClassId> = { str: 'impacto', vit: 'impacto', dex: 'controle', wil: 'suporte', spd: 'movimento' };
   return map[top];
 }
 

@@ -1,6 +1,6 @@
 /**
  * Concentração (Baldur's Gate 3): efeitos fortes mantidos pelo conjurador (zonas, reforços longos).
- * Ao sofrer dano, teste de VIT + INT contra o tamanho do golpe; falhou, o efeito se desfaz (os estados
+ * Ao sofrer dano, teste de VIT + VON contra o tamanho do golpe; falhou, o efeito se desfaz (os estados
  * que a habilidade deu e as nuvens que ela criou). Uma concentração por vez.
  */
 import { removeStatus } from './elements';
@@ -34,7 +34,7 @@ export function begin(state: BattleState, u: BattleUnit, skillId: string, before
 export function onDamaged(state: BattleState, u: BattleUnit, amount: number): void {
   if (!state.conc?.[u.uid] || amount <= 0) return;
   if (!u.alive) return end(state, u, 'caiu');
-  const chance = stats.concentrationChance(u.attrs.vit, u.attrs.int, amount, u.maxHp);
+  const chance = stats.concentrationChance(u.attrs.vit, u.attrs.wil, amount, u.maxHp);
   if (state.rng.chance(chance / 100)) return;
   end(state, u, 'perdeu a concentração');
 }

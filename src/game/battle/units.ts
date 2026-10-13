@@ -165,12 +165,12 @@ export function unitFromEnemy(def: EnemyDef, rawLevel: number, rng: Rng): Battle
   }
   const m = TIER_MULT[def.tier];
   const scale = levelScale(def, level);
-  const a = def.attrs ?? { str: 6, dex: 6, spd: 8, int: 1, vit: 6 };
+  const a = def.attrs ?? { str: 6, dex: 6, spd: 8, wil: 1, vit: 6 };
   const attrs = {
     str: Math.round(a.str * scale),
     dex: Math.round(a.dex * scale),
     spd: Math.round(a.spd + (level - (def.levelMin ?? 1)) * 0.3),
-    int: Math.round(a.int * scale),
+    wil: Math.round(a.wil * scale),
     vit: Math.round(a.vit * scale),
   };
   // Mesma regra dos 5 golpes dos heróis: o "fator" da fera vem da vida de design do bestiário

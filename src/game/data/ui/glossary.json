@@ -183,7 +183,7 @@
   "id": "nivel",
   "cat": "Personagens",
   "term": "Nível e atributos",
-  "text": "Força (dano físico), Destreza (acerto, alcance), Velocidade (barra de ação, esquiva), Inteligência (técnicas de energia, energia) e Vitalidade (vida). Cada nível dá pontos de atributo; atributos altos custam mais."
+  "text": "Força (dano físico), Destreza (acerto, alcance), Velocidade (barra de ação, esquiva), Vontade (técnicas de energia, energia) e Vitalidade (vida). Cada nível dá pontos de atributo; atributos altos custam mais."
  },
  {
   "id": "teia",
@@ -237,7 +237,7 @@
   "id": "concentracao",
   "cat": "Batalha",
   "term": "Concentração",
-  "text": "Efeitos fortes (zonas, confinamentos, alguns buffs) duram enquanto o conjurador se concentra. Ao sofrer dano, ele faz um teste de VIT e INT: se falhar, o efeito acaba. Lançar outra habilidade de concentração encerra a anterior."
+  "text": "Efeitos fortes (zonas, confinamentos, alguns buffs) duram enquanto o conjurador se concentra. Ao sofrer dano, ele faz um teste de VIT e VON: se falhar, o efeito acaba. Lançar outra habilidade de concentração encerra a anterior."
  },
  {
   "id": "confinamento",

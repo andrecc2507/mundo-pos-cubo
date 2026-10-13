@@ -123,7 +123,7 @@ export const STATUS_INFO: Record<StatusId, { name: string; color: string; icon: 
   suprimido: { name: 'Suprimido', color: '#ffb74d', icon: '⛆', debuff: true, help: 'Sob fogo de supressão: −25 de acerto, não pode se esconder e, se sair do lugar, leva um tiro de quem o suprime.' },
   caido: { name: 'Sangrando no chão', color: '#e53935', icon: '✚', debuff: true, help: 'Caído com 0 de vida: um aliado ao lado pode estabilizá-lo (Interagir) ou carregá-lo. Se o contador zerar, morre.' },
   tocha: { name: 'Tocha', color: '#ffcc80', icon: '🔦', help: 'Carrega uma tocha acesa: ilumina em volta (vê mais longe à noite), mas é visto de longe e não consegue se esconder.' },
-  concentrando: { name: 'Concentrando', color: '#b39ddb', icon: '✧', help: 'Mantém um efeito por concentração: ao sofrer dano, pode perder o efeito (teste de VIT e INT).' },
+  concentrando: { name: 'Concentrando', color: '#b39ddb', icon: '✧', help: 'Mantém um efeito por concentração: ao sofrer dano, pode perder o efeito (teste de VIT e VON).' },
 };
 
 export interface UnitLook {

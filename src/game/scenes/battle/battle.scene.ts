@@ -2031,7 +2031,7 @@ export function unitCard(u: BattleUnit): HTMLElement {
     weaponLine(u),
     giftLine(u),
     bar(Math.min(100, u.gauge), 100, '#fdd835', `Barra ${Math.floor(Math.min(100, u.gauge))}%`),
-    h('div', { class: 'muted', style: 'font-size:11px', text: `FOR ${u.attrs.str} DES ${u.attrs.dex} VEL ${u.attrs.spd} INT ${u.attrs.int} VIT ${u.attrs.vit} · Mov ${u.move} · ${actionInterval(u.attrs.spd).toFixed(1)} s/ação` }),
+    h('div', { class: 'muted', style: 'font-size:11px', text: `FOR ${u.attrs.str} DES ${u.attrs.dex} VEL ${u.attrs.spd} VON ${u.attrs.wil} VIT ${u.attrs.vit} · Mov ${u.move} · ${actionInterval(u.attrs.spd).toFixed(1)} s/ação` }),
     chips.length ? h('div', { class: 'status-chips' }, ...chips) : null,
     chips.length ? h('div', { class: 'muted', style: 'font-size:10px', text: chips.map((c) => c.title.split(' · ')[0] ?? '').filter((t) => t.includes(' — ')).join(' | ') }) : null,
     statuses.length ? h('div', { style: 'font-size:11px', text: statuses.join(' · ') }) : null,

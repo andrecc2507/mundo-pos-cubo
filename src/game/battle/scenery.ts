@@ -115,7 +115,7 @@ export function revealSecret(state: BattleState, x: number, y: number): void {
 
 /** Teste de percepção de `u`: armadilhas inimigas e passagens secretas por perto. `bonus` dobra a chance (Procurar). */
 export function perceive(state: BattleState, u: BattleUnit, bonus = 1, enemies = false): number {
-  const chance = Math.min(95, stats.perceiveChance(u.attrs.dex, u.attrs.int) * bonus) / 100;
+  const chance = Math.min(95, stats.perceiveChance(u.attrs.dex, u.attrs.wil) * bonus) / 100;
   const r = T.perceiveRange;
   let found = 0;
   for (const tr of state.traps ?? []) {

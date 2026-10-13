@@ -4,7 +4,7 @@ import { describeSkill } from '../../bestiary/describe';
 import { learnSkill, type Character } from '../../rules/character';
 import { SKILL_MAX_RANK, lockReason, rankGains, rankOf } from '../../rules/skill_tree';
 
-const ATTR_NAME: Record<string, string> = { str: 'FOR', dex: 'DES', int: 'INT', vit: 'VIT', spd: 'VEL' };
+const ATTR_NAME: Record<string, string> = { str: 'FOR', dex: 'DES', wil: 'VON', vit: 'VIT', spd: 'VEL' };
 const KIND_NAME: Record<string, string> = { physical: 'golpes', magic: 'magias', heal: 'curas' };
 
 /** "Investir em": os atributos com que a teia escala, do maior peso para o menor, por tipo de golpe. */
@@ -16,7 +16,7 @@ export function investHint(scaling: Partial<Record<string, Partial<Record<string
     .join(' · ');
 }
 
-const BONUS_LABEL: Record<string, string> = { hp: 'HP', mp: 'MP', accuracy: 'acerto', speed: 'velocidade', magic: 'dano mágico', str: 'Força', dex: 'Destreza', int: 'Inteligência' };
+const BONUS_LABEL: Record<string, string> = { hp: 'HP', mp: 'MP', accuracy: 'acerto', speed: 'velocidade', magic: 'dano mágico', str: 'Força', dex: 'Destreza', wil: 'Vontade' };
 
 /** Painel da habilidade escolhida na teia: nível, efeito, motivo do bloqueio e o botão de aprender/fortalecer. */
 export function skillDetail(ch: Character, id: string | null, render: () => void): HTMLElement {

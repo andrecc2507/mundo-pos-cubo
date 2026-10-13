@@ -24,7 +24,7 @@ describe('matemática central: exemplos do design', () => {
   });
 
   it('regra dos 5 golpes: FOR 1 contra VIT 1 (nível 1, arma de referência, sem armadura) = 5 ataques básicos', () => {
-    const dmg = (str: number, level: number) => stats.rawPower(stats.referenceWeapon(level), { str, dex: 1, spd: 1, int: 1, vit: 1 }, { str: 1 }, level) * (1 - stats.physicalResistance(0));
+    const dmg = (str: number, level: number) => stats.rawPower(stats.referenceWeapon(level), { str, dex: 1, spd: 1, wil: 1, vit: 1 }, { str: 1 }, level) * (1 - stats.physicalResistance(0));
     expect(Math.ceil(stats.maxHp(1, 1, 1) / dmg(1, 1))).toBe(5);
     // Vale para qualquer valor igual e qualquer nível (FOR x contra VIT x).
     for (const level of [1, 10, 30, 60]) for (const x of [1, 15, 40, 60]) expect(stats.maxHp(1, level, x) / dmg(x, level)).toBeCloseTo(5, 1);

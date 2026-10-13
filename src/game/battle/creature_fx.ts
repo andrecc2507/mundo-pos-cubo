@@ -1194,7 +1194,7 @@ function makeClone(state: BattleState, owner: BattleUnit): BattleUnit {
     mp: 0,
     maxMp: 0,
     weaponAtk: Math.max(1, Math.round(owner.weaponAtk * 0.25)),
-    attrs: { ...owner.attrs, str: Math.round(owner.attrs.str * 0.25), int: Math.round(owner.attrs.int * 0.25), dex: Math.round(owner.attrs.dex * 0.25) },
+    attrs: { ...owner.attrs, str: Math.round(owner.attrs.str * 0.25), wil: Math.round(owner.attrs.wil * 0.25), dex: Math.round(owner.attrs.dex * 0.25) },
     skills: [],
     items: [],
     statuses: {},
@@ -1673,7 +1673,7 @@ export function castCreatureSkill(state: BattleState, u: BattleUnit, s: SkillLik
     if (fx.suppress && t.team !== u.team && t.alive) tactics.suppress(state, u, t);
     let landed = !!fx.noDamage;
     if (fx.noDamage) {
-      const chance = Math.max(10, Math.min(95, (s.accuracy ?? 85) + (u.attrs.int - t.attrs.int) - (t.statuses.duplicatas ? 30 : 0)));
+      const chance = Math.max(10, Math.min(95, (s.accuracy ?? 85) + (u.attrs.wil - t.attrs.wil) - (t.statuses.duplicatas ? 30 : 0)));
       if (!state.rng.chance(chance / 100)) {
         state.events.push({ type: 'miss', uid: t.uid });
         state.log.push(`${t.name} resistiu a ${s.name}.`);
