@@ -1,5 +1,28 @@
 # Sistema matemático
 
+> **Revisão O1 (vale sobre o resto deste arquivo onde houver conflito).** Escala curta e legível:
+> nível máximo **20**, atributo máximo **20**, **2 pontos de atributo por nível** (o jogador escolhe),
+> 12 pontos iniciais sobre a base 4 (carreira inteira = 50 pontos = build 20/16/14/12/8).
+> Habilidades: 2 pontos por nível + 1 extra a cada 5 níveis (44 no nível 20).
+>
+> | Atributo | O que faz |
+> |---|---|
+> | **FOR** | dano de golpes corpo a corpo (armas brancas, punhos), empurrar, alcance de arremesso |
+> | **DES** | **só pontaria**: acerto de ataques físicos, alcance eficaz (+1 casa a cada 4), esquiva e perceber. **Nunca dano nem crítico.** |
+> | **VEL** | frequência de ação (linha do tempo), deslocamento e esquiva |
+> | **VON** (Vontade, antes INT) | dano das técnicas do Dom, reserva de energia (MP), resistência a energia (VON/(VON+20), até 70%), concentração |
+> | **VIT** | vida, resistência a estados (VIT/(VIT+20), até 75%), recuperação de ferimentos |
+>
+> * **Arma de fogo tem dano fixo da arma** (+ bônus de nível); DES não entra na conta. Armas corpo a corpo somam FOR.
+> * **Dom**: dano = poder da técnica × **Potência** do Dom (±9% por ponto, 0,55–1,45) × VON. Controle dá +4 de acerto por ponto.
+> * **Acerto físico** = 60 + (2×nível + DES) − (2×nível + VEL/2 + DES/2) + modificadores, entre 5% e 95%.
+> * **Esquiva em área**: quem se esquiva de uma técnica de área leva metade do dano (sem status nem empurrão).
+> * Resistências: armadura para golpes e balas, VON para energia, VIT para estados.
+> * Vida = fator da classe × 4 × (arma de referência 21 + 0,5/nível + 0,75 × poder(VIT) + 3/nível). Poder de atributo = (v + ⌊v/10⌋²) × 2.
+> * Itens: dano de arma ×3 em relação à escala antiga (atk 21–60); bestiário reescalado (nível ÷3, atributos 1–20).
+> * Campanhas salvas antes da O1 não carregam (atributo INT e nível 60).
+
+
 Fonte de design: [sistema matemático central (v0.2)](fontes/sistema_matematico.md). Referência:
 Ragnarok Online clássico (pré-renovação), **sem Sorte**. Tudo é calculado em um lugar só —
 `src/game/rules/stats.ts` — com os números em `src/game/data/balance.json`. Nenhuma habilidade

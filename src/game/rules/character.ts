@@ -228,7 +228,7 @@ export function derive(c: Character): Derived {
     maxMp: Math.round(stats.maxMp(cls.mpBase, cls.mpPerLevel, c.level, attrs.wil, treeMpBonus(c)) * (1 + tb.mp)),
     magicDmg: tb.magic,
     def,
-    physPower: stats.physicalPower(attrs, attackAttr),
+    physPower: attackAttr === 'dex' ? 0 : stats.physicalPower(attrs, attackAttr),
     magicPower: stats.magicPower(attrs),
     physRes: stats.physicalResistance(def),
     magicRes: stats.magicResistance(attrs.wil),
@@ -390,7 +390,9 @@ export function autoAllocate(c: Character, weights: Partial<Attributes>, rng: Rn
   while (c.skillPoints > 0) {
     const options = learnableSkills(c);
     if (!options.length) break;
+    const before = c.skillPoints;
     learnSkill(c, rng.pick(options));
+    if (c.skillPoints >= before) break;
   }
 }
 

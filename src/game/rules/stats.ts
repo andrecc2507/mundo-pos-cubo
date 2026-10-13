@@ -24,19 +24,14 @@ export const MAX_LEVEL = balance.progression.maxLevel;
 export const CROSS_CLASS_LEVEL = balance.progression.crossClassLevel;
 export const MAX_ATTR = balance.progression.maxAttribute;
 
-/**
- * Pontos de atributo ao chegar no nível `level`: 3 + ⌊(nível + 2)/4⌋ (4 no nível 2, 18 no 60),
- * crescendo como no Ragnarok.
- */
-export function attributePointsAt(level: number): number {
-  const p = balance.progression.attributePointsPerLevel;
-  return p.base + Math.floor((level + p.offset) / p.everyLevels);
+/** Pontos de atributo ao subir de nível: 2 por nível (o jogador escolhe onde). */
+export function attributePointsAt(_level: number): number {
+  return balance.progression.attributePointsPerLevel.perLevel;
 }
 
-/** Custo para subir um atributo que está em `value`: 2 até 10, 3 até 20 … 7 de 51 a 59 (Ragnarok). */
-export function attributeCost(value: number): number {
-  const c = balance.progression.attributeCost;
-  return Math.floor((Math.max(1, value) - 1) / c.everyPoints) + c.base;
+/** Custo para subir um atributo: 1 ponto por ponto (o teto é 20). */
+export function attributeCost(_value: number): number {
+  return balance.progression.attributeCost.flat;
 }
 
 /** Custo para levar um atributo de `from` até `to`. */
@@ -46,18 +41,11 @@ export function attributeCostRange(from: number, to: number): number {
   return sum;
 }
 
-/**
- * Pontos de atributo de uma carreira inteira: o custo exato da build-alvo do nível 60
- * (60/50/40/30/10 partindo de 1 em cada) = 696.
- */
+/** Pontos de uma carreira inteira: 12 iniciais + 2 × 19 níveis = 50 (a build 20/16/14/12/8 custa exatamente isso). */
 export const TOTAL_ATTRIBUTE_POINTS = balance.progression.targetBuild.reduce((sum, t) => sum + attributeCostRange(balance.progression.baseAttribute, t), 0);
 
-/** Pontos do nível 1: o que sobra do total depois de todos os níveis ganhos (54). */
-export const STARTING_ATTRIBUTE_POINTS = (() => {
-  let gained = 0;
-  for (let lv = 2; lv <= balance.progression.maxLevel; lv++) gained += attributePointsAt(lv);
-  return TOTAL_ATTRIBUTE_POINTS - gained;
-})();
+/** Pontos do nível 1. */
+export const STARTING_ATTRIBUTE_POINTS = balance.progression.startingAttributePoints;
 
 /** Pontos de atributo acumulados até o nível `level` (iniciais + todos os níveis ganhos). */
 export function totalAttributePoints(level: number): number {
@@ -99,10 +87,10 @@ export function xpToNext(level: number): number {
 
 // ───────────────────────────── atributos → derivados ─────────────────────────────
 
-/** Poder de um atributo: valor + ⌊valor/10⌋² (FOR → físico, DES → arcos, VON → mágico). */
+/** Poder de um atributo: (valor + ⌊valor/10⌋²) × 2 (FOR → golpes corpo a corpo, VON → técnicas do Dom). DES não dá dano. */
 export function attrPower(value: number): number {
   const v = safe(value);
-  return v + Math.floor(v / balance.power.softStep) ** 2;
+  return (v + Math.floor(v / balance.power.softStep) ** 2) * balance.power.attrMult;
 }
 
 export function physicalPower(attrs: Attributes, attackAttr: Attr = 'str'): number {
@@ -138,23 +126,23 @@ export const HITS_TO_KILL = balance.hp.hitsToKill;
 
 /** Vida máxima: fator da classe × 5 × (arma de referência do nível + poder(VIT) + bônus de nível). */
 export function maxHp(factor: number, level: number, vit: number): number {
-  return Math.max(1, Math.round(safe(factor) * HITS_TO_KILL * (referenceWeapon(level) + attrPower(vit) + levelAttack(level))));
+  return Math.max(1, Math.round(safe(factor) * HITS_TO_KILL * (referenceWeapon(level) + attrPower(vit) * balance.hp.vitShare + levelAttack(level))));
 }
 
 /** MP máximo: (base da classe + nível × crescimento + extras) × (1 + VON × 2%). */
 export function maxMp(base: number, perLevel: number, level: number, wil: number, extra = 0): number {
-  return Math.round((safe(base) + safe(level) * safe(perLevel) + safe(extra)) * (1 + safe(wil) * balance.mp.intPct));
+  return Math.round((safe(base) + safe(level) * safe(perLevel) + safe(extra)) * (1 + safe(wil) * balance.mp.wilPct));
 }
 
 /** Precisão (HIT do Ragnarok): nível + DES + bônus. */
 export function accuracy(level: number, dex: number, bonus = 0): number {
-  return safe(level) + safe(dex) + bonus;
+  return safe(level) * balance.accuracy.levelMult + safe(dex) + bonus;
 }
 
 /** Esquiva (FLEE sem AGI): nível + VEL/3 + DES/5 + bônus. */
 export function evasion(level: number, spd: number, dex: number, bonus = 0): number {
   const e = balance.evasion;
-  return safe(level) + Math.floor(safe(spd) / e.spdDiv) + Math.floor(safe(dex) / e.dexDiv) + bonus;
+  return safe(level) * e.levelMult + Math.floor(safe(spd) / e.spdDiv) + Math.floor(safe(dex) / e.dexDiv) + bonus;
 }
 
 /**
@@ -167,11 +155,11 @@ export function physicalResistance(armor: number): number {
   return Math.min(d.maxReduction, a / (a + d.armorK));
 }
 
-/** Resistência mágica: VON / (VON + 150), limitada a 70%. */
+/** Resistência a energia: VON / (VON + 20), limitada a 70% (VON 20 → 50%). */
 export function magicResistance(wil: number): number {
   const r = balance.magicResistance;
   const i = safe(wil);
-  return Math.min(r.max, i / (i + r.intK));
+  return Math.min(r.max, i / (i + r.wilK));
 }
 
 // ───────────────────────────── linha do tempo ─────────────────────────────
@@ -229,7 +217,7 @@ export function rawPower(base: number, attrs: Attributes, scaling: Partial<Recor
  * multiplicador da habilidade. Peso padrão VON 1 (a teia pode trocar: Defensor VON 0,6 + VIT 0,6).
  */
 export function healPower(attrs: Attributes, healBonus: number, power: number, level = 0, scaling: Partial<Record<Attr, number>> = { wil: 1 }): number {
-  return Math.max(1, Math.round((rawPower(0, attrs, scaling, level) * balance.skill.heal.intWeight + safe(healBonus)) * skillMultiplier(power)));
+  return Math.max(1, Math.round((rawPower(0, attrs, scaling, level) * balance.skill.heal.wilWeight + safe(healBonus)) * skillMultiplier(power)));
 }
 
 /** A técnica de energia usa a arma? Só quando a escala mistura FOR/DES (golpe carregado na arma). */
@@ -411,4 +399,11 @@ export function giftControlStrainMult(control: number): number {
 /** Versatilidade: técnicas do Dom a mais no loadout (8+: +1; 10: +2). */
 export function versatilityExtraSlots(versatility: number): number {
   return GS.versatilityExtraSlotAt.filter((at) => versatility >= at).length;
+}
+
+/** Resistência a estados (veneno, atordoamento…): VIT / (VIT + 20), até 75%. */
+export function statusResistance(vit: number): number {
+  const r = balance.statusResist;
+  const v = safe(vit);
+  return Math.min(r.max, v / (v + r.vitK));
 }

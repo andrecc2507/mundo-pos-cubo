@@ -1,6 +1,7 @@
 import { Rng } from '@core';
 import { ATTRS, DB, type Attr, type Attributes, type ClassId, type TreeNode } from '../data';
 import { chainOf, lockReason, treeOf } from './skill_tree';
+import { MAX_LEVEL } from './stats';
 import {
   BASE_ATTR,
   DEFAULT_WEAPON,
@@ -99,7 +100,7 @@ export function makeCharacter(rng: Rng, opts: MakeCharacterOptions): Character {
   };
   // Todo recruta chega com um ponto de habilidade (1 + 1 por nível = 60 no nível 60); o Aprendiz guarda o seu até a promoção.
   c.skillPoints += STARTING_SKILL_POINTS;
-  const level = Math.max(1, opts.level ?? 1);
+  const level = Math.min(MAX_LEVEL, Math.max(1, opts.level ?? 1));
   while (c.level < level) gainXp(c, xpToNext(c.level) - c.xp);
   // Recruta de classe chega com um caminho (subclasse) escolhido e os pontos gastos nele.
   if (opts.classId !== 'aprendiz' && opts.classId !== 'fera' && opts.build !== false) {

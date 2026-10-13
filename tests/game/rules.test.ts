@@ -6,17 +6,17 @@ import { attributePointsAt } from '@game/rules/stats';
 import { makeCharacter } from '@game/rules/recruit';
 
 describe('progressão estilo Ragnarok', () => {
-  it('custo de atributo cresce a cada 10 pontos', () => {
-    expect([1, 10, 11, 59].map(statCost)).toEqual([2, 2, 3, 7]);
+  it('cada ponto de atributo custa 1 ponto', () => {
+    expect([4, 10, 19].map(statCost)).toEqual([1, 1, 1]);
   });
 
-  it('subir de nível dá 3 + ⌊(nível+2)/4⌋ pontos de atributo e 1 de habilidade', () => {
+  it('subir de nível dá 2 pontos de atributo e 2 de habilidade', () => {
     const c = makeCharacter(new Rng(1), { classId: 'impacto' });
     const before = { s: c.statPoints, k: c.skillPoints };
     gainXp(c, xpToNext(1));
     expect(c.level).toBe(2);
     expect(c.statPoints).toBe(before.s + attributePointsAt(2));
-    expect(c.skillPoints).toBe(before.k + 1);
+    expect(c.skillPoints).toBe(before.k + 2);
   });
 
   it('distribuir atributo gasta o custo da curva', () => {
@@ -38,7 +38,7 @@ describe('progressão estilo Ragnarok', () => {
 
 
 
-  it('atributos derivam HP (VIT), MP e resistência mágica (INT); armadura dá resistência física', () => {
+  it('atributos derivam HP (VIT), MP e resistência mágica (VON); armadura dá resistência física', () => {
     const c = makeCharacter(new Rng(5), { classId: 'impacto' });
     const d1 = derive(c);
     c.attrs.vit += 5;

@@ -13,7 +13,9 @@ import { makeCharacter } from '@game/rules/recruit';
 const CTX: BattleContext = { kind: 'dev', baseXp: 0, gold: 0, itemDrops: [], title: 't' };
 
 function battle(): { s: BattleState; hero: BattleUnit; foe: BattleUnit } {
-  const hero = unitFromCharacter(makeCharacter(new Rng(1), { classId: 'movimento', level: 8 }), 'player');
+  const hc = makeCharacter(new Rng(1), { classId: 'movimento', level: 8 });
+  hc.skills = [];
+  const hero = unitFromCharacter(hc, 'player');
   const foe = unitFromEnemy(DB.enemies.saqueador!, 5, new Rng(2));
   const map = createEmptyMap(16, 16, 'planicie');
   building(map, 5, 5, 4, 4, 1, { wall: 'muralha', floor: 'madeira', roof: 'ardosia', windows: 0, furniture: [] });

@@ -7,8 +7,8 @@ import { makeCharacter } from '@game/rules/recruit';
 import { BASE_ATTR, gainXp } from '@game/rules/character';
 
 describe('matemática central: exemplos do design', () => {
-  it('poder de atributo = valor + ⌊valor/10⌋² (FOR 10 → 11, 20 → 24, 30 → 39, 40 → 56)', () => {
-    expect([10, 20, 30, 40].map(stats.attrPower)).toEqual([11, 24, 39, 56]);
+  it('poder de atributo = (valor + ⌊valor/10⌋²) × 2 (FOR 10 → 22, 20 → 48)', () => {
+    expect([10, 20].map(stats.attrPower)).toEqual([22, 48]);
   });
 
   it('linha do tempo: VEL 5 → 15 s, VEL 20 → 10 s', () => {
@@ -23,14 +23,16 @@ describe('matemática central: exemplos do design', () => {
     expect(stats.physicalResistance(999)).toBeLessThanOrEqual(stats.BALANCE.defense.maxReduction);
   });
 
-  it('regra dos 5 golpes: FOR 1 contra VIT 1 (nível 1, arma de referência, sem armadura) = 5 ataques básicos', () => {
+  it('regra dos golpes: FOR igual à VIT, arma de referência e sem armadura derruba em 2,5 a 6 golpes corpo a corpo', () => {
     const dmg = (str: number, level: number) => stats.rawPower(stats.referenceWeapon(level), { str, dex: 1, spd: 1, wil: 1, vit: 1 }, { str: 1 }, level) * (1 - stats.physicalResistance(0));
-    expect(Math.ceil(stats.maxHp(1, 1, 1) / dmg(1, 1))).toBe(5);
-    // Vale para qualquer valor igual e qualquer nível (FOR x contra VIT x).
-    for (const level of [1, 10, 30, 60]) for (const x of [1, 15, 40, 60]) expect(stats.maxHp(1, level, x) / dmg(x, level)).toBeCloseTo(5, 1);
+    for (const level of [1, 10, 20]) for (const x of [4, 10, 20]) {
+      const ratio = stats.maxHp(1, level, x) / dmg(x, level);
+      expect(ratio).toBeGreaterThan(2.5);
+      expect(ratio).toBeLessThan(6);
+    }
     // Atacante mais forte que a VIT do alvo derruba em menos; VIT maior aguenta mais.
-    expect(stats.maxHp(1, 10, 10) / dmg(30, 10)).toBeLessThan(5);
-    expect(stats.maxHp(1, 10, 30) / dmg(10, 10)).toBeGreaterThan(5);
+    expect(stats.maxHp(1, 10, 10) / dmg(20, 10)).toBeLessThan(stats.maxHp(1, 10, 10) / dmg(10, 10));
+    expect(stats.maxHp(1, 10, 20) / dmg(10, 10)).toBeGreaterThan(stats.maxHp(1, 10, 10) / dmg(10, 10));
   });
 
   it('ferimentos: só quem caiu abaixo de 50% em algum momento; dias crescem com o quanto caiu', () => {
@@ -41,33 +43,32 @@ describe('matemática central: exemplos do design', () => {
     expect(stats.woundDays(0.01)).toBe(6);
   });
 
-  it('progressão: nível 60, teto 60, 60 pontos de habilidade e atributos crescendo por nível', () => {
-    expect(stats.MAX_LEVEL).toBe(60);
-    expect(stats.MAX_ATTR).toBe(60);
-    expect(stats.totalSkillPoints(60)).toBe(72);
-    expect(stats.totalSkillPoints(60)).toBe(stats.BALANCE.progression.totalSkillPoints);
-    expect([2, 6, 10, 30, 60].map(stats.attributePointsAt)).toEqual([4, 5, 6, 11, 18]);
-    expect([1, 10, 11, 20, 21, 51, 59].map(stats.attributeCost)).toEqual([2, 2, 3, 3, 4, 7, 7]);
+  it('progressão: nível 20, teto 20, 2 pontos de atributo por nível, 44 pontos de habilidade', () => {
+    expect(stats.MAX_LEVEL).toBe(20);
+    expect(stats.MAX_ATTR).toBe(20);
+    expect(stats.totalSkillPoints(20)).toBe(44);
+    expect(stats.totalSkillPoints(20)).toBe(stats.BALANCE.progression.totalSkillPoints);
+    expect([2, 10, 20].map(stats.attributePointsAt)).toEqual([2, 2, 2]);
+    expect([4, 19].map(stats.attributeCost)).toEqual([1, 1]);
   });
 
-  it('total de atributo = custo real (curva crescente) da build 60/50/40/30/10 = 696', () => {
+  it('total de atributo: 12 iniciais + 2 por nível = 50 = build 20/16/14/12/8 partindo de 4', () => {
     const build = stats.BALANCE.progression.targetBuild;
-    expect(build).toEqual([60, 50, 40, 30, 10]);
-    expect(build.map((t) => stats.attributeCostRange(1, t))).toEqual([263, 194, 135, 86, 18]);
-    expect(stats.TOTAL_ATTRIBUTE_POINTS).toBe(696);
-    expect(stats.STARTING_ATTRIBUTE_POINTS).toBe(54);
-    expect(stats.totalAttributePoints(60)).toBe(696);
+    expect(build).toEqual([20, 16, 14, 12, 8]);
+    expect(stats.TOTAL_ATTRIBUTE_POINTS).toBe(50);
+    expect(stats.STARTING_ATTRIBUTE_POINTS).toBe(12);
+    expect(stats.totalAttributePoints(20)).toBe(50);
   });
 
-  it('um personagem nível 60 recebeu exatamente 696 pontos de atributo e 72 de habilidade', () => {
+  it('um personagem nível 20 recebeu exatamente 50 pontos de atributo e 44 de habilidade', () => {
     const c = makeCharacter(new Rng(1), { classId: 'controle', level: 1 });
     const spent = (Object.values(c.attrs) as number[]).reduce((sum, v) => sum + stats.attributeCostRange(BASE_ATTR, v), 0);
     expect(spent + c.statPoints).toBe(stats.STARTING_ATTRIBUTE_POINTS);
     const skills = c.skillPoints + c.skills.length;
     gainXp(c, 1e12);
-    expect(c.level).toBe(60);
-    expect(spent + c.statPoints).toBe(696);
-    expect(skills + c.skillPoints).toBe(72);
+    expect(c.level).toBe(20);
+    expect(spent + c.statPoints).toBe(50);
+    expect(skills + c.skillPoints).toBe(44);
   });
 
   it('pré-renovação sem Sorte: o crítico é 1,5× e o acerto físico fica entre 5% e 95%', () => {
@@ -81,7 +82,7 @@ describe('matemática central: monotonicidade', () => {
   const values = Array.from({ length: 100 }, (_, i) => i);
   const nonDecreasing = (f: (v: number) => number) => values.every((v) => f(v + 1) >= f(v));
 
-  it('FOR/INT ↑ → poder não diminui; VIT ↑ → vida e resistência não diminuem; INT ↑ → MP não diminui', () => {
+  it('FOR/VON ↑ → poder não diminui; VIT ↑ → vida e resistência não diminuem; VON ↑ → MP não diminui', () => {
     expect(nonDecreasing(stats.attrPower)).toBe(true);
     expect(nonDecreasing((v) => stats.maxHp(1, 20, v))).toBe(true);
     expect(nonDecreasing((v) => stats.physicalResistance(v))).toBe(true);
@@ -120,7 +121,7 @@ describe('simulação de balanceamento (sanidade)', () => {
   });
 
   it('Impacto tem mais vida que Movimento; Movimento age mais vezes que Impacto', () => {
-    for (const lv of [1, 30, 60]) {
+    for (const lv of [1, 10, 20]) {
       const fast = rows.find((r) => r.level === lv && r.classId === 'movimento')!;
       const tank = rows.find((r) => r.level === lv && r.classId === 'impacto')!;
       expect(tank.hp).toBeGreaterThan(fast.hp);
@@ -128,7 +129,7 @@ describe('simulação de balanceamento (sanidade)', () => {
     }
   });
 
-  it('nenhuma criatura passa do nível 60', () => {
-    for (const e of Object.values(DB.enemies)) expect(e!.levelMax ?? 1, e!.id).toBeLessThanOrEqual(60);
+  it('nenhuma criatura passa do nível 20', () => {
+    for (const e of Object.values(DB.enemies)) expect(e!.levelMax ?? 1, e!.id).toBeLessThanOrEqual(20);
   });
 });

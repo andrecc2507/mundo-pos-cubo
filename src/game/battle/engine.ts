@@ -1,6 +1,6 @@
 import { Rng } from '@core';
 import BONDS from '../data/battle/bonds.json';
-import { DB, item, skill, type ComboDef, type Element, type SkillDef } from '../data';
+import { DB, item, skill, type ComboDef, type Attr, type Element, type SkillDef } from '../data';
 import { addStatus, applyElementToTile, applyElementToUnit, dissipateClouds, driftSmoke, environmentTick, removeStatus, tileEffectsOnUnit, unitAt } from './elements';
 import { COVER_PENALTY, coverAgainst, coverPropAgainst, coverSides, type CoverLevel } from './cover';
 import { damageProp, propHp } from './props';
@@ -1112,6 +1112,11 @@ function elementMult(d: BattleUnit, el: Element | undefined): number {
   return m;
 }
 
+function noDex(sc: Partial<Record<Attr, number>>): Partial<Record<Attr, number>> {
+  const { dex: _d, ...rest } = sc;
+  return rest;
+}
+
 /**
  * Pipeline central de um golpe (ver docs/design/matematica.md): poder bruto (arma + atributos) →
  * multiplicador da habilidade → modificadores ofensivos → resistência (com penetração) → elemento.
@@ -1123,7 +1128,8 @@ export function previewHit(state: BattleState, a: BattleUnit, d: BattleUnit, kin
   const insp = a.statuses.inspirado ? 1.25 : 1;
   const def = sk ? DB.skills[sk.id] : undefined;
   const defScale = def?.fx?.defScaling ?? 0;
-  const scaling = def?.scaling ?? (magic ? { wil: 1 } : { [a.attackAttr]: 1 });
+  // Arma de fogo: dano fixo da arma. DES só mexe na pontaria (nunca no dano).
+  const scaling = noDex(def?.scaling ?? (magic ? { wil: 1 } : a.attackAttr === 'dex' ? {} : { [a.attackAttr]: 1 }));
   const weaponBase = magic ? (stats.magicUsesWeapon(def?.scaling) ? a.weaponAtk : 0) : a.weaponAtk;
   const raw = stats.rawPower(weaponBase, a.attrs, scaling, a.level) + (a.def + a.attrs.vit) * defScale;
   // Fortificado, quebrado e penetração mexem na defesa efetiva do alvo (m.def).
@@ -1270,6 +1276,8 @@ export function heal(state: BattleState, target: BattleUnit, amount: number): vo
 /** Chance de um confuso acertar outra unidade ao lado do alvo (aliados também). */
 export const CONFUSED_REDIRECT = 0.35;
 let redirecting = false;
+/** Técnica de área em andamento: quem se esquiva leva só metade do dano (esquiva parcial). */
+let areaGraze = false;
 
 export function resolveAttack(state: BattleState, a: BattleUnit, d: BattleUnit, kind: HitKind, power: number, el: Element | undefined, accBonus: number, mult: number, sk?: SkillLike): boolean {
   if (confine.blocks(state, a.x, a.y, d.x, d.y)) {
@@ -1302,6 +1310,12 @@ export function resolveAttack(state: BattleState, a: BattleUnit, d: BattleUnit, 
     // Tiro que erra um alvo protegido acerta a cobertura (dano médio, sem sorteio a mais).
     const cover = p.max > 0 && p.cover !== 'none' ? coverPropAgainst(state.map, d.x, d.y, a.x, a.y) : null;
     if (cover) damageProp(state, cover[0], cover[1], Math.round((p.min + p.max) / 2));
+    // Área: a esquiva tira metade do dano, não todo (o status e os efeitos do acerto não valem).
+    if (areaGraze && p.max > 0 && d.alive) {
+      const part = Math.max(1, Math.round(((p.min + p.max) / 2) * stats.BALANCE.hit.areaDodgeShare));
+      damage(state, d, part, a, el, false, magic);
+      state.log.push(`↯ ${d.name} se esquiva e ainda leva ${part}.`);
+    }
     return false;
   }
   if (a.focus) delete a.focus;
@@ -1348,7 +1362,7 @@ export function structureHit(u: BattleUnit, kind: HitKind, power: number): numbe
   const weaponBase = magic ? 0 : u.weaponAtk;
   // Demolidor (passiva): mais dano em paredes e objetos.
   const demolish = fx.passiveFx(u).reduce((m, f) => m * (f.demolish ?? 1), 1);
-  return Math.round(stats.structureDamage(stats.rawPower(weaponBase, u.attrs, magic ? { wil: 1 } : { [u.attackAttr]: 1 }, u.level), power) * demolish);
+  return Math.round(stats.structureDamage(stats.rawPower(weaponBase, u.attrs, magic ? { wil: 1 } : u.attackAttr === 'dex' ? {} : { [u.attackAttr]: 1 }, u.level), power) * demolish);
 }
 
 /** Objeto que pode ser alvo do ataque básico em (x, y): sem unidade em cima e com cobertura. */
@@ -1846,7 +1860,13 @@ function castSkillInner(state: BattleState, u: BattleUnit, s: SkillLike, x: numb
       applyElementToUnit(state, t, 'luz');
       continue;
     }
-    const hit = resolveAttack(state, u, t, s.kind, s.power, s.element, s.accuracy ?? 0, mult);
+    areaGraze = areaHit;
+    let hit: boolean;
+    try {
+      hit = resolveAttack(state, u, t, s.kind, s.power, s.element, s.accuracy ?? 0, mult);
+    } finally {
+      areaGraze = false;
+    }
     // Supressão: acertando ou não, o alvo fica sob fogo sustentado.
     if (DB.skills[s.id]?.fx?.suppress && t.alive && t.team !== u.team) tactics.suppress(state, u, t);
     // Golpe que arremessa o alvo para trás (regra do empurrão, sem teste).

@@ -36,7 +36,7 @@ export interface SimRow {
 }
 
 export const SIM_CLASSES: ClassId[] = ['impacto', 'movimento', 'suporte', 'controle'];
-export const SIM_LEVELS = [1, 10, 20, 30, 40, 50, 60];
+export const SIM_LEVELS = [1, 5, 10, 15, 20];
 
 function unitOf(classId: ClassId, level: number, seed: number): BattleUnit {
   const c = makeCharacter(new Rng(seed), { classId, level });

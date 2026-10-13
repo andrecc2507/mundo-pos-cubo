@@ -20,6 +20,7 @@ function fight(weapon: string | null, skill: string) {
   const pe = s.units.find((u) => u.team === 'enemy')!;
   [pa!.x, pa!.y, pb!.x, pb!.y, pe.x, pe.y] = [3, 3, 9, 9, 4, 3];
   pa!.mp = pa!.maxMp = 999;
+  pa!.accuracy = 999;
   pe.hp = pe.maxHp = 99999;
   pa!.gauge = 99.9;
   advance(s);
@@ -27,11 +28,11 @@ function fight(weapon: string | null, skill: string) {
 }
 
 describe('árvore de armas: Artes Marciais e Armas Brancas', () => {
-  it('os dois ramos novos existem com 5 técnicas cada, instaladas', () => {
+  it('os dois ramos novos existem com as técnicas esperadas, instaladas', () => {
     for (const id of Object.keys(BRANCHES)) {
       const n = WEAPON_TREE.nodes.find((x) => x.id === id)!;
       expect(n, id).toBeTruthy();
-      expect(n.skills).toHaveLength(5);
+      expect(n.skills).toHaveLength(id === 'armas_brancas' ? 7 : 5);
       for (const s of n.skills) expect(DB.skills[s.id], s.id).toBeTruthy();
     }
   });

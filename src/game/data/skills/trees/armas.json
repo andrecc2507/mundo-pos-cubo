@@ -35,12 +35,12 @@
    "parents": [],
    "x": 0,
    "y": -160,
-   "description": "Longe e no alto; o tiro decisivo. (Fuzil de precisão ou pistola.)",
+   "description": "Longe, parado e sem pressa. O tiro que decide a conversa. (Fuzil de precisão ou pistola.)",
    "skills": [
     {
      "id": "sniper_mirado",
      "name": "Tiro Mirado",
-     "description": "Gasta o turno mirando: +15 de acerto e +20% de crítico.",
+     "description": "Prende a respiração e gasta o turno inteiro. Dois segundos de silêncio, um tiro: +15 de acerto e +20% de crítico.",
      "kind": "ranged",
      "range": -1,
      "power": 8,
@@ -59,10 +59,10 @@
     },
     {
      "id": "sniper_visao",
-     "name": "Visão de Atirador",
-     "description": "O tiro básico alcança 2 casas a mais.",
+     "name": "Olho de Falcão",
+     "description": "Quem enxerga longe atira longe: o tiro básico alcança 2 casas a mais.",
      "kind": "passive",
-     "range": 0,
+     "range": -1,
      "power": 0,
      "cooldown": 0,
      "mp": 0,
@@ -74,7 +74,7 @@
     {
      "id": "sniper_perna",
      "name": "Tiro na Perna",
-     "description": "Imobiliza o alvo por 1 turno.",
+     "description": "Ninguém corre com um joelho a menos. Imobiliza o alvo por 1 turno.",
      "kind": "ranged",
      "range": -1,
      "power": 4,
@@ -94,27 +94,28 @@
     {
      "id": "sniper_paciencia",
      "name": "Paciência",
-     "description": "Enxerga inimigos escondidos.",
+     "description": "Quem espera, vê. Enxerga os escondidos e ganha +10 de acerto se não saiu do lugar neste turno.",
      "kind": "passive",
-     "range": 0,
+     "range": -1,
      "power": 0,
      "cooldown": 0,
      "mp": 0,
-     "levelReq": 7,
+     "levelReq": 8,
      "fx": {
-      "seeHidden": true
+      "seeHidden": true,
+      "steadyAim": 10
      }
     },
     {
      "id": "sniper_cabeca",
      "name": "Tiro na Cabeça",
-     "description": "Ignora metade da defesa e tem +40% de crítico.",
+     "description": "Mira onde dói de verdade: ignora metade da armadura e tem +40% de crítico.",
      "kind": "ranged",
      "range": -1,
      "power": 12,
      "cooldown": 4,
      "mp": 8,
-     "levelReq": 9,
+     "levelReq": 11,
      "fx": {
       "crit": 40,
       "pierce": 0.5
@@ -124,6 +125,47 @@
       "pistola"
      ],
      "anim": "arrow"
+    },
+    {
+     "id": "sniper_fantasma",
+     "name": "Bala Fantasma",
+     "description": "A bala faz a curva. Ignora linha de visão e cobertura de um alvo que o grupo já viu.",
+     "kind": "ranged",
+     "range": -1,
+     "power": 9,
+     "cooldown": 3,
+     "mp": 7,
+     "levelReq": 14,
+     "fx": {
+      "homing": true
+     },
+     "needsWeapon": [
+      "precisao",
+      "pistola"
+     ],
+     "anim": "arrow"
+    },
+    {
+     "id": "sniper_ultimo",
+     "name": "Último Argumento",
+     "description": "Uma bala, assunto encerrado. Ignora 60% da armadura, +50% de crítico e acaba com quem estiver abaixo de 15% da vida.",
+     "kind": "ranged",
+     "range": -1,
+     "power": 16,
+     "cooldown": 5,
+     "mp": 10,
+     "levelReq": 18,
+     "fx": {
+      "crit": 50,
+      "pierce": 0.6,
+      "execute": 0.15
+     },
+     "needsWeapon": [
+      "precisao",
+      "pistola"
+     ],
+     "anim": "arrow",
+     "ultimate": true
     }
    ]
   },
@@ -134,12 +176,12 @@
    "parents": [],
    "x": 160,
    "y": 0,
-   "description": "Perto, mobilidade, pressão. (Fuzil ou escopeta.)",
+   "description": "Perto, rápido e sem pedir licença. Quem para, vira alvo. (Fuzil ou escopeta.)",
    "skills": [
     {
      "id": "assalto_correr",
      "name": "Correr e Atirar",
-     "description": "Tiro rápido: a próxima vez chega na metade do tempo.",
+     "description": "Atira sem frear a perna: a próxima vez chega na metade do tempo.",
      "kind": "ranged",
      "range": -1,
      "power": 5,
@@ -155,10 +197,10 @@
     },
     {
      "id": "assalto_agil",
-     "name": "Ágil",
-     "description": "+1 de deslocamento.",
+     "name": "Pé Leve",
+     "description": "Dá um passo a mais que o resto: +1 de deslocamento.",
      "kind": "passive",
-     "range": 0,
+     "range": -1,
      "power": 0,
      "cooldown": 0,
      "mp": 0,
@@ -170,7 +212,7 @@
     {
      "id": "assalto_rajada",
      "name": "Rajada",
-     "description": "Dois tiros seguidos (gasta munição como um).",
+     "description": "Dois tiros colados, uma bala de munição só. Educado é gastar pouco.",
      "kind": "ranged",
      "range": -1,
      "power": 4,
@@ -189,13 +231,13 @@
     {
      "id": "assalto_frio",
      "name": "Sangue Frio",
-     "description": "Recebe 15% menos dano de tiros.",
+     "description": "Bala assobiando é só trânsito: recebe 15% menos dano de tiros.",
      "kind": "passive",
-     "range": 0,
+     "range": -1,
      "power": 0,
      "cooldown": 0,
      "mp": 0,
-     "levelReq": 7,
+     "levelReq": 8,
      "fx": {
       "reduce": {
        "ranged": 0.15
@@ -203,23 +245,67 @@
      }
     },
     {
-     "id": "assalto_queima",
-     "name": "Queima-roupa",
-     "description": "Tiro a até 2 casas: dano enorme e +30% de crítico.",
-     "kind": "ranged",
-     "range": 2,
-     "power": 10,
+     "id": "assalto_porta",
+     "name": "Chute na Porta",
+     "description": "Coronhada na cara, empurrão e chão: o alvo é jogado 1 casa para trás e cai.",
+     "kind": "physical",
+     "range": 1,
+     "power": 6,
      "cooldown": 3,
-     "mp": 6,
-     "levelReq": 9,
+     "mp": 4,
+     "levelReq": 11,
+     "status": {
+      "id": "derrubado",
+      "turns": 1
+     },
      "fx": {
-      "crit": 30
+      "knock": 1
      },
      "needsWeapon": [
       "fuzil",
       "escopeta"
      ],
-     "anim": "volley"
+     "anim": "thrust"
+    },
+    {
+     "id": "assalto_manobra",
+     "name": "Fogo e Manobra",
+     "description": "Atira e já sai de onde estava: ganha mais um deslocamento completo.",
+     "kind": "ranged",
+     "range": -1,
+     "power": 6,
+     "cooldown": 3,
+     "mp": 5,
+     "levelReq": 14,
+     "fx": {
+      "extraMove": true
+     },
+     "needsWeapon": [
+      "fuzil",
+      "escopeta"
+     ],
+     "anim": "dash"
+    },
+    {
+     "id": "assalto_queima",
+     "name": "Queima-roupa",
+     "description": "Dentro da guarda dele, onde não tem erro: dois tiros a até 2 casas, +40% de crítico.",
+     "kind": "ranged",
+     "range": 2,
+     "power": 9,
+     "cooldown": 4,
+     "mp": 8,
+     "levelReq": 18,
+     "fx": {
+      "hits": 2,
+      "crit": 40
+     },
+     "needsWeapon": [
+      "fuzil",
+      "escopeta"
+     ],
+     "anim": "volley",
+     "ultimate": true
     }
    ]
   },
@@ -230,12 +316,12 @@
    "parents": [],
    "x": 0,
    "y": 160,
-   "description": "Área e cobertura destruída. (Metralhadora ou lança-granadas.)",
+   "description": "Peso é argumento. Segura a linha, vira o campo do avesso. (Metralhadora ou lança-granadas.)",
    "skills": [
     {
      "id": "pesado_supressao",
      "name": "Supressão Pesada",
-     "description": "Prende o alvo sob fogo: se ele se mexer, leva um tiro.",
+     "description": "Chumbo na frente do nariz do alvo: se ele se mexer, leva tiro.",
      "kind": "ranged",
      "range": -1,
      "power": 2,
@@ -254,7 +340,7 @@
     {
      "id": "pesado_granada",
      "name": "Granada",
-     "description": "Explosão 3×3 a até 6 casas; destrói cobertura.",
+     "description": "Pino fora, problema de outro. Explosão 3×3 a até 6 casas; arrasa cobertura.",
      "kind": "ranged",
      "range": 6,
      "power": 7,
@@ -265,16 +351,17 @@
      "shape": "radius",
      "radius": 1,
      "fx": {
-      "destroyProps": true
+      "destroyProps": true,
+      "arc": true
      },
      "anim": "orb"
     },
     {
      "id": "pesado_couraca",
      "name": "Couraça",
-     "description": "Recebe 15% menos dano físico e não é derrubado.",
+     "description": "Anda como tanque: 15% menos dano físico e ninguém derruba.",
      "kind": "passive",
-     "range": 0,
+     "range": -1,
      "power": 0,
      "cooldown": 0,
      "mp": 0,
@@ -289,15 +376,29 @@
      }
     },
     {
+     "id": "pesado_teimoso",
+     "name": "Teimoso",
+     "description": "Já devia estar no chão e não está. Uma vez por batalha, sobrevive a um golpe fatal com 1 de vida.",
+     "kind": "passive",
+     "range": -1,
+     "power": 0,
+     "cooldown": 0,
+     "mp": 0,
+     "levelReq": 8,
+     "fx": {
+      "lastStand": true
+     }
+    },
+    {
      "id": "pesado_demolicao",
      "name": "Demolição",
-     "description": "Derruba paredes numa área 3×3 (quem está atrás leva dano).",
+     "description": "Parede é só um convite. Derruba tudo numa área 3×3; quem estava atrás sente.",
      "kind": "ranged",
      "range": 6,
      "power": 5,
      "cooldown": 3,
      "mp": 6,
-     "levelReq": 7,
+     "levelReq": 11,
      "target": "tile",
      "shape": "radius",
      "radius": 1,
@@ -313,19 +414,44 @@
     {
      "id": "pesado_chuva",
      "name": "Chuva de Balas",
-     "description": "Varre um cone à frente.",
+     "description": "Varre tudo à frente num cone. Não mira: espalha.",
      "kind": "ranged",
      "range": 5,
      "power": 6,
      "cooldown": 4,
      "mp": 8,
-     "levelReq": 9,
+     "levelReq": 14,
      "shape": "cone",
      "needsWeapon": [
       "metralhadora",
       "lanca_granadas"
      ],
      "anim": "volley"
+    },
+    {
+     "id": "pesado_barragem",
+     "name": "Barragem",
+     "description": "Fecha a rua: bombardeio 5×5 a até 7 casas, destrói cobertura e joga todo mundo para longe do centro.",
+     "kind": "ranged",
+     "range": 7,
+     "power": 12,
+     "cooldown": 5,
+     "mp": 12,
+     "levelReq": 18,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 2,
+     "fx": {
+      "destroyProps": true,
+      "push": 1,
+      "arc": true
+     },
+     "needsWeapon": [
+      "metralhadora",
+      "lanca_granadas"
+     ],
+     "anim": "meteor",
+     "ultimate": true
     }
    ]
   },
@@ -336,12 +462,12 @@
    "parents": [],
    "x": -160,
    "y": 0,
-   "description": "Tecnologia e armadilhas. (Qualquer arma.)",
+   "description": "Cinto cheio, cabeça fria. Resolve a luta antes de ela começar. (Qualquer arma.)",
    "skills": [
     {
      "id": "especialista_drone",
      "name": "Drone de Cura",
-     "description": "O drone cura 18% de um aliado a até 7 casas.",
+     "description": "Um zumbido que cuida: cura 18% da vida de um aliado a até 7 casas.",
      "kind": "heal",
      "range": 7,
      "power": 0,
@@ -357,7 +483,7 @@
     {
      "id": "especialista_mina",
      "name": "Mina de Choque",
-     "description": "Arma uma mina: dano e atordoa quem pisar.",
+     "description": "Presente para quem pisar: dano e atordoamento. Arma na hora, sem gastar o turno inteiro.",
      "kind": "utility",
      "range": 4,
      "power": 0,
@@ -380,7 +506,7 @@
     {
      "id": "especialista_hack",
      "name": "Hackear",
-     "description": "Desliga o alvo: silenciado por 2 turnos (sem Dom nem técnicas).",
+     "description": "Desliga o alvo por 2 turnos: sem Dom e sem técnicas.",
      "kind": "magic",
      "range": 7,
      "power": 2,
@@ -395,28 +521,28 @@
     },
     {
      "id": "especialista_ferramentas",
-     "name": "Cinto de Ferramentas",
-     "description": "O tiro básico alcança 1 casa a mais.",
+     "name": "Gambiarra",
+     "description": "Peça de sobra vira vantagem: cada mina sua que dispara devolve 3 de energia.",
      "kind": "passive",
-     "range": 0,
+     "range": -1,
      "power": 0,
      "cooldown": 0,
      "mp": 0,
-     "levelReq": 7,
+     "levelReq": 8,
      "fx": {
-      "reachBonus": 1
+      "trapRefund": 3
      }
     },
     {
      "id": "especialista_pulso",
      "name": "Pulso de Interferência",
-     "description": "Silencia todos numa área 5×5 por 1 turno.",
+     "description": "Estática em todo o campo: silencia todos numa área 5×5 por 1 turno.",
      "kind": "magic",
      "range": 6,
      "power": 1,
      "cooldown": 4,
      "mp": 8,
-     "levelReq": 9,
+     "levelReq": 11,
      "target": "tile",
      "shape": "radius",
      "radius": 2,
@@ -425,6 +551,46 @@
       "turns": 1
      },
      "anim": "nova"
+    },
+    {
+     "id": "especialista_fumaca",
+     "name": "Cortina de Fumaça",
+     "description": "Some do mapa: fumaça 3×3 que atrapalha a mira de quem atira através dela.",
+     "kind": "utility",
+     "range": 5,
+     "power": 0,
+     "cooldown": 2,
+     "mp": 3,
+     "levelReq": 14,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 1,
+     "fx": {
+      "cloud": "fumaca"
+     },
+     "apCost": 1,
+     "anim": "smoke"
+    },
+    {
+     "id": "especialista_enxame",
+     "name": "Enxame de Reparo",
+     "description": "Larga um enxame de drones: cura 25% da vida e limpa os estados de todo mundo numa área 5×5.",
+     "kind": "heal",
+     "range": 6,
+     "power": 0,
+     "cooldown": 5,
+     "mp": 10,
+     "levelReq": 18,
+     "target": "tile",
+     "shape": "radius",
+     "radius": 2,
+     "fx": {
+      "healPct": 0.25,
+      "cleanse": true,
+      "spareAllies": false
+     },
+     "anim": "heal",
+     "ultimate": true
     }
    ]
   },
@@ -538,17 +704,17 @@
    "parents": [],
    "x": -160,
    "y": -160,
-   "description": "Lâminas e porretes: cortes que sangram, investidas e giros. (Faca, facão, katana, machado, lança, taco, cano ou marreta.)",
+   "description": "Perto o bastante para sentir o cheiro. Aço, ritmo e sangue-frio. (Lâmina ou arma contundente.)",
    "skills": [
     {
+     "id": "brancas_corte",
+     "name": "Corte Rápido",
+     "description": "Rápido e feio: abre um corte (sangramento por 2 turnos) e a próxima vez chega na metade do tempo.",
      "kind": "physical",
      "range": -1,
      "power": 5,
      "cooldown": 1,
      "mp": 3,
-     "id": "brancas_corte",
-     "name": "Corte Rápido",
-     "description": "Golpe rápido que abre um corte: sangramento por 2 turnos. A próxima vez chega na metade do tempo.",
      "levelReq": 1,
      "apCost": 1,
      "status": {
@@ -564,9 +730,9 @@
     {
      "id": "brancas_aparar",
      "name": "Aparar",
-     "description": "35% de chance de aparar um golpe corpo a corpo e levar só metade do dano.",
+     "description": "Pega o golpe no cabo: 35% de chance de levar só metade do dano de golpe corpo a corpo.",
      "kind": "passive",
-     "range": 0,
+     "range": -1,
      "power": 0,
      "cooldown": 0,
      "mp": 0,
@@ -581,17 +747,17 @@
      }
     },
     {
+     "id": "brancas_investida",
+     "name": "Investida Cortante",
+     "description": "Atravessa até 4 casas em linha, cortando todo mundo que estiver no caminho.",
      "kind": "physical",
      "range": 4,
      "power": 7,
      "cooldown": 3,
      "mp": 5,
-     "id": "brancas_investida",
-     "name": "Investida Cortante",
-     "description": "Avança até 4 casas em linha, cortando todos no caminho.",
+     "levelReq": 5,
      "target": "tile",
      "shape": "line",
-     "levelReq": 5,
      "fx": {
       "dashThrough": true
      },
@@ -604,31 +770,76 @@
     {
      "id": "brancas_ritmo",
      "name": "Ritmo da Lâmina",
-     "description": "+10% de crítico e +15% de dano quando um aliado também está ao lado do alvo.",
+     "description": "Luta em dupla: +10% de crítico e +15% de dano quando um aliado também está ao lado do alvo.",
      "kind": "passive",
-     "range": 0,
+     "range": -1,
      "power": 0,
      "cooldown": 0,
      "mp": 0,
-     "levelReq": 7,
+     "levelReq": 8,
      "fx": {
       "critBonus": 10,
       "flank": 0.15
      }
     },
     {
+     "id": "brancas_misericordia",
+     "name": "Golpe de Misericórdia",
+     "description": "Quem já sangra desiste: 60% a mais de dano contra alvo sangrando.",
      "kind": "physical",
-     "range": 0,
-     "power": 10,
-     "cooldown": 4,
-     "mp": 8,
+     "range": -1,
+     "power": 8,
+     "cooldown": 2,
+     "mp": 5,
+     "levelReq": 11,
+     "fx": {
+      "vs": {
+       "status": "sangramento",
+       "mult": 1.6
+      }
+     },
+     "needsWeapon": [
+      "lamina",
+      "contundente"
+     ],
+     "anim": "thrust"
+    },
+    {
+     "id": "brancas_quebra",
+     "name": "Quebra-Guarda",
+     "description": "Amassa a armadura até ela virar enfeite: ignora 70% da defesa e deixa o alvo com a armadura quebrada por 2 turnos.",
+     "kind": "physical",
+     "range": -1,
+     "power": 8,
+     "cooldown": 3,
+     "mp": 6,
+     "levelReq": 14,
+     "status": {
+      "id": "quebrado",
+      "turns": 2
+     },
+     "fx": {
+      "pierce": 0.7
+     },
+     "needsWeapon": [
+      "lamina",
+      "contundente"
+     ],
+     "anim": "slash"
+    },
+    {
      "id": "brancas_turbilhao",
      "name": "Turbilhão de Aço",
-     "description": "Gira a arma: acerta todos ao redor (3×3) e faz sangrar.",
+     "description": "Gira a arma como quem arruma a casa: acerta todos em volta (3×3) e faz sangrar.",
+     "kind": "physical",
+     "range": 0,
+     "power": 13,
+     "cooldown": 4,
+     "mp": 10,
+     "levelReq": 18,
      "target": "self",
      "shape": "radius",
      "radius": 1,
-     "levelReq": 9,
      "status": {
       "id": "sangramento",
       "turns": 2
@@ -637,7 +848,8 @@
       "lamina",
       "contundente"
      ],
-     "anim": "spin"
+     "anim": "spin",
+     "ultimate": true
     }
    ]
   }

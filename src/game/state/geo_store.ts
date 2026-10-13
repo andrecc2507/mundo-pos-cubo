@@ -33,6 +33,8 @@ export function autosaveGeo(save: SaveService): void {
 export function loadGeo(save: SaveService, slot: string): boolean {
   const g = save.load<GeoGame>(slot);
   if (!g || g.version !== 1) return false;
+  // Campanhas de antes da escala 1–20 (atributo INT, nível até 60) não se convertem: ficam de fora.
+  if (Object.values(g.roster ?? {}).some((c) => c.attrs.wil === undefined || c.level > 20)) return false;
   g.stock ??= {};
   g.hostile ??= {};
   g.specialists ??= [];

@@ -191,7 +191,7 @@ export function unitFromEnemy(def: EnemyDef, rawLevel: number, rng: Rng): Battle
     maxMp: 0,
     mp: 0,
     def: 0,
-    weaponAtk: Math.round((def.atk ?? 7) * scale),
+    weaponAtk: Math.round((def.atk ?? 21) * scale),
     weaponRange: def.range ?? 1,
     weaponType: 'natural',
     attackAttr: 'str',

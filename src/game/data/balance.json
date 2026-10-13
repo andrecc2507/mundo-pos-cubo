@@ -1,28 +1,25 @@
 {
  "progression": {
-  "maxLevel": 60,
-  "baseAttribute": 1,
-  "maxAttribute": 60,
+  "maxLevel": 20,
+  "baseAttribute": 4,
+  "maxAttribute": 20,
   "targetBuild": [
-   60,
-   50,
-   40,
-   30,
-   10
+   20,
+   16,
+   14,
+   12,
+   8
   ],
   "attributePointsPerLevel": {
-   "base": 3,
-   "everyLevels": 4,
-   "offset": 2
+   "perLevel": 2
   },
   "attributeCost": {
-   "base": 2,
-   "everyPoints": 10
+   "flat": 1
   },
-  "skillPointsPerLevel": 1,
+  "skillPointsPerLevel": 2,
   "crossClassLevel": 5,
   "bonusSkillPointEvery": 5,
-  "totalSkillPoints": 72,
+  "totalSkillPoints": 44,
   "chainRankReq": [
    0,
    1,
@@ -35,26 +32,29 @@
    4,
    5
   ],
-  "startingSkillPoints": 1,
+  "startingSkillPoints": 2,
   "skillMaxRank": 5,
   "xpToNext": {
-   "base": 40,
-   "exponent": 1.6
-  }
+   "base": 60,
+   "exponent": 1.5
+  },
+  "startingAttributePoints": 12
  },
  "power": {
-  "softStep": 10
+  "softStep": 10,
+  "attrMult": 2
  },
  "attack": {
   "levelBonus": 3,
   "referenceWeapon": {
-   "base": 7,
-   "perLevel": 0.2
+   "base": 21,
+   "perLevel": 0.5
   }
  },
  "hp": {
-  "hitsToKill": 5,
-  "beastDesignRef": 1.8
+  "hitsToKill": 4,
+  "beastDesignRef": 1.8,
+  "vitShare": 0.75
  },
  "wounds": {
   "threshold": 0.5,
@@ -63,25 +63,27 @@
   "lightHpMult": 0.75
  },
  "mp": {
-  "intPct": 0.02
+  "wilPct": 0.03
  },
  "hit": {
-  "base": 80,
+  "base": 60,
   "min": 5,
   "max": 95,
   "heightBonus": 6,
   "defendingPenalty": 10,
-  "obscuredPenalty": 40
+  "obscuredPenalty": 40,
+  "areaDodgeShare": 0.5
  },
  "rangeFalloff": {
   "_doc": "Tiro e técnica à distância sem limite de alcance (basta ver o alvo). Até o alcance eficaz (alcance da arma ou da técnica + 1 casa a cada dexPerTile de DES) não perde nada; depois, −perTile de acerto por casa, até −maxPenalty. Arremesso (granadas, frascos, técnicas em arco) tem alcance máximo pela FOR (tactics.throwBaseRange + FOR / throwStrPerTile).",
-  "dexPerTile": 8,
+  "dexPerTile": 4,
   "perTile": 5,
   "maxPenalty": 70
  },
  "evasion": {
-  "spdDiv": 3,
-  "dexDiv": 5
+  "levelMult": 2,
+  "spdDiv": 2,
+  "dexDiv": 2
  },
  "magicHit": {
   "base": 95,
@@ -95,13 +97,13 @@
   "maxReduction": 0.8
  },
  "magicResistance": {
-  "intK": 150,
+  "wilK": 20,
   "max": 0.7
  },
  "skill": {
   "powerStep": 0.1,
   "heal": {
-   "intWeight": 0.6
+   "wilWeight": 0.6
   }
  },
  "weapons": {
@@ -209,8 +211,8 @@
  "giftStats": {
   "_doc": "Potência / Controle / Versatilidade do Dom (1–10, 5 = neutro). Cada portador sorteia em volta do valor do catálogo (±spread). Potência: dano das técnicas do Dom; Controle: acerto e Strain; Versatilidade: técnicas extras no loadout.",
   "spread": 2,
-  "powerPerPoint": 0.04,
-  "controlAccPerPoint": 2,
+  "powerPerPoint": 0.09,
+  "controlAccPerPoint": 4,
   "controlStrainPerPoint": 0.04,
   "versatilityExtraSlotAt": [
    8,
@@ -232,5 +234,12 @@
   "_doc": "Sorte justa (opção da campanha, ligada por padrão em História e Normal): cada ataque errado seguido dá Foco à unidade do jogador — +perMiss de acerto no próximo ataque, até maxStacks. Acertar zera. Aparece na previsão de golpe.",
   "perMiss": 10,
   "maxStacks": 3
+ },
+ "accuracy": {
+  "levelMult": 2
+ },
+ "statusResist": {
+  "vitK": 20,
+  "max": 0.75
  }
 }
